@@ -8,7 +8,7 @@ class CUIXml;
 #include "../script_export_space.h"
 
 struct SLuaWpnParams;
-class CPhysicsShellHolder;
+class CInventoryItem;
 
 class CUIWpnParams : public CUIWindow 
 {
@@ -17,8 +17,8 @@ public:
 	virtual						~CUIWpnParams			();
 
 	void 						InitFromXml				(CUIXml& xml_doc);
-	void 						SetInfo					(CPhysicsShellHolder &obj/*const shared_str& wpn_section*/);
-	bool 						Check					(CPhysicsShellHolder &obj/*const shared_str& wpn_section*/);
+	void 						SetInfo					(CInventoryItem* obj);
+	bool 						Check					(CInventoryItem* obj);
 
 protected:
 	CUIProgressBar				m_progressAccuracy;
@@ -30,4 +30,7 @@ protected:
 	CUIStatic					m_textHandling;
 	CUIStatic					m_textDamage;
 	CUIStatic					m_textRPM;
+	//
+	CUIStatic					m_textCurrentAmmo;
+	CUIStatic					m_textMagSizeFiremode;
 };

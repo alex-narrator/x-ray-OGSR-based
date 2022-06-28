@@ -146,7 +146,7 @@ void SBinocVisibleObj::Update()
 CBinocularsVision::CBinocularsVision(CWeaponMagazined* parent)
 {
 	m_parent = parent;
-	Load									(m_parent->cNameSect());
+	Load									(m_parent->binoc_vision_sect/*cNameSect()*/);
 }
 CBinocularsVision::~CBinocularsVision()
 {

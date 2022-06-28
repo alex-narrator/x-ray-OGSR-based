@@ -32,8 +32,8 @@ void CArtefact::script_register(lua_State *L)
 		.def_readwrite("bleeding_restore_speed"				,			&CArtefact::m_fBleedingRestoreSpeed)
 		.def_readwrite("thirst_restore_speed"				,			&CArtefact::m_fThirstRestoreSpeed)
 
-		.def_readwrite("additional_inventory_weight"		,			&CArtefact::m_additional_weight)		
-		.def_readwrite("additional_inventory_weight2"		,			&CArtefact::m_additional_weight2)		
+/*		.def_readwrite("additional_inventory_weight"		,			&CArtefact::m_additional_weight)		
+		.def_readwrite("additional_inventory_weight2"		,			&CArtefact::m_additional_weight2)*/		
 		,
 
 		class_<CMercuryBall			,CGameObject>("CMercuryBall").def		(constructor<>()),

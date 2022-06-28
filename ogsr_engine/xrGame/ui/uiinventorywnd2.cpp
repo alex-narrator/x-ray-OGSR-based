@@ -51,6 +51,11 @@ void CUIInventoryWnd::SendMessage(CUIWindow *pWnd, s16 msg, void *pData)
 	{
 		GetHolder()->StartStopMenu			(this,true);
 	}
+	else
+	if (UIRepackAmmoButton == pWnd && BUTTON_CLICKED == msg)
+	{
+		Actor()->RepackAmmo();
+	}
 
 	CUIWindow::SendMessage(pWnd, msg, pData);
 }
@@ -77,74 +82,97 @@ void CUIInventoryWnd::InitInventory()
 	SetCurrentItem				(NULL);
 
 	//Slots
-	PIItem _itm							= m_pInv->m_slots[FIRST_WEAPON_SLOT].m_pIItem;
-	if(_itm)
-	{
-		CUICellItem* itm				= create_cell_item(_itm);
-		m_pUIPistolList->SetItem		(itm);
-	}
-
-	if (Core.Features.test(xrCore::Feature::ogse_new_slots)) {
-	_itm = m_pInv->m_slots[KNIFE_SLOT].m_pIItem;
+	PIItem	_itm						= m_pInv->m_slots[KNIFE_SLOT].m_pIItem;
 	if (_itm)
 	{
 		CUICellItem* itm = create_cell_item(_itm);
 		m_pUIKnifeList->SetItem(itm);
 	}
+	_itm								= m_pInv->m_slots[FIRST_WEAPON_SLOT].m_pIItem;
+	if(_itm)
+	{
+		CUICellItem* itm				= create_cell_item(_itm);
+		m_pUIPistolList->SetItem		(itm);
 	}
-
 	_itm								= m_pInv->m_slots[SECOND_WEAPON_SLOT].m_pIItem;
 	if(_itm)
 	{
 		CUICellItem* itm				= create_cell_item(_itm);
 		m_pUIAutomaticList->SetItem		(itm);
 	}
-	_itm = m_pInv->m_slots[APPARATUS_SLOT].m_pIItem;
-
-	if (Core.Features.test(xrCore::Feature::ogse_new_slots)) {
-
+	_itm								= m_pInv->m_slots[APPARATUS_SLOT].m_pIItem;
 	if (_itm)
 	{
 		CUICellItem* itm = create_cell_item(_itm);
 		m_pUIBinocularList->SetItem(itm);
 	}
 
-	_itm = m_pInv->m_slots[DETECTOR_SLOT].m_pIItem;
+	_itm								= m_pInv->m_slots[GRENADE_SLOT].m_pIItem;
+	if(_itm)
+	{
+		CUICellItem* itm = create_cell_item( _itm );
+		m_pUIGrenadeList->SetItem( itm );
+	}
+	_itm								= m_pInv->m_slots[ARTEFACT_SLOT].m_pIItem;
+	if(_itm)
+	{
+		CUICellItem* itm				= create_cell_item(_itm);
+		m_pUIArtefactList->SetItem		(itm);
+	}
+
+	_itm								= m_pInv->m_slots[DETECTOR_SLOT].m_pIItem;
 	if (_itm)
 	{
 		CUICellItem* itm = create_cell_item(_itm);
 		m_pUIDetectorList->SetItem(itm);
 	}
 
-	_itm = m_pInv->m_slots[TORCH_SLOT].m_pIItem;
+	_itm								= m_pInv->m_slots[TORCH_SLOT].m_pIItem;
 	if (_itm)
 	{
 		CUICellItem* itm = create_cell_item(_itm);
 		m_pUITorchList->SetItem(itm);
 	}
 
-	_itm = m_pInv->m_slots[HELMET_SLOT].m_pIItem;
+	_itm								= m_pInv->m_slots[HELMET_SLOT].m_pIItem;
 	if (_itm)
 	{
 		CUICellItem* itm = create_cell_item(_itm);
 		m_pUIHelmetList->SetItem(itm);
 	}
 
-	_itm = m_pInv->m_slots[NIGHT_VISION_SLOT].m_pIItem;
+	_itm								= m_pInv->m_slots[PDA_SLOT].m_pIItem;
 	if (_itm)
 	{
 		CUICellItem* itm = create_cell_item(_itm);
-		m_pUINightVisionList->SetItem(itm);
+		m_pUIPdaList->SetItem(itm);
 	}
 
-	_itm = m_pInv->m_slots[BIODETECTOR_SLOT].m_pIItem;
-	if (_itm)
+	_itm								= m_pInv->m_slots[QUICK_SLOT_0].m_pIItem;
+	if(_itm)
 	{
-		CUICellItem* itm = create_cell_item(_itm);
-		m_pUIBIODetList->SetItem(itm);
+		CUICellItem* itm				= create_cell_item(_itm);
+		m_pUIQuickList_0->SetItem		(itm);
+	}
+	_itm								= m_pInv->m_slots[QUICK_SLOT_1].m_pIItem;
+	if(_itm)
+	{
+		CUICellItem* itm				= create_cell_item(_itm);
+		m_pUIQuickList_1->SetItem		(itm);
+	}
+	_itm								= m_pInv->m_slots[QUICK_SLOT_2].m_pIItem;
+	if(_itm)
+	{
+		CUICellItem* itm				= create_cell_item(_itm);
+		m_pUIQuickList_2->SetItem		(itm);
+	}
+	_itm								= m_pInv->m_slots[QUICK_SLOT_3].m_pIItem;
+	if(_itm)
+	{
+		CUICellItem* itm				= create_cell_item(_itm);
+		m_pUIQuickList_3->SetItem		(itm);
 	}
 
-	}
 
 	PIItem _outfit						= m_pInv->m_slots[OUTFIT_SLOT].m_pIItem;
 	CUICellItem* outfit					= (_outfit)?create_cell_item(_outfit):NULL;
@@ -168,19 +196,13 @@ void CUIInventoryWnd::InitInventory()
 	    m_pUIBagList->SetItem( itm );
 	  }
 	}
-	//fake
-	_itm								= m_pInv->m_slots[GRENADE_SLOT].m_pIItem;
-	if(_itm)
-	{
-	  if ( !_itm->m_flags.test( CInventoryItem::FIHiddenForInventory ) ) {
-	    CUICellItem* itm = create_cell_item( _itm );
-	    m_pUIBagList->SetItem( itm );
-	  }
-	}
+
 
 	m_pUIBagList->SetScrollPos(bag_scroll);
 
 	UpdateWeight();
+
+	UpdateCustomDraw();
 
 	m_b_need_reinit					= false;
 }  
@@ -236,7 +258,7 @@ bool CUIInventoryWnd::ToSlot(CUICellItem* itm, bool force_place)
 	if(GetInventory()->CanPutInSlot(iitem)){
 		CUIDragDropListEx* new_owner		= GetSlotList(_slot);
 		
-		if(_slot==GRENADE_SLOT && !new_owner )return true; //fake, sorry (((
+//		if(_slot==GRENADE_SLOT && !new_owner )return true; //fake, sorry (((
 
 		result = GetInventory()->Slot(iitem);
 		VERIFY								(result);
@@ -247,7 +269,8 @@ bool CUIInventoryWnd::ToSlot(CUICellItem* itm, bool force_place)
 	
 		SendEvent_Item2Slot					(iitem);
 
-		SendEvent_ActivateSlot				(iitem);
+		if (GetInventory()->activate_slot(_slot) || iitem->cast_weapon())
+			SendEvent_ActivateSlot				(iitem);
 		
 		/************************************************** added by Ray Twitty (aka Shadows) START **************************************************/
 		// обновляем статик веса в инвентаре
@@ -373,7 +396,32 @@ bool CUIInventoryWnd::OnItemSelected(CUICellItem* itm)
 {
 	SetCurrentItem(itm);
 
-	itm->ColorizeItems( { m_pUIBagList, m_pUIBeltList, m_pUIPistolList, m_pUIAutomaticList, m_pUIKnifeList, m_pUIHelmetList, m_pUIBIODetList, m_pUINightVisionList, m_pUIDetectorList, m_pUITorchList, m_pUIBinocularList, m_pUIOutfitList } );
+	itm->ColorizeItems( { 
+		m_pUIBagList, 
+		m_pUIBeltList, 
+		//
+		m_pUIOutfitList,
+		m_pUIHelmetList,
+		m_pUIWarBeltList,
+		m_pUIBackPackList,
+		//
+		m_pUIKnifeList,
+		m_pUIPistolList, 
+		m_pUIAutomaticList, 
+		m_pUIBinocularList,
+		// 
+		m_pUIGrenadeList,
+		m_pUIArtefactList,
+		//
+		m_pUIDetectorList, 
+		m_pUITorchList, 
+		m_pUIPdaList,
+		//
+		m_pUIQuickList_0,
+		m_pUIQuickList_1,
+		m_pUIQuickList_2,
+		m_pUIQuickList_3
+		} );
 	return false;
 }
 
@@ -502,19 +550,28 @@ void CUIInventoryWnd::ClearAllLists()
 {
 	m_pUIBagList->ClearAll					(true);
 	m_pUIBeltList->ClearAll					(true);
+	//
 	m_pUIOutfitList->ClearAll				(true);
+	m_pUIHelmetList->ClearAll				(true);
+	m_pUIWarBeltList->ClearAll				(true);
+	m_pUIBackPackList->ClearAll				(true);
+	//
+	m_pUIKnifeList->ClearAll				(true);
 	m_pUIPistolList->ClearAll				(true);
-	if (Core.Features.test(xrCore::Feature::ogse_new_slots))
-		m_pUIKnifeList->ClearAll(true);
 	m_pUIAutomaticList->ClearAll			(true);
-	if (Core.Features.test(xrCore::Feature::ogse_new_slots)) {
-		m_pUIDetectorList->ClearAll(true);
-		m_pUITorchList->ClearAll(true);
-		m_pUIHelmetList->ClearAll(true);
-		m_pUINightVisionList->ClearAll(true);
-		m_pUIBIODetList->ClearAll(true);
-		m_pUIBinocularList->ClearAll(true);
-	}
+	m_pUIBinocularList->ClearAll			(true);
+	//
+	m_pUIGrenadeList->ClearAll				(true);
+	m_pUIArtefactList->ClearAll				(true);
+	//
+	m_pUIDetectorList->ClearAll				(true);
+	m_pUITorchList->ClearAll				(true);
+	m_pUIPdaList->ClearAll					(true);
+	//
+	m_pUIQuickList_0->ClearAll	(true);
+	m_pUIQuickList_1->ClearAll	(true);
+	m_pUIQuickList_2->ClearAll	(true);
+	m_pUIQuickList_3->ClearAll	(true);
 }
 
 

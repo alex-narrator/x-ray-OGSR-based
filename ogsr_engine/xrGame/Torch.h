@@ -56,14 +56,21 @@ public:
 			void	SwitchNightVision		  ();
 			void	SwitchNightVision		  (bool light_on);
 			void	UpdateSwitchNightVision   ();
+			bool	IsNightVisionOn () { return m_bNightVisionOn; };
 protected:
+	bool					m_bTorchLightEnabled{};
 	bool					m_bNightVisionEnabled{};
 	bool					m_bNightVisionOn{};
 
-	HUD_SOUND				m_NightVisionOnSnd;
-	HUD_SOUND				m_NightVisionOffSnd;
-	HUD_SOUND				m_NightVisionIdleSnd;
-	HUD_SOUND				m_NightVisionBrokenSnd;
+	HUD_SOUND				SndTorchOn;
+	HUD_SOUND				SndTorchOff;
+	//
+	HUD_SOUND				SndNightVisionOn;
+	HUD_SOUND				SndNightVisionOff;
+	HUD_SOUND				SndNightVisionIdle;
+	HUD_SOUND				SndNightVisionBroken;
+
+	shared_str				m_NightVisionSect;
 
 	enum EStats{
 		eTorchActive				= (1<<0),

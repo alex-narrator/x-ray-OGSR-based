@@ -13,6 +13,7 @@ class CInventory;
 #include "UIOutfitInfo.h"
 #include "UIItemInfo.h"
 #include "../inventory_space.h"
+#include "../actor_flags.h"
 
 class CArtefact;
 class CUI3tButton;
@@ -33,7 +34,7 @@ public:
 
 	void					InitInventory				();
 	void					InitInventory_delayed		();
-	virtual bool StopAnyMove() { return !!Core.Features.test(xrCore::Feature::more_hide_weapon); }
+	virtual bool			StopAnyMove					() { return g_eFreeHands != eFreeHandsOff; }
 
 	virtual void			SendMessage					(CUIWindow *pWnd, s16 msg, void *pData);
 	virtual bool			OnMouse						(float x, float y, EUIMessages mouse_action);
@@ -80,6 +81,7 @@ protected:
 	CUIFrameWindow				UIPersonalWnd;
 
 	CUI3tButton*				UIExitButton;
+	CUI3tButton*				UIRepackAmmoButton;
 
 	CUIStatic					UIStaticBottom;
 	CUIStatic					UIStaticTime;
@@ -90,17 +92,27 @@ protected:
 	CUIDragDropListEx*			m_pUIBagList;
 	CUIDragDropListEx*			m_pUIBeltList;
 
-	CUIDragDropListEx*			m_pUIPistolList;
-	CUIDragDropListEx*			m_pUIAutomaticList;
 	CUIOutfitDragDropList*		m_pUIOutfitList;
+	CUIDragDropListEx*			m_pUIHelmetList;
+	CUIDragDropListEx*			m_pUIWarBeltList;
+	CUIDragDropListEx*			m_pUIBackPackList;
 
 	CUIDragDropListEx*			m_pUIKnifeList;
-	CUIDragDropListEx*			m_pUIHelmetList;
-	CUIDragDropListEx*			m_pUIBIODetList;
-	CUIDragDropListEx*			m_pUINightVisionList;
+	CUIDragDropListEx*			m_pUIPistolList;
+	CUIDragDropListEx*			m_pUIAutomaticList;
+	CUIDragDropListEx*			m_pUIBinocularList;
+
+	CUIDragDropListEx*			m_pUIGrenadeList;
+	CUIDragDropListEx*			m_pUIArtefactList;
+
 	CUIDragDropListEx*			m_pUIDetectorList;
 	CUIDragDropListEx*			m_pUITorchList;
-	CUIDragDropListEx*			m_pUIBinocularList;
+	CUIDragDropListEx*			m_pUIPdaList;
+
+	CUIDragDropListEx*			m_pUIQuickList_0;
+	CUIDragDropListEx*			m_pUIQuickList_1;
+	CUIDragDropListEx*			m_pUIQuickList_2;
+	CUIDragDropListEx*			m_pUIQuickList_3;
 
 	// alpet: для индексированного доступа
 	CUIDragDropListEx*			m_slots_array[ SLOTS_TOTAL ];
@@ -120,10 +132,12 @@ protected:
 
 	CUIStatic					UIProgressBack;
 	CUIStatic					UIProgressBack_rank;
+	CUIStatic					UIProgressBackRadiation; //отдельная подложка для убираемого прогрессбара радиации
 	CUIProgressBar				UIProgressBarHealth;	
 	CUIProgressBar				UIProgressBarPsyHealth;
 	CUIProgressBar				UIProgressBarRadiation;
 	CUIProgressBar				UIProgressBarRank;
+	CUIProgressBar				UIProgressBarSatiety;
 
 	CUIPropertiesBox			UIPropertiesBox;
 	
@@ -172,5 +186,7 @@ private:
 public:
 	PIItem						CurrentIItem();
 	void UpdateWeight();
-	void UpdateOutfit();
+//	void UpdateOutfit();
+	//обновление отрисовки сетки пояса
+	void					UpdateCustomDraw();
 };

@@ -39,9 +39,12 @@ using namespace InventoryUtilities;
 CUIInventoryWnd*	g_pInvWnd = NULL;
 
 CUIInventoryWnd::CUIInventoryWnd() : 
-	m_pUIBagList(nullptr), m_pUIBeltList(nullptr), m_pUIPistolList(nullptr), m_pUIAutomaticList(nullptr),
-	m_pUIKnifeList(nullptr), m_pUIHelmetList(nullptr), m_pUIBIODetList(nullptr), m_pUINightVisionList(nullptr),
-	m_pUIDetectorList(nullptr), m_pUITorchList(nullptr), m_pUIBinocularList(nullptr), m_pUIOutfitList(nullptr)
+	m_pUIBagList(nullptr), m_pUIBeltList(nullptr), 
+	m_pUIOutfitList(nullptr), m_pUIHelmetList(nullptr), m_pUIWarBeltList(nullptr), m_pUIBackPackList(nullptr), 
+	m_pUIKnifeList(nullptr), m_pUIPistolList(nullptr), m_pUIAutomaticList(nullptr), m_pUIBinocularList(nullptr),
+	m_pUIGrenadeList(nullptr), m_pUIArtefactList(nullptr),
+	m_pUIDetectorList(nullptr), m_pUITorchList(nullptr), m_pUIPdaList(nullptr),
+	m_pUIQuickList_0(nullptr), m_pUIQuickList_1(nullptr), m_pUIQuickList_2(nullptr), m_pUIQuickList_3(nullptr)
 {
 	m_iCurrentActiveSlot				= NO_ACTIVE_SLOT;
 	UIRank								= NULL;
@@ -92,14 +95,20 @@ void CUIInventoryWnd::Init()
 	AttachChild							(&UIProgressBack);
 	xml_init.InitStatic					(uiXml, "progress_background", 0, &UIProgressBack);
 
-	UIProgressBack.AttachChild (&UIProgressBarHealth);
-	xml_init.InitProgressBar (uiXml, "progress_bar_health", 0, &UIProgressBarHealth);
-	
-	UIProgressBack.AttachChild	(&UIProgressBarPsyHealth);
-	xml_init.InitProgressBar (uiXml, "progress_bar_psy", 0, &UIProgressBarPsyHealth);
+	AttachChild							(&UIProgressBackRadiation);
+	xml_init.InitStatic					(uiXml, "progress_background_radiation", 0, &UIProgressBackRadiation);
 
-	UIProgressBack.AttachChild	(&UIProgressBarRadiation);
-	xml_init.InitProgressBar (uiXml, "progress_bar_radiation", 0, &UIProgressBarRadiation);
+	UIProgressBack.AttachChild			(&UIProgressBarHealth);
+	xml_init.InitProgressBar			(uiXml, "progress_bar_health", 0, &UIProgressBarHealth);
+	
+	UIProgressBack.AttachChild			(&UIProgressBarPsyHealth);
+	xml_init.InitProgressBar			(uiXml, "progress_bar_psy", 0, &UIProgressBarPsyHealth);
+
+	UIProgressBack.AttachChild			(&UIProgressBarSatiety);
+	xml_init.InitProgressBar			(uiXml, "progress_bar_satiety", 0, &UIProgressBarSatiety);
+
+	UIProgressBackRadiation.AttachChild	(&UIProgressBarRadiation);
+	xml_init.InitProgressBar			(uiXml, "progress_bar_radiation", 0, &UIProgressBarRadiation);
 
 	UIPersonalWnd.AttachChild			(&UIStaticPersonal);
 	xml_init.InitStatic					(uiXml, "static_personal",0, &UIStaticPersonal);
@@ -124,11 +133,21 @@ void CUIInventoryWnd::Init()
 	xml_init.InitDragDropListEx			(uiXml, "dragdrop_outfit", 0, m_pUIOutfitList);
 	BindDragDropListEnents				(m_pUIOutfitList);
 
-	if (Core.Features.test(xrCore::Feature::ogse_new_slots)) {
+	m_pUIHelmetList						= xr_new<CUIDragDropListEx>(); AttachChild(m_pUIHelmetList); m_pUIHelmetList->SetAutoDelete(true);
+	xml_init.InitDragDropListEx			(uiXml, "dragdrop_helmet", 0, m_pUIHelmetList);
+	BindDragDropListEnents				(m_pUIHelmetList);
+
+	m_pUIWarBeltList					= xr_new<CUIDragDropListEx>(); AttachChild(m_pUIWarBeltList); m_pUIWarBeltList->SetAutoDelete(true);
+	xml_init.InitDragDropListEx			(uiXml, "dragdrop_warbelt", 0, m_pUIWarBeltList);
+	BindDragDropListEnents				(m_pUIWarBeltList);
+
+	m_pUIBackPackList					= xr_new<CUIDragDropListEx>(); AttachChild(m_pUIBackPackList); m_pUIBackPackList->SetAutoDelete(true);
+	xml_init.InitDragDropListEx			(uiXml, "dragdrop_backpack", 0, m_pUIBackPackList);
+	BindDragDropListEnents				(m_pUIBackPackList);
+
 	m_pUIKnifeList						= xr_new<CUIDragDropListEx>(); AttachChild(m_pUIKnifeList); m_pUIKnifeList->SetAutoDelete(true);
 	xml_init.InitDragDropListEx			(uiXml, "dragdrop_knife", 0, m_pUIKnifeList);
 	BindDragDropListEnents				(m_pUIKnifeList);
-	}
 
 	m_pUIPistolList						= xr_new<CUIDragDropListEx>(); AttachChild(m_pUIPistolList); m_pUIPistolList->SetAutoDelete(true);
 	xml_init.InitDragDropListEx			(uiXml, "dragdrop_pistol", 0, m_pUIPistolList);
@@ -138,23 +157,17 @@ void CUIInventoryWnd::Init()
 	xml_init.InitDragDropListEx			(uiXml, "dragdrop_automatic", 0, m_pUIAutomaticList);
 	BindDragDropListEnents				(m_pUIAutomaticList);
 
-	if (Core.Features.test(xrCore::Feature::ogse_new_slots)) {
-
 	m_pUIBinocularList					= xr_new<CUIDragDropListEx>(); AttachChild(m_pUIBinocularList); m_pUIBinocularList->SetAutoDelete(true);
 	xml_init.InitDragDropListEx			(uiXml, "dragdrop_binocular", 0, m_pUIBinocularList);
 	BindDragDropListEnents				(m_pUIBinocularList);
 
-	m_pUIHelmetList						= xr_new<CUIDragDropListEx>(); AttachChild(m_pUIHelmetList); m_pUIHelmetList->SetAutoDelete(true);
-	xml_init.InitDragDropListEx			(uiXml, "dragdrop_helmet", 0, m_pUIHelmetList);
-	BindDragDropListEnents				(m_pUIHelmetList);
+	m_pUIGrenadeList					= xr_new<CUIDragDropListEx>(); AttachChild(m_pUIGrenadeList); m_pUIGrenadeList->SetAutoDelete(true);
+	xml_init.InitDragDropListEx			(uiXml, "dragdrop_grenade", 0, m_pUIGrenadeList);
+	BindDragDropListEnents				(m_pUIGrenadeList);
 
-	m_pUIBIODetList						= xr_new<CUIDragDropListEx>(); AttachChild(m_pUIBIODetList); m_pUIBIODetList->SetAutoDelete(true);
-	xml_init.InitDragDropListEx			(uiXml, "dragdrop_biodetector", 0, m_pUIBIODetList);
-	BindDragDropListEnents				(m_pUIBIODetList);
-
-	m_pUINightVisionList				= xr_new<CUIDragDropListEx>(); AttachChild(m_pUINightVisionList); m_pUINightVisionList->SetAutoDelete(true);
-	xml_init.InitDragDropListEx			(uiXml, "dragdrop_nv", 0, m_pUINightVisionList);
-	BindDragDropListEnents				(m_pUINightVisionList);
+	m_pUIArtefactList					= xr_new<CUIDragDropListEx>(); AttachChild(m_pUIArtefactList); m_pUIArtefactList->SetAutoDelete(true);
+	xml_init.InitDragDropListEx			(uiXml, "dragdrop_artefact", 0, m_pUIArtefactList);
+	BindDragDropListEnents				(m_pUIArtefactList);
 
 	m_pUIDetectorList					= xr_new<CUIDragDropListEx>(); AttachChild(m_pUIDetectorList); m_pUIDetectorList->SetAutoDelete(true);
 	xml_init.InitDragDropListEx			(uiXml, "dragdrop_detector", 0, m_pUIDetectorList);
@@ -164,23 +177,49 @@ void CUIInventoryWnd::Init()
 	xml_init.InitDragDropListEx			(uiXml, "dragdrop_torch", 0, m_pUITorchList);
 	BindDragDropListEnents				(m_pUITorchList);
 
-	}
+	m_pUIPdaList						= xr_new<CUIDragDropListEx>(); AttachChild(m_pUIPdaList); m_pUIPdaList->SetAutoDelete(true);
+	xml_init.InitDragDropListEx			(uiXml, "dragdrop_pda", 0, m_pUIPdaList);
+	BindDragDropListEnents				(m_pUIPdaList);
+
+	m_pUIQuickList_0			= xr_new<CUIDragDropListEx>(); AttachChild(m_pUIQuickList_0); m_pUIQuickList_0->SetAutoDelete(true);
+	xml_init.InitDragDropListEx			(uiXml, "dragdrop_quick_0", 0, m_pUIQuickList_0);
+	BindDragDropListEnents				(m_pUIQuickList_0);
+
+	m_pUIQuickList_1			= xr_new<CUIDragDropListEx>(); AttachChild(m_pUIQuickList_1); m_pUIQuickList_1->SetAutoDelete(true);
+	xml_init.InitDragDropListEx			(uiXml, "dragdrop_quick_1", 0, m_pUIQuickList_1);
+	BindDragDropListEnents				(m_pUIQuickList_1);
+
+	m_pUIQuickList_2			= xr_new<CUIDragDropListEx>(); AttachChild(m_pUIQuickList_2); m_pUIQuickList_2->SetAutoDelete(true);
+	xml_init.InitDragDropListEx			(uiXml, "dragdrop_quick_2", 0, m_pUIQuickList_2);
+	BindDragDropListEnents				(m_pUIQuickList_2);
+
+	m_pUIQuickList_3			= xr_new<CUIDragDropListEx>(); AttachChild(m_pUIQuickList_3); m_pUIQuickList_3->SetAutoDelete(true);
+	xml_init.InitDragDropListEx			(uiXml, "dragdrop_quick_3", 0, m_pUIQuickList_3);
+	BindDragDropListEnents				(m_pUIQuickList_3);
 
 	for ( u8 i = 0; i < SLOTS_TOTAL; i++ )
 		m_slots_array[ i ] = NULL;
-	m_slots_array[ OUTFIT_SLOT        ] = m_pUIOutfitList;
-	if (Core.Features.test(xrCore::Feature::ogse_new_slots))
-		m_slots_array[ KNIFE_SLOT         ] = m_pUIKnifeList;
-	m_slots_array[ FIRST_WEAPON_SLOT  ] = m_pUIPistolList;
-	m_slots_array[ SECOND_WEAPON_SLOT ] = m_pUIAutomaticList;
-	if (Core.Features.test(xrCore::Feature::ogse_new_slots)) {
-		m_slots_array[APPARATUS_SLOT] = m_pUIBinocularList;
-		m_slots_array[HELMET_SLOT] = m_pUIHelmetList;
-		m_slots_array[BIODETECTOR_SLOT] = m_pUIBIODetList;
-		m_slots_array[NIGHT_VISION_SLOT] = m_pUINightVisionList;
-		m_slots_array[DETECTOR_SLOT] = m_pUIDetectorList;
-		m_slots_array[TORCH_SLOT] = m_pUITorchList;
-	}
+	m_slots_array[OUTFIT_SLOT] = m_pUIOutfitList;
+	m_slots_array[HELMET_SLOT] = m_pUIHelmetList;
+	m_slots_array[WARBELT_SLOT] = m_pUIWarBeltList;
+	m_slots_array[BACKPACK_SLOT] = m_pUIBackPackList;
+
+	m_slots_array[KNIFE_SLOT] = m_pUIKnifeList;
+	m_slots_array[FIRST_WEAPON_SLOT] = m_pUIPistolList;
+	m_slots_array[SECOND_WEAPON_SLOT] = m_pUIAutomaticList;
+	m_slots_array[APPARATUS_SLOT] = m_pUIBinocularList;
+
+	m_slots_array[GRENADE_SLOT] = m_pUIGrenadeList;
+	m_slots_array[ARTEFACT_SLOT] = m_pUIArtefactList;
+
+	m_slots_array[DETECTOR_SLOT] = m_pUIDetectorList;
+	m_slots_array[TORCH_SLOT] = m_pUITorchList;
+	m_slots_array[PDA_SLOT] = m_pUIPdaList;
+
+	m_slots_array[QUICK_SLOT_0] = m_pUIQuickList_0;
+	m_slots_array[QUICK_SLOT_1] = m_pUIQuickList_1;
+	m_slots_array[QUICK_SLOT_2] = m_pUIQuickList_2;
+	m_slots_array[QUICK_SLOT_3] = m_pUIQuickList_3;
 
 	//pop-up menu
 	AttachChild							(&UIPropertiesBox);
@@ -196,6 +235,10 @@ void CUIInventoryWnd::Init()
 	UIExitButton						= xr_new<CUI3tButton>();UIExitButton->SetAutoDelete(true);
 	AttachChild							(UIExitButton);
 	xml_init.Init3tButton				(uiXml, "exit_button", 0, UIExitButton);
+
+	UIRepackAmmoButton					= xr_new<CUI3tButton>(); UIRepackAmmoButton->SetAutoDelete(true);
+	AttachChild							(UIRepackAmmoButton);
+	xml_init.Init3tButton				(uiXml, "repack_ammo_button", 0, UIRepackAmmoButton);
 
 //Load sounds
 
@@ -277,28 +320,42 @@ void CUIInventoryWnd::Update()
 
 	if(pEntityAlive) 
 	{
-		float v = pEntityAlive->conditions().GetHealth()*100.0f;
+		auto cond = &pEntityAlive->conditions();
+
+		float v = cond->GetHealth()*100.0f;
 		UIProgressBarHealth.SetProgressPos		(v);
 
-		v = pEntityAlive->conditions().GetPsyHealth()*100.0f;
+		v = cond->GetPsyHealth()*100.0f;
 		UIProgressBarPsyHealth.SetProgressPos	(v);
 
-		v = pEntityAlive->conditions().GetRadiation()*100.0f;
-		UIProgressBarRadiation.SetProgressPos	(v);
+		v = cond->GetSatiety() * 100.0f;
+		UIProgressBarSatiety.SetProgressPos(v);
+
+		v = cond->GetRadiation()*100.0f;
+		if (Actor()->inventory().ItemFromSlot(DETECTOR_SLOT)) //удаляем шкалу радиации для прогрессбара в инвентаре если не экипирован детектор -- NO_RAD_UI_WITHOUT_DETECTOR_IN_SLOT
+		{
+			UIProgressBackRadiation.Show(true);
+			UIProgressBarRadiation.Show(true);
+			UIProgressBarRadiation.SetProgressPos(v);
+		}
+		else
+		{
+			UIProgressBackRadiation.Show(false);
+		}
 
 		CInventoryOwner* pOurInvOwner	= smart_cast<CInventoryOwner*>(pEntityAlive);
 		u32 _money						= pOurInvOwner->get_money();
 
 		// update money
 		string64						sMoney;
-		sprintf_s							(sMoney,"%d RU", _money);
-		UIMoneyWnd.SetText				(sMoney);
+		sprintf_s						(sMoney,"%d %s", _money, CStringTable().translate("ui_st_money_regional").c_str());
+		UIMoneyWnd.SetText				(Actor()->GetPDA() ? sMoney : CStringTable().translate("ui_st_pda_account_unavailable").c_str());
 
 		if (m_b_need_update_stats)
 		{
 			// update outfit parameters
-			CCustomOutfit* outfit = smart_cast<CCustomOutfit*>(pOurInvOwner->inventory().m_slots[OUTFIT_SLOT].m_pIItem);
-			UIOutfitInfo.Update(outfit);
+//			CCustomOutfit* outfit = smart_cast<CCustomOutfit*>(pOurInvOwner->inventory().m_slots[OUTFIT_SLOT].m_pIItem);
+			UIOutfitInfo.Update(/*outfit*/);
 
 			m_b_need_update_stats = false;
 		}
@@ -324,9 +381,12 @@ void CUIInventoryWnd::Show()
 
 	m_b_need_update_stats = true;
 
-	if (Core.Features.test(xrCore::Feature::engine_ammo_repacker) && !Core.Features.test(xrCore::Feature::hard_ammo_reload))
-		if (auto pActor = Actor())
-			pActor->RepackAmmo();
+	if (auto pActor = Actor())
+	{
+		if (g_eFreeHands == eFreeHandsManual) Actor()->SetWeaponHideState(INV_STATE_INV_WND, true); //спрячем оружие в руках
+		Actor()->inventory().TryToHideWeapon(true);
+		if (psActorFlags.test(AF_AMMO_FROM_BELT)) Actor()->SetAmmoPlacement(true); //установим флаг перезарядки из рюкзака
+	}
 }
 
 void CUIInventoryWnd::Hide()
@@ -346,9 +406,12 @@ void CUIInventoryWnd::Hide()
 		m_iCurrentActiveSlot = NO_ACTIVE_SLOT;
 	}
 
-	if (Core.Features.test(xrCore::Feature::more_hide_weapon))
-		if ( pActor )
-			pActor->SetWeaponHideState(INV_STATE_INV_WND, false);
+	if (pActor)
+	{
+		if (g_eFreeHands == eFreeHandsManual) pActor->SetWeaponHideState(INV_STATE_INV_WND, false); //восстановим показ оружия в руках
+		pActor->inventory().TryToHideWeapon(false);
+		if (psActorFlags.test(AF_AMMO_FROM_BELT)) pActor->SetAmmoPlacement(false); //сбросим флаг перезарядки из рюкзака
+	}
 
 	HideSlotsHighlight();
 }
@@ -530,26 +593,45 @@ bool CUIInventoryWnd::OnKeyboard(int dik, EUIMessages keyboard_action)
 	return false;
 }
 
-void CUIInventoryWnd::UpdateOutfit()
+//void CUIInventoryWnd::UpdateOutfit()
+//{
+//	if (dont_update_belt_flag) { //Чтобы арты не перемещались в рюкзак, при смене костюма
+//		dont_update_belt_flag = false;
+//		return;
+//	}
+//
+//	auto& inv = Actor()->inventory();
+//	const u32 new_slots_count = inv.BeltSlotsCount();
+//	m_pUIBeltList->SetCellsAvailable(new_slots_count);
+//
+//	auto& l_blist = inv.m_belt;
+//	bool modified{};
+//	while (l_blist.size() > new_slots_count) {
+//		inv.Ruck(l_blist.back());
+//		modified = true;
+//	}
+//
+//	if (modified) {
+//		extern void update_inventory_window(); //некрасиво, зато просто
+//		update_inventory_window();
+//	}
+//}
+
+void CUIInventoryWnd::UpdateCustomDraw()
 {
-	if (dont_update_belt_flag) { //Чтобы арты не перемещались в рюкзак, при смене костюма
-		dont_update_belt_flag = false;
-		return;
-	}
+	CActor* pActor = smart_cast<CActor*>(Level().CurrentEntity());
+
+	if (!pActor) return;
 
 	auto& inv = Actor()->inventory();
-	const u32 new_slots_count = inv.BeltSlotsCount();
-	m_pUIBeltList->SetCellsAvailable(new_slots_count);
 
-	auto& l_blist = inv.m_belt;
-	bool modified{};
-	while (l_blist.size() > new_slots_count) {
-		inv.Ruck(l_blist.back());
-		modified = true;
-	}
+	u32 belt_width = inv.BeltWidth();
+	u32 belt_height = inv.BeltHeight();
 
-	if (modified) {
-		extern void update_inventory_window(); //некрасиво, зато просто
-		update_inventory_window();
-	}
+	Ivector2 belt_array{};
+	belt_array.x = belt_width;
+	belt_array.y = belt_height;
+
+//	m_pUIBeltList->SetCellsCapacity(belt_array);
+	m_pUIBeltList->SetCellsAvailable(belt_width * belt_height);
 }

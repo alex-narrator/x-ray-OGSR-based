@@ -70,8 +70,25 @@ extern	int		g_bHudAdjustMode;
 extern	int		g_bHudAdjustItemIdx;
 extern	float	g_bHudAdjustDeltaPos;
 extern	float	g_bHudAdjustDeltaRot;
-
 //-----------------------------------------------------------
+extern float	g_fForceGrowSpeed;
+//режимы "свободных рук"
+EFreeHandsMode g_eFreeHands = eFreeHandsOff; //освобождение рук для взаимодействия с предметами: 0 - отключено, 1 - автоматически, 2 - вручную
+xr_token	free_hands_token[] = {
+	{ "fh_off",		eFreeHandsOff		}, //отключено
+	{ "fh_auto",	eFreeHandsAuto		}, //автоосвобождение
+	{ "fh_manual",	eFreeHandsManual	}, //освобождать вручную
+	{ 0,			0					}
+};
+
+//элементы HUD выводятся по нажатию клавиш
+EHudOnKeyMode g_eHudOnKey = eHudOnKeyOff; //элементы HUD выводятся по нажатию клавиш: 0 - отключено, 1 - только warning-иконки, 2 - иконка положения персонажа в качестве warning-иконки здоровья
+xr_token	hud_on_key_token[] = {
+	{ "hk_off",		eHudOnKeyOff			}, //отключено
+	{ "hk_warning", eHudOnKeyWarningIcon	}, //только warning-иконки
+	{ "hk_motion",	eHudOnKeyMotionIcon		}, //иконка положения персонажа в качестве warning-иконки здоровья
+	{ 0,			0						}
+};
 
 BOOL	g_bCheckTime			= FALSE;
 int		net_cl_inputupdaterate	= 50;
@@ -1181,6 +1198,9 @@ void CCC_RegisterCommands()
 	CMD3(CCC_Mask,				"hud_crosshair_build",	&psHUD_Flags,	HUD_CROSSHAIR_BUILD); // билдокурсор
 	CMD3(CCC_Mask, "hud_crosshair_hard", &psHUD_Flags, HUD_CROSSHAIR_HARD);
 	CMD3( CCC_Mask, "hud_small_font", &psHUD_Flags, HUD_SMALL_FONT); // использовать уменьшенный размер шрифта
+	CMD3(CCC_Mask, "hud_stop_missile_playing", &psHUD_Flags, HUD_STOP_MISSILE_PLAYING);	//отключение анимаций подбрасывания для гранат и болта
+	CMD3(CCC_Mask, "hud_use_luminosity", &psHUD_Flags, HUD_USE_LUMINOSITY);	//использование освещённости вместо заметности на худовой шкале
+	CMD3(CCC_Token, "hud_show_on_key", (u32*)&g_eHudOnKey, hud_on_key_token);	//элементы HUD выводятся по нажатию клавиш
 
 	CMD3(CCC_Mask,				"hud_crosshair",		&psHUD_Flags,	HUD_CROSSHAIR);
 	CMD3(CCC_Mask,				"hud_crosshair_dist",	&psHUD_Flags,	HUD_CROSSHAIR_DIST);
@@ -1284,13 +1304,15 @@ void CCC_RegisterCommands()
 	CMD1(CCC_Spawn,			"g_spawn");
 	CMD3(CCC_Mask,			"g_god",				&psActorFlags,	AF_GODMODE	);
 	CMD3(CCC_Mask,			"g_unlimitedammo",		&psActorFlags,	AF_UNLIMITEDAMMO);
-	CMD3(CCC_Mask,			"g_ammunition_on_belt",	&psActorFlags,	AF_AMMO_ON_BELT);
+	CMD3(CCC_Mask,			"g_ammo_from_belt",	&psActorFlags,	AF_AMMO_FROM_BELT);
 	CMD3(CCC_Mask,			"g_3d_scopes",			&psActorFlags,	AF_3D_SCOPES);
 	CMD4(CCC_Integer, "g_3d_scopes_fps_factor", &g_3dscopes_fps_factor, 2, 5);
 	CMD3(CCC_Mask,			"g_crosshair_dbg",		&psActorFlags,	AF_CROSSHAIR_DBG);
 	CMD3(CCC_Mask, "g_camera_collision", &psActorFlags, AF_CAM_COLLISION);
 
 	CMD3(CCC_Mask, "g_mouse_wheel_switch_slot", &psActorFlags, AF_MOUSE_WHEEL_SWITCH_SLOTS);
+
+
 
 	CMD1(CCC_TimeFactor,	"time_factor")	
 	CMD1(CCC_SetWeather,	"set_weather");
@@ -1405,4 +1427,21 @@ void CCC_RegisterCommands()
 
 	CMD4( CCC_Float, "g_cam_height_speed",  &cam_HeightInterpolationSpeed, 4.0f, 16.0f );
 	CMD4( CCC_Float, "g_cam_lookout_speed", &cam_LookoutSpeed,             1.0f,  4.0f );
+
+	//взаимодействие с предметами
+	CMD3(CCC_Token,             "g_free_hands",					(u32*)&g_eFreeHands,  free_hands_token			);	//режимы "свободных рук"
+	CMD3(CCC_Mask,				"g_pickup_target_only",			&psActorFlags,	AF_PICKUP_TARGET_ONLY			);	//можно подобрать только те предметы на которые непосредственно смотрит прицел
+	//инвентарь
+	CMD3(CCC_Mask,				"g_quick_slot_from_belt",		&psActorFlags,	AF_QUICK_FROM_BELT				);	//наполнение быстрых слотов с пояса
+	CMD3(CCC_Mask,				"g_artefacts_from_all",			&psActorFlags,	AF_ARTEFACTS_FROM_ALL			);	//артефакты работают из всего инвентаря
+	CMD3(CCC_Mask,				"g_artefact_detector_check",	&psActorFlags,	AF_ARTEFACT_DETECTOR_CHECK		);	//свойства артефактов отображаются после проверки детектором
+	//оружие
+	CMD3(CCC_Mask,				"g_no_auto_reload",				&psActorFlags,	AF_NO_AUTO_RELOAD				);	//запрет автоперезарядки оружия
+	CMD3(CCC_Mask,				"g_wpn_actions_reset_sprint",	&psActorFlags,	AF_WPN_ACTIONS_RESET_SPRINT		);	//перезарядка/смена типа патрона/бросок гранаты/болта/удар ножом сбрасывают спринт
+	//
+	CMD4(CCC_Float,				"missile_force_grow_speed",		&g_fForceGrowSpeed,					 1.0f, 50.0f); //скорость замаха гранатой/болтом
+	//параметры персонажа
+	CMD3(CCC_Mask,				"g_smooth_overweight",			&psActorFlags,	AF_SMOOTH_OVERWEIGHT			);	//плавный перегруз без обездвиживания
+	CMD3(CCC_Mask,				"g_survival_mode",				&psActorFlags,	AF_SURVIVAL						);	//взаимозависимость параметров здоровья ГГ
+	CMD3(CCC_Mask,				"g_pickup_target_only",			&psActorFlags,	AF_PICKUP_TARGET_ONLY			);	//можно подобрать только те предметы на которые непосредственно смотрит прицел
 }

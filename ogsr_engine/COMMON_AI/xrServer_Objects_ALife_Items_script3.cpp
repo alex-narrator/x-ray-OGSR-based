@@ -26,3 +26,14 @@ void CSE_ALifeItemWeaponMagazinedWGL::script_register(lua_State *L)
 			.def_readwrite("gl_mode", &CSE_ALifeItemWeaponMagazinedWGL::m_bGrenadeMode)
 	];
 }
+
+void CSE_ALifeItemEatable::script_register(lua_State* L)
+{
+	module(L)[
+		luabind_class_item1(
+			CSE_ALifeItemEatable,
+			"cse_alife_item_eatable",
+			CSE_ALifeItem
+		)
+	];
+}

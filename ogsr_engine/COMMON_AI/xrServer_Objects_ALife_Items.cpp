@@ -56,6 +56,9 @@ CSE_ALifeInventoryItem::CSE_ALifeInventoryItem(LPCSTR caSection)
 
 	State.angular_vel.set		(0.f,0.f,0.f);
 	State.linear_vel.set		(0.f,0.f,0.f);
+
+	m_fRadiationRestoreSpeed	= READ_IF_EXISTS(pSettings, r_float, caSection, "radiation_restore_speed", 0.f);
+	m_fLastTimeCalled			= 0.f;
 }
 
 CSE_Abstract *CSE_ALifeInventoryItem::init	()
@@ -92,6 +95,10 @@ static inline bool check (const u8 &mask, const u8 &test)
 
 void CSE_ALifeInventoryItem::UPDATE_Write	(NET_Packet &tNetPacket)
 {
+	tNetPacket.w_float_q8(m_fCondition, 0.0f, 1.0f);
+	tNetPacket.w_float(m_fRadiationRestoreSpeed);
+	tNetPacket.w_float(m_fLastTimeCalled);
+
 	if (!m_u8NumItems) {
 		tNetPacket.w_u8				(0);
 		return;
@@ -134,6 +141,14 @@ void CSE_ALifeInventoryItem::UPDATE_Write	(NET_Packet &tNetPacket)
 
 void CSE_ALifeInventoryItem::UPDATE_Read	(NET_Packet &tNetPacket)
 {
+	u16 m_wVersion = base()->m_wVersion;
+	if (m_wVersion > 118)
+	{
+		tNetPacket.r_float_q8(m_fCondition, 0.0f, 1.0f);
+		tNetPacket.r_float(m_fRadiationRestoreSpeed);
+		tNetPacket.r_float(m_fLastTimeCalled);
+	}
+
 	tNetPacket.r_u8					(m_u8NumItems);
 	if (!m_u8NumItems) {
 		return;
@@ -353,6 +368,14 @@ CSE_ALifeItemWeapon::CSE_ALifeItemWeapon	(LPCSTR caSection) : CSE_ALifeItem(caSe
 	m_grenade_launcher_status	=	(EWeaponAddonStatus)pSettings->r_s32(s_name,"grenade_launcher_status");
 	m_ef_main_weapon_type		= READ_IF_EXISTS(pSettings,r_u32,caSection,"ef_main_weapon_type",u32(-1));
 	m_ef_weapon_type			= READ_IF_EXISTS(pSettings,r_u32,caSection,"ef_weapon_type",u32(-1));
+	//
+	bMisfire					= false;
+	//
+	m_cur_scope					= 0;
+	m_cur_silencer				= 0;
+	m_cur_glauncher				= 0;
+	//
+	m_MagazineSize				= pSettings->r_float(caSection, "ammo_mag_size");
 }
 
 CSE_ALifeItemWeapon::~CSE_ALifeItemWeapon	()
@@ -375,26 +398,46 @@ void CSE_ALifeItemWeapon::UPDATE_Read(NET_Packet	&tNetPacket)
 {
 	inherited::UPDATE_Read		(tNetPacket);
 
-	tNetPacket.r_float_q8		(m_fCondition,0.0f,1.0f);
+//	tNetPacket.r_float_q8		(m_fCondition,0.0f,1.0f);
 	tNetPacket.r_u8				(wpn_flags);
 	tNetPacket.r_u16			(a_elapsed);
 	tNetPacket.r_u8				(m_addon_flags.flags);
 	tNetPacket.r_u8				(ammo_type);
 	tNetPacket.r_u8				(wpn_state);
 	tNetPacket.r_u8				(m_bZoom);
+	//
+	if (m_wVersion > 118)
+	{
+		u8 _data = tNetPacket.r_u8();
+		bMisfire = !!(_data & 0x1);
+
+		m_cur_scope = tNetPacket.r_u8();
+		m_cur_silencer = tNetPacket.r_u8();
+		m_cur_glauncher = tNetPacket.r_u8();
+
+		m_MagazineSize = tNetPacket.r_u32();
+	}
 }
 
 void CSE_ALifeItemWeapon::UPDATE_Write(NET_Packet	&tNetPacket)
 {
 	inherited::UPDATE_Write		(tNetPacket);
 
-	tNetPacket.w_float_q8		(m_fCondition,0.0f,1.0f);
+//	tNetPacket.w_float_q8		(m_fCondition,0.0f,1.0f);
 	tNetPacket.w_u8				(wpn_flags);
 	tNetPacket.w_u16			(a_elapsed);
 	tNetPacket.w_u8				(m_addon_flags.get());
 	tNetPacket.w_u8				(ammo_type);
 	tNetPacket.w_u8				(wpn_state);
 	tNetPacket.w_u8				(m_bZoom);
+	//
+	tNetPacket.w_u8				(bMisfire ? 1 : 0);
+	//
+	tNetPacket.w_u8				(m_cur_scope);
+	tNetPacket.w_u8				(m_cur_silencer);
+	tNetPacket.w_u8				(m_cur_glauncher);
+
+	tNetPacket.w_u32			(m_MagazineSize);
 }
 
 void CSE_ALifeItemWeapon::STATE_Read(NET_Packet	&tNetPacket, u16 size)
@@ -476,7 +519,7 @@ BOOL CSE_ALifeItemWeapon::Net_Relevant()
 ////////////////////////////////////////////////////////////////////////////
 CSE_ALifeItemWeaponShotGun::CSE_ALifeItemWeaponShotGun	(LPCSTR caSection) : CSE_ALifeItemWeaponMagazined(caSection)
 {
-	m_AmmoIDs.clear();
+	//m_AmmoIDs.clear();
 }
 
 CSE_ALifeItemWeaponShotGun::~CSE_ALifeItemWeaponShotGun	()
@@ -487,22 +530,22 @@ void CSE_ALifeItemWeaponShotGun::UPDATE_Read		(NET_Packet& P)
 {
 	inherited::UPDATE_Read(P);
 
-	m_AmmoIDs.clear();
-	u8 AmmoCount = P.r_u8();
-	for (u8 i=0; i<AmmoCount; i++)
-	{
-		m_AmmoIDs.push_back(P.r_u8());
-	}
+	//m_AmmoIDs.clear();
+	//u8 AmmoCount = P.r_u8();
+	//for (u8 i=0; i<AmmoCount; i++)
+	//{
+	//	m_AmmoIDs.push_back(P.r_u8());
+	//}
 }
 void CSE_ALifeItemWeaponShotGun::UPDATE_Write	(NET_Packet& P)
 {
 	inherited::UPDATE_Write(P);
 
-	P.w_u8(u8(m_AmmoIDs.size()));
-	for (u32 i=0; i<m_AmmoIDs.size(); i++)
-	{
-		P.w_u8(u8(m_AmmoIDs[i]));
-	}
+	//P.w_u8(u8(m_AmmoIDs.size()));
+	//for (u32 i=0; i<m_AmmoIDs.size(); i++)
+	//{
+	//	P.w_u8(u8(m_AmmoIDs[i]));
+	//}
 }
 void CSE_ALifeItemWeaponShotGun::STATE_Read		(NET_Packet& P, u16 size)
 {
@@ -526,6 +569,18 @@ CSE_ALifeItemWeaponMagazined::CSE_ALifeItemWeaponMagazined(const char* caSection
 	else {
 		m_u8CurFireMode = 0;
 	}
+	//
+	m_AmmoIDs.clear();
+	//
+	m_bIsMagazineAttached = true;
+	//
+	m_fAttachedSilencerCondition = 1.f;
+	m_fAttachedScopeCondition = 1.f;
+	m_fAttachedGrenadeLauncherCondition = 1.f;
+	//
+	m_fRTZoomFactor = 1.f;
+	//
+	m_bNightVisionSwitchedOn = true;
 }
 
 CSE_ALifeItemWeaponMagazined::~CSE_ALifeItemWeaponMagazined	()
@@ -537,12 +592,48 @@ void CSE_ALifeItemWeaponMagazined::UPDATE_Read		(NET_Packet& P)
 	inherited::UPDATE_Read(P);
 
 	m_u8CurFireMode = P.r_u8();
+
+	if (m_wVersion > 118)
+	{
+		m_AmmoIDs.clear();
+		u8 AmmoCount = P.r_u8();
+		for (u8 i = 0; i < AmmoCount; i++)
+		{
+			m_AmmoIDs.push_back(P.r_u8());
+		}
+		//
+		m_bIsMagazineAttached = !!(P.r_u8() & 0x1);
+		//
+		m_fAttachedSilencerCondition = P.r_float();
+		m_fAttachedScopeCondition = P.r_float();
+		m_fAttachedGrenadeLauncherCondition = P.r_float();
+
+		m_fRTZoomFactor = P.r_float();
+
+		m_bNightVisionSwitchedOn = !!(P.r_u8() & 0x1);
+	}
 }
 void CSE_ALifeItemWeaponMagazined::UPDATE_Write	(NET_Packet& P)
 {
 	inherited::UPDATE_Write(P);
 
 	P.w_u8(m_u8CurFireMode);	
+	//
+	P.w_u8(u8(m_AmmoIDs.size()));
+	for (u32 i = 0; i < m_AmmoIDs.size(); i++)
+	{
+		P.w_u8(u8(m_AmmoIDs[i]));
+	}
+	//
+	P.w_u8(m_bIsMagazineAttached ? 1 : 0);
+	//
+	P.w_float(m_fAttachedSilencerCondition);
+	P.w_float(m_fAttachedScopeCondition);
+	P.w_float(m_fAttachedGrenadeLauncherCondition);
+	//
+	P.w_float(m_fRTZoomFactor);
+	//
+	P.w_u8(m_bNightVisionSwitchedOn ? 1 : 0);
 }
 void CSE_ALifeItemWeaponMagazined::STATE_Read		(NET_Packet& P, u16 size)
 {
@@ -628,7 +719,13 @@ void CSE_ALifeItemWeaponMagazinedWGL::STATE_Write		(NET_Packet& P)
 ////////////////////////////////////////////////////////////////////////////
 CSE_ALifeItemAmmo::CSE_ALifeItemAmmo		(LPCSTR caSection) : CSE_ALifeItem(caSection)
 {
-	a_elapsed					= m_boxSize = (u16)pSettings->r_s32(caSection, "box_size");
+	if (pSettings->line_exist(caSection, "ammo_types") && pSettings->line_exist(caSection, "mag_types"))
+	{
+		a_elapsed = 0;
+		m_boxSize = (u16)pSettings->r_s32(caSection, "box_size");
+	}
+	else
+		a_elapsed = m_boxSize = (u16)pSettings->r_s32(caSection, "box_size");
 	if (pSettings->section_exist(caSection) && pSettings->line_exist(caSection,"visual"))
         set_visual				(pSettings->r_string(caSection,"visual"));
 }
@@ -717,6 +814,7 @@ void CSE_ALifeItemDetector::UPDATE_Write	(NET_Packet	&tNetPacket)
 CSE_ALifeItemArtefact::CSE_ALifeItemArtefact(LPCSTR caSection) : CSE_ALifeItem(caSection)
 {
 	m_fAnomalyValue				= 100.f;
+	m_fRandomK					= 1.f;
 }
 
 CSE_ALifeItemArtefact::~CSE_ALifeItemArtefact()
@@ -736,11 +834,16 @@ void CSE_ALifeItemArtefact::STATE_Write		(NET_Packet	&tNetPacket)
 void CSE_ALifeItemArtefact::UPDATE_Read		(NET_Packet	&tNetPacket)
 {
 	inherited::UPDATE_Read		(tNetPacket);
+	//
+	if (m_wVersion > 118)
+		m_fRandomK = tNetPacket.r_float();
 }
 
 void CSE_ALifeItemArtefact::UPDATE_Write	(NET_Packet	&tNetPacket)
 {
 	inherited::UPDATE_Write		(tNetPacket);
+	//
+	tNetPacket.w_float(m_fRandomK);
 }
 
 BOOL CSE_ALifeItemArtefact::Net_Relevant	()
@@ -858,6 +961,7 @@ void CSE_ALifeItemDocument::UPDATE_Write	(NET_Packet	&tNetPacket)
 CSE_ALifeItemGrenade::CSE_ALifeItemGrenade	(LPCSTR caSection): CSE_ALifeItem(caSection)
 {
 	m_ef_weapon_type	= READ_IF_EXISTS(pSettings,r_u32,caSection,"ef_weapon_type",u32(-1));
+	m_dwDestroyTimeMax	= NULL;
 }
 
 CSE_ALifeItemGrenade::~CSE_ALifeItemGrenade	()
@@ -883,11 +987,16 @@ void CSE_ALifeItemGrenade::STATE_Write		(NET_Packet	&tNetPacket)
 void CSE_ALifeItemGrenade::UPDATE_Read		(NET_Packet	&tNetPacket)
 {
 	inherited::UPDATE_Read		(tNetPacket);
+	//
+	if (m_wVersion > 118)
+		m_dwDestroyTimeMax = tNetPacket.r_u32();
 }
 
 void CSE_ALifeItemGrenade::UPDATE_Write		(NET_Packet	&tNetPacket)
 {
 	inherited::UPDATE_Write		(tNetPacket);
+	//
+	tNetPacket.w_u32(m_dwDestroyTimeMax);
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -1000,16 +1109,58 @@ void CSE_ALifeItemCustomOutfit::STATE_Write		(NET_Packet	&tNetPacket)
 void CSE_ALifeItemCustomOutfit::UPDATE_Read		(NET_Packet	&tNetPacket)
 {
 	inherited::UPDATE_Read			(tNetPacket);
-	tNetPacket.r_float_q8			(m_fCondition,0.0f,1.0f);
+//	tNetPacket.r_float_q8			(m_fCondition,0.0f,1.0f);
 }
 
 void CSE_ALifeItemCustomOutfit::UPDATE_Write		(NET_Packet	&tNetPacket)
 {
 	inherited::UPDATE_Write			(tNetPacket);
-	tNetPacket.w_float_q8			(m_fCondition,0.0f,1.0f);
+//	tNetPacket.w_float_q8			(m_fCondition,0.0f,1.0f);
 }
 
 BOOL CSE_ALifeItemCustomOutfit::Net_Relevant		()
 {
 	return							(true);
+}
+
+#include "eatable_item.h"
+////////////////////////////////////////////////////////////////////////////
+// CSE_ALifeItemEatable by Real Wolf. 09.09.2014.
+////////////////////////////////////////////////////////////////////////////
+CSE_ALifeItemEatable::CSE_ALifeItemEatable(LPCSTR caSection) : CSE_ALifeItem(caSection)
+{
+	m_portions_num = pSettings->r_s32(caSection, "eat_portions_num");
+}
+
+CSE_ALifeItemEatable::~CSE_ALifeItemEatable()
+{
+}
+
+BOOL CSE_ALifeItemEatable::Net_Relevant()
+{
+	return inherited::Net_Relevant();
+}
+
+
+void CSE_ALifeItemEatable::STATE_Read(NET_Packet& tNetPacket, u16 size)
+{
+	inherited::STATE_Read(tNetPacket, size);
+}
+
+void CSE_ALifeItemEatable::STATE_Write(NET_Packet& tNetPacket)
+{
+	inherited::STATE_Write(tNetPacket);
+}
+
+void CSE_ALifeItemEatable::UPDATE_Read(NET_Packet& tNetPacket)
+{
+	inherited::UPDATE_Read(tNetPacket);
+	if (m_wVersion > 118)
+		m_portions_num = tNetPacket.r_s32();
+}
+
+void CSE_ALifeItemEatable::UPDATE_Write(NET_Packet& tNetPacket)
+{
+	inherited::UPDATE_Write(tNetPacket);
+	tNetPacket.w_s32(m_portions_num);
 }

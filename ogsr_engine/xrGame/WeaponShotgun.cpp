@@ -7,12 +7,16 @@
 #include "level.h"
 #include "actor.h"
 
+#include "hudmanager.h"
+#include "uigamecustom.h"
+#include "game_object_space.h"
+
 CWeaponShotgun::CWeaponShotgun(void) : CWeaponCustomPistol("TOZ34")
 {
     m_eSoundShotBoth		= ESoundTypes(SOUND_TYPE_WEAPON_SHOOTING);
 	m_eSoundClose			= ESoundTypes(SOUND_TYPE_WEAPON_RECHARGING);
 	m_eSoundAddCartridge	= ESoundTypes(SOUND_TYPE_WEAPON_RECHARGING);
-	m_bLockType = true; // Запрещает заряжать в дробовики патроны разного типа
+//	m_bLockType = true; // Запрещает заряжать в дробовики патроны разного типа
 	m_stop_triStateReload = false;
 }
 
@@ -63,7 +67,7 @@ void CWeaponShotgun::Fire2Start ()
 
 	inherited::Fire2Start();
 
-	if (IsValid())
+	if (IsValid() && !IsMisfire())
 	{
 		if (!IsWorking())
 		{
@@ -78,6 +82,16 @@ void CWeaponShotgun::Fire2Start ()
 			else					
 				SwitchState((iAmmoElapsed < iMagazineSize)?eFire:eFire2);
 		}
+	}
+	else if (IsMisfire())
+	{
+		if (smart_cast<CActor*>(this->H_Parent()) && (Level().CurrentViewEntity() == H_Parent()))
+		{
+			HUD().GetUI()->UIGame()->RemoveCustomStatic("gun_not_jammed");
+			HUD().GetUI()->AddInfoMessage("gun_jammed");
+		}
+		// Callbacks added by Cribbledirge.
+		StateSwitchCallback(GameObject::eOnActorWeaponJammed, GameObject::eOnNPCWeaponJammed);
 	}
 	else
 		if (!iAmmoElapsed)
@@ -218,24 +232,73 @@ void CWeaponShotgun::UpdateSounds	()
 	if (m_sndClose.playing())        m_sndClose.set_position        (get_LastFP());
 }
 
-#ifdef DUPLET_STATE_SWITCH
-void CWeaponShotgun::SwitchDuplet()
-{
-	is_duplet_enabled = !is_duplet_enabled;
-}
-#endif
+//#ifdef DUPLET_STATE_SWITCH
+//void CWeaponShotgun::SwitchDuplet()
+//{
+//	is_duplet_enabled = !is_duplet_enabled;
+//}
+//#endif
 
 bool CWeaponShotgun::Action			(s32 cmd, u32 flags) 
 {
-#ifdef DUPLET_STATE_SWITCH
-
-	if (is_duplet_enabled)
+//#ifdef DUPLET_STATE_SWITCH
+//
+//	if (is_duplet_enabled)
+//	{
+//		switch (cmd)
+//		{
+//		case kWPN_FIRE:
+//		{
+//			if (flags&CMD_START)
+//			{
+//				if (IsPending()) return false;
+//				Fire2Start();
+//			}
+//			else
+//				Fire2End();
+//
+//			return true;
+//		}
+//		}
+//	}
+//
+//#endif // !DUPLET_STATE_SWITCH
+//
+//	if(inherited::Action(cmd, flags)) return true;
+//
+//	if(	m_bTriStateReload && GetState()==eReload &&
+//		( cmd == kWPN_FIRE || cmd == kWPN_NEXT ) && flags&CMD_START &&
+//		(m_sub_state==eSubstateReloadInProcess	|| m_sub_state == eSubstateReloadBegin) )//остановить перезагрузку
+//	{
+//		m_stop_triStateReload = true;
+//		return true;
+//	}
+//
+//#ifndef DUPLET_STATE_SWITCH
+//
+//	//если оружие чем-то занято, то ничего не делать
+//	if (IsPending()) return false;
+//
+//	switch(cmd) 
+//	{
+//		case kWPN_ZOOM : 
+//			{
+//				if(flags&CMD_START) Fire2Start();
+//				else Fire2End();
+//			}
+//			return true;
+//	}
+//
+//#endif // !DUPLET_STATE_SWITCH
+//
+//	return false;
+	if (GetCurrentFireMode() == 2)
 	{
 		switch (cmd)
 		{
 		case kWPN_FIRE:
 		{
-			if (flags&CMD_START)
+			if (flags & CMD_START)
 			{
 				if (IsPending()) return false;
 				Fire2Start();
@@ -248,34 +311,17 @@ bool CWeaponShotgun::Action			(s32 cmd, u32 flags)
 		}
 	}
 
-#endif // !DUPLET_STATE_SWITCH
+	if (inherited::Action(cmd, flags)) return true;
 
-	if(inherited::Action(cmd, flags)) return true;
-
-	if(	m_bTriStateReload && GetState()==eReload &&
-		( cmd == kWPN_FIRE || cmd == kWPN_NEXT ) && flags&CMD_START &&
-		(m_sub_state==eSubstateReloadInProcess	|| m_sub_state == eSubstateReloadBegin) )//остановить перезагрузку
+	if (m_bTriStateReload && GetState() == eReload &&
+		(cmd == kWPN_FIRE || cmd == kWPN_NEXT || cmd == kWPN_RELOAD) && flags & CMD_START &&
+		m_sub_state == eSubstateReloadInProcess || m_sub_state == eSubstateReloadBegin)//остановить перезагрузку
 	{
+		//AddCartridge(1);
+		//m_sub_state = eSubstateReloadEnd;
 		m_stop_triStateReload = true;
 		return true;
 	}
-
-#ifndef DUPLET_STATE_SWITCH
-
-	//если оружие чем-то занято, то ничего не делать
-	if (IsPending()) return false;
-
-	switch(cmd) 
-	{
-		case kWPN_ZOOM : 
-			{
-				if(flags&CMD_START) Fire2Start();
-				else Fire2End();
-			}
-			return true;
-	}
-
-#endif // !DUPLET_STATE_SWITCH
 
 	return false;
 }
@@ -398,36 +444,38 @@ bool CWeaponShotgun::HaveCartridgeInInventory( u8 cnt ) {
   if ( unlimited_ammo() ) return true;
   if ( !m_pCurrentInventory ) return false;
 
-  if ( m_set_next_ammoType_on_reload != u32(-1) ) {
-    m_ammoType = m_set_next_ammoType_on_reload;
-    m_set_next_ammoType_on_reload = u32(-1);
-    if ( !m_magazine.empty() )
-      UnloadMagazine();
+  m_pAmmo = smart_cast<CWeaponAmmo*>(m_pCurrentInventory->GetAmmoMinCurr(*m_ammoTypes[m_ammoType], ParentIsActor()));
+
+  if (!m_pAmmo)
+  {
+	  for (u32 i = 0; i < m_ammoTypes.size(); ++i)
+	  {
+		  //проверить патроны всех подходящих типов
+		  m_pAmmo = smart_cast<CWeaponAmmo*>(m_pCurrentInventory->GetAmmoMinCurr(*m_ammoTypes[i], ParentIsActor()));
+
+		  if (m_pAmmo)
+		  {
+			  m_ammoType = i;
+			  break;
+		  }
+	  }
   }
 
-  u32 ac = GetAmmoCount( m_ammoType, cnt );
-  if ( ac == 0 && ( m_magazine.empty() || !m_bLockType ) ) {
-    u8 skip_ammo_type = m_ammoType;
-    for ( u8 i = 0; i < u8( m_ammoTypes.size() ); ++i ) {
-      if ( i == skip_ammo_type ) continue;
-      ac = GetAmmoCount( i, cnt );
-      if ( ac >= cnt ) {
-        m_ammoType = i;
-        break;
-      }
-      else if ( ac > 0 && !m_ammoType )
-        m_ammoType = i;
-    }
-  }
-  m_pAmmo = smart_cast<CWeaponAmmo*>( m_pCurrentInventory->GetAmmoMinCurr( *m_ammoTypes[ m_ammoType ], ParentIsActor() ) );
-
-  return ( m_pAmmo && ac >= cnt );
+  return m_pAmmo && m_pAmmo->m_boxCurr >= cnt;
 }
 
 
 u8 CWeaponShotgun::AddCartridge		(u8 cnt)
 {
-	if(IsMisfire())	bMisfire = false;
+	if (IsMisfire())
+	{
+		bMisfire = false;
+		if (smart_cast<CActor*>(this->H_Parent()) && (Level().CurrentViewEntity() == H_Parent()))
+		{
+			HUD().GetUI()->UIGame()->RemoveCustomStatic("gun_jammed");
+			HUD().GetUI()->AddInfoMessage("gun_not_jammed");
+		}
+	}
 
 	if(m_set_next_ammoType_on_reload != u32(-1)){
 		m_ammoType						= m_set_next_ammoType_on_reload;
@@ -465,15 +513,15 @@ u8 CWeaponShotgun::AddCartridge		(u8 cnt)
 }
 
 
-void CWeaponShotgun::net_Export( CSE_Abstract* E ) {
-  inherited::net_Export( E );
-  CSE_ALifeItemWeaponShotGun* sg = smart_cast<CSE_ALifeItemWeaponShotGun*>( E );
-  sg->m_AmmoIDs.clear();
-  for ( u32 i = 0; i < m_magazine.size(); i++ ) {
-    CCartridge& l_cartridge = *( m_magazine.begin() + i );
-    sg->m_AmmoIDs.push_back( l_cartridge.m_LocalAmmoType );
-  }
-}
+//void CWeaponShotgun::net_Export( CSE_Abstract* E ) {
+//  inherited::net_Export( E );
+//  CSE_ALifeItemWeaponShotGun* sg = smart_cast<CSE_ALifeItemWeaponShotGun*>( E );
+//  sg->m_AmmoIDs.clear();
+//  for ( u32 i = 0; i < m_magazine.size(); i++ ) {
+//    CCartridge& l_cartridge = *( m_magazine.begin() + i );
+//    sg->m_AmmoIDs.push_back( l_cartridge.m_LocalAmmoType );
+//  }
+//}
 
 
 void CWeaponShotgun::TryReload() {

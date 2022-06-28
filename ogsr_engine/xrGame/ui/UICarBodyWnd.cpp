@@ -239,9 +239,17 @@ void CUICarBodyWnd::Hide()
 	if(m_pInventoryBox)
 		m_pInventoryBox->m_in_use				= false;
 
-	if (Core.Features.test(xrCore::Feature::more_hide_weapon))
-		if ( Actor() )
+	if (Actor())
+	{
+		if (Core.Features.test(xrCore::Feature::more_hide_weapon))
 			Actor()->SetWeaponHideState(INV_STATE_BLOCK_ALL, false);
+
+//		CBaseMonster* Monster = smart_cast<CBaseMonster*>(m_pOthersObject);
+//		if (g_eFreeHands == eFreeHandsManual && !Monster) Actor()->SetWeaponHideState(INV_STATE_INV_WND, false);  //восстановим показ оружия в руках, если обыскиваем не монстра
+
+		Actor()->inventory().TryToHideWeapon(false);
+		if (psActorFlags.test(AF_AMMO_FROM_BELT)) Actor()->SetAmmoPlacement(false); //сбросим флаг перезарядки из рюкзака
+	}
 
 	PlaySnd(eInvSndClose);
 }
@@ -311,6 +319,7 @@ void CUICarBodyWnd::SendMessage(CUIWindow *pWnd, s16 msg, void *pData)
 					auto ProcessUnload = [](void* pWpn) {
 						auto WpnMagaz = static_cast<CWeaponMagazined*>(pWpn);
 						WpnMagaz->UnloadMagazine();
+						WpnMagaz->PullShutter();
 						if (auto WpnMagazWgl = smart_cast<CWeaponMagazinedWGrenade*>(WpnMagaz))
 						{
 							if (WpnMagazWgl->IsGrenadeLauncherAttached())
@@ -429,9 +438,17 @@ void CUICarBodyWnd::Show()
 	SetCurrentItem							(NULL);
 	InventoryUtilities::UpdateWeight		(*m_pUIOurBagWnd);
 
-	if (Core.Features.test(xrCore::Feature::engine_ammo_repacker) && !Core.Features.test(xrCore::Feature::hard_ammo_reload))
-		if (auto pActor = Actor())
-			pActor->RepackAmmo();
+	if (auto pActor = Actor())
+	{
+		//if (Core.Features.test(xrCore::Feature::engine_ammo_repacker) && !Core.Features.test(xrCore::Feature::hard_ammo_reload))
+		//	pActor->RepackAmmo();
+
+		//CBaseMonster* Monster = smart_cast<CBaseMonster*>(m_pOthersObject);
+		//if (g_eFreeHands == eFreeHandsManual && !Monster) Actor()->SetWeaponHideState(INV_STATE_INV_WND, true);  //спрячем оружие в руках, если обыскиваем не монстра 
+		
+		Actor()->inventory().TryToHideWeapon(true);
+		if (psActorFlags.test(AF_AMMO_FROM_BELT)) Actor()->SetAmmoPlacement(true); //установим флаг перезарядки из рюкзака
+	}
 
 	PlaySnd(eInvSndOpen);
 }
@@ -567,6 +584,7 @@ void CUICarBodyWnd::MoveItems(CUICellItem* itm)
 
 void SendEvent_Item_Drop(u16 from_id, PIItem	pItem)
 {
+	pItem->OnMoveOut(pItem->m_eItemPlace);
 	pItem->SetDropManual(TRUE);
 
 	NET_Packet P;
@@ -785,16 +803,6 @@ void CUICarBodyWnd::EatItem()
 	CActor *pActor				= smart_cast<CActor*>(Level().CurrentEntity());
 	if(!pActor)					return;
 
-	CUIDragDropListEx* owner_list		= CurrentItem()->OwnerList();
-	if(owner_list==m_pUIOthersBagList)
-	{
-		u16 owner_id				= (m_pInventoryBox)?m_pInventoryBox->object().ID():smart_cast<CGameObject*>(m_pOthersObject)->ID();
-
-		move_item(	owner_id, //from
-					Actor()->ID(), //to
-					CurrentIItem()->object().ID());
-	}
-
 	NET_Packet					P;
 	CGameObject::u_EventGen		(P, GEG_PLAYER_ITEM_EAT, Actor()->ID());
 	P.w_u16						(CurrentIItem()->object().ID());
@@ -925,6 +933,9 @@ bool CUICarBodyWnd::TransferItem(PIItem itm, CInventoryOwner* owner_from, CInven
 		float itmWeight						= itm->Weight();
 		if(invWeight+itmWeight >=maxWeight)	return false;
 	}
+
+	if (owner_from == m_pOurObject)
+		itm->OnMoveOut(itm->m_eItemPlace);
 
 	move_item(go_from->ID(), go_to->ID(), itm->object().ID());
 

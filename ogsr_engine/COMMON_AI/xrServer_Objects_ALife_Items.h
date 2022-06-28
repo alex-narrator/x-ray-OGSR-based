@@ -47,6 +47,9 @@ public:
 	CSE_ALifeObject* m_self{};
 	u32								m_last_update_time;
 
+	float 							m_fRadiationRestoreSpeed;
+	float							m_fLastTimeCalled;
+
 									CSE_ALifeInventoryItem	(LPCSTR caSection);
 	virtual							~CSE_ALifeInventoryItem	();
 	// we need this to prevent virtual inheritance :-(
@@ -160,6 +163,14 @@ SERVER_ENTITY_DECLARE_BEGIN(CSE_ALifeItemWeapon,CSE_ALifeItem)
 	u8								m_bZoom{};
 	u32								m_ef_main_weapon_type;
 	u32								m_ef_weapon_type;
+	//
+	bool							bMisfire;
+	//
+	u8								m_cur_scope;
+	u8								m_cur_silencer;
+	u8								m_cur_glauncher;
+	//
+	u32								m_MagazineSize;
 
 									CSE_ALifeItemWeapon	(LPCSTR caSection);
 	virtual							~CSE_ALifeItemWeapon();
@@ -181,6 +192,20 @@ add_to_type_list(CSE_ALifeItemWeapon)
 
 SERVER_ENTITY_DECLARE_BEGIN(CSE_ALifeItemWeaponMagazined,CSE_ALifeItemWeapon)
 u8			m_u8CurFireMode;
+//присоединён ли магазин
+bool		m_bIsMagazineAttached;
+//для хранения состояния присоединённого прицела
+float		m_fAttachedScopeCondition;
+//для хранения состояния присоединённого гранатомёта
+float		m_fAttachedGrenadeLauncherCondition;
+//для хранения состояния присоединённого глушителя
+float		m_fAttachedSilencerCondition;
+//
+float		m_fRTZoomFactor;
+//
+bool		m_bNightVisionSwitchedOn;
+xr_vector<u8> m_AmmoIDs;
+//
 CSE_ALifeItemWeaponMagazined(LPCSTR caSection);
 virtual							~CSE_ALifeItemWeaponMagazined();
 
@@ -202,7 +227,7 @@ add_to_type_list(CSE_ALifeItemWeaponMagazinedWGL)
 #define script_type_list save_type_list(CSE_ALifeItemWeaponMagazinedWGL)
 
 SERVER_ENTITY_DECLARE_BEGIN(CSE_ALifeItemWeaponShotGun,CSE_ALifeItemWeaponMagazined)
-	xr_vector<u8>				m_AmmoIDs;
+//	xr_vector<u8>				m_AmmoIDs;
 								CSE_ALifeItemWeaponShotGun(LPCSTR caSection);
 virtual							~CSE_ALifeItemWeaponShotGun();
 
@@ -224,6 +249,7 @@ add_to_type_list(CSE_ALifeItemDetector)
 
 SERVER_ENTITY_DECLARE_BEGIN(CSE_ALifeItemArtefact,CSE_ALifeItem)
 	float							m_fAnomalyValue;
+	float							m_fRandomK;
 									CSE_ALifeItemArtefact	(LPCSTR caSection);
 	virtual							~CSE_ALifeItemArtefact	();
 	virtual BOOL					Net_Relevant			();
@@ -253,6 +279,7 @@ add_to_type_list(CSE_ALifeItemDocument)
 
 SERVER_ENTITY_DECLARE_BEGIN(CSE_ALifeItemGrenade,CSE_ALifeItem)
 	u32								m_ef_weapon_type;
+	u32								m_dwDestroyTimeMax;		//время до взырва гранаты
 									CSE_ALifeItemGrenade	(LPCSTR caSection);
 	virtual							~CSE_ALifeItemGrenade	();
 	virtual u32						ef_weapon_type			() const;
@@ -287,6 +314,16 @@ SERVER_ENTITY_DECLARE_BEGIN(CSE_ALifeItemCustomOutfit,CSE_ALifeItem)
 SERVER_ENTITY_DECLARE_END
 add_to_type_list(CSE_ALifeItemCustomOutfit)
 #define script_type_list save_type_list(CSE_ALifeItemCustomOutfit)
+
+SERVER_ENTITY_DECLARE_BEGIN(CSE_ALifeItemEatable, CSE_ALifeItem)
+CSE_ALifeItemEatable(LPCSTR);
+virtual				~CSE_ALifeItemEatable();
+virtual		BOOL	Net_Relevant();
+public:
+	s32		m_portions_num;
+	SERVER_ENTITY_DECLARE_END
+		add_to_type_list(CSE_ALifeItemEatable)
+#define script_type_list save_type_list(CSE_ALifeItemEatable)
 
 class CSE_InventoryContainer : public CSE_InventoryBoxAbstract, public CSE_ALifeItem
 {

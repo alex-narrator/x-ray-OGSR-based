@@ -28,7 +28,14 @@ LPCSTR _imm_names []={
 	"power_restore_speed",
 	"bleeding_restore_speed",
 	"psy_health_restore_speed",
-
+	"alcohol_restore_speed",
+	//
+	"additional_walk_accel",
+	"additional_jump_speed",
+	//
+	"additional_max_weight",
+	"additional_max_volume",
+	//
 	"burn_immunity",
 	"shock_immunity",
 	"strike_immunity",
@@ -48,7 +55,14 @@ LPCSTR _imm_st_names[]={
 	"ui_inv_power",
 	"ui_inv_bleeding",
 	"ui_inv_psy_health",
-
+	"ui_inv_alcohol",
+	//
+	"ui_inv_walk_accel",
+	"ui_inv_jump_speed",
+	//
+	"ui_inv_weight",
+	"ui_inv_volume",
+	//
 	"ui_inv_outfit_burn_protection",
 	"ui_inv_outfit_shock_protection",
 	"ui_inv_outfit_strike_protection",
@@ -58,16 +72,6 @@ LPCSTR _imm_st_names[]={
 	"ui_inv_outfit_chemical_burn_protection",
 	"ui_inv_outfit_explosion_protection",
 	"ui_inv_outfit_fire_wound_protection",
-};
-
-LPCSTR _actor_param_names[] = {
-	"satiety_health_v",
-	"radiation_v",
-	"satiety_v",
-	"thirst_v",
-	"satiety_power_v",
-	"wound_incarnation_v",
-	"psy_health_v"
 };
 
 void CUIOutfitInfo::InitFromXml(CUIXml& xml_doc)
@@ -97,38 +101,58 @@ void CUIOutfitInfo::InitFromXml(CUIXml& xml_doc)
 
 }
 
-float CUIOutfitInfo::GetArtefactParam(ActorRestoreParams params, u32 i)
+float CUIOutfitInfo::GetRestoreParam(u32 i)
 {
 	float r = 0;
-	switch (i)
+
+	auto outfit = Actor()->GetOutfit();
+	if (outfit) 
 	{
-	case _item_health_restore_speed:
-		r = params.HealthRestoreSpeed; break;
-	case _item_radiation_restore_speed:
-		r = params.RadiationRestoreSpeed; break;
-	case _item_satiety_restore_speed:
-		r = params.SatietyRestoreSpeed; break;
-	case _item_thirst_restore_speed:
-		r = params.ThirstRestoreSpeed; break;
-	case _item_power_restore_speed:
-		r = params.PowerRestoreSpeed; break;
-	case _item_bleeding_restore_speed:
-		r = params.BleedingRestoreSpeed; break;
-	case _item_psy_health_restore_speed:
-		r = params.PsyHealthRestoreSpeed; break;
+		switch (i)
+		{
+		case _item_health_restore_speed:
+			r = outfit->m_fHealthRestoreSpeed; break;
+		case _item_radiation_restore_speed:
+			r = outfit->m_fRadiationRestoreSpeed; break;
+		case _item_satiety_restore_speed:
+			r = outfit->m_fSatietyRestoreSpeed; break;
+		case _item_thirst_restore_speed:
+			r = outfit->m_fThirstRestoreSpeed; break;
+		case _item_power_restore_speed:
+			r = outfit->m_fPowerRestoreSpeed; break;
+		case _item_bleeding_restore_speed:
+			r = outfit->m_fBleedingRestoreSpeed; break;
+		case _item_psy_health_restore_speed:
+			r = outfit->m_fPsyHealthRestoreSpeed; break;
+		case _item_alcohol_restore_speed:
+			r = outfit->m_fAlcoholRestoreSpeed; break;
+		case _item_additional_walk_accel:
+			r = outfit->GetAdditionalWalkAccel(); break;
+		case _item_additional_jump_speed:
+			r = outfit->GetAdditionalJumpSpeed(); break;
+		case _item_additional_weight:
+			r = outfit->GetAdditionalMaxWeight(); break;
+		case _item_additional_volume:
+			r = outfit->GetAdditionalMaxVolume(); break;
+		}
 	}
+
 	return r;
 }
 
 #include "script_game_object.h"
 
-void CUIOutfitInfo::Update(CCustomOutfit* outfit)
+void CUIOutfitInfo::Update()
 {
 	string128 _buff;
 
-	auto artefactEffects = Actor()->ActiveArtefactsOnBelt();
+//	auto artefactEffects = Actor()->ActiveArtefactsOnBelt();
+
+	auto outfit = Actor()->GetOutfit();
 
 	m_listWnd->Clear(false); // clear existing items and do not scroll to top
+
+	if (!Actor()->HasDetector()) return;
 
 	for (u32 i = _item_start; i < _max_item_index; ++i)
 	{
@@ -141,21 +165,18 @@ void CUIOutfitInfo::Update(CCustomOutfit* outfit)
 
 		if (i < _max_item_index1)
 		{
-			_val_outfit = GetArtefactParam(artefactEffects, i);
-
-			float _actor_val = pSettings->r_float("actor_condition", _actor_param_names[i]);
-			_val_outfit = (_val_outfit / _actor_val);
+			_val_outfit = GetRestoreParam(i);
 		}
 		else
 		{
-			_val_outfit = outfit ? outfit->GetDefHitTypeProtection(ALife::EHitType(i - _max_item_index1)) : 1.0f;
-			_val_outfit = 1.0f - _val_outfit;
+			if (outfit)
+				_val_outfit = outfit->GetHitTypeProtection(ALife::EHitType(i - _max_item_index1));
 
 			_val_af = Actor()->HitArtefactsOnBelt(1.0f, ALife::EHitType(i - _max_item_index1));
 			_val_af = 1.0f - _val_af;
 		}
 
-		if (fsimilar(_val_outfit, 0.0f) && fsimilar(_val_af, 0.0f))
+		if (fis_zero(_val_outfit) && fis_zero(_val_af))
 		{
 			continue;
 		}

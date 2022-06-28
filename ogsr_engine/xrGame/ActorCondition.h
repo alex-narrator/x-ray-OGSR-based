@@ -38,7 +38,13 @@ private:
 	CActor*											m_object;
 	void				UpdateTutorialThresholds	();
 	void 				UpdateSatiety				();
-	void				UpdateThirst();
+	void				UpdateThirst				();
+	void                UpdateAlcohol				();
+	//виртуальные методы CEntityCondition
+	virtual void		UpdateHealth				();
+	virtual void		UpdatePower					();
+	virtual void		UpdateRadiation				();
+	virtual void		UpdatePsyHealth				();
 public:
 						CActorCondition				(CActor *object);
 	virtual				~CActorCondition			(void);
@@ -48,6 +54,8 @@ public:
 
 	virtual CWound*		ConditionHit				(SHit* pHDS);
 	virtual void		UpdateCondition				();
+	//скорость потери крови из всех открытых ран 
+	virtual float		BleedingSpeed				();
 
 	virtual void 		ChangeAlcohol				(float value);
 	virtual void 		ChangeSatiety				(float value);
@@ -61,7 +69,7 @@ public:
 	virtual bool		IsCantJump					(float weight);
 
 	void		PowerHit					(float power, bool apply_outfit);
-	virtual void		UpdatePower();
+//	virtual void		UpdatePower();
 
 	void		ConditionJump				(float weight);
 	void		ConditionWalk				(float weight, bool accel, bool sprint);
@@ -71,7 +79,7 @@ public:
 	float GetPsy				()	{return 1.0f-GetPsyHealth();}
 	float				GetSatiety			()	{return m_fSatiety;}
 	float				GetThirst			()	{return m_fThirst;}
-	void				SetMaxWalkWeight	(float _weight) { m_MaxWalkWeight = _weight; }
+//	void				SetMaxWalkWeight	(float _weight) { m_MaxWalkWeight = _weight; }
 
 	void		AffectDamage_InjuriousMaterialAndMonstersInfluence();
 	float		GetInjuriousMaterialDamage	();
@@ -84,7 +92,7 @@ public:
 	}
 	virtual void			save					(NET_Packet &output_packet);
 	virtual void			load					(IReader &input_packet);
-	float	m_MaxWalkWeight;
+//	float	m_MaxWalkWeight;
 
 	bool	DisableSprint							(SHit* pHDS);
 	float	HitSlowmo								(SHit* pHDS);
@@ -145,4 +153,43 @@ protected:
 public:
 	void net_Relcase( CObject* O );
 	void set_monsters_aura_radius( float r ) { if ( r > monsters_aura_radius ) monsters_aura_radius = r; };
+
+protected:
+	bool m_bFlagState;
+
+public:
+	float m_fBleedingPowerDecrease;
+	//
+	float m_fMinPowerWalkJump;
+	//
+	float m_fMinHealthRadiation;
+	float m_fMinHealthRadiationTreshold;
+	//
+	float m_fAlcoholSatietyIntens; //коэфф. для рассчета интенсивности постэффекта опьянения от голода
+	//
+	float m_fExerciseStressFactor; //фактор физнагрузки - множитель для коэффициента нагрузки актора при спринте и прыжке
+	//
+	float m_fZoomEffectorK;
+	float m_fV_HardHoldPower;
+
+	float GetSmoothOwerweightKoef();
+	//коэфф. выносливости - на будущее для влияния на удар ножа, бросок гранаты и т.д.
+	float GetPowerKoef();
+	//коэфф. регенерации актора - зависит от сытости и дозы облучения
+	float GetRegenKoef();
+	//коэффициент нагрузки актора
+	float GetStress();
+	//во сколько раз больше трясутся руки в прицеливании при полном отсутствии выносливости
+	float GetZoomEffectorKoef();
+
+	float AlcoholSatiety() { return m_fAlcohol * (1.0f + m_fAlcoholSatietyIntens - GetSatiety()); }
+
+	float GetWoundIncarnation	();
+	float GetHealthRestore		();
+	float GetRadiationRestore	();
+	float GetPsyHealthRestore	();
+	float GetPowerRestore		();
+	float GetSatietyRestore		();
+	float GetAlcoholRestore		();
+	float GetThirstRestore		();
 };

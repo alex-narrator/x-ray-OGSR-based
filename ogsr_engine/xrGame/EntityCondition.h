@@ -78,7 +78,7 @@ public:
 	virtual void					UpdatePower();
 	
 	//скорость потери крови из всех открытых ран 
-	float					BleedingSpeed			();
+	virtual float			BleedingSpeed			();
 
 	CObject*				GetWhoHitLastTime		() {return m_pWho;}
 	u16						GetWhoHitLastTimeID		() {return m_iWhoID;}
@@ -90,17 +90,17 @@ public:
 	
 	void					ClearWounds();
 protected:
-	void					UpdateHealth			();
+	virtual void			UpdateHealth			();
 	void					UpdateSatiety			(float k=1.0f);
-	void					UpdateRadiation			(float k=1.0f);
-	void					UpdatePsyHealth			(float k=1.0f);
+	virtual void			UpdateRadiation			(/*float k=1.0f*/);
+	virtual void			UpdatePsyHealth			(/*float k=1.0f*/);
 
 	void					UpdateEntityMorale		();
 
 
 	//изменение силы хита в зависимости от надетого костюма
 	//(только для InventoryOwner)
-	float					HitOutfitEffect			(float hit_power, ALife::EHitType hit_type, s16 element, float AP);
+	float					HitOutfitEffect			(SHit*);
 	//изменение потери сил в зависимости от надетого костюма
 	float					HitPowerEffect			(float power_loss);
 	

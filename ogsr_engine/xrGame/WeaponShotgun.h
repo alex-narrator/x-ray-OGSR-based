@@ -13,7 +13,7 @@ public:
 	virtual void	Load			(LPCSTR section);
 	
 	virtual void	net_Destroy			();
-	virtual void net_Export( CSE_Abstract* E );
+	//virtual void net_Export( CSE_Abstract* E );
 
 	virtual void	Reload				();
 	void TryReload();
@@ -37,10 +37,10 @@ public:
 
 	virtual bool	Action(s32 cmd, u32 flags);
 
-#ifdef DUPLET_STATE_SWITCH
-	bool is_duplet_enabled = false;
-	void SwitchDuplet();
-#endif // !DUPLET_STATE_SWITCH
+//#ifdef DUPLET_STATE_SWITCH
+//	bool is_duplet_enabled = false;
+//	void SwitchDuplet();
+//#endif // !DUPLET_STATE_SWITCH
 
 protected:
 	virtual void	OnAnimationEnd		(u32 state);

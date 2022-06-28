@@ -27,6 +27,15 @@ protected:
 	bool sndReloadPartlyExist{};
 	HUD_SOUND		sndFireModes;
 	HUD_SOUND		sndZoomChange;
+	//
+	HUD_SOUND		sndShutter;
+	HUD_SOUND		sndZoomIn;
+	HUD_SOUND		sndZoomOut;
+	HUD_SOUND		SndNightVisionOn;
+	HUD_SOUND		SndNightVisionOff;
+	HUD_SOUND		SndNightVisionIdle;
+	HUD_SOUND		SndNightVisionBroken;
+
 	//звук текущего выстрела
 	HUD_SOUND*		m_pSndShotCurrent;
 
@@ -42,6 +51,7 @@ protected:
 	ESoundTypes		m_eSoundShot;
 	ESoundTypes		m_eSoundEmptyClick;
 	ESoundTypes		m_eSoundReload;
+	ESoundTypes		m_eSoundShutter;
 
 	// General
 	//кадр момента пересчета UpdateSounds
@@ -97,12 +107,12 @@ public:
 	virtual void	OnH_A_Chield		();
 
 	virtual bool	Attach(PIItem pIItem, bool b_send_event);
-	virtual bool	Detach(const char* item_section_name, bool b_spawn_item);
+	virtual bool	Detach(const char* item_section_name, bool b_spawn_item, float item_condition = 1.f);
 	virtual bool	CanAttach(PIItem pIItem);
 	virtual bool	CanDetach(const char* item_section_name);
 
 	virtual void	InitAddons();
-	virtual void	InitZoomParams(LPCSTR section, bool useTexture);
+//	virtual void	InitZoomParams	(LPCSTR section, bool useTexture);
 
 	virtual bool	Action			(s32 cmd, u32 flags);
 	virtual void	UnloadMagazine	(bool spawn_ammo = true);
@@ -144,6 +154,15 @@ protected:
 	string16		m_sCurFireMode;
 	int				m_iPrefferedFireMode;
 	u32 m_fire_zoomout_time = u32(-1);
+
+	//скорострельность привилегированного режима стрельбы
+	float			fTimeToFirePreffered;
+	//у оружия есть патронник
+	bool			m_bHasChamber;
+	//последний заряженный тип магазина
+	u32				m_LastLoadedMagType;
+	//присоединён ли магазин
+	bool			m_bIsMagazineAttached;
 
 	//переменная блокирует использование
 	//только разных типов патронов
@@ -192,9 +211,74 @@ protected:
 
 	virtual	int		ShotsFired			() { return m_iShotNum; }
 	virtual float	GetWeaponDeterioration	();
+	//для хранения состояния присоединённого прицела
+	float			m_fAttachedScopeCondition;
+	//для хранения состояния присоединённого гранатомёта
+	float			m_fAttachedGrenadeLauncherCondition;
+	//для хранения состояния присоединённого глушителя
+	float			m_fAttachedSilencerCondition;
+	//износ самого глушителя при стрельбе
+	virtual float	GetSilencerDeterioration();
+	virtual void	DeteriorateSilencerAttachable(float);
 
 	virtual void	OnDrawUI();
 	virtual void	net_Relcase(CObject *object);
 
-  bool ScopeRespawn( PIItem );
+//  bool ScopeRespawn( PIItem );
+public:
+	// Real Wolf.20.01.15
+	virtual					bool TryToGetAmmo(u32);
+	//
+	LPCSTR					m_NightVisionSect;
+	bool					m_bNightVisionOn;
+	void					SwitchNightVision(bool, bool);
+	void					UpdateSwitchNightVision();
+	void					SwitchNightVision();
+
+	virtual float			GetConditionMisfireProbability() const;
+
+	//оружие использует отъёмный магазин
+	virtual bool	HasDetachableMagazine	() const;
+	virtual bool	IsMagazineAttached		() const;
+	//у оружия есть патронник
+	virtual bool	HasChamber				() { return /*ParentIsActor() &&*/ m_bHasChamber; };
+	//разрядить кол-во патронов
+	virtual void	UnloadAmmo(int unload_count, bool spawn_ammo = true, bool detach_magazine = false);
+	IC void			PullShutter() { ShutterAction(); };
+	//
+	int				GetMagazineCount() const;
+	//
+	virtual bool	IsSingleReloading();
+	virtual bool	AmmoTypeIsMagazine(u32 type) const;
+	LPCSTR			GetMagazineEmptySect() const;
+
+	//действие передёргивания затвора
+	virtual void	ShutterAction();
+	//сохранение типа патрона в патроннике при смешанной зарядке
+	virtual void	HandleCartridgeInChamber();
+
+	virtual float	Weight();
+
+	virtual void	LoadZoomParams(LPCSTR section);
+	//
+	LPCSTR			binoc_vision_sect;
+	//
+	virtual void	ChangeAttachedSilencerCondition(float);
+	virtual void	ChangeAttachedScopeCondition(float);
+	virtual void	ChangeAttachedGrenadeLauncherCondition(float);
+
+	virtual bool	IsSilencerBroken();
+	virtual bool	IsScopeBroken();
+	virtual bool	IsGrenadeLauncherBroken();
+
+	virtual	void	Hit(SHit* pHDS);
+	virtual bool	IsHitToAddon(SHit* pHDS);
+protected:
+	bool			m_bNightVisionEnabled;
+	bool			m_bNightVisionSwitchedOn;
+	//передёргивание затвора
+	virtual void	OnShutter();
+	virtual void	switch2_Shutter();
+	//передёргивание затвора
+	virtual void	PlayAnimShutter();
 };

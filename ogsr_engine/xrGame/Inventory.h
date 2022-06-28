@@ -103,7 +103,7 @@ public:
 	PIItem					tpfGetObjectByIndex	(int iIndex);
 	PIItem					GetItemFromInventory(LPCSTR caItemName);
 
-	bool					Eat					(PIItem pIItem);								
+	bool					Eat					(PIItem pIItem, CInventoryOwner* eater = nullptr);
 	
 	u32						GetActiveSlot		() const			{return m_iActiveSlot;}
 	
@@ -131,7 +131,7 @@ public:
 	float				GetMaxWeight				() const				{return m_fMaxWeight;}
 	void				SetMaxWeight				(float weight)			{m_fMaxWeight = weight;}
 
-	u32					BeltSlotsCount					() const;
+//	u32					BeltSlotsCount					() const;
 
 	inline	CInventoryOwner*GetOwner				() const				{ return m_pOwner; }
 	
@@ -175,7 +175,7 @@ protected:
 
 	// Максимальное кол-во объектов
 	//на поясе
-	u32					m_iMaxBelt;	
+//	u32					m_iMaxBelt;	
 	// Максимальное расстояние на котором можно подобрать объект
 	float				 m_fTakeDist;
 
@@ -188,4 +188,21 @@ protected:
 
 private:
 	u32 UpdatesCount{};
+
+public:
+	// AF_FREE_HANDS - свободна ли хотябы одна рука актора
+	bool                    IsFreeHands();
+	//сокрытие/восстановлени показа оружия в режиме AF_FREE_HANDS
+	void                    TryToHideWeapon(bool b_hide_state, bool b_save_prev_slot = true);
+	PIItem					GetSame(const PIItem pIItem, bool bSearchRuck) const;	//получаем айтем из всего инвентаря или с пояса
+		//считаем предметы в рюкзаке или на поясе + в слотах
+	virtual u32				GetSameItemCount(LPCSTR caSection, bool SearchRuck);
+	PIItem					GetFromSlots(const char* name) const;						//получаем айтем из слотов
+		//размещение патронов на поясе при разрядке оружия в руках
+	void					TryAmmoCustomPlacement(CInventoryItem* pIItem);
+
+	u32						BeltWidth	() const;
+	u32						BeltHeight	() const;
+
+	bool					activate_slot(u32 slot);
 };

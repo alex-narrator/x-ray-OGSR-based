@@ -15,7 +15,7 @@ std::vector<_action> actions = {
 	DEF_ACTION("down",				kDOWN)
 	DEF_ACTION("jump",				kJUMP)
 	DEF_ACTION("crouch",			kCROUCH)
-	DEF_ACTION("crouch_toggle",		kCROUCH_TOGGLE)
+//	DEF_ACTION("crouch_toggle",		kCROUCH_TOGGLE)
 	DEF_ACTION("accel",				kACCEL)
 	DEF_ACTION("sprint_toggle",  	kSPRINT_TOGGLE)
 
@@ -93,8 +93,17 @@ std::vector<_action> actions = {
 	DEF_ACTION("speech_menu_8",		kSPEECH_MENU_8)
 	DEF_ACTION("speech_menu_9",		kSPEECH_MENU_9)
 
-	DEF_ACTION("use_bandage",		kUSE_BANDAGE)
-	DEF_ACTION("use_medkit",			kUSE_MEDKIT)
+/*	DEF_ACTION("use_bandage",		kUSE_BANDAGE)
+	DEF_ACTION("use_medkit",			kUSE_MEDKIT)*/
+
+	DEF_ACTION("use_quick_slot_0",		kUSE_QUICK_SLOT_0)
+	DEF_ACTION("use_quick_slot_1",		kUSE_QUICK_SLOT_1)
+	DEF_ACTION("use_quick_slot_2",		kUSE_QUICK_SLOT_2)
+	DEF_ACTION("use_quick_slot_3",		kUSE_QUICK_SLOT_3)
+
+	DEF_ACTION("check_gear",			kCHECKGEAR)
+	DEF_ACTION("check_active_item",		kCHECKACTIVEITEM)
+	DEF_ACTION("kick",					kKICK)
 
 	DEF_ACTION("quick_save",			kQUICK_SAVE)
 	DEF_ACTION("quick_load",			kQUICK_LOAD)

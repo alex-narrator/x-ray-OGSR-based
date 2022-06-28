@@ -6,6 +6,8 @@
 #include "actor.h"
 #include "inventory.h"
 #include "weapon.h"
+#include "Artifact.h"
+#include "CustomOutfit.h"
 #include "../xr_3da/camerabase.h"
 #include "xrMessages.h"
 
@@ -210,17 +212,44 @@ void CActor::g_cl_CheckControls(u32 mstate_wf, Fvector &vControlAccel, float &Ju
 
 		if ((mstate_wf&mcJump))
 		{
-			float weight = 0.f;
-			if (Core.Features.test(xrCore::Feature::condition_jump_weight_mod))
-				weight = inventory().TotalWeight() / (inventory().GetMaxWeight() + ArtefactsAddWeight(false));
-			else
-				weight = inventory().TotalWeight() / MaxCarryWeight();
+			float weight = GetCarryWeight() / MaxCarryWeight();//inventory().TotalWeight() / MaxCarryWeight();
+			//if (Core.Features.test(xrCore::Feature::condition_jump_weight_mod))
+			//	weight = inventory().TotalWeight() / (inventory().GetMaxWeight() + ArtefactsAddWeight(false));
+			//else
+			//	weight = inventory().TotalWeight() / MaxCarryWeight();
 
 			if (CanJump(weight))
 			{
 				mstate_real |= mcJump;
 				m_bJumpKeyPressed = TRUE;
-				Jump = m_fJumpSpeed;
+				//custom jump speed
+				float jump_speed = m_fJumpSpeed;
+				//Msg("m_fJumpSpeed = %.2f", m_fJumpSpeed);
+
+				auto placement = psActorFlags.test(AF_ARTEFACTS_FROM_ALL) ? inventory().m_all : inventory().m_belt;
+				for (const auto& it : placement) {
+					auto artefact = smart_cast<CArtefact*>(it);
+
+					if (artefact && !fis_zero(artefact->GetCondition()))
+						jump_speed += m_fJumpSpeed * artefact->GetAdditionalJumpSpeed();
+				}
+
+				auto outfit = GetOutfit();
+				if (outfit && !fis_zero(outfit->GetCondition()))
+					jump_speed += outfit->GetAdditionalJumpSpeed();
+
+				//auto backpack = GetBackPack();
+				//if (backpack && !fis_zero(backpack->GetCondition()))
+				//	jump_speed += backpack->GetAdditionalJumpSpeed();
+
+				//Msg("additional jump_speed = %.2f", jump_speed);
+				jump_speed *= conditions().GetSmoothOwerweightKoef();
+				character_physics_support()->movement()->SetJumpUpVelocity(jump_speed);
+				clamp(jump_speed, 0.0f, jump_speed);
+				//debug
+				//Msg("jump_speed = %.2f", jump_speed);
+				//
+				Jump = jump_speed/*m_fJumpSpeed*/;
 				m_fJumpTime = s_fJumpTime;
 
 				//уменьшить силу игрока из-за выполненого прыжка
@@ -326,7 +355,33 @@ void CActor::g_cl_CheckControls(u32 mstate_wf, Fvector &vControlAccel, float &Ju
 			// normalize and analyze crouch and run
 			float	scale = vControlAccel.magnitude();
 			if (scale > EPS) {
-				scale = m_fWalkAccel / scale;
+				//custom walk accel
+				float walk_accel = m_fWalkAccel;
+				//Msg("m_fWalkAccel = %.2f", m_fWalkAccel);
+
+				auto placement = psActorFlags.test(AF_ARTEFACTS_FROM_ALL) ? inventory().m_all : inventory().m_belt;
+				for (const auto& it : placement) {
+					auto artefact = smart_cast<CArtefact*>(it);
+
+					if (artefact && !fis_zero(artefact->GetCondition()))
+						walk_accel += m_fWalkAccel * artefact->GetAdditionalWalkAccel();
+				}
+
+				auto outfit = GetOutfit();
+				if (outfit && !fis_zero(outfit->GetCondition()))
+					walk_accel += outfit->GetAdditionalWalkAccel();
+
+				//auto backpack = GetBackPack();
+				//if (backpack && !fis_zero(backpack->GetCondition()))
+				//	walk_accel += backpack->GetAdditionalWalkAccel();
+
+				//Msg("additional walk_accel = %.2f", walk_accel);
+				walk_accel *= conditions().GetSmoothOwerweightKoef();
+				clamp(walk_accel, 0.0f, walk_accel);
+				//debug
+				//Msg("walk_accel = %.2f", walk_accel);
+				//
+				scale =	/*m_fWalkAccel*/walk_accel / scale;
 				if (bAccelerated)
 					if (mstate_real&mcBack)
 						scale *= m_fRunBackFactor * m_fExoFactor;
@@ -579,7 +634,7 @@ bool	isActorAccelerated			(u32 mstate, bool ZoomMode)
 bool CActor::CanAccelerate			()
 {
 	bool can_accel = !conditions().IsLimping() &&
-		!character_physics_support()->movement()->PHCapture() && 
+//		!character_physics_support()->movement()->PHCapture() && 
 //		&& !m_bZoomAimingMode
 //		&& !(mstate_real&mcLookout)
 		(m_time_lock_accel < Device.dwTimeGlobal)
@@ -608,7 +663,8 @@ bool CActor::CanSprint			()
 bool	CActor::CanJump(float weight)
 {
 	bool can_Jump = /*!IsLimping() &&*/
-		!character_physics_support()->movement()->PHCapture() && ((mstate_real&mcJump) == 0) && (m_fJumpTime <= 0.f)
+//		!character_physics_support()->movement()->PHCapture() && 
+		((mstate_real&mcJump) == 0) && (m_fJumpTime <= 0.f)
 		&& ( !m_hit_slowmo_jump || ( fis_zero( hit_slowmo ) && m_time_lock_accel < Device.dwTimeGlobal ) )
 		&& !m_bJumpKeyPressed && !m_bZoomAimingMode // && ((mstate_real&mcCrouch)==0);
 		&& !conditions().IsCantJump(weight);

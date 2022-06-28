@@ -75,6 +75,7 @@ struct CUITradeInternal{
 };
 
 bool others_zero_trade;
+const char* money_name;
 
 CUITradeWnd::CUITradeWnd()
 	:	m_bDealControlsVisible	(false),
@@ -86,7 +87,9 @@ CUITradeWnd::CUITradeWnd()
 	Init();
 	Hide();
 	SetCurrentItem			(NULL);
-        others_zero_trade = !!READ_IF_EXISTS( pSettings, r_bool, "trade", "others_zero_trade", false );
+
+    others_zero_trade = !!READ_IF_EXISTS( pSettings, r_bool, "trade", "others_zero_trade", false );
+	money_name = CStringTable().translate("ui_st_money_regional").c_str();
 }
 
 CUITradeWnd::~CUITradeWnd()
@@ -212,6 +215,17 @@ void CUITradeWnd::InitTrade(CInventoryOwner* pOur, CInventoryOwner* pOthers)
 	EnableAll							();
 
 	UpdateLists							(eBoth);
+
+	// режим бартерной торговли
+	if (!m_pInvOwner->GetPDA())
+	{
+		m_uidata->UIOurMoneyStatic.SetText(*CStringTable().translate("ui_st_pda_account_unavailable"));   //закроем статиком кол-во денег актора, т.к. оно еще не обновилось и не ноль
+		m_uidata->UIOtherMoneyStatic.SetText(*CStringTable().translate("ui_st_pda_account_unavailable")); //закроем статиком кол-во денег контрагента, т.к. оно еще не обновилось и не ---
+		m_uidata->UIPerformTradeButton.SetText(*CStringTable().translate("ui_st_barter")); //напишем "бартер" на кнопке, вместо "торговать"
+	}
+	else
+		m_uidata->UIPerformTradeButton.SetText(*CStringTable().translate("ui_st_trade")); //вернём надпись "торговать" на кнопке, вместо "бартер"
+//
 }  
 
 void CUITradeWnd::SendMessage(CUIWindow *pWnd, s16 msg, void *pData)
@@ -276,8 +290,7 @@ void CUITradeWnd::Update()
 	if(m_uidata->UIDealMsg){
 		m_uidata->UIDealMsg->Update();
 		if( !m_uidata->UIDealMsg->IsActual()){
-			HUD().GetUI()->UIGame()->RemoveCustomStatic("not_enough_money_mine");
-			HUD().GetUI()->UIGame()->RemoveCustomStatic("not_enough_money_other");
+			HUD().GetUI()->UIGame()->RemoveCustomStatic("not_enough_money");
 			m_uidata->UIDealMsg			= NULL;
 		}
 	}
@@ -294,9 +307,13 @@ void CUITradeWnd::Show()
 	ResetAll						();
 	m_uidata->UIDealMsg				= NULL;
 
-	if (Core.Features.test(xrCore::Feature::engine_ammo_repacker) && !Core.Features.test(xrCore::Feature::hard_ammo_reload))
-		if (auto pActor = Actor())
-			pActor->RepackAmmo();
+	if (auto pActor = Actor())
+	{
+		//if (Core.Features.test(xrCore::Feature::engine_ammo_repacker) && !Core.Features.test(xrCore::Feature::hard_ammo_reload))
+		//	pActor->RepackAmmo();
+
+		if (psActorFlags.test(AF_AMMO_FROM_BELT)) Actor()->SetAmmoPlacement(true); //установим флаг перезарядки из рюкзака
+	}
 }
 
 void CUITradeWnd::Hide()
@@ -310,14 +327,16 @@ void CUITradeWnd::Hide()
 	m_uidata->UIDealMsg				= NULL;
 
 	if(HUD().GetUI()->UIGame()){
-		HUD().GetUI()->UIGame()->RemoveCustomStatic("not_enough_money_mine");
-		HUD().GetUI()->UIGame()->RemoveCustomStatic("not_enough_money_other");
+		HUD().GetUI()->UIGame()->RemoveCustomStatic("not_enough_money");
 	}
 
 	m_uidata->UIOurBagList.ClearAll		(true);
 	m_uidata->UIOurTradeList.ClearAll	(true);
 	m_uidata->UIOthersBagList.ClearAll	(true);
 	m_uidata->UIOthersTradeList.ClearAll(true);
+
+	if (auto pActor = Actor())
+		if (psActorFlags.test(AF_AMMO_FROM_BELT)) Actor()->SetAmmoPlacement(false); //сбросим флаг перезарядки из рюкзака
 }
 
 void CUITradeWnd::StartTrade()
@@ -467,13 +486,16 @@ void CUITradeWnd::PerformTrade()
                 }
 	}else
 	{
-		if(others_money<0)
-			m_uidata->UIDealMsg		= HUD().GetUI()->UIGame()->AddCustomStatic("not_enough_money_other", true);
-		else
-			m_uidata->UIDealMsg		= HUD().GetUI()->UIGame()->AddCustomStatic("not_enough_money_mine", true);
+		string256				deal_refuse_text; //строка с текстом сообщения-отказа при невозмжности совершить торговую сделку
+		//условия для формирования текста
+		LPCSTR                  trader_name = others_money < 0 ? m_pOthersInvOwner->Name() : m_pInvOwner->Name(); //от чьего имени выдаётся сообщение
+		STRING_ID               refusal_text = /*g_actor*/m_pInvOwner->GetPDA() ? "st_not_enough_money_to_trade" : "st_not_enough_money_to_barter"; //текст сообщения отказа в зависимости от торговля/бартер
+		//показываем статик с текстом отказа
+		m_uidata->UIDealMsg = HUD().GetUI()->UIGame()->AddCustomStatic("not_enough_money", true); //показать статик
+		strconcat(sizeof(deal_refuse_text), deal_refuse_text, trader_name, ": ", *CStringTable().translate(refusal_text)); //сформировать текст
+		m_uidata->UIDealMsg->wnd()->SetText(deal_refuse_text); //задать текст статику
 
-
-		m_uidata->UIDealMsg->m_endTime	= Device.fTimeGlobal+2.0f;// sec
+		m_uidata->UIDealMsg->m_endTime	= Device.fTimeGlobal+1.0f;// sec
 	}
 	SetCurrentItem			(NULL);
 }
@@ -558,18 +580,19 @@ void CUITradeWnd::UpdatePrices()
 	}
 
 	string256				buf;
-	sprintf_s( buf, "%d RU", m_iOurTradePrice );
+	sprintf_s( buf, "%d %s", m_iOurTradePrice, money_name);
 	m_uidata->UIOurPriceCaption.GetPhraseByIndex(2)->str = buf;
-	sprintf_s					(buf, "%d RU", m_iOthersTradePrice);
+	sprintf_s					(buf, "%d %s", m_iOthersTradePrice, money_name);
 	m_uidata->UIOthersPriceCaption.GetPhraseByIndex(2)->str = buf;
 
-	sprintf_s					(buf, "%d RU", m_pInvOwner->get_money());
+	sprintf_s					(buf, "%d %s", m_pInvOwner->get_money(), money_name);
 	m_uidata->UIOurMoneyStatic.SetText(buf);
 
 	if(!m_pOthersInvOwner->InfinitiveMoney()){
-          sprintf_s( buf, "%d RU", (int)m_pOthersInvOwner->get_money() );
+          sprintf_s( buf, "%d %s", (int)m_pOthersInvOwner->get_money(), money_name);
           m_uidata->UIOtherMoneyStatic.SetText(buf);
-	}else
+	}//else
+	if (m_pOthersInvOwner->InfinitiveMoney() || (!m_pOthersInvOwner->InfinitiveMoney() && !m_pInvOwner->GetPDA())) //закроем --- счетчик денег контрагента, если в режиме бартера
 	{
 		m_uidata->UIOtherMoneyStatic.SetText("---");
 	}
@@ -584,6 +607,7 @@ void CUITradeWnd::TransferItems(CUIDragDropListEx* pSellList,
 	{
 		CUICellItem* itm	=	pSellList->RemoveItem(pSellList->GetItemIdx(0),false);
 		auto InvItm = (PIItem)itm->m_pData;
+		if (!bBuying)		InvItm->OnMoveOut(InvItm->m_eItemPlace);
 		InvItm->m_highlight_equipped = false; //Убираем подсветку после продажи предмета
 		itm->m_select_equipped = false;
 		pTrade->TransferItem( InvItm, bBuying, !others_zero_trade );
@@ -786,7 +810,7 @@ void CUITradeWnd::SetCurrentItem(CUICellItem* itm)
 
 		string256			str;
 
-		sprintf_s				(str, "%d RU", m_pOthersTrade->GetItemPrice(CurrentIItem(), bBuying) );
+		sprintf_s				(str, "%d %s", m_pOthersTrade->GetItemPrice(CurrentIItem(), bBuying), money_name);
 		m_uidata->UIItemInfo.UICost->SetText (str);
 	}
 

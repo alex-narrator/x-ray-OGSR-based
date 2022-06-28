@@ -580,6 +580,8 @@ CSE_ALifeCustomZone::CSE_ALifeCustomZone	(LPCSTR caSection) : CSE_ALifeSpaceRest
 	m_disabled_time				= 0;
 	m_start_time_shift			= 0;
 
+	m_maxPower					= pSettings->r_float(caSection, "max_start_power");
+	m_ttl						= u32(-1);
 }
 
 CSE_ALifeCustomZone::~CSE_ALifeCustomZone	()

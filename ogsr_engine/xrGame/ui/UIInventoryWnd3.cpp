@@ -44,29 +44,31 @@ void CUIInventoryWnd::ActivatePropertiesBox()
 	CCustomOutfit*		pOutfit				= smart_cast<CCustomOutfit*>	(CurrentIItem());
 	CWeapon*			pWeapon				= smart_cast<CWeapon*>			(CurrentIItem());
 	CBottleItem*		pBottleItem			= smart_cast<CBottleItem*>		(CurrentIItem());
+
+	string1024			temp;
     
 	bool b_show = false;
 
 	if (!pOutfit && CurrentIItem()->GetSlot() != NO_ACTIVE_SLOT) {
 		auto slots = CurrentIItem()->GetSlots();
-		bool multi_slot = slots.size() > 1;
+		//bool multi_slot = slots.size() > 1;
 		for (u8 i = 0; i < (u8)slots.size(); ++i) {
 			auto slot = slots[i];
-			if (slot != NO_ACTIVE_SLOT && slot != GRENADE_SLOT) {
+			if (slot != NO_ACTIVE_SLOT/* && slot != GRENADE_SLOT*/) {
 				if (!m_pInv->m_slots[slot].m_pIItem || m_pInv->m_slots[slot].m_pIItem != CurrentIItem()) {
-					if (multi_slot && Core.Features.test(xrCore::Feature::slots_extend_menu))
+					//if (multi_slot && Core.Features.test(xrCore::Feature::slots_extend_menu))
 					{
 						string128 full_action_text;
 						strconcat(sizeof(full_action_text), full_action_text, "st_move_to_slot_", std::to_string(slot).c_str());
 						UIPropertiesBox.AddItem(full_action_text, (void*)(__int64)slot, INVENTORY_TO_SLOT_ACTION);
 						b_show = true;
 					}
-					else 
-					{
-						UIPropertiesBox.AddItem("st_move_to_slot", NULL, INVENTORY_TO_SLOT_ACTION);
-						b_show = true;
-						break;
-					}
+					//else 
+					//{
+					//	UIPropertiesBox.AddItem("st_move_to_slot", NULL, INVENTORY_TO_SLOT_ACTION);
+					//	b_show = true;
+					//	break;
+					//}
 				}
 			}
 		}
@@ -97,6 +99,20 @@ void CUIInventoryWnd::ActivatePropertiesBox()
 	//отсоединение аддонов от вещи
 	if(pWeapon)
 	{
+		if (m_pInv->InSlot(pWeapon))
+		{
+			for (u32 i = 0; i < pWeapon->m_ammoTypes.size(); ++i)
+			{
+				if (pWeapon->TryToGetAmmo(i))
+				{
+					strconcat(sizeof(temp), temp, *CStringTable().translate("st_load_ammo_type"), " ",
+						*CStringTable().translate(pSettings->r_string(pWeapon->m_ammoTypes[i].c_str(), "inv_name_short")));
+					UIPropertiesBox.AddItem(temp, (void*)(__int64)i, INVENTORY_RELOAD_MAGAZINE);
+					b_show = true;
+				}
+			}
+		}
+		//
 		if(pWeapon->GrenadeLauncherAttachable() && pWeapon->IsGrenadeLauncherAttached())
 		{
 			UIPropertiesBox.AddItem("st_detach_gl",  NULL, INVENTORY_DETACH_GRENADE_LAUNCHER_ADDON);
@@ -267,13 +283,17 @@ void CUIInventoryWnd::ProcessPropertiesBoxClicked	()
 			DetachAddon(*(smart_cast<CWeapon*>(CurrentIItem()))->GetGrenadeLauncherName());
 			break;
 		case INVENTORY_RELOAD_MAGAZINE:
-			(smart_cast<CWeapon*>(CurrentIItem()))->Action(kWPN_RELOAD, CMD_START);
-			break;
+		{
+			void* d = UIPropertiesBox.GetClickedItem()->GetData();
+			(smart_cast<CWeapon*>(CurrentIItem()))->m_set_next_ammoType_on_reload = (u32)(__int64)d;
+			(smart_cast<CWeapon*>(CurrentIItem()))->ReloadWeapon();
+		}break;
 		case INVENTORY_UNLOAD_MAGAZINE:
 			{
 				auto ProcessUnload = [](void* pWpn) {
 					auto WpnMagaz = static_cast<CWeaponMagazined*>(pWpn);
 					WpnMagaz->UnloadMagazine();
+					WpnMagaz->PullShutter();
 					if (auto WpnMagazWgl = smart_cast<CWeaponMagazinedWGrenade*>(WpnMagaz))
 					{
 						if (WpnMagazWgl->IsGrenadeLauncherAttached())
@@ -300,6 +320,9 @@ void CUIInventoryWnd::ProcessPropertiesBoxClicked	()
 
 bool CUIInventoryWnd::TryUseItem(PIItem itm)
 {
+	if (itm->IsPlaceable(QUICK_SLOT_0, QUICK_SLOT_3) || itm->Belt())
+		return false;
+
 	CBottleItem*		pBottleItem			= smart_cast<CBottleItem*>		(itm);
 	CMedkit*			pMedkit				= smart_cast<CMedkit*>			(itm);
 	CAntirad*			pAntirad			= smart_cast<CAntirad*>			(itm);

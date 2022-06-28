@@ -13,7 +13,7 @@ public:
 	CUIArtefactPanel() = default;
 	~CUIArtefactPanel() { m_vRects.clear_and_free(); }
 
-	virtual void InitIcons		(const TIItemContainer& artefacts);
+	virtual void InitIcons		(const TIItemContainer& items);
 	virtual void Draw			();
 			void InitFromXML	(CUIXml& xml, LPCSTR path, int index);
 

@@ -156,14 +156,16 @@ BOOL CActor::net_Spawn		(CSE_Abstract* DC)
 	cam_Active()->Set		(-E->o_torso.yaw,E->o_torso.pitch,0);//E->o_Angle.z);
 
 	// *** movement state - respawn
-	mstate_wishful			= 0;
 	if ( m_loaded_ph_box_id == 1 || m_loaded_ph_box_id == 3 )
-	  mstate_real = mcCrouch;
+		mstate_wishful = mcCrouch;
 	else if ( m_loaded_ph_box_id == 2 || m_loaded_ph_box_id == 4 )
-	  mstate_real = mcCrouch|mcAccel;
+		mstate_wishful = mcCrouch|mcAccel;
 	else
-	  mstate_real = 0;
-	mstate_old = mstate_real;
+		mstate_wishful = 0;
+
+	mstate_real = 0;
+	mstate_old	= 0;
+
 	m_bJumpKeyPressed		= FALSE;
 
 	NET_SavedAccel.set		(0,0,0);

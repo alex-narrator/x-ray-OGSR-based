@@ -67,7 +67,7 @@ CInventory::CInventory()
 {
 	m_fTakeDist									= pSettings->r_float	("inventory","take_dist");
 	m_fMaxWeight								= pSettings->r_float	("inventory","max_weight");
-	m_iMaxBelt									= pSettings->r_u32		("inventory","max_belt");
+//	m_iMaxBelt									= pSettings->r_u32		("inventory","max_belt");
 	
 	m_slots.resize								(SLOTS_TOTAL);
 	
@@ -93,9 +93,9 @@ CInventory::CInventory()
 	m_slots[OUTFIT_SLOT].m_bVisible				= false;
 	m_slots[TORCH_SLOT].m_bVisible				= false;
 	m_slots[HELMET_SLOT].m_bVisible				= false;
-	m_slots[NIGHT_VISION_SLOT].m_bVisible		= false;
-	m_slots[BIODETECTOR_SLOT].m_bVisible		= false;
-	m_slots[DETECTOR_SLOT].m_bVisible = false; //KRodin: это очень важно! Слот для зп-стайл детекторов должен быть НЕ активируемым!
+//	m_slots[NIGHT_VISION_SLOT].m_bVisible		= false;
+//	m_slots[BIODETECTOR_SLOT].m_bVisible		= false;
+	m_slots[DETECTOR_SLOT].m_bVisible			= false; //KRodin: это очень важно! Слот для зп-стайл детекторов должен быть НЕ активируемым!
 
 	for (u32 i = 0; i < m_slots.size(); ++i)
 	{
@@ -161,6 +161,8 @@ void CInventory::Take(CGameObject *pObj, bool bNotActivate, bool strict_placemen
 
 	if(!strict_placement)
 		pIItem->m_eItemPlace			= eItemPlaceUndefined;
+
+	TryAmmoCustomPlacement(pIItem);
 
 	bool result							= false;
 	switch(pIItem->m_eItemPlace)
@@ -275,7 +277,7 @@ bool CInventory::DropItem(CGameObject *pObj)
 			m_slots[pIItem->GetSlot()].m_pIItem = NULL;	
 
 			// хак для учета снятия брони - надо менять визуал актору
-			pIItem->OnDrop();
+//			pIItem->OnDrop();
 
 			pIItem->object().processing_deactivate();
 		}break;
@@ -288,6 +290,8 @@ bool CInventory::DropItem(CGameObject *pObj)
 		m_all.erase				(it);
 	else
 		Msg						("! CInventory::Drop item not found in inventory!!!");
+
+	pIItem->OnMoveOut(pIItem->m_eItemPlace);
 
 	pIItem->m_pCurrentInventory = NULL;
 
@@ -317,7 +321,8 @@ bool CInventory::Slot(PIItem pIItem, bool bNotActivate)
 				pIItem);
 		*/
 		if(m_slots[pIItem->GetSlot()].m_pIItem == pIItem && !bNotActivate )
-			Activate(pIItem->GetSlot());
+			if (activate_slot(pIItem->GetSlot()))
+				Activate(pIItem->GetSlot());
 
 		return false;
 	}
@@ -345,12 +350,13 @@ bool CInventory::Slot(PIItem pIItem, bool bNotActivate)
 	if(m_belt.end() != it) m_belt.erase(it);
 
 	if ( ( m_iActiveSlot == pIItem->GetSlot() || ( m_iActiveSlot == NO_ACTIVE_SLOT && m_iNextActiveSlot == NO_ACTIVE_SLOT ) ) && !bNotActivate )
-		Activate(pIItem->GetSlot());
+		if (activate_slot(pIItem->GetSlot()))
+			Activate(pIItem->GetSlot());
 
 	auto PrevPlace = pIItem->m_eItemPlace;
 	pIItem->m_eItemPlace = eItemPlaceSlot;
 	m_pOwner->OnItemSlot(pIItem, PrevPlace);
-	pIItem->OnMoveToSlot();
+	pIItem->OnMoveToSlot(PrevPlace);
 	
 	pIItem->object().processing_activate();
 
@@ -380,10 +386,10 @@ bool CInventory::Belt(PIItem pIItem)
 	CalcTotalWeight();
 	InvalidateState						();
 
-	EItemPlace p = pIItem->m_eItemPlace;
+	auto PrevPlace = pIItem->m_eItemPlace;
 	pIItem->m_eItemPlace = eItemPlaceBelt;
-	m_pOwner->OnItemBelt(pIItem, p);
-	pIItem->OnMoveToBelt();
+	m_pOwner->OnItemBelt(pIItem, PrevPlace);
+	pIItem->OnMoveToBelt(PrevPlace);
 
 	if(in_slot)
 		pIItem->object().processing_deactivate();
@@ -633,6 +639,55 @@ bool CInventory::Action(s32 cmd, u32 flags)
 					b_send_event = Activate(cmd - kWPN_1, eKeyAction);
 			}
 		}break;
+	case kARTEFACT:
+	{
+		if (flags & CMD_START)
+		{
+			if ((int)m_iActiveSlot == ARTEFACT_SLOT &&
+				m_slots[m_iActiveSlot].m_pIItem)
+			{
+				b_send_event = Activate(NO_ACTIVE_SLOT);
+			}
+			else {
+				b_send_event = Activate(ARTEFACT_SLOT, eKeyAction);
+			}
+		}
+	}break;
+	case kUSE_QUICK_SLOT_0:
+	case kUSE_QUICK_SLOT_1:
+	case kUSE_QUICK_SLOT_2:
+	case kUSE_QUICK_SLOT_3:
+	{
+		PIItem itm = NULL;
+
+		switch (cmd)
+		{
+		case kUSE_QUICK_SLOT_0:
+			itm = m_slots[QUICK_SLOT_0].m_pIItem;
+			break;
+		case kUSE_QUICK_SLOT_1:
+			itm = m_slots[QUICK_SLOT_1].m_pIItem;
+			break;
+		case kUSE_QUICK_SLOT_2:
+			itm = m_slots[QUICK_SLOT_2].m_pIItem;
+			break;
+		case kUSE_QUICK_SLOT_3:
+			itm = m_slots[QUICK_SLOT_3].m_pIItem;
+			break;
+		}
+
+		if (flags & CMD_START)
+		{
+			auto pHudItem = smart_cast<CHudItem*>(itm);
+			//если в слоте предмет без худа то и активировать его не нужно
+			if (!pHudItem) return false;
+
+			if (m_iActiveSlot == itm->GetSlot())
+				b_send_event = Activate(NO_ACTIVE_SLOT);
+			else
+				b_send_event = Activate(itm->GetSlot(), eKeyAction);
+		}
+	}break;
 	}
 
 	if(b_send_event && g_pGameLevel && OnClient() && pActor)
@@ -649,7 +704,8 @@ void CInventory::Update()
 	// соотв. и слотов под арты как бы нет. Вот поэтому до первого апдейта CInventory актора считаем, что все слоты для артов доступны ( см. CInventory::BeltSlotsCount() )
 	// По моим наблюдениям на момент первого апдейта CInventory, все предметы в инвентаре актора уже вышли в онлайн.
 	if (smart_cast<CActor*>(m_pOwner) && (++UpdatesCount == 1))
-		smart_cast<CUIGameSP*>(HUD().GetUI()->UIGame())->InventoryMenu->UpdateOutfit();
+		//smart_cast<CUIGameSP*>(HUD().GetUI()->UIGame())->InventoryMenu->UpdateOutfit();
+		Actor()->SetAllItemsLoaded(true);
 
 	bool bActiveSlotVisible;
 	
@@ -805,15 +861,11 @@ PIItem CInventory::GetAny(const char *name) const
 
 PIItem CInventory::GetAmmo(const char *name, bool forActor) const
 {
-	bool include_ruck = !forActor || !psActorFlags.test(AF_AMMO_ON_BELT);
+	bool include_ruck = !forActor || !psActorFlags.test(AF_AMMO_FROM_BELT) || Actor()->GetAmmoPlacement();
 
-	PIItem itm;
-	if (include_ruck) {
-		itm = GetAny(name);
-	}
-	else {
-		itm = Get(name, false);
-	}
+	PIItem itm = Get(name, include_ruck);
+	if (!include_ruck && !itm)
+		itm = GetFromSlots(name);
 	return itm;
 }
 
@@ -904,14 +956,16 @@ CInventoryItem *CInventory::get_object_by_id(ALife::_OBJECT_ID tObjectID)
 #include "game_object_space.h"
 #include "script_callback_ex.h"
 #include "script_game_object.h"
-bool CInventory::Eat(PIItem pIItem)
+bool CInventory::Eat(PIItem pIItem, CInventoryOwner* eater)
 {
-	R_ASSERT(pIItem->m_pCurrentInventory==this);
+//	R_ASSERT(pIItem->m_pCurrentInventory==this);
 	//устанаовить съедобна ли вещь
 	CEatableItem* pItemToEat = smart_cast<CEatableItem*>(pIItem);
 	R_ASSERT				(pItemToEat);
 
-	CEntityAlive *entity_alive = smart_cast<CEntityAlive*>(m_pOwner);
+	auto eatem_eater = eater ? eater : m_pOwner;
+
+	CEntityAlive *entity_alive = smart_cast<CEntityAlive*>(eatem_eater);
 	R_ASSERT				(entity_alive);
 
 	if (Actor()->m_inventory == this)
@@ -924,12 +978,14 @@ bool CInventory::Eat(PIItem pIItem)
 
 	if(pItemToEat->Empty() && entity_alive->Local())
 	{
+		auto object = pIItem->cast_game_object();
+
 		NET_Packet					P;
-		CGameObject::u_EventGen		(P,GE_OWNERSHIP_REJECT,entity_alive->ID());
+		CGameObject::u_EventGen		(P,GE_OWNERSHIP_REJECT, object->H_Parent()->ID());
 		P.w_u16						(pIItem->object().ID());
 		CGameObject::u_EventSend	(P);
 
-		CGameObject::u_EventGen		(P,GE_DESTROY,pIItem->object().ID());
+		CGameObject::u_EventGen		(P,GE_DESTROY, object->ID());
 		CGameObject::u_EventSend	(P);
 
 		return		false;
@@ -991,9 +1047,9 @@ bool CInventory::CanPutInBelt(PIItem pIItem)
 	if(InBelt(pIItem))					return false;
 	if(!m_bBeltUseful)					return false;
 	if(!pIItem || !pIItem->Belt())		return false;
-	if(m_belt.size() >= BeltSlotsCount())	return false;
+	if(m_belt.size() >= BeltWidth() * BeltHeight())	return false;
 
-	return FreeRoom_inBelt(m_belt, pIItem, BeltSlotsCount(), 1);
+	return FreeRoom_inBelt(m_belt, pIItem, BeltWidth(), BeltHeight());
 }
 //проверяет можем ли поместить вещь в рюкзак,
 //при этом реально ничего не меняется
@@ -1054,17 +1110,17 @@ bool CInventory::CanTakeItem(CInventoryItem *inventory_item) const
 }
 
 
-u32 CInventory::BeltSlotsCount() const
-{
-	if (auto pActor = smart_cast<CActor*>(m_pOwner))
-		if (auto outfit = pActor->GetOutfit())
-			return outfit->get_artefact_count();
-
-	static const u32 m_iMinBelt = READ_IF_EXISTS(pSettings, r_u32, "inventory", "min_belt", m_iMaxBelt); //Кол-во слотов под арты, когда костюма нет.
-
-	// см. комментарии в CInventory::Update()
-	return UpdatesCount ? m_iMinBelt : m_iMaxBelt;
-}
+//u32 CInventory::BeltSlotsCount() const
+//{
+//	//if (auto pActor = smart_cast<CActor*>(m_pOwner))
+//	//	if (auto outfit = pActor->GetOutfit())
+//	//		return outfit->get_artefact_count();
+//
+//	static const u32 m_iMinBelt = READ_IF_EXISTS(pSettings, r_u32, "inventory", "min_belt", m_iMaxBelt); //Кол-во слотов под арты, когда костюма нет.
+//
+//	// см. комментарии в CInventory::Update()
+//	return UpdatesCount ? m_iMinBelt : m_iMaxBelt;
+//}
 
 void  CInventory::AddAvailableItems(TIItemContainer& items_container, bool for_trade) const
 {
@@ -1187,10 +1243,12 @@ void CInventory::Iterate( bool bSearchRuck, std::function<bool( const PIItem )> 
 
 
 void CInventory::IterateAmmo( bool bSearchRuck, std::function<bool( const PIItem )> callback ) const {
-  const auto& list = bSearchRuck ? m_ruck : m_belt;
+  //const auto& list = bSearchRuck ? m_ruck : m_belt;
+  const auto& list = m_all;
+  auto excluded_place = bSearchRuck ? eItemPlaceBelt : eItemPlaceRuck; //якщо треба шукати у рюкзаці, тоді не шукаємо на поясі, та навпаки (а у слотах шукаємо завжди)
   for ( const auto& it : list ) {
     const auto *ammo = smart_cast<CWeaponAmmo*>( it );
-    if ( ammo && it->Useful() && callback( it ) )
+    if ( ammo && it->Useful() && it->m_eItemPlace != excluded_place && callback( it ) )
       break;
   }
 }
@@ -1214,7 +1272,7 @@ PIItem CInventory::GetAmmoMaxCurr( const char *name, bool forActor ) const {
     return false;
   };
 
-  bool include_ruck = !forActor || !psActorFlags.test( AF_AMMO_ON_BELT );
+  bool include_ruck = !forActor || !psActorFlags.test(AF_AMMO_FROM_BELT) || Actor()->GetAmmoPlacement();
 
   IterateAmmo( false, callback );
   if ( include_ruck ) {
@@ -1266,7 +1324,7 @@ PIItem CInventory::GetAmmoMinCurr( const char *name, bool forActor ) const {
     return false;
   };
 
-  bool include_ruck = !forActor || !psActorFlags.test( AF_AMMO_ON_BELT );
+  bool include_ruck = !forActor || !psActorFlags.test(AF_AMMO_FROM_BELT) || Actor()->GetAmmoPlacement();
 
   IterateAmmo( false, callback );
   if ( include_ruck ) {
@@ -1287,4 +1345,190 @@ bool CInventory::IsActiveSlotBlocked() const {
 		if (slot.CanBeActivated())
 			return false;
 	return true;
+}
+
+bool CInventory::IsFreeHands()
+{
+	CHudItem* pHudItem = smart_cast<CHudItem*>(ActiveItem());
+
+	return g_eFreeHands != eFreeHandsManual ||
+		(ActiveItem() && ActiveItem()->IsSingleHanded() && !pHudItem->IsPending()) ||
+		ActiveItem() == NULL ||
+		GetActiveSlot() == NO_ACTIVE_SLOT;
+}
+
+void CInventory::TryToHideWeapon(bool b_hide_state, bool b_save_prev_slot)
+{
+	if (g_eFreeHands != eFreeHandsAuto) return; //только для авторежима свободных рук
+
+	if (b_hide_state)
+	{
+		if (ActiveItem() && !ActiveItem()->IsSingleHanded())
+		{
+			m_iPrevActiveSlot = b_save_prev_slot ? GetActiveSlot() : NO_ACTIVE_SLOT;
+			Activate(NO_ACTIVE_SLOT);
+		}
+	}
+	else
+	{
+		if (m_iPrevActiveSlot != NO_ACTIVE_SLOT)
+		{
+			Activate(m_iPrevActiveSlot);
+			m_iPrevActiveSlot = NO_ACTIVE_SLOT;
+		}
+	}
+}
+
+//получаем айтем из всего инвентаря или с пояса
+PIItem CInventory::GetSame(const PIItem pIItem, bool bSearchRuck) const
+{
+	const TIItemContainer& list = bSearchRuck ? m_ruck : m_belt;
+
+	for (TIItemContainer::const_iterator it = list.begin(); list.end() != it; ++it)
+	{
+		const PIItem l_pIItem = *it;
+
+		if ((l_pIItem != pIItem) &&
+			!xr_strcmp(l_pIItem->object().cNameSect(),
+				pIItem->object().cNameSect()))
+			return l_pIItem;
+	}
+	return nullptr;
+}
+
+u32 CInventory::GetSameItemCount(LPCSTR caSection, bool SearchRuck)
+{
+	u32			l_dwCount = 0;
+	TIItemContainer& l_list = SearchRuck ? m_ruck : m_belt;
+	for (TIItemContainer::iterator l_it = l_list.begin(); l_list.end() != l_it; ++l_it)
+	{
+		PIItem	l_pIItem = *l_it;
+		if (l_pIItem && !xr_strcmp(l_pIItem->object().cNameSect(), caSection))
+			++l_dwCount;
+	}
+	//помимо пояса еще и в слотах поищем
+	if (!SearchRuck)
+		for (u32 i = 0; i < m_slots.size(); ++i)
+		{
+			PIItem l_pIItem = m_slots[i].m_pIItem;
+			if (l_pIItem && !xr_strcmp(l_pIItem->object().cNameSect(), caSection))
+				++l_dwCount;
+		}
+
+	return		(l_dwCount);
+}
+
+//найти в слотах вещь с указанным именем
+PIItem CInventory::GetFromSlots(const char* name) const
+{
+	for (u32 i = 0; i < m_slots.size(); ++i)
+	{
+		PIItem pIItem = m_slots[i].m_pIItem;
+		if (pIItem && !xr_strcmp(pIItem->object().cNameSect(), name) &&
+			pIItem->Useful())
+			return pIItem;
+	}
+	return NULL;
+}
+
+void CInventory::TryAmmoCustomPlacement(CInventoryItem* pIItem)
+{
+	auto pAmmo = smart_cast<CWeaponAmmo*>(pIItem);
+	if (!pAmmo) return;
+
+	//if (pAmmo->IsPlaceable(QUICK_SLOT_0, QUICK_SLOT_3))
+	//	pAmmo->m_eItemPlace = eItemPlaceRuck;
+
+	auto pActor = smart_cast<CActor*>(m_pOwner);
+	if (!pActor) return;
+
+	auto pWeapon = smart_cast<CWeapon*>(ActiveItem());
+	if (!pWeapon) return;
+
+	//Msg("ammo [%s] with ID [%d] has taken", pIItem->object().cNameSect().c_str(), pIItem->object().ID());
+
+	if (psActorFlags.test(AF_AMMO_FROM_BELT) && pWeapon->IsAmmoWasSpawned() && !pActor->GetAmmoPlacement()) //если включены патроны с пояса, то для боеприпасов актора, которые спавнятся при разрядке
+	{
+		//auto pWarbelt = pActor->GetWarBelt();
+		//bool b_has_drop_pouch = pWarbelt && pWarbelt->HasDropPouch();
+
+		//if (pAmmo->IsBoxReloadableEmpty() && b_has_drop_pouch) //якщо пустий магазин та є сумка для скидання - кладемо до рюкзаку
+		//	return;
+
+		if (CanPutInBelt(pAmmo)) //попробуем положить патроны в пояс
+		{
+			//Msg("ammo [%s] with ID [%d] was placed to belt", pIItem->object().cNameSect().c_str(), pIItem->object().ID());
+			pAmmo->m_eItemPlace = eItemPlaceBelt;
+		}
+		else //попробуем определить свободный слот и положить в него
+		{
+			auto slots = pAmmo->GetSlots();
+			for (u8 i = 0; i < (u8)slots.size(); ++i)
+			{
+				pAmmo->SetSlot(slots[i]);
+
+				if (CanPutInSlot(pAmmo))
+				{
+					//Msg("ammo [%s] with ID [%d] was placed to slot [%d]", pIItem->object().cNameSect().c_str(), pIItem->object().ID(), pIItem->GetSlot());
+					pAmmo->m_eItemPlace = eItemPlaceSlot;
+					break;
+				}
+			}
+		}
+
+		if (!CanPutInBelt(pAmmo) && !CanPutInSlot(pAmmo)/* && !b_has_drop_pouch*/) //нікуди не вміщається та немає сумки для скидання - кидаємо на землю
+			pAmmo->SetDropManual(TRUE);
+	}
+	pWeapon->SetAmmoWasSpawned(false);	//сбрасываем флажок спавна патронов
+}
+
+u32  CInventory::BeltWidth() const
+{
+	CActor* pActor = smart_cast<CActor*>(m_pOwner);
+	if (pActor)
+	{
+		//CWarBelt* warbelt = pActor->GetWarBelt();
+		//if (warbelt)
+		//{
+		//	return warbelt->GetBeltWidth();
+		//}
+	}
+	return 0; //m_iMaxBeltWidth;
+}
+
+u32  CInventory::BeltHeight() const
+{
+	CActor* pActor = smart_cast<CActor*>(m_pOwner);
+	if (pActor)
+	{
+		//CWarBelt* warbelt = pActor->GetWarBelt();
+		//if (warbelt)
+		//{
+		//	return warbelt->GetBeltHeight();
+		//}
+	}
+	return 0; //m_iMaxBeltHeight;
+}
+
+bool CInventory::activate_slot(u32 slot)
+{
+	switch (slot)
+	{
+	case  KNIFE_SLOT:
+		return true;
+	case  FIRST_WEAPON_SLOT:
+		return true;
+	case  SECOND_WEAPON_SLOT:
+		return true;
+	case  GRENADE_SLOT:
+		return true;
+	case  APPARATUS_SLOT:
+		return true;
+	case  BOLT_SLOT:
+		return true;
+	case  ARTEFACT_SLOT:
+		return true;
+	}
+
+	return false;
 }

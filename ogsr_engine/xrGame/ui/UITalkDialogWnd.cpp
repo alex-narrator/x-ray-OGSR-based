@@ -101,12 +101,19 @@ void CUITalkDialogWnd::Init(float x, float y, float width, float height)
 }
 
 #include "UIInventoryUtilities.h"
-	
+#include "../string_table.h"
 void CUITalkDialogWnd::Show()
 {
 	InventoryUtilities::SendInfoToActor				("ui_talk");
 	inherited::Show(true);
 	inherited::Enable(true);
+
+	// режим бартерной торговли
+	if (g_actor->GetPDA())
+		UIToTradeButton.SetText(*CStringTable().translate("ui_st_trade"));  //напишем "торговать" на кнопке, вместо "бартер"
+	else
+		UIToTradeButton.SetText(*CStringTable().translate("ui_st_barter")); //напишем "бартер" на кнопке, вместо "торговать"
+	//
 
 	ResetAll();
 }

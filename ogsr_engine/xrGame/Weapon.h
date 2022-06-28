@@ -123,6 +123,8 @@ public:
 		eMisfire,
 		eMagEmpty,
 		eSwitch,
+		//
+		eShutter, //затвор
 	};
 	enum EWeaponSubStates{
 		eSubstateReloadBegin		=0,
@@ -169,7 +171,8 @@ public:
 			bool IsScopeAttached			() const;
 			bool IsSilencerAttached			() const;
 
-	bool			IsGrenadeMode() const;
+//	bool			IsGrenadeMode() const;
+	virtual bool IsGrenadeMode() const { return false; };
 
 	virtual bool GrenadeLauncherAttachable() const;
 	virtual bool ScopeAttachable() const;
@@ -183,25 +186,25 @@ public:
 	virtual void InitAddons();
 
 	//для отоброажения иконок апгрейдов в интерфейсе
-	int	GetScopeX() {return m_iScopeX;}
-	int	GetScopeY() {return m_iScopeY;}
-	int	GetSilencerX() {return m_iSilencerX;}
-	int	GetSilencerY() {return m_iSilencerY;}
-	int	GetGrenadeLauncherX() {return m_iGrenadeLauncherX;}
-	int	GetGrenadeLauncherY() {return m_iGrenadeLauncherY;}
+	int	GetScopeX			();
+	int	GetScopeY			();
+	int	GetSilencerX		();
+	int	GetSilencerY		();
+	int	GetGrenadeLauncherX	();
+	int	GetGrenadeLauncherY	();
 
-	const shared_str& GetGrenadeLauncherName	() const		{return m_sGrenadeLauncherName;}
-	const shared_str& GetScopeName				() const		{return m_sScopeName;}
-	const shared_str& GetSilencerName			() const		{return m_sSilencerName;}
+	const shared_str GetScopeName				() const { return m_scopes		[m_cur_scope]		; }
+	const shared_str GetSilencerName			() const { return m_silencers	[m_cur_silencer]	; }
+	const shared_str GetGrenadeLauncherName		() const { return m_glaunchers	[m_cur_glauncher]	; }
 
 	u8		GetAddonsState						()		const		{return m_flagsAddOnState;};
 	void	SetAddonsState						(u8 st)	{m_flagsAddOnState=st;}
 
                                                                                //названия секций подключаемых аддонов
-    shared_str		m_sScopeName;
-    std::vector<shared_str> m_allScopeNames;
-    shared_str		m_sSilencerName;
-    shared_str		m_sGrenadeLauncherName;
+    //shared_str		m_sScopeName;
+    //std::vector<shared_str> m_allScopeNames;
+    //shared_str		m_sSilencerName;
+    //shared_str		m_sGrenadeLauncherName;
 
 	std::vector<shared_str> m_sWpn_scope_bones;
 	shared_str m_sWpn_silencer_bone;
@@ -241,6 +244,8 @@ protected:
 	bool			m_bScopeDynamicZoom;
 	//run-time zoom factor
 	float			m_fRTZoomFactor;
+	float			m_fMinScopeZoomFactor;
+	u32				m_uZoomStepCount;
 	//разрешение режима приближения
 	bool			m_bZoomEnabled;
 	//текущий фактор приближения
@@ -285,7 +290,8 @@ protected:
 public:
 
 	IC bool					IsZoomEnabled		()	const	{return m_bZoomEnabled;}
-	void					GetZoomData			(float scope_factor, float& delta, float& min_zoom_factor);
+//	void					GetZoomData			(float scope_factor, float& delta, float& min_zoom_factor);
+	float					GetZoomStepDelta	(float, float, u32);
 	virtual	void			ZoomChange			(bool inc);
 	virtual void			OnZoomIn			();
 	virtual void			OnZoomOut			();
@@ -308,9 +314,9 @@ public:
 			bool			IsRotatingToZoom	() const		{	return (m_fZoomRotationFactor<1.f);}
 			bool			IsRotatingFromZoom() const { return m_fZoomRotationFactor > 0.f; }
 
-	virtual float			Weight				() const;		
-	virtual u32				Cost				() const;
-	virtual float			GetControlInertionFactor() const;
+	virtual float			Weight				() /*const*/;		
+	virtual u32				Cost				() /*const*/;
+	virtual float			GetControlInertionFactor()/* const*/;
 
 public:
     virtual EHandDependence		HandDependence		()	const		{	return eHandDependence;}
@@ -429,6 +435,10 @@ protected:
 	float					conditionDecreasePerShot;
 	float					conditionDecreasePerShotOnHit;
 	float					conditionDecreasePerShotSilencer;
+	//увеличение изношености при выстреле из подствольника
+	float					conditionDecreasePerShotGL;
+	//увеличение изношености при выстреле с глушителем для самого глушителя
+	float					conditionDecreasePerShotSilencerSelf;
 
 	//  [8/2/2005]
 	float					m_fPDM_disp_base			;
@@ -498,6 +508,8 @@ protected:
 
 	virtual bool			IsNecessaryItem	    (const shared_str& item_sect);
 
+	bool					m_bAmmoWasSpawned;
+
 public:
 	xr_vector<shared_str>	m_ammoTypes;
 	xr_vector<shared_str>	m_highlightAddons;
@@ -516,7 +528,7 @@ public:
 	IC	bool				can_be_strapped				() const {return m_can_be_strapped;};
 
 	LPCSTR					GetCurrentAmmo_ShortName	();
-	float					GetMagazineWeight(const decltype(m_magazine)& mag) const;
+	float					GetAmmoInMagazineWeight		(const decltype(m_magazine)& mag);
 
 
 protected:
@@ -624,4 +636,28 @@ public:
 	inline bool IsFlashlightOn() const {
 		return m_flagsAddOnState & CSE_ALifeItemWeapon::eWeaponAddonFlashlightOn;
 	}
+
+public:
+	bool IsAmmoWasSpawned() { return m_bAmmoWasSpawned; };
+	void SetAmmoWasSpawned(bool value) { m_bAmmoWasSpawned = value; };
+	//
+	//какие патроны будут заряжены при смене типа боеприпаса
+	u32	GetNextAmmoType(bool looped);
+	//оружие использует отъёмный магазин
+	virtual bool	HasDetachableMagazine() const { return false; };
+	virtual bool	IsSingleReloading() { return false; };
+	//
+	IC void ReloadWeapon() { Reload(); };
+	virtual	bool TryToGetAmmo(u32) { return true; };
+
+	xr_vector<shared_str>	m_scopes;
+	u8						m_cur_scope;
+
+	xr_vector<shared_str>	m_silencers;
+	u8						m_cur_silencer;
+
+	xr_vector<shared_str>	m_glaunchers;
+	u8						m_cur_glauncher;
+
+	bool					camRecoilCompensation;
 };

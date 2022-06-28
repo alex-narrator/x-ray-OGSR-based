@@ -15,11 +15,15 @@
 #define PDA_SLOT			7
 #define DETECTOR_SLOT		8
 #define TORCH_SLOT			9
-#define HELMET_SLOT			10
-#define NIGHT_VISION_SLOT	11
-#define BIODETECTOR_SLOT	12
-
-#define SLOTS_TOTAL			13
+#define ARTEFACT_SLOT		10
+#define HELMET_SLOT			11
+#define QUICK_SLOT_0		12
+#define QUICK_SLOT_1		13
+#define QUICK_SLOT_2		14
+#define QUICK_SLOT_3		15
+#define WARBELT_SLOT		16
+#define BACKPACK_SLOT		17
+#define SLOTS_TOTAL			18
 
 #define RUCK_HEIGHT			280
 #define RUCK_WIDTH			7

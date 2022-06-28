@@ -145,12 +145,12 @@ void CUIItemInfo::InitItem(CInventoryItem* pInvItem)
 	}
 	if(UIWeight)
 	{
-		sprintf_s				(str, "%3.2f kg", pInvItem->Weight());
+		sprintf_s				(str, "%3.2f %s", pInvItem->Weight(), CStringTable().translate("st_kg").c_str());
 		UIWeight->SetText	(str);
 	}
 	if( UICost )
 	{
-		sprintf_s				(str, "%d RU", pInvItem->Cost());		// will be owerwritten in multiplayer
+		sprintf_s				(str, "%d %s", pInvItem->Cost(), CStringTable().translate("ui_st_money_regional").c_str());		// will be owerwritten in multiplayer
 		UICost->SetText		(str);
 	}
 
@@ -165,9 +165,9 @@ void CUIItemInfo::InitItem(CInventoryItem* pInvItem)
 	{
 		UIDesc->Clear();
 		VERIFY(0 == UIDesc->GetSize());
-		TryAddWpnInfo(pInvItem->object());
-		TryAddArtefactInfo(pInvItem->object().cNameSect());
-		TryAddCustomInfo(pInvItem->object());
+		TryAddWpnInfo		(pInvItem);
+		TryAddArtefactInfo	(pInvItem);
+		TryAddCustomInfo	(pInvItem);
 		if(m_desc_info.bShowDescrText)
 		{
 			CUIStatic* pItem					= xr_new<CUIStatic>();
@@ -199,7 +199,7 @@ void CUIItemInfo::InitItem(CInventoryItem* pInvItem)
 	}
 }
 
-void CUIItemInfo::TryAddWpnInfo (CPhysicsShellHolder &obj)
+void CUIItemInfo::TryAddWpnInfo (CInventoryItem* obj)
 {
 	if (UIWpnParams->Check(obj))
 	{
@@ -208,25 +208,22 @@ void CUIItemInfo::TryAddWpnInfo (CPhysicsShellHolder &obj)
 	}
 }
 
-void CUIItemInfo::TryAddArtefactInfo(const shared_str& af_section)
+void CUIItemInfo::TryAddArtefactInfo(CInventoryItem* obj)
 {
-	if (UIArtefactParams->Check(af_section))
-	{
-		UIArtefactParams->SetInfo(af_section);
-		UIDesc->AddWindow(UIArtefactParams, false);
-	}
+	UIArtefactParams->SetInfo(obj);
+	UIDesc->AddWindow(UIArtefactParams, false);
 }
 
 #include "script_game_object.h"
 
-void CUIItemInfo::TryAddCustomInfo(CPhysicsShellHolder& obj)
+void CUIItemInfo::TryAddCustomInfo(CInventoryItem* obj)
 {
 	if (pSettings->line_exist("engine_callbacks", "ui_item_info_callback"))
 	{
 		const char* callback = pSettings->r_string("engine_callbacks", "ui_item_info_callback");
 		if (luabind::functor<void> lua_function; ai().script_engine().functor(callback, lua_function))
 		{
-			lua_function(UIDesc, obj.lua_game_object());
+			lua_function(UIDesc, obj->object().lua_game_object());
 		}
 	}
 }

@@ -40,6 +40,7 @@ CWeaponMagazinedWGrenade::~CWeaponMagazinedWGrenade(void)
 	HUD_SOUND::DestroySound(sndShotG);
 	HUD_SOUND::DestroySound(sndReloadG);
 	HUD_SOUND::DestroySound(sndSwitch);
+	HUD_SOUND::DestroySound(sndShutterG);
 }
 
 void CWeaponMagazinedWGrenade::StopHUDSounds		()
@@ -47,6 +48,7 @@ void CWeaponMagazinedWGrenade::StopHUDSounds		()
 	HUD_SOUND::StopSound(sndShotG);
 	HUD_SOUND::StopSound(sndReloadG);
 	HUD_SOUND::StopSound(sndSwitch);
+	HUD_SOUND::StopSound(sndShutterG);
 
 	inherited::StopHUDSounds();
 }
@@ -61,7 +63,9 @@ void CWeaponMagazinedWGrenade::Load	(LPCSTR section)
 	HUD_SOUND::LoadSound(section,"snd_shoot_grenade"	, sndShotG		, m_eSoundShot);
 	HUD_SOUND::LoadSound(section,"snd_reload_grenade"	, sndReloadG	, m_eSoundReload);
 	HUD_SOUND::LoadSound(section,"snd_switch"			, sndSwitch		, m_eSoundReload);
-	
+	//
+	bool b_shutter_g_sound = !!pSettings->line_exist(section, "snd_shutter_g");
+	HUD_SOUND::LoadSound(section, b_shutter_g_sound ? "snd_shutter_g" : "snd_draw", sndShutterG, m_eSoundShutter);
 
 	m_sFlameParticles2 = pSettings->r_string(section, "grenade_flame_particles");
 
@@ -253,8 +257,19 @@ void  CWeaponMagazinedWGrenade::PerformSwitchGL()
 
 bool CWeaponMagazinedWGrenade::Action(s32 cmd, u32 flags) 
 {
-	if (m_bGrenadeMode && (cmd == kWPN_FIREMODE_PREV || cmd == kWPN_FIREMODE_NEXT))
+	if (m_bGrenadeMode && (cmd == kWPN_FIREMODE_PREV ||
+		cmd == kWPN_FIREMODE_NEXT ||
+		cmd == kWPN_ZOOM_INC ||
+		cmd == kWPN_ZOOM_DEC
+		))
 		return false;
+
+	if (m_bGrenadeMode && flags & CMD_START && cmd == kWPN_FIRE &&
+		IsGrenadeLauncherBroken())
+	{
+		OnEmptyClick();
+		return false;
+	}
 
 	if(inherited::Action(cmd, flags))
 		return true;
@@ -264,12 +279,12 @@ bool CWeaponMagazinedWGrenade::Action(s32 cmd, u32 flags)
 	// case kWPN_ZOOM:  ??? 
 	case kWPN_FUNC: 
 	{
-		if (!IsZoomed())
-		{
+		//if (!IsZoomed())
+		//{
 			if (flags&CMD_START)
 				SwitchState(eSwitch);
 			return true;
-		}
+		//}
 	}
 	}
 	return false;
@@ -311,7 +326,10 @@ void CWeaponMagazinedWGrenade::state_Fire(float dt)
 		{
 
 			fTime			+=	fTimeToFire;
-
+			//снижаем кондицию оружи при выстреле из ПГ
+			//Msg("GetWeaponDeterioration GL = %f", GetWeaponDeterioration());
+			ChangeCondition(-GetWeaponDeterioration());
+			//
 			++m_iShotNum;
 			OnShot			();
 			StateSwitchCallback(GameObject::eOnActorWeaponFire, GameObject::eOnNPCWeaponFire);
@@ -521,8 +539,8 @@ bool CWeaponMagazinedWGrenade::CanAttach(PIItem pIItem)
 	if(pGrenadeLauncher &&
 	   CSE_ALifeItemWeapon::eAddonAttachable == m_eGrenadeLauncherStatus &&
 	   0 == (m_flagsAddOnState&CSE_ALifeItemWeapon::eWeaponAddonGrenadeLauncher) &&
-	   !xr_strcmp(*m_sGrenadeLauncherName, pIItem->object().cNameSect()))
-       return true;
+	   std::find(m_glaunchers.begin(), m_glaunchers.end(), pIItem->object().cNameSect()) != m_glaunchers.end())
+	   return true;
 	else
 		return inherited::CanAttach(pIItem);
 }
@@ -530,9 +548,9 @@ bool CWeaponMagazinedWGrenade::CanAttach(PIItem pIItem)
 bool CWeaponMagazinedWGrenade::CanDetach(const char* item_section_name)
 {
 	if(CSE_ALifeItemWeapon::eAddonAttachable == m_eGrenadeLauncherStatus &&
-	   0 != (m_flagsAddOnState&CSE_ALifeItemWeapon::eWeaponAddonGrenadeLauncher) &&
-	   !xr_strcmp(*m_sGrenadeLauncherName, item_section_name))
-	   return true;
+		0 != (m_flagsAddOnState&CSE_ALifeItemWeapon::eWeaponAddonGrenadeLauncher) &&
+		std::find(m_glaunchers.begin(), m_glaunchers.end(), item_section_name) != m_glaunchers.end())
+		return true;
 	else
 	   return inherited::CanDetach(item_section_name);
 }
@@ -541,14 +559,17 @@ bool CWeaponMagazinedWGrenade::Attach(PIItem pIItem, bool b_send_event)
 {
 	CGrenadeLauncher* pGrenadeLauncher = smart_cast<CGrenadeLauncher*>(pIItem);
 	
-	if(pGrenadeLauncher &&
-	   CSE_ALifeItemWeapon::eAddonAttachable == m_eGrenadeLauncherStatus &&
-	   0 == (m_flagsAddOnState&CSE_ALifeItemWeapon::eWeaponAddonGrenadeLauncher) &&
-	   !xr_strcmp(*m_sGrenadeLauncherName, pIItem->object().cNameSect()))
+	if (pGrenadeLauncher &&
+		CSE_ALifeItemWeapon::eAddonAttachable == m_eGrenadeLauncherStatus &&
+		0 == (m_flagsAddOnState & CSE_ALifeItemWeapon::eWeaponAddonGrenadeLauncher))
 	{
+		auto it = std::find(m_glaunchers.begin(), m_glaunchers.end(), pIItem->object().cNameSect());
+		m_cur_glauncher = (u8)std::distance(m_glaunchers.begin(), it);
 		m_flagsAddOnState |= CSE_ALifeItemWeapon::eWeaponAddonGrenadeLauncher;
 
 		CRocketLauncher::m_fLaunchSpeed = pGrenadeLauncher->GetGrenadeVel();
+
+		m_fAttachedGrenadeLauncherCondition = pIItem->GetCondition();
 
  		//уничтожить подствольник из инвентаря
 		if(b_send_event)
@@ -565,11 +586,11 @@ bool CWeaponMagazinedWGrenade::Attach(PIItem pIItem, bool b_send_event)
         return inherited::Attach(pIItem, b_send_event);
 }
 
-bool CWeaponMagazinedWGrenade::Detach(const char* item_section_name, bool b_spawn_item)
+bool CWeaponMagazinedWGrenade::Detach(const char* item_section_name, bool b_spawn_item, float item_condition)
 {
 	if (CSE_ALifeItemWeapon::eAddonAttachable == m_eGrenadeLauncherStatus &&
-	   0 != (m_flagsAddOnState&CSE_ALifeItemWeapon::eWeaponAddonGrenadeLauncher) &&
-	   !xr_strcmp(*m_sGrenadeLauncherName, item_section_name))
+		0 != (m_flagsAddOnState & CSE_ALifeItemWeapon::eWeaponAddonGrenadeLauncher) &&
+		std::find(m_glaunchers.begin(), m_glaunchers.end(), item_section_name) != m_glaunchers.end())
 	{
 		// https://github.com/revolucas/CoC-Xray/pull/5/commits/9ca73da34a58ceb48713b1c67608198c6af26db2
 		// Now we need to unload GL's magazine
@@ -582,11 +603,15 @@ bool CWeaponMagazinedWGrenade::Detach(const char* item_section_name, bool b_spaw
 
 		m_flagsAddOnState &= ~CSE_ALifeItemWeapon::eWeaponAddonGrenadeLauncher;
 
+		m_cur_glauncher = 0;
+		if (b_spawn_item) item_condition = m_fAttachedGrenadeLauncherCondition;
+		m_fAttachedGrenadeLauncherCondition = 1.f;
+
 		UpdateAddonsVisibility();
-		return CInventoryItemObject::Detach(item_section_name, b_spawn_item);
+		return CInventoryItemObject::Detach(item_section_name, b_spawn_item, item_condition);
 	}
 	else
-		return inherited::Detach(item_section_name, b_spawn_item);
+		return inherited::Detach(item_section_name, b_spawn_item, item_condition);
 }
 
 void CWeaponMagazinedWGrenade::InitAddons()
@@ -597,7 +622,7 @@ void CWeaponMagazinedWGrenade::InitAddons()
 	{
 		if(IsGrenadeLauncherAttached())
 		{
-			CRocketLauncher::m_fLaunchSpeed = pSettings->r_float(*m_sGrenadeLauncherName,"grenade_vel");
+			CRocketLauncher::m_fLaunchSpeed = pSettings->r_float(GetGrenadeLauncherName(),"grenade_vel");
 		}
 	}
 
@@ -830,8 +855,8 @@ void CWeaponMagazinedWGrenade::load(IReader &input_packet)
 
 	load_data(m_bGrenadeMode, input_packet);
 	load_data(iAmmoElapsed2, input_packet);
-	if ( ai().get_alife()->header().version() >= 5 )
-	  load_data( m_ammoType2, input_packet );
+//	if ( ai().get_alife()->header().version() >= 5 )
+	load_data( m_ammoType2, input_packet );
 	//Msg( "~~[%s][%s] loaded: m_bGrenadeMode: [%d], iAmmoElapsed2: [%d], m_ammoType2: [%u]", __FUNCTION__, this->Name(), m_bGrenadeMode, iAmmoElapsed2, m_ammoType2 );
 }
 
@@ -851,6 +876,45 @@ bool CWeaponMagazinedWGrenade::IsNecessaryItem	    (const shared_str& item_sect)
 }
 
 
-float CWeaponMagazinedWGrenade::Weight() const {
-  return inherited::Weight() + GetMagazineWeight( m_magazine2 );
+float CWeaponMagazinedWGrenade::Weight() /*const*/ {
+  return inherited::Weight() + GetAmmoInMagazineWeight( m_magazine2 );
+}
+
+float CWeaponMagazinedWGrenade::GetWeaponDeterioration()
+{
+	if (!m_bGrenadeMode)
+		return inherited::GetWeaponDeterioration();
+
+	shared_str section = GrenadeLauncherAttachable() ? GetGrenadeLauncherName() : cNameSect();
+	conditionDecreasePerShotGL = READ_IF_EXISTS(pSettings, r_float, section, "condition_shot_dec_gl", 0.0f);
+
+	return conditionDecreasePerShotGL;
+}
+//
+void CWeaponMagazinedWGrenade::switch2_Shutter()
+{
+	if (m_bGrenadeMode)
+	{
+		PlaySound(sndShutterG, get_LastFP());
+		PlayAnimShutter();
+		SetPending(TRUE);
+	}
+	else
+		inherited::switch2_Shutter();
+}
+//
+void CWeaponMagazinedWGrenade::PlayAnimShutter()
+{
+	VERIFY(GetState() == eShutter);
+	if (m_bGrenadeMode)
+	{
+		PlayHUDMotion("anim_shutter_g", true, eSwitch);
+	}
+	else
+	{
+		if (IsGrenadeLauncherAttached())
+			PlayHUDMotion("anim_shutter_gl", true, eSwitch);
+		else
+			inherited::PlayAnimShutter();
+	}
 }

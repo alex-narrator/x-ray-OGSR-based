@@ -514,10 +514,6 @@
 		<text>Включить музыкальный эмбиент (требуется перезаход на локацию)</text>
 	</string>
 
-	<string id="ui_mm_ammunition_on_belt">
-		<text>Включить использование патронов только с пояса</text>
-	</string>
-
 	<!-- Окно "Звук" -->
 	<string id="ui_mm_sound">
 		<text>Звук</text>

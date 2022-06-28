@@ -305,6 +305,6 @@ Fvector CPHCapture::GetCapturePosition() {
   object->XFORM().transform_tiny( pos );
   CActor* A = smart_cast<CActor*>( m_character->PhysicsRefObject() );
   if ( A )
-    pos.mad( pos, A->Direction(), .5f );
+    pos.mad(pos, A->Direction(), A->m_fHoldingDistance);
   return pos;
 }

@@ -189,7 +189,7 @@ void CInventoryScript::script_register(lua_State *L)
 			.def_readwrite( "m_flags", &CInventoryItem::m_flags )
 			.def_readwrite( "always_ungroupable", &CInventoryItem::m_always_ungroupable )
 
-			.def_readwrite( "psy_health_restore_speed", &CInventoryItem::m_fPsyHealthRestoreSpeed )
+//			.def_readwrite( "psy_health_restore_speed", &CInventoryItem::m_fPsyHealthRestoreSpeed )
 			.def_readwrite( "radiation_restore_speed", &CInventoryItem::m_fRadiationRestoreSpeed )
 
 			//.property("class_name"						,			&get_lua_class_name)
@@ -203,7 +203,7 @@ void CInventoryScript::script_register(lua_State *L)
 			class_<CInventoryItemObject, bases<CInventoryItem, CGameObject>>("CInventoryItemObject"),
 
 			class_ <CInventory>("CInventory")
-			.def_readonly("max_belt"					,			&CInventory::m_iMaxBelt)
+//			.def_readonly("max_belt"					,			&CInventory::m_iMaxBelt)
 			.def_readwrite("max_weight"					,			&CInventory::m_fMaxWeight)
 			.def_readwrite("take_dist"					,			&CInventory::m_fTakeDist)
 			.def_readonly ("total_weight"				,			&CInventory::m_fTotalWeight)
@@ -278,8 +278,8 @@ void COutfitScript::script_register(lua_State *L)
 	module(L)
 		[
 			class_<CCustomOutfit, CInventoryItemObject>("CCustomOutfit")
-			.def_readwrite("additional_inventory_weight"		,		&CCustomOutfit::m_additional_weight)
-			.def_readwrite("additional_inventory_weight2"		,		&CCustomOutfit::m_additional_weight2)
+			//.def_readwrite("additional_inventory_weight"		,		&CCustomOutfit::m_additional_weight)
+			//.def_readwrite("additional_inventory_weight2"		,		&CCustomOutfit::m_additional_weight2)
 			.def_readwrite("power_loss"							,		&CCustomOutfit::m_fPowerLoss)			
 			.property("burn_protection"					,			&get_protection<ALife::eHitTypeBurn>					, 	&set_protection<ALife::eHitTypeBurn>)			
 			.property("strike_protection"				,			&get_protection<ALife::eHitTypeStrike>					,	&set_protection<ALife::eHitTypeStrike >)
@@ -354,27 +354,31 @@ void CWeaponScript::set_hit_power(CWeapon *wpn, luabind::object const& t)
 	vector.w = object_cast<float>(t[4]);	
 }
 
-LPCSTR get_scope_name(CWeapon *I) { return I->m_sScopeName.c_str(); }
+LPCSTR get_scope_name(CWeapon *I) { return I->GetScopeName().c_str(); }
 
 void set_scope_name(CWeapon* item, LPCSTR text)
 {
-	item->m_allScopeNames.erase(std::remove(item->m_allScopeNames.begin(), item->m_allScopeNames.end(), item->m_sScopeName), item->m_allScopeNames.end());
-	item->m_sScopeName = text;
-	item->m_allScopeNames.push_back(item->m_sScopeName);
+	item->m_scopes.erase(std::remove(item->m_scopes.begin(), item->m_scopes.end(), item->GetScopeName()), item->m_scopes.end());
+//	item->m_sScopeName = text;
+	item->m_scopes.push_back(text);
 }
 
-LPCSTR get_silencer_name(CWeapon *I) { return I->m_sSilencerName.c_str(); }
+LPCSTR get_silencer_name(CWeapon *I) { return I->GetSilencerName().c_str(); }
 
 void set_silencer_name(CWeapon *item, LPCSTR text)
 {
-    item->m_sSilencerName = text;
+//    item->m_sSilencerName = text;
+	item->m_silencers.erase(std::remove(item->m_silencers.begin(), item->m_silencers.end(), item->GetSilencerName()), item->m_silencers.end());
+	item->m_silencers.push_back(text);
 }
 
-LPCSTR get_grenade_launcher_name(CWeapon *I) { return I->m_sGrenadeLauncherName.c_str(); }
+LPCSTR get_grenade_launcher_name(CWeapon *I) { return I->GetGrenadeLauncherName().c_str(); }
 
 void set_grenade_launcher_name(CWeapon *item, LPCSTR text)
 {
-    item->m_sGrenadeLauncherName = text;
+//    item->m_sGrenadeLauncherName = text;
+	item->m_glaunchers.erase(std::remove(item->m_glaunchers.begin(), item->m_glaunchers.end(), item->GetGrenadeLauncherName()), item->m_glaunchers.end());
+	item->m_glaunchers.push_back(text);
 }
 
 void CWeaponScript::script_register(lua_State *L)

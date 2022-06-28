@@ -10,6 +10,8 @@
 #include "character_info.h"
 #include "inventory_space.h"
 
+#include "associative_vector.h"
+
 class CSE_Abstract;
 class CInventory;
 class CInventoryItem;
@@ -133,7 +135,7 @@ public:
 
 	//возвращает текуший разброс стрельбы (в радианах) с учетом движения
 	virtual float GetWeaponAccuracy			() const;
-	virtual float ArtefactsAddWeight ( bool = true ) const;
+//	virtual float ArtefactsAddWeight ( bool = true ) const;
 	//максимальный переносимы вес
 	virtual float GetCarryWeight			() const;
 	virtual float MaxCarryWeight			() const;
@@ -221,6 +223,15 @@ public:
 	virtual bool				NeedOsoznanieMode		() {return m_need_osoznanie_mode!=FALSE;}
 
   void SetNextItemSlot( u32 );
+
+  u32 u_BarterMoney; //отдельный денежный фонд NPC в режиме бартера
+
+  protected:
+	  //
+	  typedef associative_vector<shared_str, float>	DEFICITS;
+	  DEFICITS				m_deficits;
+	  float					deficit(const shared_str& section) const;
+	  //
 };
 
 #include "inventory_owner_inline.h"

@@ -201,6 +201,9 @@ void CHudItem::UpdateCL()
 			}
 		}
 	}
+
+	if (GetHUDmode())
+		Actor()->TryToBlockSprint(IsPending());
 }
 
 void CHudItem::OnH_A_Chield()

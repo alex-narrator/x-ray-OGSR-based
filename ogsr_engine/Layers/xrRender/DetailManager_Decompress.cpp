@@ -69,7 +69,7 @@ bool det_render_debug = false;
 
 #include "../../xr_3da/gamemtllib.h"
 
-extern float ps_current_detail_scale;
+//extern float ps_current_detail_scale;
 //#define		DBG_SWITCHOFF_RANDOMIZE
 void		CDetailManager::cache_Decompress(Slot* S)
 {

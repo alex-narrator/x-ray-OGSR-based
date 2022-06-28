@@ -474,15 +474,15 @@ float CScriptGameObject::GetBinocZoomFactor()
 	}
 	return k->GetZoomFactor();
 }
-void CScriptGameObject::SetBinocZoomFactor(float _zoom)
-{
-	CWeaponBinoculars						*k = smart_cast<CWeaponBinoculars*>(&object());
-	if (!k) {
-		ai().script_engine().script_log(ScriptStorage::eLuaMessageTypeError, "CWeaponBinoculars : cannot access class member SetBinocZoomFactor!");
-		return;
-	}
-	k->SetZoomFactor(_zoom);
-}
+//void CScriptGameObject::SetBinocZoomFactor(float _zoom)
+//{
+//	CWeaponBinoculars						*k = smart_cast<CWeaponBinoculars*>(&object());
+//	if (!k) {
+//		ai().script_engine().script_log(ScriptStorage::eLuaMessageTypeError, "CWeaponBinoculars : cannot access class member SetBinocZoomFactor!");
+//		return;
+//	}
+//	k->SetZoomFactor(_zoom);
+//}
 float CScriptGameObject::GetZoomFactor()
 {
 	CWeapon						*k = smart_cast<CWeapon*>(&object());

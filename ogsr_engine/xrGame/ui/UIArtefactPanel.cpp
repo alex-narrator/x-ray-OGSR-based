@@ -2,7 +2,7 @@
 #include "UIArtefactPanel.h"
 #include "UIInventoryUtilities.h"
 #include "UIXmlInit.h"
-#include "../artifact.h"
+#include "inventory_item.h"
 
 void CUIArtefactPanel::InitFromXML	(CUIXml& xml, LPCSTR path, int index)
 {
@@ -12,16 +12,16 @@ void CUIArtefactPanel::InitFromXML	(CUIXml& xml, LPCSTR path, int index)
 	m_fScale					= xml.ReadAttribFlt(path, index, "scale");
 }
 
-void CUIArtefactPanel::InitIcons(const TIItemContainer& artefacts)
+void CUIArtefactPanel::InitIcons(const TIItemContainer& items)
 {
 	m_si.SetShader(InventoryUtilities::GetEquipmentIconsShader());
 	m_vRects.clear_and_free();
 	
-	for(const auto& art : artefacts)
+	for(const auto& art : items)
 	{
-		const auto artefact = smart_cast<CArtefact*>(art);
-		if ( artefact ) {
-			m_vRects.push_back( &( artefact->m_icon_params ) );
+		const auto item = smart_cast<CInventoryItem*>(art);
+		if (item) {
+			m_vRects.push_back( &(item->m_icon_params ) );
 		}
 	}
 }

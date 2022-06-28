@@ -8,7 +8,6 @@ class CUIScrollView;
 class CUIProgressBar;
 class CUIWpnParams;
 class CUIArtefactParams;
-class CPhysicsShellHolder;
 
 //extern const char * const 		fieldsCaptionColor;
 
@@ -31,9 +30,9 @@ public:
 	void				Init				(LPCSTR xml_name);
 	void				InitItem			(CInventoryItem* pInvItem);
 
-	void				TryAddWpnInfo		(CPhysicsShellHolder& obj);
-	void				TryAddArtefactInfo(const shared_str& af_section);
-	void				TryAddCustomInfo(CPhysicsShellHolder& obj);
+	void				TryAddWpnInfo		(CInventoryItem* obj);
+	void				TryAddArtefactInfo	(CInventoryItem* obj);
+	void				TryAddCustomInfo	(CInventoryItem* obj);
 
 	virtual void		Draw				();
 	bool				m_b_force_drawing;

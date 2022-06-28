@@ -235,15 +235,15 @@ void CCustomDetectorSHOC::OnMoveToRuck(EItemPlace prevPlace)
 	TurnOff();
 }
 
-void CCustomDetectorSHOC::OnMoveToSlot()
+void CCustomDetectorSHOC::OnMoveToSlot(EItemPlace prevPlace)
 {
-	inherited::OnMoveToSlot();
+	inherited::OnMoveToSlot(prevPlace);
 	TurnOn();
 }
 
-void CCustomDetectorSHOC::OnMoveToBelt()
+void CCustomDetectorSHOC::OnMoveToBelt(EItemPlace prevPlace)
 {
-	inherited::OnMoveToBelt();
+	inherited::OnMoveToBelt(prevPlace);
 	TurnOn();
 }
 

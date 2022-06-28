@@ -2,6 +2,7 @@
 #include "WeaponKnife.h"
 #include "Entity.h"
 #include "Actor.h"
+#include "ActorCondition.h"
 #include "level.h"
 #include "xr_level_controller.h"
 #include "../xr_3da/gamemtllib.h"
@@ -10,6 +11,7 @@
 #include "game_cl_single.h"
 #include "game_object_space.h"
 #include "Level_Bullet_Manager.h"
+#include "HUDManager.h"
 
 #define KNIFE_MATERIAL_NAME "objects\\knife"
 
@@ -37,6 +39,8 @@ void CWeaponKnife::Load	(LPCSTR section)
 	HUD_SOUND::LoadSound(section,"snd_shoot"		, m_sndShot		, ESoundTypes(SOUND_TYPE_WEAPON_SHOOTING)		);
 	
 	knife_material_idx =  GMLib.GetMaterialIdx(KNIFE_MATERIAL_NAME);
+
+	m_fMinConditionHitPart = READ_IF_EXISTS(pSettings, r_float, section, "min_condition_hit_part", 1.0f);
 }
 
 void CWeaponKnife::OnStateSwitch(u32 S, u32 oldState)
@@ -132,8 +136,19 @@ void CWeaponKnife::KnifeStrike(u32 state, const Fvector& pos, const Fvector& dir
 
 		PlaySound(m_sndShot, pos);
 
-		if ( ParentIsActor() && !fis_zero( conditionDecreasePerShotOnHit ) && GetCondition() < 0.95f )
-                  cur_fHit = cur_fHit * ( GetCondition() / 0.95f );
+		if (ParentIsActor())
+		{
+			if (!fis_zero(conditionDecreasePerShotOnHit))
+			{
+				float condition_k = m_fMinConditionHitPart + (1 - m_fMinConditionHitPart) * GetCondition();
+				float power_k = Actor()->conditions().GetPowerKoef();
+				cur_fHit = cur_fHit * condition_k * power_k;
+				//Msg("knife hit [%f], condition_k [%f], power_k [%f]", fCurrentHit, condition_k, power_k);
+			}
+			if (fis_zero(GetCondition()))
+				m_eHitType = m_eHitType_ZeroCondition;
+		}
+
 		SBullet& bullet = Level().BulletManager().AddBullet(pos,
 			dir,
 			m_fStartBulletSpeed,
@@ -237,6 +252,7 @@ void CWeaponKnife::switch2_Hiding()
 	FireEnd();
 	VERIFY(GetState() == eHiding);
 	PlayHUDMotion({ "anim_hide", "anm_hide" }, true, GetState());
+	SetPending(TRUE);
 }
 
 void CWeaponKnife::switch2_Hidden()
@@ -249,23 +265,43 @@ void CWeaponKnife::switch2_Showing()
 {
 	VERIFY(GetState() == eShowing);
 	PlayHUDMotion({ "anim_draw", "anm_show" }, false, GetState());
+	SetPending(TRUE);
 }
 
 void CWeaponKnife::FireStart()
 {
-	inherited::FireStart();
-	SwitchState(eFire);
+	if (!ParentIsActor() || (ParentIsActor() && !Actor()->conditions().IsCantWalk()))
+	{
+		inherited::FireStart();
+		SwitchState(eFire);
+	}
+	//
+	if (ParentIsActor() && !GodMode())
+	{
+		if (!Actor()->conditions().IsCantWalk())
+			Actor()->conditions().ConditionJump(Weight() * 0.1f);
+		else
+			HUD().GetUI()->AddInfoMessage("cant_walk");
+	}
+	//
 }
 
 void CWeaponKnife::Fire2Start () 
 {
-	inherited::Fire2Start();
-	SwitchState(eFire2);
-
-	if (ParentIsActor())
+	if (!ParentIsActor() || (ParentIsActor() && !Actor()->conditions().IsCantWalk()))
 	{
-		Actor()->set_state_wishful(Actor()->get_state_wishful() & (~mcSprint));
+		inherited::Fire2Start();
+		SwitchState(eFire2);
 	}
+
+	if (ParentIsActor() && !GodMode())
+	{
+		if (!Actor()->conditions().IsCantWalk())
+			Actor()->conditions().ConditionJump(Weight() * 0.1f);
+		else
+			HUD().GetUI()->AddInfoMessage("cant_walk");
+	}
+	//
 }
 
 
@@ -275,7 +311,7 @@ bool CWeaponKnife::Action(s32 cmd, u32 flags)
 	switch(cmd) 
 	{
 		case kWPN_ZOOM : 
-			if(flags&CMD_START) Fire2Start();
+			if(flags&CMD_START && !IsPending()) Fire2Start(); //!IsPending() добавлено чтобы Fire2Start() вызывался только по окончании атаки а не по каждому нажатию kWPN_ZOOM
 			else Fire2End();
 			return true;
 	}
@@ -318,6 +354,8 @@ void CWeaponKnife::LoadFireParams(LPCSTR section, LPCSTR prefix)
 
 	fHitImpulse_2		= pSettings->r_float	(section,strconcat(sizeof(full_name),full_name, prefix, "hit_impulse_2"));
 	m_eHitType_2		= ALife::g_tfString2HitType(pSettings->r_string(section, "hit_type_2"));
+
+	m_eHitType_ZeroCondition = ALife::g_tfString2HitType(READ_IF_EXISTS(pSettings, r_string, section, "hit_type_zero_condition", "wound"));
 }
 
 void CWeaponKnife::GetBriefInfo(xr_string& str_name, xr_string& icon_sect_name, xr_string& str_count)

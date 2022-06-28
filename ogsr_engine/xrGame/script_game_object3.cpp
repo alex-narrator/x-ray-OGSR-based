@@ -236,7 +236,8 @@ float CScriptGameObject::GetCurrentOutfitProtection(int hit_type)
 	CCustomOutfit* o = smart_cast<CCustomOutfit*>(current_equipment);
 	if(!o)				return 0.0f;
 
-	return		1.0f - o->GetDefHitTypeProtection(ALife::EHitType(hit_type));
+//	return		1.0f - o->GetDefHitTypeProtection(ALife::EHitType(hit_type));
+	return		/*1.0f - */o->GetHitTypeProtection(ALife::EHitType(hit_type));
 }
 
 CScriptGameObject *CScriptGameObject::GetFood() const
@@ -970,7 +971,7 @@ void CScriptGameObject::SetMaxWeight(float _weight)
 	}
 	e->inventory().SetMaxWeight(_weight);
 }
-void CScriptGameObject::SetMaxWalkWeight(float _weight)
+/*void CScriptGameObject::SetMaxWalkWeight(float _weight)
 {
 	CActor						*e = smart_cast<CActor*>(&object());
 	if (!e) {
@@ -978,7 +979,7 @@ void CScriptGameObject::SetMaxWalkWeight(float _weight)
 		return;
 	}
 	e->conditions().SetMaxWalkWeight(_weight);
-}
+}*/
 
 float CScriptGameObject::GetMaxWeight() const
 {
@@ -991,7 +992,7 @@ float CScriptGameObject::GetMaxWeight() const
 
 	return e->MaxCarryWeight();
 }
-float CScriptGameObject::GetMaxWalkWeight() const
+/*float CScriptGameObject::GetMaxWalkWeight() const
 {
 	auto e = smart_cast<CActor*>(&object());
 	if (!e)
@@ -1005,7 +1006,7 @@ float CScriptGameObject::GetMaxWalkWeight() const
 		max_w += outfit->m_additional_weight;
 
 	return max_w;
-}
+}*/
 float CScriptGameObject::GetInventoryWeight() const
 {
 	auto e = smart_cast<CInventoryOwner*>(&object());

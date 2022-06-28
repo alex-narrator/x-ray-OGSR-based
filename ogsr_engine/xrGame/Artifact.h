@@ -40,6 +40,7 @@ public:
 	
 	virtual BOOL					net_Spawn						(CSE_Abstract* DC);
 	virtual void					net_Destroy						();
+	virtual void					net_Export						(CSE_Abstract* E);
 
 	virtual void					OnH_A_Chield					();
 	virtual void					OnH_B_Independent				(bool just_before_destroy);
@@ -97,12 +98,30 @@ public:
 	float							m_fSatietyRestoreSpeed;
 	float							m_fPowerRestoreSpeed;
 	float							m_fBleedingRestoreSpeed;
+	float							m_fPsyHealthRestoreSpeed;
+	float							m_fAlcoholRestoreSpeed;
 	float							m_fThirstRestoreSpeed;
 
-	float m_additional_weight;
-	float m_additional_weight2;
+	HitImmunity::HitTypeSVec		m_HitTypeProtection;
 
-	CHitImmunity 					m_ArtefactHitImmunities;
+	float                           m_fAdditionalWalkAccel;
+	float                           m_fAdditionalJumpSpeed;
+	float							m_fAdditionalMaxWeight;
+	float							m_fAdditionalMaxVolume;
+	//
+	float							m_fRandomKMin;
+	float							m_fRandomKMax;
+	float							m_fRandomK;
+	float							GetRandomKoef() { return m_fRandomK; };
+
+	float							GetAdditionalWalkAccel();
+	float							GetAdditionalJumpSpeed();
+	float							GetAdditionalMaxWeight();
+	float							GetAdditionalMaxVolume();
+	float							GetHitTypeProtection(ALife::EHitType hit_type);
+
+	virtual void					UpdateConditionDecrease(float) override;
+
 public:
 	enum EAFHudStates {
 		eIdle		= 0,
@@ -120,7 +139,7 @@ public:
 	virtual void					OnStateSwitch		(u32 S, u32 oldState);
 	virtual void					OnAnimationEnd		(u32 state);
 	virtual bool					IsHidden			()	const	{return GetState()==eHidden;}
-	virtual void					GetBriefInfo(xr_string& str_name, xr_string& icon_sect_name, xr_string& str_count);
+//	virtual void					GetBriefInfo(xr_string& str_name, xr_string& icon_sect_name, xr_string& str_count);
 
 	// optimization FAST/SLOW mode
 public:						

@@ -31,6 +31,8 @@ protected:
 	float				fWallmarkSize;
 	u16					knife_material_idx;
 
+	float				m_fMinConditionHitPart; //минимальная доля хита при полном износе
+
 protected:	
 
 	ALife::EHitType		m_eHitType_1;
@@ -42,6 +44,8 @@ protected:
 	//float				fHitPower_2;
 	Fvector4			fvHitPower_2;
 	float				fHitImpulse_2;
+
+	ALife::EHitType		m_eHitType_ZeroCondition; //тип хита при полном износе
 protected:
 	virtual void		LoadFireParams					(LPCSTR section, LPCSTR prefix);
 public:

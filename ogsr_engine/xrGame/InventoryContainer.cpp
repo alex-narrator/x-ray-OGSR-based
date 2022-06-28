@@ -54,7 +54,7 @@ u32	CInventoryContainer::CalcItems	(SItemsInfo &info) const
 			result++;
 			info.weight += itm->Weight();
 			info.cost	+= itm->Cost();
-			float rsp = itm->RadiationRestoreSpeed();
+			float rsp = itm->m_fRadiationRestoreSpeed;
 			info.info[0] += rsp > 0 ? rsp : 0; // нейтрализаторы радиации из рюкзака не работают (артефакты в т.ч.)
 		}
 	}

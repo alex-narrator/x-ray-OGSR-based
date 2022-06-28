@@ -16,6 +16,9 @@ public:
 private:
 							EState				m_curren_state;
 							CUIStatic			m_states[stLast];
+							CUIStatic			UIStaticMotionBack;
+							CUIStatic			UIStaticLuminocity;
+							CUIStatic			UIStaticNoise;
 							CUIProgressBar		m_power_progress;
 							CUIProgressBar		m_luminosity_progress;
 							CUIProgressBar		m_noise_progress;
@@ -45,4 +48,9 @@ public:
 			void			SetLuminosity		(float Pos);
 			void			SetActorVisibility	(u16 who_id, float value);
 			void			ResetVisibility		();
+			//
+			void			InitStateColorize	();
+			u32             u_ColorDefault;
+			void			SetStateWarningColor	(EState state); //раскраска иконки положения персонажа
+			xr_vector<float>						m_Thresholds;	//Пороги изменения цвета индикатора, загружаемые из system.ltx
 };

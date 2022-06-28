@@ -52,8 +52,14 @@ CInventoryItem::CInventoryItem()
 	m_Description		= "";
 	m_cell_item			= NULL;
 
-	m_fPsyHealthRestoreSpeed = 0.f;
-	m_fRadiationRestoreSpeed = 0.f;
+	m_fRadiationRestoreSpeed	= 0.f;
+	m_fRadiationAccumFactor		= 0.f;
+	m_fRadiationAccumLimit		= 0.f;
+
+	m_fTTLOnDecrease			= 0.f;
+	m_fLastTimeCalled			= 0.f;
+
+	b_brake_item = false;
 
 	loaded_belt_index = (u8)(-1);
 	m_highlight_equipped = false;
@@ -96,6 +102,8 @@ void CInventoryItem::Load(LPCSTR section)
 	m_weight			= pSettings->r_float(section, "inv_weight");
 	R_ASSERT			(m_weight>=0.f);
 
+	m_volume			= READ_IF_EXISTS(pSettings, r_float, section, "inv_volume", .0f);
+
 	m_cost				= pSettings->r_u32(section, "cost");
 
 	m_slots_sect = READ_IF_EXISTS( pSettings, r_string, section, "slot", "" );
@@ -114,7 +122,7 @@ void CInventoryItem::Load(LPCSTR section)
             SetSlot( m_slots[ 0 ] );
 	}
 
-	if (Core.Features.test(xrCore::Feature::forcibly_equivalent_slots)) {
+/*	if (Core.Features.test(xrCore::Feature::forcibly_equivalent_slots)) {
 		// В OGSR, первый и второй оружейные слоты принудительно
         // равнозначны. Что бы сохранить совместимость с этим, если
         // для предмета указан только один слот и это оружейный слот,
@@ -125,7 +133,7 @@ void CInventoryItem::Load(LPCSTR section)
           else if ( m_slots[ 0 ] == SECOND_WEAPON_SLOT )
             m_slots.push_back( FIRST_WEAPON_SLOT );
         }
-	}
+	}*/
 
 	// Description
 	if ( pSettings->line_exist(section, "description") )
@@ -141,11 +149,29 @@ void CInventoryItem::Load(LPCSTR section)
 	m_fControlInertionFactor	= READ_IF_EXISTS(pSettings, r_float,section,"control_inertion_factor",	1.0f);
 	m_icon_name					= READ_IF_EXISTS(pSettings, r_string,section,"icon_name",				NULL);
 
-	m_fPsyHealthRestoreSpeed = READ_IF_EXISTS( pSettings, r_float, section,	"psy_health_restore_speed", 0.f );
-	m_fRadiationRestoreSpeed = READ_IF_EXISTS( pSettings, r_float, section,	"radiation_restore_speed", 0.f );
+	//m_fPsyHealthRestoreSpeed = READ_IF_EXISTS( pSettings, r_float, section,	"psy_health_restore_speed", 0.f );
+	//m_fRadiationRestoreSpeed = READ_IF_EXISTS( pSettings, r_float, section,	"radiation_restore_speed", 0.f );
 	m_always_ungroupable = READ_IF_EXISTS( pSettings, r_bool, section, "always_ungroupable", false );
 
 	m_need_brief_info = READ_IF_EXISTS( pSettings, r_bool, section, "show_brief_info", true );
+
+	if (pSettings->line_exist(section, "use_condition"))
+		m_flags.set(FUsingCondition, pSettings->r_bool(section, "use_condition"));
+
+	m_bBreakOnZeroCondition = !!READ_IF_EXISTS(pSettings, r_bool, section, "break_on_zero_condition", FALSE);
+
+	if (pSettings->line_exist(section, "break_particles"))
+		m_sBreakParticles = pSettings->r_string(section, "break_particles");
+
+	if (pSettings->line_exist(section, "break_sound"))
+		sndBreaking.create(pSettings->r_string(section, "break_sound"), st_Effect, sg_SourceType);
+
+	//радіація
+	m_fRadiationRestoreSpeed	=	READ_IF_EXISTS	( pSettings, r_float, section,	"radiation_restore_speed", 0.f );
+	m_fRadiationAccumFactor		=	READ_IF_EXISTS	( pSettings, r_float, section,	"radiation_accum_factor",  0.f );	
+	m_fRadiationAccumLimit		=	READ_IF_EXISTS	( pSettings, r_float, section,	"radiation_accum_limit",   0.f );	
+	//
+	m_fTTLOnDecrease			=	READ_IF_EXISTS	(pSettings, r_float, section,	"ttl_on_dec", 0.f);
 }
 
 
@@ -203,12 +229,21 @@ bool CInventoryItem::IsPlaceable( u8 min_slot, u8 max_slot ) {
 
 void	CInventoryItem::Hit					(SHit* pHDS)
 {
-	if( !m_flags.test(FUsingCondition) ) return;
-
 	float hit_power = pHDS->damage();
 	hit_power *= m_HitTypeK[pHDS->hit_type];
 
+	if (pHDS->type() == ALife::eHitTypeRadiation && !fis_zero(m_fRadiationAccumFactor))
+	{
+		m_fRadiationRestoreSpeed += m_fRadiationAccumFactor * pHDS->damage();
+		clamp<float>(m_fRadiationRestoreSpeed, -m_fRadiationAccumLimit, m_fRadiationAccumLimit);
+		//Msg("! item [%s] current m_fRadiationRestoreSpeed [%.3f]", object().cName().c_str(), m_fRadiationRestoreSpeed);
+	}
+
+	if (!m_flags.test(FUsingCondition)) return;
+
 	ChangeCondition(-hit_power);
+
+	TryBreakToPieces(true);
 }
 
 const char* CInventoryItem::Name() 
@@ -274,7 +309,9 @@ void CInventoryItem::UpdateCL()
 	}
 
 #endif
-
+	if (b_brake_item)
+		object().DestroyObject();
+	UpdateConditionDecrease(Level().GetGameDayTimeSec());
 }
 
 void CInventoryItem::OnEvent (NET_Packet& P, u16 type)
@@ -328,7 +365,7 @@ void CInventoryItem::OnEvent (NET_Packet& P, u16 type)
 //процесс отсоединения вещи заключается в спауне новой вещи 
 //в инвентаре и установке соответствующих флагов в родительском
 //объекте, поэтому функция должна быть переопределена
-bool CInventoryItem::Detach(const char* item_section_name, bool b_spawn_item) 
+bool CInventoryItem::Detach(const char* item_section_name, bool b_spawn_item, float item_condition)
 {
 	if (OnClient()) return true;
 	if(b_spawn_item)
@@ -340,7 +377,10 @@ bool CInventoryItem::Detach(const char* item_section_name, bool b_spawn_item)
 		R_ASSERT			(l_tpALifeDynamicObject);
 		
 		l_tpALifeDynamicObject->m_tNodeID = object().ai_location().level_vertex_id();
-			
+		//
+		CSE_ALifeInventoryItem* item = smart_cast<CSE_ALifeInventoryItem*>(l_tpALifeDynamicObject);
+		if (item) item->m_fCondition = item_condition;
+		//
 		// Fill
 		D->s_name			=	item_section_name;
 		D->set_name_replace	("");
@@ -386,6 +426,14 @@ BOOL CInventoryItem::net_Spawn			(CSE_Abstract* DC)
 	CSE_ALifeInventoryItem			*pSE_InventoryItem = smart_cast<CSE_ALifeInventoryItem*>(e);
 	if (!pSE_InventoryItem)			return TRUE;
 
+	m_fRadiationRestoreSpeed = pSE_InventoryItem->m_fRadiationRestoreSpeed;
+	if (fis_zero(pSE_InventoryItem->m_fLastTimeCalled))
+		pSE_InventoryItem->m_fLastTimeCalled = Level().GetGameDayTimeSec();
+	m_fLastTimeCalled = pSE_InventoryItem->m_fLastTimeCalled;
+
+	if (!fis_zero(m_fTTLOnDecrease))
+		object().processing_activate();
+
 	return							TRUE;
 }
 
@@ -420,6 +468,9 @@ void CInventoryItem::save(NET_Packet &packet)
 void CInventoryItem::net_Export( CSE_Abstract* E ) {
   CSE_ALifeInventoryItem* item = smart_cast<CSE_ALifeInventoryItem*>( E );
   item->m_u8NumItems = 0;
+  item->m_fCondition = m_fCondition;
+  item->m_fRadiationRestoreSpeed = m_fRadiationRestoreSpeed;
+  item->m_fLastTimeCalled = m_fLastTimeCalled;
 };
 
 void CInventoryItem::load(IReader &packet)
@@ -671,7 +722,7 @@ void CInventoryItem::SetLoadedBeltIndex( u8 pos ) {
 }
 
 
-void CInventoryItem::OnMoveToSlot() {
+void CInventoryItem::OnMoveToSlot(EItemPlace prevPlace) {
   if ( smart_cast<CActor*>( object().H_Parent() )/* && !smart_cast<CGrenade*>( this )*/) {
     if ( Core.Features.test( xrCore::Feature::equipped_untradable ) ) {
       m_flags.set( FIAlwaysUntradable, TRUE );
@@ -687,7 +738,7 @@ void CInventoryItem::OnMoveToSlot() {
 };
 
 
-void CInventoryItem::OnMoveToBelt() {
+void CInventoryItem::OnMoveToBelt(EItemPlace prevPlace) {
   if ( smart_cast<CActor*>( object().H_Parent() ) ) {
     if ( Core.Features.test( xrCore::Feature::equipped_untradable ) ) {
       m_flags.set( FIAlwaysUntradable, TRUE );
@@ -717,3 +768,80 @@ void CInventoryItem::OnMoveToRuck(EItemPlace prevPlace) {
     }
   }
 };
+
+float	CInventoryItem::GetControlInertionFactor()
+{
+	//значение задано принудительно
+	bool b_manually_set = !!pSettings->line_exist(object().cNameSect(), "control_inertion_factor");
+
+	float weight_k = sqrtf(Weight());
+	//чтобы очень лёгкие предметы не давали огромной чувствительности
+	clamp(weight_k, 1.f, weight_k);
+
+	return b_manually_set ? m_fControlInertionFactor : weight_k;
+}
+
+bool  CInventoryItem::WillBeBroken()
+{
+	return m_bBreakOnZeroCondition && fis_zero(GetCondition()) && !IsQuestItem();
+}
+
+void CInventoryItem::TryBreakToPieces(bool play_effects)
+{
+	if (WillBeBroken() && !b_brake_item)
+	{
+		b_brake_item = true;
+
+		if (play_effects)
+		{
+			if (object().H_Parent())
+			{
+				//играем звук
+				sndBreaking.play_at_pos(object().H_Parent(), object().H_Parent()->Position(), false);
+				SetDropManual(TRUE);
+			}
+			else
+			{
+				//играем звук
+				sndBreaking.play_at_pos(cast_game_object(), object().Position(), false);
+				//отыграть партиклы разбивания
+				if (*m_sBreakParticles)
+				{
+					//показываем эффекты
+					CParticlesObject* pStaticPG;
+					pStaticPG = CParticlesObject::Create(*m_sBreakParticles, TRUE);
+					pStaticPG->play_at_pos(object().Position());
+				}
+			}
+		}
+	}
+}
+
+void CInventoryItem::UpdateConditionDecrease(float current_time)
+{
+	if (fis_zero(m_fTTLOnDecrease) ||
+		fis_zero(m_fCondition)) return;
+
+	float delta_time = 0.f;
+
+	if (current_time > m_fLastTimeCalled)
+		delta_time = current_time - m_fLastTimeCalled;
+
+	m_fLastTimeCalled = Level().GetGameDayTimeSec();
+
+	float condition_dec =
+		(1.f / (m_fTTLOnDecrease * 3600.f)) *	//приведення до ігрових годин
+		delta_time;
+
+	ChangeCondition(-condition_dec);
+
+	TryBreakToPieces(false);
+	//	Msg("IItem [%s] change condition on [%.6f]|current condition [%.6f]|delta_time  [%.6f], current time [%.6f]", object().cName().c_str(), condition_dec, GetCondition(), delta_time, current_time);
+}
+
+void CInventoryItem::GetBriefInfo(xr_string& str_name, xr_string& icon_sect_name, xr_string& str_count)
+{
+	str_name = Name();
+	str_count = "";
+	icon_sect_name = *m_object->cNameSect();
+}

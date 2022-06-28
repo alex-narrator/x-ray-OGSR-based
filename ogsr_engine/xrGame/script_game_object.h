@@ -609,12 +609,12 @@ public:
 			// инвентарь
 			float				GetActorMaxWeight					() const;
 			void				SetActorMaxWeight					(float max_weight);
-			float				GetActorMaxWalkWeight				() const;
+/*			float				GetActorMaxWalkWeight				() const;
 			void				SetActorMaxWalkWeight				(float max_walk_weight);
 			float				GetAdditionalMaxWeight				() const;
 			void				SetAdditionalMaxWeight				(float add_max_weight);
 			float				GetAdditionalMaxWalkWeight			() const;
-			void				SetAdditionalMaxWalkWeight			(float add_max_walk_weight);
+			void				SetAdditionalMaxWalkWeight			(float add_max_walk_weight);*/
 			float				GetTotalWeight						() const;
 			float				Weight								() const;
 			/*************************************************** added by Ray Twitty (aka Shadows) END ***************************************************/
@@ -656,9 +656,9 @@ public:
 			void				SetCamFOV(float _fov);
 
 			void				SetMaxWeight(float _weight);
-			void				SetMaxWalkWeight(float _weight);
+//			void				SetMaxWalkWeight(float _weight);
 			float				GetMaxWeight() const;
-			float				GetMaxWalkWeight() const;
+//			float				GetMaxWalkWeight() const;
 			float				GetInventoryWeight() const;
 			u32					CalcItemPrice(CScriptGameObject *item, bool b_buying) const;
 
@@ -679,7 +679,7 @@ public:
 			u16					GetBoneID(LPCSTR _bone_name);
 
 			float				GetBinocZoomFactor();
-			void				SetBinocZoomFactor(float _zoom);
+//			void				SetBinocZoomFactor(float _zoom);
 			float				GetZoomFactor();
 
 			u8					GetAddonFlags();

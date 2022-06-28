@@ -13,6 +13,7 @@
 #include "game_object_space.h"
 #include "script_callback_ex.h"
 #include "script_game_object.h"
+#include "xrServer_Objects_ALife_Items.h"
 
 const float default_grenade_detonation_threshold_hit=100;
 CGrenade::CGrenade(void) 
@@ -56,8 +57,28 @@ BOOL CGrenade::net_Spawn(CSE_Abstract* DC)
 	box.mul								(3.f);
 	CExplosive::SetExplosionSize		(box);
 	m_thrown							= false;
+	//
+	if (auto se_grenade = smart_cast<CSE_ALifeItemGrenade*>(DC))
+		if (se_grenade->m_dwDestroyTimeMax != NULL) //загружаем значение задержки из серверного объекта
+			m_dwDestroyTimeMax = se_grenade->m_dwDestroyTimeMax;
+		else										//попытаемся сгенерировать задержку
+		{
+			LPCSTR str = pSettings->r_string(cNameSect(), "destroy_time");
+			int cnt = _GetItemCount(str);
+			if (cnt > 1)							//заданы границы рандомной задержки до взрыва
+			{
+				Ivector2 m = pSettings->r_ivector2(cNameSect(), "destroy_time");
+				m_dwDestroyTimeMax = ::Random.randI(m.x, m.y);
+			}
+		}
+	//
 	return								ret;
 }
+
+void CGrenade::net_Export(CSE_Abstract* E) {
+	auto se_grenade = smart_cast<CSE_ALifeItemGrenade*>(E);
+	se_grenade->m_dwDestroyTimeMax = m_dwDestroyTimeMax;
+};
 
 void CGrenade::net_Destroy() 
 {
@@ -204,13 +225,13 @@ void CGrenade::PutNextToSlot()
 		NET_Packet						P;
 		m_pCurrentInventory->Ruck		(this);
 
-		this->u_EventGen				(P, GEG_PLAYER_ITEM2RUCK, this->H_Parent()->ID());
+		this->u_EventGen				(P, psActorFlags.test(AF_AMMO_FROM_BELT) ? GEG_PLAYER_ITEM2BELT : GEG_PLAYER_ITEM2RUCK, this->H_Parent()->ID());
 		P.w_u16							(this->ID());
 		this->u_EventSend				(P);
 
-		CGrenade *pNext					= smart_cast<CGrenade*>(	m_pCurrentInventory->Same(this,true)		);
+		CGrenade *pNext					= smart_cast<CGrenade*>(	m_pCurrentInventory->Same(this, !psActorFlags.test(AF_AMMO_FROM_BELT))		);
 		if(!pNext) 
-			pNext						= smart_cast<CGrenade*>(	m_pCurrentInventory->SameSlot(GRENADE_SLOT, this, true)	);
+			pNext						= smart_cast<CGrenade*>(	m_pCurrentInventory->SameSlot(GRENADE_SLOT, this, !psActorFlags.test(AF_AMMO_FROM_BELT))	);
 
 		VERIFY							(pNext != this);
 
@@ -265,38 +286,77 @@ bool CGrenade::Action(s32 cmd, u32 flags)
 					|| state == eIdle
 					|| state == eBore)
 				{
-					if (m_pCurrentInventory)
+					if (m_pCurrentInventory && m_pCurrentInventory->GetActiveSlot() == GRENADE_SLOT) //переключать типы гранат можно только из гранатного слота
 					{
-						TIItemContainer::iterator it = m_pCurrentInventory->m_ruck.begin();
-						TIItemContainer::iterator it_e = m_pCurrentInventory->m_ruck.end();
-						/*	for(;it!=it_e;++it)
+						// (c) NanoBot
+						xr_vector<shared_str>    types_sect_grn;        // текущий список секций гранат
+						// Находим список секций гранат разных типов в активе
+						// в m_belt или m_ruck нет гранаты которую актор держит в руках, т.е. this
+						types_sect_grn.push_back(this->cNameSect());
+						int        count_types = 1;    // текущие количество типов гранат в активе
+						//GRENADE_FROM_BELT
+						auto placement = psActorFlags.test(AF_AMMO_FROM_BELT) ? m_pCurrentInventory->m_belt : m_pCurrentInventory->m_ruck;
+						TIItemContainer::iterator    it = placement.begin(), it_e = placement.end();
+
+						for (; it != it_e; ++it)
+						{
+							CGrenade* pGrenade = smart_cast<CGrenade*>(*it);
+							if (pGrenade)
 							{
-								CGrenade *pGrenade = smart_cast<CGrenade*>(*it);
-								if(pGrenade && xr_strcmp(pGrenade->cNameSect(), cNameSect()))
+								// составляем список типов гранат (с) НаноБот
+								xr_vector<shared_str>::const_iterator    I = types_sect_grn.begin();
+								xr_vector<shared_str>::const_iterator    E = types_sect_grn.end();
+								bool    new_type = true;
+								for (; I != E; ++I)
+								{
+									if (!xr_strcmp(pGrenade->cNameSect(), *I)) // если совпадают
+										new_type = false;
+								}
+								if (new_type)    // новый тип гранаты?, добавляем
+								{
+									types_sect_grn.push_back(pGrenade->cNameSect());
+									count_types++;
+								}
+							}
+						}
+						// Если типов больше 1 то, сортируем список по алфавиту
+						// и находим номер текущей гранаты в списке.
+						if (count_types > 1)
+						{
+							int        curr_num = 0;        // номер типа текущей гранаты
+							std::sort(types_sect_grn.begin(), types_sect_grn.end());
+							xr_vector<shared_str>::const_iterator    I = types_sect_grn.begin();
+							xr_vector<shared_str>::const_iterator    E = types_sect_grn.end();
+							for (; I != E; ++I)
+							{
+								if (!xr_strcmp(this->cNameSect(), *I)) // если совпадают
+									break;
+								curr_num++;
+							}
+							int        next_num = curr_num + 1;    // номер секции следующей гранаты
+							if (next_num >= count_types)    next_num = 0;
+							shared_str    sect_next_grn = types_sect_grn[next_num];    // секция следущей гранаты
+							// Ищем в активе гранату с секцией следущего типа
+							//GRENADE_FROM_BELT
+							auto placement = psActorFlags.test(AF_AMMO_FROM_BELT) ? m_pCurrentInventory->m_belt : m_pCurrentInventory->m_ruck;
+							TIItemContainer::iterator    it = placement.begin(), it_e = placement.end();
+
+							for (; it != it_e; ++it)
+							{
+								CGrenade* pGrenade = smart_cast<CGrenade*>(*it);
+								if (pGrenade && !xr_strcmp(pGrenade->cNameSect(), sect_next_grn))
 								{
 									m_pCurrentInventory->Ruck(this);
 									m_pCurrentInventory->SetActiveSlot(NO_ACTIVE_SLOT);
 									m_pCurrentInventory->Slot(pGrenade);
+									//GRENADE_FROM_BELT
+									if (/*Belt()*/psActorFlags.test(AF_AMMO_FROM_BELT))
+										m_pCurrentInventory->Belt(this);                    // текущую гранату, обратно в пояс.
 									return true;
 								}
-							}*/
-						xr_map<shared_str, CGrenade *> tmp; tmp.insert(mk_pair(cNameSect(), this));
-						for (; it != it_e; ++it)
-						{
-							CGrenade *pGrenade = smart_cast<CGrenade*>(*it);
-							if (pGrenade && (tmp.find(pGrenade->cNameSect()) == tmp.end()))
-								tmp.insert(mk_pair(pGrenade->cNameSect(), pGrenade));
+							}
 						}
-						xr_map<shared_str, CGrenade *>::iterator curr_it = tmp.find(cNameSect());
-						curr_it++;
-						CGrenade *tgt;
-						if (curr_it != tmp.end())
-							tgt = curr_it->second;
-						else
-							tgt = tmp.begin()->second;
-						m_pCurrentInventory->Ruck(this);
-						m_pCurrentInventory->SetActiveSlot(NO_ACTIVE_SLOT);
-						m_pCurrentInventory->Slot(tgt);
+						return true;
 					}
 				}
 			}
@@ -349,13 +409,21 @@ void CGrenade::Deactivate( bool now )
 
 	inherited::Deactivate( now || ( GetState() == eThrowStart || GetState() == eReady || GetState() == eThrow) );
 }
-
+#include "hudmanager.h"
+#include "ui/UIMainIngameWnd.h"
 void CGrenade::GetBriefInfo(xr_string& str_name, xr_string& icon_sect_name, xr_string& str_count)
 {
-	str_name				= NameShort();
-	u32 ThisGrenadeCount	= m_pCurrentInventory->dwfGetSameItemCount(*cNameSect(), true);
+	str_name = NameShort();
+	bool SearchRuck = !psActorFlags.test(AF_AMMO_FROM_BELT);
+	u32 ThisGrenadeCount = m_pCurrentInventory->GetSameItemCount(*cNameSect(), SearchRuck);
 	string16				stmp;
-	sprintf_s					(stmp, "%d", ThisGrenadeCount);
-	str_count				= stmp;
-	icon_sect_name			= *cNameSect();
+	auto CurrentHUD = HUD().GetUI()->UIMainIngameWnd;
+
+	if (CurrentHUD->IsHUDElementAllowed(eGear))
+		sprintf_s(stmp, "%d", ThisGrenadeCount);
+	else if (CurrentHUD->IsHUDElementAllowed(eActiveItem))
+		sprintf_s(stmp, "");
+
+	str_count = stmp;
+	icon_sect_name = *cNameSect();
 }

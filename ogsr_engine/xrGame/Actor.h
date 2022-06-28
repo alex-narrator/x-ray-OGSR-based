@@ -22,6 +22,7 @@ class CInfoPortion;
 struct GAME_NEWS_DATA;
 class CActorCondition;
 class CCustomOutfit;
+class CCustomDetector;
 class CKnownContactsRegistryWrapper;
 class CEncyclopediaRegistryWrapper;
 class CGameTaskRegistryWrapper;
@@ -70,6 +71,7 @@ struct ActorRestoreParams
 	float	SatietyRestoreSpeed;
 	float	RadiationRestoreSpeed;
 	float	PsyHealthRestoreSpeed;
+	float	AlcoholRestoreSpeed;
 	float	ThirstRestoreSpeed;
 };
 
@@ -214,12 +216,11 @@ public:
 	//свойства артефактов
 	virtual void		UpdateArtefactsOnBelt();
 
-	virtual ActorRestoreParams		ActiveArtefactsOnBelt();
-	virtual float					HitArtefactsOnBelt( float, ALife::EHitType, bool = false );
+	virtual float		HitArtefactsOnBelt	( float, ALife::EHitType, bool = false );
 
 	virtual void		UpdateArtefactPanel();
 protected:
-	void ApplyArtefactEffects(ActorRestoreParams&, CArtefact*);
+//	void ApplyArtefactEffects(ActorRestoreParams&, CArtefact*);
 	//звук тяжелого дыхания
 	ref_sound			m_HeavyBreathSnd;
 	ref_sound			m_BloodSnd;
@@ -770,6 +771,33 @@ private:
 public:
 	IC void	SetDrugRadProtection(float _prot) { m_fDrugRadProtectionCoeff = _prot; };
 	IC void	SetDrugPsyProtection(float _prot) { m_fDrugPsyProtectionCoeff = _prot; };
+
+	float   m_fThrowImpulse;	//сила с которой актор отбрасывает предмет
+	float	m_fKickImpulse;		//сила с которой актор пинает предмет
+	float	m_fHoldingDistance; //расстояние перед актором на котором находится удерживаемый предмет
+	void	ActorThrow();
+	void	ActorKick();
+	//множитель для управления интенсивностью эффектора качания в прицеливании
+	float	GetZoomEffectorK();
+	void	SetHardHold(bool val) { m_bIsHardHold = val; };
+	bool	IsHardHold() { return m_bIsHardHold || is_actor_creep(); };
+
+	void	TryToBlockSprint(bool bReason);
+	//визначаємо чи треба передати хіт до рюкзака та його вмісту
+	bool	IsHitToBackPack(SHit* pHDS);
+
+	bool	HasDetector();
+
+	bool GetAmmoPlacement() { return m_bRuckAmmoPlacement; };
+	void SetAmmoPlacement(bool set_ruck) { m_bRuckAmmoPlacement = set_ruck; };
+
+	bool IsAllItemsLoaded() { return m_bRuckAmmoPlacement; };
+	void SetAllItemsLoaded(bool val) { bAllItemsLoaded = val; };
+
+protected:
+	bool	m_bIsHardHold;
+	bool	m_bRuckAmmoPlacement;
+	bool	bAllItemsLoaded;
 };
 
 extern bool		isActorAccelerated			(u32 mstate, bool ZoomMode);

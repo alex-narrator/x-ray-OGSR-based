@@ -22,17 +22,22 @@ CCustomOutfit::CCustomOutfit()
 
 	m_flags.set(FUsingCondition, TRUE);
 
-	m_HitTypeProtection.resize(ALife::eHitTypeMax);
-	for(int i=0; i<ALife::eHitTypeMax; i++)
-		m_HitTypeProtection[i] = 1.0f;
+	m_HitTypeProtection.clear	();
+	m_HitTypeProtection.resize	(ALife::eHitTypeMax);
 
 	m_boneProtection = xr_new<SBoneProtections>();
 
-	m_fBleedingRestoreSpeed  = 0.f;
-	m_fHealthRestoreSpeed    = 0.f;
-	m_fPowerRestoreSpeed     = 0.f;
-	m_fSatietyRestoreSpeed   = 0.f;
-	m_fThirstRestoreSpeed    = 0.f;
+	m_fHealthRestoreSpeed		= 0.f;
+	m_fSatietyRestoreSpeed		= 0.f;
+	m_fPowerRestoreSpeed		= 0.f;
+	m_fBleedingRestoreSpeed		= 0.f;
+	m_fPsyHealthRestoreSpeed	= 0.f;
+	m_fAlcoholRestoreSpeed		= 0.f;
+	m_fThirstRestoreSpeed		= 0.f;
+	m_fAdditionalMaxWeight		= 0.f;
+	m_fAdditionalMaxVolume		= 0.f;
+	m_fAdditionalWalkAccel		= 0.f;
+	m_fAdditionalJumpSpeed		= 0.f;
 }
 
 CCustomOutfit::~CCustomOutfit() 
@@ -40,83 +45,95 @@ CCustomOutfit::~CCustomOutfit()
 	xr_delete(m_boneProtection);
 }
 
-void CCustomOutfit::net_Export( CSE_Abstract* E ) {
-  inherited::net_Export( E );
-  CSE_ALifeInventoryItem *itm = smart_cast<CSE_ALifeInventoryItem*>( E );
-  itm->m_fCondition = m_fCondition;
-}
+//void CCustomOutfit::net_Export( CSE_Abstract* E ) {
+//  inherited::net_Export( E );
+//  CSE_ALifeInventoryItem *itm = smart_cast<CSE_ALifeInventoryItem*>( E );
+//  itm->m_fCondition = m_fCondition;
+//}
 
 void CCustomOutfit::Load(LPCSTR section) 
 {
 	inherited::Load(section);
 
-	m_HitTypeProtection[ALife::eHitTypeBurn]		= pSettings->r_float(section,"burn_protection");
-	m_HitTypeProtection[ALife::eHitTypeStrike]		= pSettings->r_float(section,"strike_protection");
-	m_HitTypeProtection[ALife::eHitTypeShock]		= pSettings->r_float(section,"shock_protection");
-	m_HitTypeProtection[ALife::eHitTypeWound]		= pSettings->r_float(section,"wound_protection");
-	m_HitTypeProtection[ALife::eHitTypeRadiation]	= pSettings->r_float(section,"radiation_protection");
-	m_HitTypeProtection[ALife::eHitTypeTelepatic]	= pSettings->r_float(section,"telepatic_protection");
-	m_HitTypeProtection[ALife::eHitTypeChemicalBurn]= pSettings->r_float(section,"chemical_burn_protection");
-	m_HitTypeProtection[ALife::eHitTypeExplosion]	= pSettings->r_float(section,"explosion_protection");
-	m_HitTypeProtection[ALife::eHitTypeFireWound]	= pSettings->r_float(section,"fire_wound_protection");
-	m_HitTypeProtection[ALife::eHitTypePhysicStrike]= READ_IF_EXISTS(pSettings, r_float, section, "physic_strike_protection", 0.0f);
+	//*_restore_speed
+	m_fHealthRestoreSpeed								= READ_IF_EXISTS(pSettings, r_float, section, "health_restore_speed",		0.f);
+//	m_fRadiationRestoreSpeed							= READ_IF_EXISTS(pSettings, r_float, section, "radiation_restore_speed",	0.f);
+	m_fSatietyRestoreSpeed								= READ_IF_EXISTS(pSettings, r_float, section, "satiety_restore_speed",		0.f);
+	m_fPowerRestoreSpeed								= READ_IF_EXISTS(pSettings, r_float, section, "power_restore_speed",		0.f);
+	m_fBleedingRestoreSpeed								= READ_IF_EXISTS(pSettings, r_float, section, "bleeding_restore_speed",		0.f);
+	m_fPsyHealthRestoreSpeed							= READ_IF_EXISTS(pSettings, r_float, section, "psy_health_restore_speed",	0.f);
+	m_fAlcoholRestoreSpeed								= READ_IF_EXISTS(pSettings, r_float, section, "alcohol_restore_speed",		0.f);
+	m_fThirstRestoreSpeed								= READ_IF_EXISTS( pSettings, r_float, section, "thirst_restore_speed",		0.f );
+	//addition
+	m_fAdditionalMaxWeight								= READ_IF_EXISTS(pSettings, r_float, section, "additional_max_weight",		0.f);
+	m_fAdditionalMaxVolume								= READ_IF_EXISTS(pSettings, r_float, section, "additional_max_volume",		0.f);
+	m_fAdditionalWalkAccel								= READ_IF_EXISTS(pSettings, r_float, section, "additional_walk_accel",		0.f);
+	m_fAdditionalJumpSpeed								= READ_IF_EXISTS(pSettings, r_float, section, "additional_jump_speed",		0.f);
+	//protection
+	m_HitTypeProtection[ALife::eHitTypeBurn]			= READ_IF_EXISTS(pSettings, r_float, section, "burn_protection",			0.f);
+	m_HitTypeProtection[ALife::eHitTypeStrike]			= READ_IF_EXISTS(pSettings, r_float, section, "strike_protection",			0.f);
+	m_HitTypeProtection[ALife::eHitTypeShock]			= READ_IF_EXISTS(pSettings, r_float, section, "shock_protection",			0.f);
+	m_HitTypeProtection[ALife::eHitTypeWound]			= READ_IF_EXISTS(pSettings, r_float, section, "wound_protection",			0.f);
+	m_HitTypeProtection[ALife::eHitTypeRadiation]		= READ_IF_EXISTS(pSettings, r_float, section, "radiation_protection",		0.f);
+	m_HitTypeProtection[ALife::eHitTypeTelepatic]		= READ_IF_EXISTS(pSettings, r_float, section, "telepatic_protection",		0.f);
+	m_HitTypeProtection[ALife::eHitTypeChemicalBurn]	= READ_IF_EXISTS(pSettings, r_float, section, "chemical_burn_protection",	0.f);
+	m_HitTypeProtection[ALife::eHitTypeExplosion]		= READ_IF_EXISTS(pSettings, r_float, section, "explosion_protection",		0.f);
+	m_HitTypeProtection[ALife::eHitTypeFireWound]		= READ_IF_EXISTS(pSettings, r_float, section, "fire_wound_protection",		0.f);
+	m_HitTypeProtection[ALife::eHitTypeWound_2]			= READ_IF_EXISTS(pSettings, r_float, section, "wound_2_protection",			0.f);
+	m_HitTypeProtection[ALife::eHitTypePhysicStrike]	= READ_IF_EXISTS(pSettings, r_float, section, "physic_strike_protection",	0.f);
 
-	if (pSettings->line_exist(section, "actor_visual"))
-		m_ActorVisual = pSettings->r_string(section, "actor_visual");
-	else
-		m_ActorVisual = NULL;
+	//if (pSettings->line_exist(section, "actor_visual"))
+	//	m_ActorVisual = pSettings->r_string(section, "actor_visual");
+	//else
+	//	m_ActorVisual = NULL;
+
+	m_ActorVisual = READ_IF_EXISTS(pSettings, r_string, section, "actor_visual", nullptr);
 
 	m_ef_equipment_type		= pSettings->r_u32(section,"ef_equipment_type");
-	if (pSettings->line_exist(section, "power_loss"))
-		m_fPowerLoss = pSettings->r_float(section, "power_loss");
-	else
-		m_fPowerLoss = 1.0f;	
 
-	m_additional_weight				= pSettings->r_float(section,"additional_inventory_weight");
-	m_additional_weight2			= pSettings->r_float(section,"additional_inventory_weight2");
+	m_fPowerLoss = READ_IF_EXISTS(pSettings, r_float, section, "power_loss", 1.f);
+	//if (pSettings->line_exist(section, "power_loss"))
+	//	m_fPowerLoss = pSettings->r_float(section, "power_loss");
+	//else
+	//	m_fPowerLoss = 1.0f;	
 
-	if (pSettings->line_exist(section, "nightvision_sect"))
-		m_NightVisionSect = pSettings->r_string(section, "nightvision_sect");
-	else
-		m_NightVisionSect = NULL;
+	//if (pSettings->line_exist(section, "nightvision_sect"))
+	//	m_NightVisionSect = pSettings->r_string(section, "nightvision_sect");
+	//else
+	//	m_NightVisionSect = NULL;
 
 	m_full_icon_name								= pSettings->r_string(section,"full_icon_name");
 
-	m_fBleedingRestoreSpeed  = READ_IF_EXISTS( pSettings, r_float, section, "bleeding_restore_speed", 0.f );
-	m_fHealthRestoreSpeed    = READ_IF_EXISTS( pSettings, r_float, section, "health_restore_speed", 0.f );
-	m_fPowerRestoreSpeed     = READ_IF_EXISTS( pSettings, r_float, section, "power_restore_speed", 0.f );
-	m_fSatietyRestoreSpeed   = READ_IF_EXISTS( pSettings, r_float, section, "satiety_restore_speed", 0.f );
-	m_fThirstRestoreSpeed    = READ_IF_EXISTS( pSettings, r_float, section, "thirst_restore_speed", 0.f );
-
-	m_artefact_count = READ_IF_EXISTS(pSettings, r_u32, section, "artefact_count", pSettings->r_u32("inventory", "max_belt"));
+//	m_artefact_count = READ_IF_EXISTS(pSettings, r_u32, section, "artefact_count", pSettings->r_u32("inventory", "max_belt"));
 }
 
-void CCustomOutfit::Hit(float hit_power, ALife::EHitType hit_type)
+//void CCustomOutfit::Hit(float hit_power, ALife::EHitType hit_type)
+//{
+//	hit_power *= m_HitTypeK[hit_type];
+//	if (hit_power > 0)
+//	{
+//		ChangeCondition(-hit_power);
+//	}
+//}
+
+float CCustomOutfit::GetHitTypeProtection(ALife::EHitType hit_type)
 {
-	hit_power *= m_HitTypeK[hit_type];
-	if (hit_power > 0)
-	{
-		ChangeCondition(-hit_power);
-	}
+	return m_HitTypeProtection[hit_type] * GetCondition();
 }
 
-float CCustomOutfit::GetDefHitTypeProtection(ALife::EHitType hit_type)
-{
-	return 1.0f - m_HitTypeProtection[hit_type]*GetCondition();
-}
+//float CCustomOutfit::GetHitTypeProtection(ALife::EHitType hit_type, s16 element)
+//{
+//	float fBase = m_HitTypeProtection[hit_type]*GetCondition();
+//	float bone = m_boneProtection->getBoneProtection(element);
+//	return 1.0f - fBase*bone;
+//}
 
-float CCustomOutfit::GetHitTypeProtection(ALife::EHitType hit_type, s16 element)
+float	CCustomOutfit::HitThruArmour(SHit* pHDS/*float hit_power, s16 element, float AP*/)
 {
-	float fBase = m_HitTypeProtection[hit_type]*GetCondition();
-	float bone = m_boneProtection->getBoneProtection(element);
-	return 1.0f - fBase*bone;
-}
-
-float	CCustomOutfit::HitThruArmour(float hit_power, s16 element, float AP)
-{
-	float BoneArmour = m_boneProtection->getBoneArmour(element)*GetCondition()*(1-AP);	
+	float hit_power = pHDS->damage();
+	float BoneArmour = m_boneProtection->getBoneArmour(pHDS->bone()/*element*/) * GetCondition() * (1 - pHDS->ap/*AP*/);
 	float NewHitPower = hit_power - BoneArmour;
-	if (NewHitPower < hit_power*m_boneProtection->m_fHitFrac) return hit_power*m_boneProtection->m_fHitFrac;
+	if (NewHitPower < hit_power * m_boneProtection->m_fHitFrac) return hit_power * m_boneProtection->m_fHitFrac;
 	return NewHitPower;
 };
 
@@ -126,9 +143,10 @@ BOOL	CCustomOutfit::BonePassBullet					(int boneID)
 };
 
 #include "torch.h"
-void	CCustomOutfit::OnMoveToSlot		()
+void	CCustomOutfit::OnMoveToSlot		(EItemPlace prevPlace)
 {
-	inherited::OnMoveToSlot();
+	inherited::OnMoveToSlot(prevPlace);
+	
 	if (m_pCurrentInventory)
 	{
 		CActor* pActor = smart_cast<CActor*> (m_pCurrentInventory->GetOwner());
@@ -147,22 +165,52 @@ void	CCustomOutfit::OnMoveToSlot		()
 			else
 				g_player_hud->load_default();
 
-			smart_cast<CUIGameSP*>(HUD().GetUI()->UIGame())->InventoryMenu->UpdateOutfit();
+//			smart_cast<CUIGameSP*>(HUD().GetUI()->UIGame())->InventoryMenu->UpdateOutfit();
 		}
 	}
 }
 
-void CCustomOutfit::OnDropOrMoveToRuck() {
+//void CCustomOutfit::OnDropOrMoveToRuck() {
+//	if (m_pCurrentInventory && !Level().is_removing_objects())
+//	{
+//		CActor* pActor = smart_cast<CActor*> (m_pCurrentInventory->GetOwner());
+//		if (pActor)
+//		{
+//			CTorch* pTorch = smart_cast<CTorch*>(pActor->inventory().ItemFromSlot(TORCH_SLOT));
+//			if (pTorch)
+//			{
+//				pTorch->SwitchNightVision(false);
+//			}
+//			if (m_ActorVisual.size())
+//			{
+//				shared_str DefVisual = pActor->GetDefaultVisualOutfit();
+//				if (DefVisual.size())
+//				{
+//					pActor->ChangeVisual(DefVisual);
+//				}
+//			}
+//
+//			g_player_hud->load_default();
+//
+////			smart_cast<CUIGameSP*>(HUD().GetUI()->UIGame())->InventoryMenu->UpdateOutfit();
+//		}
+//	}
+//}
+
+void CCustomOutfit::OnMoveToRuck(EItemPlace prevPlace) 
+{
+	inherited::OnMoveToRuck(prevPlace);
+
 	if (m_pCurrentInventory && !Level().is_removing_objects())
 	{
 		CActor* pActor = smart_cast<CActor*> (m_pCurrentInventory->GetOwner());
-		if (pActor)
+		if (pActor && prevPlace == eItemPlaceSlot)
 		{
-			CTorch* pTorch = smart_cast<CTorch*>(pActor->inventory().ItemFromSlot(TORCH_SLOT));
-			if (pTorch)
-			{
-				pTorch->SwitchNightVision(false);
-			}
+			//CTorch* pTorch = smart_cast<CTorch*>(pActor->inventory().ItemFromSlot(TORCH_SLOT));
+			//if (pTorch)
+			//{
+			//	pTorch->SwitchNightVision(false);
+			//}
 			if (m_ActorVisual.size())
 			{
 				shared_str DefVisual = pActor->GetDefaultVisualOutfit();
@@ -174,22 +222,23 @@ void CCustomOutfit::OnDropOrMoveToRuck() {
 
 			g_player_hud->load_default();
 
-			smart_cast<CUIGameSP*>(HUD().GetUI()->UIGame())->InventoryMenu->UpdateOutfit();
+//			smart_cast<CUIGameSP*>(HUD().GetUI()->UIGame())->InventoryMenu->UpdateOutfit();
 		}
 	}
 }
 
-void CCustomOutfit::OnMoveToRuck(EItemPlace prevPlace) {
-	inherited::OnMoveToRuck(prevPlace);
+void CCustomOutfit::OnMoveOut(EItemPlace prevPlace)
+{
+	inherited::OnMoveOut(prevPlace);
 
-	OnDropOrMoveToRuck();
+	OnMoveToRuck(prevPlace);
 }
 
-void CCustomOutfit::OnDrop() {
-	inherited::OnDrop();
-
-	OnDropOrMoveToRuck();
-}
+//void CCustomOutfit::OnDrop() {
+//	inherited::OnDrop();
+//
+//	OnDropOrMoveToRuck();
+//}
 
 u32	CCustomOutfit::ef_equipment_type	() const
 {
@@ -204,3 +253,23 @@ float CCustomOutfit::GetPowerLoss()
 	};
 	return m_fPowerLoss;
 };
+
+float CCustomOutfit::GetAdditionalMaxWeight()
+{
+	return m_fAdditionalMaxWeight * GetCondition();
+}
+
+float CCustomOutfit::GetAdditionalMaxVolume()
+{
+	return m_fAdditionalMaxVolume * GetCondition();
+}
+
+float CCustomOutfit::GetAdditionalWalkAccel()
+{
+	return m_fAdditionalWalkAccel * GetCondition();
+}
+
+float CCustomOutfit::GetAdditionalJumpSpeed()
+{
+	return m_fAdditionalJumpSpeed * GetCondition();
+}

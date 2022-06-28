@@ -6,7 +6,7 @@ class CCartridge
 public:
 	CCartridge();
 	void Load(LPCSTR section, u8 LocalAmmoType);
-	float Weight() const;
+	virtual float Weight() /*const*/;
 
 	shared_str	m_ammoSect;
 	enum{
@@ -29,6 +29,8 @@ public:
 
 	shared_str	m_InvShortName;
 	RStringVec	m_ExplodeParticles;
+	//вероятность осечки
+	float		m_misfireProbability;
 };
 
 class CWeaponAmmo :	public CInventoryItemObject {
@@ -41,16 +43,16 @@ public:
 	virtual void					Load				(LPCSTR section);
 	virtual BOOL					net_Spawn			(CSE_Abstract* DC);
 	virtual void					net_Destroy			();
-	virtual void net_Export( CSE_Abstract* E );
+	virtual void					net_Export			( CSE_Abstract* E );
 	virtual void					OnH_B_Chield		();
 	virtual void					OnH_B_Independent	(bool just_before_destroy);
 	virtual void					UpdateCL			();
 	virtual void					renderable_Render	();
 
 	virtual bool					Useful				() const;
-	virtual float					Weight				() const;
+	virtual float					Weight				() /*const*/;
 
-	virtual u32						Cost				() const;
+	virtual u32						Cost				() /*const*/;
 	bool							Get					(CCartridge &cartridge);
 
 	float		m_kDist, m_kDisp, m_kHit, m_kImpulse, m_kPierce, m_kAP, m_kAirRes, m_kSpeed;
@@ -62,6 +64,21 @@ public:
 	u16			m_boxSize;
 	u16			m_boxCurr;
 	bool		m_tracer;
+	//
+	shared_str	m_ammoSect, m_EmptySect;
+	shared_str	m_InvShortName;
+	//вероятность осечки от патрона
+	float		m_misfireProbability;
+	//вероятность осечки от магазина
+	float		m_misfireProbabilityBox;
+
+	xr_vector<shared_str>		m_ammoTypes;
+	xr_vector<shared_str>		m_magTypes;
+	virtual bool IsBoxReloadable		() const;
+	virtual bool IsBoxReloadableEmpty	() const;
+	void ReloadBox				(LPCSTR ammo_sect);
+	void UnloadBox				();
+	void SpawnAmmo				(u32 boxCurr = 0xffffffff, LPCSTR ammoSect = NULL, u32 ParentID = 0xffffffff);
 
 public:
 	virtual CInventoryItem *can_make_killing	(const CInventory *inventory) const;

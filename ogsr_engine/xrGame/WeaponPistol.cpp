@@ -22,15 +22,15 @@ void CWeaponPistol::net_Destroy()
 	HUD_SOUND::DestroySound(sndClose);
 }
 
-void CWeaponPistol::net_Relcase(CObject *object)
-{
-	inherited::net_Relcase(object);
-}
+//void CWeaponPistol::net_Relcase(CObject *object)
+//{
+//	inherited::net_Relcase(object);
+//}
 
-void CWeaponPistol::OnDrawUI()
-{
-	inherited::OnDrawUI();
-}
+//void CWeaponPistol::OnDrawUI()
+//{
+//	inherited::OnDrawUI();
+//}
 
 void CWeaponPistol::Load	(LPCSTR section)
 {
@@ -158,7 +158,7 @@ void CWeaponPistol::PlayAnimAim()
 void CWeaponPistol::PlayAnimReload()
 {
 	VERIFY(GetState() == eReload);
-	if (m_opened)
+	if (m_opened && !IsSingleReloading())
 		PlayHUDMotion({ "anim_reload_empty", "anm_reload_empty" }, true, GetState());
 	else 
 		inherited::PlayAnimReload();
@@ -183,7 +183,7 @@ void CWeaponPistol::PlayAnimShoot()
 	VERIFY(GetState() == eFire || GetState() == eFire2);
 
 	string_path guns_shoot_anm{};
-	xr_strconcat(guns_shoot_anm, "anm_shoot", (this->IsZoomed() && !this->IsRotatingToZoom()) ? "_aim" : "", iAmmoElapsed == 1 ? "_last" : "", this->IsSilencerAttached() ? "_sil" : "");
+	xr_strconcat(guns_shoot_anm, "anm_shoot", (IsZoomed() && !IsRotatingToZoom()) ? "_aim" : "", iAmmoElapsed == 1 ? "_last" : "", IsSilencerAttached() ? "_sil" : "");
 	if (AnimationExist(guns_shoot_anm)) {
 		PlayHUDMotion(guns_shoot_anm, false, GetState());
 		m_opened = iAmmoElapsed <= 1;
@@ -202,15 +202,15 @@ void CWeaponPistol::PlayAnimShoot()
 	}
 }
 
-void CWeaponPistol::switch2_Reload()
-{
-//.	if(GetState()==eReload) return;
-	inherited::switch2_Reload();
-}
+//void CWeaponPistol::switch2_Reload()
+//{
+////.	if(GetState()==eReload) return;
+//	inherited::switch2_Reload();
+//}
 
 void CWeaponPistol::OnAnimationEnd(u32 state)
 {
-	if(state == eHiding && m_opened) 
+	if((state == eHiding || state == eShutter) && m_opened)
 	{
 		m_opened = false;
 //		switch2_Hiding();

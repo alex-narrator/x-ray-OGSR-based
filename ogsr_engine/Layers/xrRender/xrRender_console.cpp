@@ -128,6 +128,7 @@ int			ps_r__LightSleepFrames		= 10	;
 float		ps_r__Detail_l_ambient		= 0.9f	;
 float		ps_r__Detail_l_aniso		= 0.25f	;
 float		ps_r__Detail_density		= 0.3f	;
+float		ps_r__Detail_scale			= 1.f	;
 float		ps_r__Detail_rainbow_hemi	= 0.75f	;
 
 float		ps_r__Tree_w_rot			= 10.0f	;

@@ -16,6 +16,7 @@
 #include "ai_space.h"
 #include "actor.h"
 #include "patrol_path_storage.h"
+#include "hudmanager.h"
 
 #define	FASTMODE_DISTANCE (50.f)	//distance to camera from sphere, when zone switches to fast update sequence
 
@@ -70,6 +71,11 @@ CArtefact::CArtefact()
 	m_sParticlesName			= nullptr;
 	m_pTrailLight				= nullptr;
 	m_activationObj				= nullptr;
+
+	m_fRandomK					= 1.f;
+
+	m_HitTypeProtection.clear	();
+	m_HitTypeProtection.resize	(ALife::eHitTypeMax);
 }
 
 
@@ -89,17 +95,33 @@ void CArtefact::Load(LPCSTR section)
 	}
 
 
-	{
-		m_fHealthRestoreSpeed = pSettings->r_float		(section,"health_restore_speed"		);
-		m_fSatietyRestoreSpeed = pSettings->r_float		(section,"satiety_restore_speed"	);
-		m_fPowerRestoreSpeed = pSettings->r_float		(section,"power_restore_speed"		);
-		m_fBleedingRestoreSpeed = pSettings->r_float	(section,"bleeding_restore_speed"	);
-		if(pSettings->section_exist(/**cNameSect(), */pSettings->r_string(section,"hit_absorbation_sect")))
-			m_ArtefactHitImmunities.LoadImmunities(pSettings->r_string(section,"hit_absorbation_sect"),pSettings);
-		m_additional_weight  = READ_IF_EXISTS( pSettings, r_float, section, "additional_inventory_weight",  0.f );
-		m_additional_weight2 = READ_IF_EXISTS( pSettings, r_float, section, "additional_inventory_weight2", 0.f );
-		m_fThirstRestoreSpeed = READ_IF_EXISTS(pSettings, r_float, section, "thirst_restore_speed", 0.f);
-	}
+	//*_restore_speed
+	m_fHealthRestoreSpeed								= READ_IF_EXISTS(pSettings, r_float, section, "health_restore_speed",		0.f);
+//	m_fRadiationRestoreSpeed							= READ_IF_EXISTS(pSettings, r_float, section, "radiation_restore_speed",	0.f);
+	m_fSatietyRestoreSpeed								= READ_IF_EXISTS(pSettings, r_float, section, "satiety_restore_speed",		0.f);
+	m_fPowerRestoreSpeed								= READ_IF_EXISTS(pSettings, r_float, section, "power_restore_speed",		0.f);
+	m_fBleedingRestoreSpeed								= READ_IF_EXISTS(pSettings, r_float, section, "bleeding_restore_speed",		0.f);
+	m_fPsyHealthRestoreSpeed							= READ_IF_EXISTS(pSettings, r_float, section, "psy_health_restore_speed",	0.f);
+	m_fAlcoholRestoreSpeed								= READ_IF_EXISTS(pSettings, r_float, section, "alcohol_restore_speed",		0.f);
+	m_fThirstRestoreSpeed								= READ_IF_EXISTS(pSettings, r_float, section, "thirst_restore_speed",		0.f);
+	//addition
+	m_fAdditionalMaxWeight								= READ_IF_EXISTS(pSettings, r_float, section, "additional_max_weight",		0.f);
+	m_fAdditionalMaxVolume								= READ_IF_EXISTS(pSettings, r_float, section, "additional_max_volume",		0.f);
+	m_fAdditionalWalkAccel								= READ_IF_EXISTS(pSettings, r_float, section, "additional_walk_accel",		0.f);
+	m_fAdditionalJumpSpeed								= READ_IF_EXISTS(pSettings, r_float, section, "additional_jump_speed",		0.f);
+	//protection
+	m_HitTypeProtection[ALife::eHitTypeBurn]			= READ_IF_EXISTS(pSettings, r_float, section, "burn_protection",			0.f);
+	m_HitTypeProtection[ALife::eHitTypeStrike]			= READ_IF_EXISTS(pSettings, r_float, section, "strike_protection",			0.f);
+	m_HitTypeProtection[ALife::eHitTypeShock]			= READ_IF_EXISTS(pSettings, r_float, section, "shock_protection",			0.f);
+	m_HitTypeProtection[ALife::eHitTypeWound]			= READ_IF_EXISTS(pSettings, r_float, section, "wound_protection",			0.f);
+	m_HitTypeProtection[ALife::eHitTypeRadiation]		= READ_IF_EXISTS(pSettings, r_float, section, "radiation_protection",		0.f);
+	m_HitTypeProtection[ALife::eHitTypeTelepatic]		= READ_IF_EXISTS(pSettings, r_float, section, "telepatic_protection",		0.f);
+	m_HitTypeProtection[ALife::eHitTypeChemicalBurn]	= READ_IF_EXISTS(pSettings, r_float, section, "chemical_burn_protection",	0.f);
+	m_HitTypeProtection[ALife::eHitTypeExplosion]		= READ_IF_EXISTS(pSettings, r_float, section, "explosion_protection",		0.f);
+	m_HitTypeProtection[ALife::eHitTypeFireWound]		= READ_IF_EXISTS(pSettings, r_float, section, "fire_wound_protection",		0.f);
+	m_HitTypeProtection[ALife::eHitTypeWound_2]			= READ_IF_EXISTS(pSettings, r_float, section, "wound_2_protection",			0.f);
+	m_HitTypeProtection[ALife::eHitTypePhysicStrike]	= READ_IF_EXISTS(pSettings, r_float, section, "physic_strike_protection",	0.f);
+
 	m_bCanSpawnZone = !!pSettings->line_exist("artefact_spawn_zones", section);
 	m_af_rank = READ_IF_EXISTS(pSettings, r_u8, section, "af_rank", 0);
 }
@@ -127,9 +149,31 @@ BOOL CArtefact::net_Spawn(CSE_Abstract* DC)
 	o_fastmode					= FALSE	;		// start initially with fast-mode enabled
 	o_render_frame				= 0		;
 	SetState					(eHidden);
-
+	//
+	if (auto se_artefact = smart_cast<CSE_ALifeItemArtefact*>(DC))
+		if (se_artefact->m_fRandomK != 1.f)
+			m_fRandomK = se_artefact->m_fRandomK;
+		else if (pSettings->line_exist(cNameSect(), "random_k"))
+		{
+			LPCSTR str = pSettings->r_string(cNameSect(), "random_k");
+			int cnt = _GetItemCount(str);
+			if (cnt > 1)							//заданы границы рандома свойств
+			{
+				Fvector2 m = pSettings->r_fvector2(cNameSect(), "random_k");
+				m_fRandomK = ::Random.randF(m.x, m.y);
+			}
+			else if (cnt == 1)
+				m_fRandomK = ::Random.randF(0.f, pSettings->r_float(cNameSect(), "random_k"));
+		}
+	//debug
+	//Msg("net_Spawn [%s] (id [%d]) with random k [%.4f]", cNameSect().c_str(), ID(), GetRandomKoef());
 	return result;	
 }
+
+void CArtefact::net_Export(CSE_Abstract* E) {
+	auto se_artefact = smart_cast<CSE_ALifeItemArtefact*>(E);
+	se_artefact->m_fRandomK = m_fRandomK;
+};
 
 void CArtefact::net_Destroy() 
 {
@@ -400,24 +444,29 @@ void CArtefact::OnAnimationEnd(u32 state)
 		}break;
 	case eActivating:
 		{
-			if(Local()){
+			if(Local() && !fis_zero(GetCondition())){
 				SwitchState		(eHiding);
 				NET_Packet		P;
 				u_EventGen		(P, GEG_PLAYER_ACTIVATEARTEFACT, H_Parent()->ID());
 				P.w_u16			(ID());
 				u_EventSend		(P);	
 			}
+			else if (fis_zero(GetCondition()))
+			{
+				HUD().GetUI()->AddInfoMessage("failed_to_activate_artefact");
+				SwitchState(eIdle);
+			}
 		}break;
 	};
 }
 
 
-void CArtefact::GetBriefInfo(xr_string& str_name, xr_string& icon_sect_name, xr_string& str_count)
-{
-	str_name = NameShort();
-	str_count = "";
-	icon_sect_name = *cNameSect();
-}
+//void CArtefact::GetBriefInfo(xr_string& str_name, xr_string& icon_sect_name, xr_string& str_count)
+//{
+//	str_name = NameShort();
+//	str_count = "";
+//	icon_sect_name = *cNameSect();
+//}
 
 
 void CArtefact::FollowByPath(LPCSTR path_name, int start_idx, Fvector magic_force)
@@ -451,7 +500,43 @@ void CArtefact::SwitchAfParticles(bool bOn)
 	}
 }
 
+float CArtefact::GetAdditionalWalkAccel()
+{
+	return m_fAdditionalWalkAccel * GetCondition() * GetRandomKoef();
+}
 
+float CArtefact::GetAdditionalJumpSpeed()
+{
+	return m_fAdditionalJumpSpeed * GetCondition() * GetRandomKoef();
+}
+
+float CArtefact::GetAdditionalMaxWeight()
+{
+	return m_fAdditionalMaxWeight * GetCondition() * GetRandomKoef();
+}
+
+float CArtefact::GetAdditionalMaxVolume()
+{
+	return m_fAdditionalMaxVolume * GetCondition() * GetRandomKoef();
+}
+
+float	CArtefact::GetHitTypeProtection(ALife::EHitType hit_type)
+{
+	return m_HitTypeProtection[hit_type] * GetCondition() * GetRandomKoef();
+}
+
+void CArtefact::UpdateConditionDecrease(float current_time)
+{
+	if (!m_pCurrentInventory || !psActorFlags.test(AF_ARTEFACTS_FROM_ALL) && !m_pCurrentInventory->InBelt(this) ||
+		!smart_cast<CActor*>(H_Parent()))
+	{
+		m_fLastTimeCalled = Level().GetGameDayTimeSec();
+		return;
+	}
+
+	inherited::UpdateConditionDecrease(current_time);
+	//	Msg("! Artefact [%s] change condition on [%.6f]|current condition [%.6f]|delta_time  [%.6f]|time_factor [%.6f]", cName().c_str(), condition_dec, GetCondition(), Device.fTimeDelta, Level().GetGameTimeFactor());
+}
 
 //---SArtefactActivation----
 SArtefactActivation::SArtefactActivation(CArtefact* af,u32 owner_id)
@@ -587,12 +672,23 @@ void SArtefactActivation::SpawnAnomaly()
 	VERIFY(!ph_world->Processing());
 	string128 tmp;
 	LPCSTR str			= pSettings->r_string("artefact_spawn_zones",*m_af->cNameSect());
-	VERIFY3(_GetItemCount(str) >= 3,"Bad record format in artefact_spawn_zones",str);
-	float zone_radius	= (float)atof(_GetItem(str,1,tmp));
+	VERIFY3(_GetItemCount(str) >= 4,"Bad record format in artefact_spawn_zones",str);
+	float	zone_radius	= (float)atof(_GetItem(str,1,tmp));
+	float	zone_power	= (float)atof(_GetItem(str, 2, tmp));
+	u32		zone_ttl	= (u32)atof(_GetItem(str, 3, tmp));
 	u8 restrictor_type = RestrictionSpace::eRestrictorTypeNone;
-	if ( _GetItemCount( str ) > 3 && atoi( _GetItem( str, 3, tmp ) ) != 0 ) {
+	if ( _GetItemCount( str ) > 4 && atoi( _GetItem( str, 4, tmp ) ) != 0 ) {
 	  restrictor_type = RestrictionSpace::eDefaultRestrictorTypeNone;
-  }
+	}
+	//
+	float af_condition = m_af->GetCondition();
+	if (af_condition < 1.f)
+	{
+		zone_radius *= af_condition;
+		zone_power *= af_condition;
+		zone_ttl = (u32)ceil((float)zone_ttl * af_condition);
+	}
+	//
 	LPCSTR zone_sect	= _GetItem(str,0,tmp); //must be last call of _GetItem... (LPCSTR !!!)
 
 		Fvector pos;
@@ -612,6 +708,8 @@ void SArtefactActivation::SpawnAnomaly()
 		_shape.type					= CShapeData::cfSphere;
 		AlifeZone->assign_shapes	(&_shape,1);
 		AlifeZone->m_owner_id		= m_owner_id;
+		AlifeZone->m_maxPower		= zone_power;
+		AlifeZone->m_ttl			= zone_ttl;
 		AlifeZone->m_space_restrictor_type	= restrictor_type;
 
 		NET_Packet					P;

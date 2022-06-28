@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="windows-1251" ?>
+<string_table>
+	<string id="st_kg">
+		<text>кг</text>
+	</string>
+	<string id="st_l">
+		<text>л</text>
+	</string>
+	<string id="st_rad">
+		<text>мР/ч</text>
+	</string>
+	<string id="ui_st_money_regional">
+		<text>грн</text>
+	</string>
+	<string id="ui_st_pda_account_unavailable">
+		<text>[счёт недоступен]</text>
+	</string>
+	
+	<string id="ui_inv_psy_health">
+		<text>Пси-здоровье</text>
+	</string>
+	<string id="ui_inv_alcohol">
+		<text>Опьянение</text>
+	</string>
+	<string id="ui_inv_walk_accel">
+		<text>Скорость</text>
+	</string>
+	<string id="ui_inv_jump_speed">
+		<text>Прыжок</text>
+	</string>
+	<string id="ui_inv_volume">
+		<text>Объём</text>
+	</string>
+	
+	<string id="st_quick_slot_empty">
+		<text>Карман пуст</text>
+	</string>
+	<string id="ui_quick_slot_use_str_0">
+		<text>[$$ACTION_USE_QUICK_SLOT_0$$]</text>
+	</string>
+	<string id="ui_quick_slot_use_str_1">
+		<text>[$$ACTION_USE_QUICK_SLOT_1$$]</text>
+	</string>
+	<string id="ui_quick_slot_use_str_2">
+		<text>[$$ACTION_USE_QUICK_SLOT_2$$]</text>
+	</string>
+	<string id="ui_quick_slot_use_str_3">
+		<text>[$$ACTION_USE_QUICK_SLOT_3$$]</text>
+	</string>
+	
+	<string id="kb_kick">
+		<text>Пинок</text>
+	</string>
+	<string id="kb_artefact">
+		<text>Артефакт</text>
+	</string>	
+	<string id="kb_use_quick_slot_0">
+		<text>Карман 1</text>
+	</string>
+	<string id="kb_use_quick_slot_1">
+		<text>Карман 2</text>
+	</string>
+	<string id="kb_use_quick_slot_2">
+		<text>Карман 3</text>
+	</string>
+	<string id="kb_use_quick_slot_3">
+		<text>Карман 4</text>
+	</string>
+	<string id="kb_check_active_item">
+		<text>Проверить предмет в руках</text>
+	</string>
+	<string id="kb_check_gear">
+		<text>Проверить снаряжение</text>
+	</string>
+	<string id="kb_check_devices">
+		<text>Проверить приборы</text>
+	</string>
+	<string id="kb_ext_1">
+		<text>Автоприцеливание</text>
+	</string>
+	
+	<string id="ui_mm_ammo_from_belt">
+		<text>Патроны и гранаты с пояса</text>
+	</string>
+	
+	<string id="st_not_enough_money_to_trade">
+		<text>недостаточно денег</text>
+	</string>
+	<string id="st_not_enough_money_to_barter">
+		<text>недостаточно товаров</text>
+	</string>
+	<string id="ui_st_barter">
+		<text>Бартер</text>
+	</string>
+	
+	<string id="st_current_ammo">
+		<text>Снаряженный боеприпас:</text>
+	</string>
+	<string id="st_not_loaded">
+		<text>[не заряжен]</text>
+	</string>
+	<string id="st_mag_size_fire_mode">
+		<text>Размер магазина, текущий режим огня:</text>
+	</string>
+	<string id="st_gl_mode">
+		<text>[гранатомёт]</text>
+	</string>
+</string_table>

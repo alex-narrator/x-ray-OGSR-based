@@ -66,18 +66,18 @@ void CRadioactiveZone::feel_touch_new					(CObject* O	)
 	inherited::feel_touch_new(O);
 }
 
-#include "actor.h"
-BOOL CRadioactiveZone::feel_touch_contact(CObject* O)
-{
-
-	CActor* A = smart_cast<CActor*>(O);
-	if ( A )
-	{ 
-		if (!((CCF_Shape*)CFORM())->Contact(O))		return	FALSE;
-		return										A->feel_touch_on_contact(this);
-	}else
-		return										FALSE;
-}
+//#include "actor.h"
+//BOOL CRadioactiveZone::feel_touch_contact(CObject* O)
+//{
+//
+//	CActor* A = smart_cast<CActor*>(O);
+//	if ( A )
+//	{ 
+//		if (!((CCF_Shape*)CFORM())->Contact(O))		return	FALSE;
+//		return										A->feel_touch_on_contact(this);
+//	}else
+//		return										FALSE;
+//}
 
 void CRadioactiveZone::UpdateWorkload					(u32	dt)
 {

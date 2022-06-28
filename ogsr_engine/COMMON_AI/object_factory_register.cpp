@@ -130,10 +130,10 @@
 #	include "hairszone.h"
 #	include "amebazone.h"
 #	include "nogravityzone.h"
-#include "SimpleDetectorSHOC.h"
-#include "SimpleDetector.h"
-#include "EliteDetector.h"
-#include "AdvancedDetector.h"
+#	include "SimpleDetectorSHOC.h"
+#	include "SimpleDetector.h"
+#	include "EliteDetector.h"
+#	include "AdvancedDetector.h"
 
 #	include "torch.h"
 #	include "pda.h"
@@ -237,8 +237,8 @@ void CObjectFactory::register_classes	()
 	//  [8/17/2006]
 	ADD(CWeaponMagazinedWGrenade,CSE_ALifeItemWeaponMagazinedWGL,CLSID_OBJECT_W_MAGAZWGL		,"wpn_wmaggl");
 	//  [8/17/2006]
-	ADD(CWeaponFN2000			,CSE_ALifeItemWeaponMagazinedWGL	,CLSID_OBJECT_W_FN2000			,"wpn_fn2000");
-	ADD(CWeaponAK74				,CSE_ALifeItemWeaponMagazinedWGL	,CLSID_OBJECT_W_AK74			,"wpn_ak74");
+	ADD(CWeaponFN2000			,CSE_ALifeItemWeaponMagazinedWGL,CLSID_OBJECT_W_FN2000			,"wpn_fn2000");
+	ADD(CWeaponAK74				,CSE_ALifeItemWeaponMagazinedWGL,CLSID_OBJECT_W_AK74			,"wpn_ak74");
 	ADD(CWeaponLR300			,CSE_ALifeItemWeaponMagazined	,CLSID_OBJECT_W_LR300			,"wpn_lr300");
 	ADD(CWeaponHPSA				,CSE_ALifeItemWeaponMagazined	,CLSID_OBJECT_W_HPSA			,"wpn_hpsa");
 	ADD(CWeaponPM				,CSE_ALifeItemWeaponMagazined	,CLSID_OBJECT_W_PM				,"wpn_pm");
@@ -270,11 +270,11 @@ void CObjectFactory::register_classes	()
 
 	// Inventory
 	ADD(CBolt					,CSE_ALifeItemBolt				,CLSID_IITEM_BOLT				,"obj_bolt");
-	ADD(CMedkit					,CSE_ALifeItem					,CLSID_IITEM_MEDKIT				,"obj_medkit");
-	ADD(CMedkit					,CSE_ALifeItem					,CLSID_IITEM_BANDAGE			,"obj_bandage");
-	ADD(CAntirad				,CSE_ALifeItem					,CLSID_IITEM_ANTIRAD			,"obj_antirad");
-	ADD(CFoodItem				,CSE_ALifeItem					,CLSID_IITEM_FOOD				,"obj_food");
-	ADD(CBottleItem				,CSE_ALifeItem					,CLSID_IITEM_BOTTLE				,"obj_bottle");
+	ADD(CMedkit					,CSE_ALifeItemEatable			,CLSID_IITEM_MEDKIT				,"obj_medkit");
+	ADD(CMedkit					,CSE_ALifeItemEatable			,CLSID_IITEM_BANDAGE			,"obj_bandage");
+	ADD(CAntirad				,CSE_ALifeItemEatable			,CLSID_IITEM_ANTIRAD			,"obj_antirad");
+	ADD(CFoodItem				,CSE_ALifeItemEatable			,CLSID_IITEM_FOOD				,"obj_food");
+	ADD(CBottleItem				,CSE_ALifeItemEatable			,CLSID_IITEM_BOTTLE				,"obj_bottle");
 	ADD(CExplosiveItem			,CSE_ALifeItemExplosive			,CLSID_IITEM_EXPLOSIVE			,"obj_explosive");
 	
 	//Info Document
@@ -315,11 +315,11 @@ void CObjectFactory::register_classes	()
 	ADD(CNoGravityZone			,CSE_ALifeAnomalousZone			,CLSID_Z_NOGRAVITY				,"nogravity_zone");
 
 	// Detectors
-	ADD(CSimpleDetectorSHOC, CSE_ALifeItemDetector, CLSID_DETECTOR_SIMPLE_SHOC, "device_detector_simple_shoc");
-	ADD(CSimpleDetector, CSE_ALifeItemDetector, CLSID_DETECTOR_SIMPLE, "device_detector_simple");
-	ADD(CAdvancedDetector, CSE_ALifeItemDetector, CLSID_DETECTOR_ADVANCED, "device_detector_advanced");
-	ADD(CEliteDetector, CSE_ALifeItemDetector, CLSID_DETECTOR_ELITE, "device_detector_elite");
-	ADD(CScientificDetector, CSE_ALifeItemDetector, CLSID_DETECTOR_SCIENTIFIC, "device_detector_scientific");
+	ADD(CSimpleDetectorSHOC		,CSE_ALifeItemDetector			,CLSID_DETECTOR_SIMPLE_SHOC		,"device_detector_simple_shoc");
+	ADD(CSimpleDetector			,CSE_ALifeItemDetector			,CLSID_DETECTOR_SIMPLE			,"device_detector_simple");
+	ADD(CAdvancedDetector		,CSE_ALifeItemDetector			,CLSID_DETECTOR_ADVANCED		,"device_detector_advanced");
+	ADD(CEliteDetector			,CSE_ALifeItemDetector			,CLSID_DETECTOR_ELITE			,"device_detector_elite");
+	ADD(CScientificDetector		,CSE_ALifeItemDetector			,CLSID_DETECTOR_SCIENTIFIC		,"device_detector_scientific");
 
 	// Devices
 	ADD(CTorch					,CSE_ALifeItemTorch				,CLSID_DEVICE_TORCH				,"device_torch");

@@ -277,23 +277,27 @@ void CEntityCondition::UpdateCondition()
 
 
 
-float CEntityCondition::HitOutfitEffect(float hit_power, ALife::EHitType hit_type, s16 element, float AP)
+float CEntityCondition::HitOutfitEffect(SHit* pHDS)
 {
     CInventoryOwner* pInvOwner		= smart_cast<CInventoryOwner*>(m_object);
-	if(!pInvOwner)					return hit_power;
+	if(!pInvOwner)					return pHDS->damage();
 
-	CCustomOutfit* pOutfit			= (CCustomOutfit*)pInvOwner->inventory().m_slots[OUTFIT_SLOT].m_pIItem;
-	if(!pOutfit)					return hit_power;
+	float new_hit_power				= pHDS->damage();
 
-	float new_hit_power				= hit_power;
+	auto pOutfit = pInvOwner->GetOutfit();
+	if (pOutfit)
+	{
+		if (pHDS->hit_type == ALife::eHitTypeFireWound)
+			new_hit_power = pOutfit->HitThruArmour(pHDS);
+		else
+			new_hit_power *= (1.0f - pOutfit->GetHitTypeProtection(pHDS->type()));
 
-	if (hit_type == ALife::eHitTypeFireWound)
-		new_hit_power				= pOutfit->HitThruArmour(hit_power, element, AP);
-	else
-		new_hit_power				*= pOutfit->GetHitTypeProtection(hit_type,element);
+		//увеличить изношенность костюма
+		pOutfit->Hit(pHDS);
+	}
 
-	//увеличить изношенность костюма
-	pOutfit->Hit(hit_power, hit_type);
+	//auto pBackPack = pInvOwner->GetBackPack();
+	//if (pBackPack) pBackPack->Hit(pHDS);
 
 	return							new_hit_power;
 }
@@ -359,7 +363,7 @@ CWound* CEntityCondition::ConditionHit(SHit* pHDS)
 
 	float hit_power_org = pHDS->damage();
 	float hit_power = hit_power_org;
-	hit_power = HitOutfitEffect(hit_power, pHDS->hit_type, pHDS->boneID, pHDS->ap);
+	hit_power = HitOutfitEffect(pHDS);
 
 	bool bAddWound = true;
 	switch(pHDS->hit_type)
@@ -462,20 +466,22 @@ void CEntityCondition::UpdatePower()
 {
 }
 
-void CEntityCondition::UpdatePsyHealth(float k)
+void CEntityCondition::UpdatePsyHealth(/*float k*/)
 {
 	if(m_fPsyHealth>0)
 	{
-		m_fDeltaPsyHealth += m_change_v.m_fV_PsyHealth*k*m_fDeltaTime;
+		m_fDeltaPsyHealth += m_change_v.m_fV_PsyHealth
+//			*k
+			*m_fDeltaTime;
 	}
 }
 
-void CEntityCondition::UpdateRadiation(float k)
+void CEntityCondition::UpdateRadiation(/*float k*/)
 {
 	if(m_fRadiation>0)
 	{
 		m_fDeltaRadiation -= m_change_v.m_fV_Radiation*
-							k*
+//							k*
 							m_fDeltaTime;
 
 		m_fDeltaHealth -= CanBeHarmed() ? m_change_v.m_fV_RadiationHealth*m_fRadiation*m_fDeltaTime : 0.0f;

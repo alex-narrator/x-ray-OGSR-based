@@ -2,6 +2,7 @@
 #include "missile.h"
 #include "PhysicsShell.h"
 #include "actor.h"
+#include "ActorCondition.h"
 #include "../xr_3da/camerabase.h"
 #include "xrserver_objects_alife.h"
 #include "ActorEffector.h"
@@ -20,6 +21,9 @@
 
 #include "ui/UIProgressShape.h"
 #include "ui/UIXmlInit.h"
+#include "HUDManager.h"
+
+float g_fForceGrowSpeed = 25.f;
 
 CUIProgressShape* g_MissileForceShape = NULL;
 
@@ -66,7 +70,7 @@ void CMissile::Load(LPCSTR section)
 	m_fMinForce			= pSettings->r_float(section,"force_min");
 	m_fConstForce		= pSettings->r_float(section,"force_const");
 	m_fMaxForce			= pSettings->r_float(section,"force_max");
-	m_fForceGrowSpeed	= pSettings->r_float(section,"force_grow_speed");
+//	m_fForceGrowSpeed	= pSettings->r_float(section,"force_grow_speed");
 
 	m_dwDestroyTimeMax	= pSettings->r_u32(section,"destroy_time");
 	
@@ -182,7 +186,7 @@ void CMissile::UpdateCL()
 {
 	inherited::UpdateCL();
 
-	if (!Core.Features.test(xrCore::Feature::stop_anim_playing))
+	if (/*!Core.Features.test(xrCore::Feature::stop_anim_playing)*/!psHUD_Flags.test(HUD_STOP_MISSILE_PLAYING))
 	{
 		CActor* pActor = smart_cast<CActor*>(H_Parent());
 		if (pActor && !(pActor->get_state()&EMoveCommand::mcAnyMove) && this == pActor->inventory().ActiveItem())
@@ -194,10 +198,13 @@ void CMissile::UpdateCL()
 			}
 		}
 	}
-
+	//
+	auto pActor = smart_cast<CActor*>(H_Parent());
+	bool b_have_no_power = pActor && pActor->conditions().IsCantWalk();
+	//
 	if (GetState() == eReady)
 	{
-		if (m_throw)
+		if (m_throw || b_have_no_power)
 		{
 			SwitchState(eThrow);
 		}
@@ -206,7 +213,7 @@ void CMissile::UpdateCL()
 			CActor* actor = smart_cast<CActor*>(H_Parent());
 			if (actor)
 			{
-				m_fThrowForce += (m_fForceGrowSpeed * Device.dwTimeDelta) * .001f;
+				m_fThrowForce += (/*m_fForceGrowSpeed*/g_fForceGrowSpeed * Device.dwTimeDelta) * .001f;
 				clamp(m_fThrowForce, m_fMinForce, m_fMaxForce);
 			}
 		}
@@ -355,6 +362,11 @@ void CMissile::OnAnimationEnd(u32 state)
 	break;
 	case eThrow:
 	{
+		auto pActor = smart_cast<CActor*>(H_Parent());
+		bool b_have_no_power = pActor && pActor->conditions().IsCantWalk();
+		if (pActor && !b_have_no_power && !GodMode()) 
+			pActor->conditions().ConditionJump(Weight() * 0.1f);
+
 		if (!m_throwMotionMarksAvailable)
 			Throw();
 		SwitchState(eThrowEnd);
@@ -503,7 +515,14 @@ void CMissile::Throw()
 	CInventoryOwner						*inventory_owner = smart_cast<CInventoryOwner*>(H_Parent());
 	VERIFY								(inventory_owner);
 	if (inventory_owner->use_default_throw_force())
-		m_fake_missile->m_fThrowForce	= m_constpower ? m_fConstForce : m_fThrowForce; 
+	{
+		//
+		float f_const_force = (m_fMinForce + m_fMaxForce) / 2;
+		auto pActor = smart_cast<CActor*>(H_Parent());
+		float power_k = pActor ? pActor->conditions().GetPowerKoef() : 1.f;
+		//
+		m_fake_missile->m_fThrowForce = (m_constpower ? f_const_force : m_fThrowForce) * power_k;
+	}
 	else
 		m_fake_missile->m_fThrowForce	= inventory_owner->missile_throw_force(); 
 	
@@ -562,6 +581,14 @@ void CMissile::Destroy()
 bool CMissile::Action(s32 cmd, u32 flags) 
 {
 	if(inherited::Action(cmd, flags)) return true;
+
+	auto pActor = smart_cast<CActor*>(H_Parent());
+	bool b_have_no_power = pActor && pActor->conditions().IsCantWalk();
+	if (b_have_no_power && GetState() != eReady)
+	{
+		HUD().GetUI()->AddInfoMessage("cant_walk");
+		return false;
+	}
 
 	switch(cmd) 
 	{

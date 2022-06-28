@@ -31,7 +31,7 @@ public:
 
 
 	virtual bool	Attach(PIItem pIItem, bool b_send_event);
-	virtual bool	Detach(const char* item_section_name, bool b_spawn_item);
+	virtual bool	Detach(const char* item_section_name, bool b_spawn_item, float item_condition = 1.f);
 	virtual bool	CanAttach(PIItem pIItem);
 	virtual bool	CanDetach(const char* item_section_name);
 	virtual void	InitAddons();
@@ -71,6 +71,7 @@ public:
 	HUD_SOUND			sndShotG;
 	HUD_SOUND			sndReloadG;
 	HUD_SOUND			sndSwitch;
+	HUD_SOUND			sndShutterG;
 
 	//дополнительные параметры патронов 
 	//для подствольника
@@ -92,5 +93,17 @@ public:
 	shared_str grenade_bone_name;
 
 	IC int GetAmmoElapsed2() const { return int(m_magazine2.size()); }
-	virtual float Weight () const;		
+	virtual float Weight () /*const*/;		
+
+	virtual bool IsGrenadeMode() const { return m_bGrenadeMode; };
+	//получаем износ при выстреле из подствольника
+	virtual float	GetWeaponDeterioration();
+	//считаем что в режиме подствольника стрельба только одиночными
+	virtual bool	HasFireModes() { return m_bHasDifferentFireModes && !IsGrenadeMode(); };
+	//передёргивание затвора
+	virtual void	switch2_Shutter();
+	//передёргивание затвора
+	virtual void	PlayAnimShutter();
+	//оружие использует отъёмный магазин
+	virtual bool	HasDetachableMagazine() { return inherited::HasDetachableMagazine() && !IsGrenadeMode(); };
 };

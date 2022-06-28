@@ -79,7 +79,7 @@ public:
 	virtual LPCSTR				NameShort			();
 //.	virtual LPCSTR				NameComplex			();
 	shared_str					ItemDescription		() { return m_Description; }
-	virtual void				GetBriefInfo		(xr_string& str_name, xr_string& icon_sect_name, xr_string& str_count) {};
+	virtual void				GetBriefInfo		(xr_string& str_name, xr_string& icon_sect_name, xr_string& str_count)/* {}*/;
 	virtual bool				NeedBriefInfo() { return m_need_brief_info; };
 	
 	virtual void				OnEvent				(NET_Packet& P, u16 type);
@@ -88,7 +88,7 @@ public:
 	virtual bool				Attach				(PIItem pIItem, bool b_send_event) {return false;}
 	virtual bool				Detach				(PIItem pIItem) {return false;}
 	//при детаче спаунится новая вещь при заданно названии секции
-	virtual bool				Detach				(const char* item_section_name, bool b_spawn_item);
+	virtual bool				Detach				(const char* item_section_name, bool b_spawn_item, float item_condition = 1.f);
 	virtual bool				CanAttach			(PIItem pIItem) {return false;}
 	virtual bool				CanDetach			(LPCSTR item_section_name) {return false;}
 
@@ -118,22 +118,30 @@ public:
 			BOOL				IsInvalid			() const;
 
 			BOOL				IsQuestItem			()	const	{return m_flags.test(FIsQuestItem);}			
-			virtual u32					Cost				() const	{ return m_cost; }
+	virtual u32					Cost				()	const	{ return m_cost; }
 	virtual	void				SetCost				(u32 cost) 	{ m_cost = cost; }
-	virtual float				Weight				() const	{ return m_weight;}		
+	virtual float				Weight				() /*const*/	{ return m_weight;}		
+	virtual void                SetWeight			(float w) { m_weight = w; }
+	virtual float				Volume				() { return m_volume; }
+	virtual void                SetVolume			(float v) { m_volume = v; }
 
 
-	float m_fPsyHealthRestoreSpeed;
-	virtual float PsyHealthRestoreSpeed() const { return m_fPsyHealthRestoreSpeed; }
+	//float m_fPsyHealthRestoreSpeed;
+	//virtual float PsyHealthRestoreSpeed() const { return m_fPsyHealthRestoreSpeed; }
 
-	float m_fRadiationRestoreSpeed;
-	virtual float RadiationRestoreSpeed() const { return m_fRadiationRestoreSpeed; }
+	//float m_fRadiationRestoreSpeed;
+	//virtual float RadiationRestoreSpeed() const { return m_fRadiationRestoreSpeed; }
+
+	float 						m_fRadiationRestoreSpeed;
+	float 						m_fRadiationAccumFactor;          // alpet: скорость появления вторичной радиактивности
+	float 						m_fRadiationAccumLimit;			  // alpet: предел вторичной радиоактивности 
 
 public:
 	CInventory*					m_pCurrentInventory;
 
 	u32							m_cost;
 	float						m_weight;
+	float						m_volume;
 	shared_str					m_Description;
 	CUIInventoryCellItem*		m_cell_item;
 
@@ -144,10 +152,11 @@ public:
 	EItemPlace					m_eItemPlace;
 
 
-	virtual void				OnMoveToSlot		();
-	virtual void				OnMoveToBelt		();
-	virtual void				OnMoveToRuck(EItemPlace prevPlace);
-	virtual void				OnDrop() {};
+	virtual void				OnMoveToSlot		(EItemPlace prevPlace);
+	virtual void				OnMoveToBelt		(EItemPlace prevPlace);
+	virtual void				OnMoveToRuck		(EItemPlace prevPlace);
+	virtual void				OnMoveOut			(EItemPlace prevPlace){};
+//	virtual void				OnDrop() {};
 
 			int					GetGridWidth		() const ;
 			int					GetGridHeight		() const ;
@@ -206,7 +215,7 @@ public:
 
 	virtual	bool				IsSprintAllowed				() const		{return !!m_flags.test(FAllowSprint);} ;
 
-	virtual	float				GetControlInertionFactor(	) const			{return m_fControlInertionFactor;};
+	virtual	float				GetControlInertionFactor	()/* const			{return m_fControlInertionFactor;}*/;
 
 	virtual bool				StopSprintOnFire() { return true; }
 
@@ -266,6 +275,21 @@ public:
         u8   GetLoadedBeltIndex() { return loaded_belt_index; };
 	bool m_highlight_equipped;
 	bool m_always_ungroupable;
+
+			bool				m_bBreakOnZeroCondition;
+	virtual void				TryBreakToPieces	(bool);
+	virtual bool				WillBeBroken		();
+			bool				b_brake_item;
+	//проміжок часу до повного розряджання
+			float				m_fTTLOnDecrease;
+			float				m_fLastTimeCalled;
+	virtual void				UpdateConditionDecrease(float);
+
+protected:
+	//партікли знищення
+	shared_str m_sBreakParticles;
+	//звук знищення
+	ref_sound sndBreaking;
 };
 
 #include "inventory_item_inline.h"

@@ -13,6 +13,7 @@
 #include "UIMotionIcon.h"
 #include "../hudsound.h"
 #include "../script_export_space.h"
+#include "../inventory.h"
 
 struct					GAME_NEWS_DATA;
 
@@ -26,6 +27,57 @@ class					CWeapon;
 class					CMissile;
 class					CInventoryItem;
 
+class					CUIXml;
+class					CUIStatic;
+
+// Енумы элементов худа
+enum EHUDElement
+{
+	ePDA,
+	eDetector,
+	eActiveItem,
+	eGear,
+	eArmor,
+};
+
+class CUIQuickSlotPanel : public CUIWindow
+{
+private:
+	typedef				CUIWindow inherited;
+public:
+	CUIQuickSlotPanel();
+	~CUIQuickSlotPanel();
+	virtual void 		Update();
+	virtual void		Draw();
+	virtual void		Show();
+	virtual void		Hide();
+	virtual void 		Init();
+	void				DrawItemInSlot(const PIItem itm, CUIStatic* m_QuickSlot_Icon, Fvector2 m_QuickSlot_Icon_Size);
+protected:
+	//
+	Fvector2 m_QuickSlot_0_Icon_Size;
+	Fvector2 m_QuickSlot_1_Icon_Size;
+	Fvector2 m_QuickSlot_2_Icon_Size;
+	Fvector2 m_QuickSlot_3_Icon_Size;
+	//
+	CUIStatic* m_QuickSlot_0_Icon;
+	CUIStatic* m_QuickSlot_1_Icon;
+	CUIStatic* m_QuickSlot_2_Icon;
+	CUIStatic* m_QuickSlot_3_Icon;
+	//
+	CUIStatic* m_CountItemQuickSlot_0_Text;
+	CUIStatic* m_CountItemQuickSlot_1_Text;
+	CUIStatic* m_CountItemQuickSlot_2_Text;
+	CUIStatic* m_CountItemQuickSlot_3_Text;
+	//
+	CUIStatic* m_UseQuickSlot_0_Text;
+	CUIStatic* m_UseQuickSlot_1_Text;
+	CUIStatic* m_UseQuickSlot_2_Text;
+	CUIStatic* m_UseQuickSlot_3_Text;
+	//
+	CUIStatic* m_QuickSlotPanelBackground;
+};
+
 class CUIMainIngameWnd: public CUIWindow  
 {
 public:
@@ -37,10 +89,11 @@ public:
 	virtual void Update();
 
 	bool OnKeyboardPress(int dik);
+	bool OnKeyboardHold	(int cmd);
 
 protected:
 	
-	CUIStatic			UIStaticDiskIO;
+	//CUIStatic			UIStaticDiskIO;
 	CUIStatic			UIStaticHealth;
 	CUIStatic			UIStaticArmor;
 	CUIStatic			UIStaticQuickHelp;
@@ -79,10 +132,15 @@ protected:
 	CUIStatic			UIThirstIcon;
 //	CUIStatic			UISleepIcon;
 //	CUIStatic			UIArtefactIcon;
+	//
+	CUIStatic			UIArmorIcon;
+	CUIStatic			UIHealthIcon;
+	CUIStatic			UIPowerIcon;
 
-	CUIScrollView* m_UIIcons{};
+	CUIScrollView*		m_UIIcons{};
 public:	
-	CUIArtefactPanel*    m_artefactPanel;
+	CUIArtefactPanel*		m_artefactPanel;
+	CUIQuickSlotPanel*		m_quickSlotPanel;
 	
 public:
 	
@@ -95,6 +153,9 @@ public:
 		ewiWound,
 		ewiStarvation,
 		ewiPsyHealth,
+		ewiArmor,
+		ewiHealth,
+		ewiPower,
 		ewiInvincible,
 		ewiThirst,
 //		ewiSleep,
@@ -163,6 +224,8 @@ protected:
 	void				UpdatePickUpItem();
 public:
 	void				SetPickUpItem	(CInventoryItem* PickUpItem);
+
+	bool                IsHUDElementAllowed(EHUDElement element);
 
 	DECLARE_SCRIPT_REGISTER_FUNCTION
 };

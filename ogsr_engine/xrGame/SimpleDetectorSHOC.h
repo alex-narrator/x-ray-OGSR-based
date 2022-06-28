@@ -59,9 +59,9 @@ public:
 	void TurnOff();
 	bool IsWorking() { return m_bWorking; }
 
-	virtual void OnMoveToSlot() override;
+	virtual void OnMoveToSlot(EItemPlace prevPlace) override;
 	virtual void OnMoveToRuck(EItemPlace prevPlace) override;
-	virtual void OnMoveToBelt() override;
+	virtual void OnMoveToBelt(EItemPlace prevPlace) override;
 
 protected:
 	void StopAllSounds();

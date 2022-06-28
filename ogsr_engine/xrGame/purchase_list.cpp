@@ -14,7 +14,7 @@
 #include "level.h"
 #include "xrServer_Object_Base.h"
 
-static float min_deficit_factor = .3f;
+//static float min_deficit_factor = .3f;
 
 void CPurchaseList::process	(CInifile &ini_file, LPCSTR section, CInventoryOwner &owner)
 {
@@ -32,6 +32,11 @@ void CPurchaseList::process	(CInifile &ini_file, LPCSTR section, CInventoryOwner
 			Msg("Cannot get engine callback %s!", pSettings->r_string("engine_callbacks", "trade_purchase_item_process"));
 		}
 	}
+
+	auto trade_ini = &ini_file;
+
+	min_deficit = READ_IF_EXISTS(trade_ini, r_float, "trader", "min_deficit_factor", READ_IF_EXISTS(pSettings, r_float, "trade", "min_deficit_factor", 1.f));
+	max_deficit = READ_IF_EXISTS(trade_ini, r_float, "trader", "max_deficit_factor", READ_IF_EXISTS(pSettings, r_float, "trade", "max_deficit_factor", 1.f));
 
 	const CGameObject		&game_object = smart_cast<const CGameObject &>(owner);
 	CInifile::Sect			&S = ini_file.r_section(section);
@@ -82,12 +87,9 @@ void CPurchaseList::process	(const CGameObject &owner, const shared_str &name, c
 	}
 
 	VERIFY3(m_deficits.find(name) == m_deficits.end(),"Duplicate section in the purchase list",*name);
-	m_deficits.insert			(
-		std::make_pair(
-			name,
-			(float)count*probability
-			/
-			_max((float)j,min_deficit_factor)
-		)
-	);
+	float deficit = (float)count * probability / (float)j;
+	clamp(deficit, min_deficit, max_deficit);
+	m_deficits.insert(std::make_pair(name, deficit));
+
+	//Msg("~ deficit [%.4f](min[%.4f]|max[%.4f]) for item [%s] (count [%d]|prob [%.4f]|item spawned [%d])", deficit, min_deficit, max_deficit, name.c_str(), count, probability, j);
 }

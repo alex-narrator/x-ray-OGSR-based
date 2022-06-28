@@ -23,6 +23,7 @@ public:
 	virtual bool			Useful						() const;
 
 	virtual BOOL			net_Spawn					(CSE_Abstract* DC);
+	virtual void			net_Export					(CSE_Abstract* E);
 
 	virtual void			OnH_B_Independent			(bool just_before_destroy);
 	virtual	void			UseBy						(CEntityAlive* npc);
@@ -31,13 +32,14 @@ public:
 			void			SetRadiation				(float rad);
 protected:	
 	//влияние при поедании вещи на параметры игрока
-	float					m_fHealthInfluence;
-	float					m_fPowerInfluence;
-	float					m_fSatietyInfluence;
-	float					m_fRadiationInfluence;
+	float					m_fHealthInfluence{};
+	float					m_fPowerInfluence{};
+	float					m_fSatietyInfluence{};
+	float					m_fRadiationInfluence{};
 	float					m_fMaxPowerUpInfluence{};
 	float					m_fPsyHealthInfluence;
 	float					m_fThirstInfluence{};
+	float					m_fAlcoholInfluence{};
 	//заживление ран на кол-во процентов
 	float					m_fWoundsHealPerc{};
 
@@ -45,5 +47,14 @@ protected:
 	//-1 - порция одна и больше не бывает (чтоб не выводить надпись в меню)
 	int						m_iPortionsNum;
 	int						m_iStartPortionsNum{};
+	bool					m_bUsePortionVolume{};
+
+	//яка доля власної радіоактивності предмета буде передана гравцеві при вживанні
+	float					m_fSelfRadiationInfluence{};
+
+	int						GetStartPortionsNum	() const { return m_iStartPortionsNum; };  // <--- // Не используется, но может пригодится. //
+	float					GetOnePortionWeight	();
+	float					GetOnePortionVolume	();
+	u32						GetOnePortionCost	();
 };
 

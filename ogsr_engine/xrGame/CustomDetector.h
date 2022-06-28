@@ -153,7 +153,7 @@ public:
 
     bool IsWorking() const;
 
-    virtual void OnMoveToSlot() override;
+    virtual void OnMoveToSlot(EItemPlace prevPlace) override;
     virtual void OnMoveToRuck(EItemPlace prevPlace) override;
 
     virtual void OnActiveItem() override;

@@ -309,9 +309,10 @@ private:
 //	//-----------------------------------------------------------------
 //	// Spawn Inventory Item
 //	//-----------------------------------------------------------------
-//private:
-//	LPCSTR					m_item_section;
-//	float					m_spawn_probability;
+private:
+	LPCSTR					m_item_section;
+	float					m_spawn_probability;
+	void					TrySpawnInventoryItem();
 
 	//--------------------------------------------------------------------
 	// Berserk

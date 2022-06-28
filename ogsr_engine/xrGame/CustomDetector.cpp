@@ -314,7 +314,7 @@ void CCustomDetector::OnMoveToRuck(EItemPlace prevPlace)
     StopCurrentAnimWithoutCallback();
 }
 
-void CCustomDetector::OnMoveToSlot() { inherited::OnMoveToSlot(); }
+void CCustomDetector::OnMoveToSlot(EItemPlace prevPlace) { inherited::OnMoveToSlot(prevPlace); }
 
 void CCustomDetector::TurnDetectorInternal(bool b)
 {

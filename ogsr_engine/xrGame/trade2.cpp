@@ -223,15 +223,7 @@ u32	CTrade::GetItemPrice(PIItem pItem, bool b_buying)
 	);
 	
 	// computing deficit_factor
-	float deficit_factor = 1.f;
-	if (Core.Features.test(xrCore::Feature::use_trade_deficit_factor)) {
-		deficit_factor = pThis.inv_owner->deficit_factor(pItem->object().cNameSect());
-
-		clamp(deficit_factor,
-			READ_IF_EXISTS(pSettings, r_float, "trade", "min_deficit_factor", 1),
-			READ_IF_EXISTS(pSettings, r_float, "trade", "max_deficit_factor", 1)
-		);
-	}
+	float deficit_factor = pThis.inv_owner->deficit_factor(pItem->object().cNameSect());
 
 	const float						original_result =
 			base_cost*
