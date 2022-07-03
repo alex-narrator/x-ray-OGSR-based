@@ -48,9 +48,6 @@ public:
 	CUIQuickSlotPanel();
 	~CUIQuickSlotPanel();
 	virtual void 		Update();
-	virtual void		Draw();
-	virtual void		Show();
-	virtual void		Hide();
 	virtual void 		Init();
 	void				DrawItemInSlot(const PIItem itm, CUIStatic* m_QuickSlot_Icon, Fvector2 m_QuickSlot_Icon_Size);
 protected:
@@ -93,7 +90,6 @@ public:
 
 protected:
 	
-	//CUIStatic			UIStaticDiskIO;
 	CUIStatic			UIStaticHealth;
 	CUIStatic			UIStaticArmor;
 	CUIStatic			UIStaticQuickHelp;
@@ -200,9 +196,6 @@ protected:
 
 	//для текущего активного актера и оружия
 	CActor*				m_pActor;	
-	CWeapon*			m_pWeapon;
-	CMissile*			m_pGrenade;
-	CInventoryItem*		m_pItem;
 
 	// Отображение подсказок при наведении прицела на объект
 	void				RenderQuickInfos();

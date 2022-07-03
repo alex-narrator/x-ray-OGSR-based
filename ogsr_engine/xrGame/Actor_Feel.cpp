@@ -131,10 +131,9 @@ void CActor::PickupModeUpdate()
 }
 
 #include "../xr_3da/camerabase.h"
-BOOL	g_b_COD_PickUpMode = TRUE;
 void	CActor::PickupModeUpdate_COD	()
 {
-	if (Level().CurrentViewEntity() != this || !g_b_COD_PickUpMode) return;
+	if (Level().CurrentViewEntity() != this) return;
 		
 	if (!g_Alive() || eacFirstEye != cam_active) 
 	{
@@ -255,9 +254,11 @@ void CActor::PickupInfoDraw(CObject* object)
 	float x = (1.f + v_res.x)/2.f * (Device.dwWidth);
 	float y = (1.f - v_res.y)/2.f * (Device.dwHeight);
 
-	HUD().Font().pFontLetterica16Russian->SetAligment	(CGameFont::alCenter);
-	HUD().Font().pFontLetterica16Russian->SetColor		(PICKUP_INFO_COLOR);
-	HUD().Font().pFontLetterica16Russian->Out			(x,y,draw_str);
+	auto pFont = HUD().Font().pFontLetterica18Russian;//pFontLetterica16Russian;
+
+	pFont->SetAligment	(CGameFont::alCenter);
+	pFont->SetColor		(PICKUP_INFO_COLOR);
+	pFont->Out			(x,y,draw_str);
 }
 
 void CActor::feel_sound_new(CObject* who, int type, CSound_UserDataPtr user_data, const Fvector& Position, float power)

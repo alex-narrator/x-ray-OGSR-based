@@ -66,7 +66,7 @@ static CUIMainIngameWnd* GetMainIngameWindow()
 	return nullptr;
 }
 
-static CUIStatic* warn_icon_list[8]{};
+static CUIStatic* warn_icon_list[11]{};
 
 // alpet: для возможности внешнего контроля иконок (используется в NLC6 вместо типичных индикаторов). Никак не влияет на игру для остальных модов.
 static bool external_icon_ctrl = false;
@@ -100,20 +100,23 @@ static bool SetupGameIcon(CUIMainIngameWnd::EWarningIcons icon, u32 cl, float wi
 
 CUIMainIngameWnd::CUIMainIngameWnd()
 {
-	m_pActor					= NULL;
-	m_pWeapon					= NULL;
-	m_pGrenade					= NULL;
-	m_pItem						= NULL;
-	UIZoneMap					= xr_new<CUIZoneMap>();
-	m_pPickUpItem				= NULL;
-	m_artefactPanel				= xr_new<CUIArtefactPanel>();
-	m_quickSlotPanel			= xr_new<CUIQuickSlotPanel>();
+	m_pActor						= NULL;
+	//m_pWeapon					= NULL;
+	//m_pGrenade					= NULL;
+	//m_pItem						= NULL;
+	UIZoneMap						= xr_new<CUIZoneMap>();
+	m_pPickUpItem					= NULL;
+	m_artefactPanel					= xr_new<CUIArtefactPanel>();
+	m_quickSlotPanel				= xr_new<CUIQuickSlotPanel>();
 
 	warn_icon_list[ewiWeaponJammed]	= &UIWeaponJammedIcon;	
 	warn_icon_list[ewiRadiation]	= &UIRadiaitionIcon;
 	warn_icon_list[ewiWound]		= &UIWoundIcon;
 	warn_icon_list[ewiStarvation]	= &UIStarvationIcon;
 	warn_icon_list[ewiPsyHealth]	= &UIPsyHealthIcon;
+	warn_icon_list[ewiArmor]		= &UIArmorIcon;
+	warn_icon_list[ewiHealth]		= &UIHealthIcon;
+	warn_icon_list[ewiPower]		= &UIPowerIcon;
 	warn_icon_list[ewiInvincible]	= &UIInvincibleIcon;
 	warn_icon_list[ewiThirst]		= &UIThirstIcon;
 }
@@ -299,41 +302,19 @@ void CUIMainIngameWnd::Init()
 	m_quickSlotPanel->SetWindowName			("quick_slot_panel");
 	this->AttachChild						(m_quickSlotPanel);
 
-/*	AttachChild								(&UIStaticDiskIO);
-	UIStaticDiskIO.SetWndRect				(1000,750,16,16);
-	UIStaticDiskIO.GetUIStaticItem().SetRect(0,0,16,16);
-	UIStaticDiskIO.InitTexture				("ui\\ui_disk_io");
-	UIStaticDiskIO.SetOriginalRect			(0,0,32,32);
-	UIStaticDiskIO.SetStretchTexture		(TRUE);*/
-
-
 	HUD_SOUND::LoadSound					("maingame_ui", "snd_new_contact"		, m_contactSnd		, SOUND_TYPE_IDLE);
 }
 
 //float UIStaticDiskIO_start_time = 0.0f;
 void CUIMainIngameWnd::Draw()
 {
-	// show IO icon
-/*	bool IOActive	= (FS.dwOpenCounter>0);
-	if	(IOActive)	UIStaticDiskIO_start_time = Device.fTimeGlobal;
-
-	if ((UIStaticDiskIO_start_time+1.0f) < Device.fTimeGlobal)	UIStaticDiskIO.Show(false); 
-	else {
-		u32		alpha			= clampr(iFloor(255.f*(1.f-(Device.fTimeGlobal-UIStaticDiskIO_start_time)/1.f)),0,255);
-		UIStaticDiskIO.Show		( true  ); 
-		UIStaticDiskIO.SetColor	(color_rgba(255,255,255,alpha));
-	}
-	FS.dwOpenCounter = 0;*/
-
 	if(!m_pActor) return;
 
-	//UIMotionIcon.SetNoise		((s16)(0xffff&iFloor(m_pActor->m_snd_noise*100.0f)));
-	CUIWindow::Draw				();
+	CUIWindow::Draw();
+
 	if (IsHUDElementAllowed(ePDA)) UIZoneMap->Render();
 
-	IsHUDElementAllowed(eGear) ? m_quickSlotPanel->Draw() : m_quickSlotPanel->Hide(); //рисуем панель квикслотов
-
-	RenderQuickInfos			();		
+	RenderQuickInfos();		
 }
 
 void CUIMainIngameWnd::SetAmmoIcon (const shared_str& sect_name)
@@ -371,9 +352,6 @@ void CUIMainIngameWnd::Update()
 	m_pActor = smart_cast<CActor*>(Level().CurrentViewEntity());
 	if (!m_pActor) 
 	{
-		m_pItem					= NULL;
-		m_pWeapon				= NULL;
-		m_pGrenade				= NULL;
 		CUIWindow::Update		();
 		return;
 	}
@@ -407,23 +385,23 @@ void CUIMainIngameWnd::Update()
 					TurnOffWarningIcon (ewiInvincible);
 		}
 
-		// Armor indicator stuff
+		// Health bar
+		bool show_bar = eHudOnKeyOff == g_eHudOnKey;
+		UIHealthBar.Show(show_bar);
+		UIStaticHealth.Show(show_bar);
+		if(show_bar)
+			UIHealthBar.SetProgressPos(m_pActor->GetfHealth() * 100.0f);
+		// Armor bar
 		PIItem	Outfit = m_pActor->inventory().ItemFromSlot(OUTFIT_SLOT);
-		if (Outfit && g_eHudOnKey == eHudOnKeyOff)
-		{
-			UIArmorBar.Show					(true);
-			UIStaticArmor.Show				(true);
+		show_bar = Outfit && eHudOnKeyOff == g_eHudOnKey;
+		UIArmorBar.Show					(show_bar);
+		UIStaticArmor.Show				(show_bar);
+		if(show_bar)
 			UIArmorBar.SetProgressPos		(Outfit->GetCondition()*100);
-		}
-		else
-		{
-			UIArmorBar.Show					(false);
-			UIStaticArmor.Show				(false);
-		}
 
 		UpdateActiveItemInfo				();
 
-		bool b_replace_progress_bar = g_eHudOnKey == eHudOnKeyWarningIcon;
+		bool b_show_icon = eHudOnKeyWarningIcon == g_eHudOnKey;
 		auto cond = &m_pActor->conditions();
 
 		EWarningIcons i = ewiWeaponJammed;
@@ -459,11 +437,11 @@ void CUIMainIngameWnd::Update()
 					value = 1 - Outfit->GetCondition();
 				break;
 			case ewiHealth:
-				if (b_replace_progress_bar)
+				if (b_show_icon)
 					value = 1 - cond->GetHealth();
 				break;
 			case ewiPower:
-				if (b_replace_progress_bar)
+				if (b_show_icon)
 					value = 1 - cond->GetPower();
 				break;
 				//
@@ -523,29 +501,17 @@ void CUIMainIngameWnd::Update()
 		}
 	}
 
-	// health&armor
-	if (g_eHudOnKey == eHudOnKeyOff)
-	{
-		UIHealthBar.Show(true);
-		UIStaticHealth.Show(true);
-		UIHealthBar.SetProgressPos(m_pActor->GetfHealth() * 100.0f);
-	}
-	else
-	{
-		UIHealthBar.Show(false);
-		UIStaticHealth.Show(false);
-	}
-	/*UIMotionIcon.SetPower			(m_pActor->conditions().GetPower()*100.0f);*/
-
 	UIZoneMap->UpdateRadar			(Device.vCameraPosition);
 	float h,p;
 	Device.vCameraDirection.getHP	(h,p);
 	UIZoneMap->SetHeading			(-h);
 
 	UpdatePickUpItem				();
-	m_quickSlotPanel->Update		();
 
-	m_artefactPanel->Show(IsHUDElementAllowed(eGear)); //отрисовка панели артефактов
+	bool show_panels = IsHUDElementAllowed(eGear);
+	m_quickSlotPanel->Show(show_panels);
+	m_artefactPanel->Show(show_panels); //отрисовка панели артефактов
+
 	UpdateFlashingIcons(); //обновляем состояние мигающих иконок - UI_LOCK_PDA_WITHOUT_PDA_IN_SLOT
 
 	CUIWindow::Update				();
@@ -702,49 +668,48 @@ void CUIMainIngameWnd::SetWarningIconColor(CUIStatic* s, const u32 cl)
 
 void CUIMainIngameWnd::SetWarningIconColor(EWarningIcons icon, const u32 cl)
 {
-	bool bMagicFlag = true;
-
 	// Задаем цвет требуемой иконки
 	switch(icon)
 	{
 	case ewiAll:
-		bMagicFlag = false;
+		break;
 	case ewiWeaponJammed:
 		SetWarningIconColor		(&UIWeaponJammedIcon, cl);
-		if (bMagicFlag) break;
+		break;
 	case ewiRadiation:
 		SetWarningIconColor		(&UIRadiaitionIcon, cl);
-		if (bMagicFlag) break;
+		break;
 	case ewiWound:
 		SetWarningIconColor		(&UIWoundIcon, cl);
-		if (bMagicFlag) break;
+		break;
 	case ewiStarvation:
 		SetWarningIconColor		(&UIStarvationIcon, cl);
-		if (bMagicFlag) break;
-	case ewiThirst:
-		SetWarningIconColor     (&UIThirstIcon, cl);
-		if (bMagicFlag) break;
+		break;
 	case ewiPsyHealth:
 		SetWarningIconColor		(&UIPsyHealthIcon, cl);
-		if (bMagicFlag) break;
+		break;
 		//
 	case ewiArmor:
 		SetWarningIconColor		(&UIArmorIcon, cl);
-		if (bMagicFlag) break;
+		break;
 	case ewiHealth:
 		SetWarningIconColor		(&UIHealthIcon, cl);
-		if (bMagicFlag) break;
+		break;
 	case ewiPower:
 		SetWarningIconColor		(&UIPowerIcon, cl);
-		if (bMagicFlag) break;
+		break;
 		//
 	case ewiInvincible:
 		SetWarningIconColor		(&UIInvincibleIcon, cl);
-		if (bMagicFlag) break;
+		break;
+
+	case ewiThirst:
+		SetWarningIconColor(&UIThirstIcon, cl);
 		break;
 
 	default:
 		R_ASSERT(!"Unknown warning icon type");
+		break;
 	}
 }
 
@@ -942,28 +907,21 @@ void CUIMainIngameWnd::UpdatePickUpItem	()
 void CUIMainIngameWnd::UpdateActiveItemInfo()
 {
 	PIItem item		=  m_pActor->inventory().ActiveItem();
-	if (IsHUDElementAllowed(eActiveItem) || item && item->NeedBriefInfo() && IsHUDElementAllowed(eGear))
-	{
+	bool show_info = item && item->NeedBriefInfo() && (IsHUDElementAllowed(eActiveItem) || IsHUDElementAllowed(eGear));
+
+	UIWeaponBack.Show			(show_info);
+	UIWeaponSignAmmo.Show		(show_info);
+
+	if (show_info) {
 		xr_string					str_name;
 		xr_string					icon_sect_name;
 		xr_string					str_count;
-		item->GetBriefInfo			(str_name, icon_sect_name, str_count);
 
-		UIWeaponBack.Show			(true						);
-		UIWeaponSignAmmo.Show		(true						);
-		UIWeaponBack.SetText		(str_name.c_str			()	);
-		UIWeaponSignAmmo.SetText	(str_count.c_str		()	);
-		SetAmmoIcon					(icon_sect_name.c_str	()	);
+		item->GetBriefInfo(str_name, icon_sect_name, str_count);
 
-		//-------------------
-		m_pWeapon = smart_cast<CWeapon*> (item);		
-	}else
-	{
-		//UIWeaponIcon.Show			(false);
-		//UIWeaponSignAmmo.Show		(false);
-		//UIWeaponBack.SetText		("");
-		//m_pWeapon = item ? smart_cast<CWeapon*>( item ) : nullptr;
-		UIWeaponBack.Show(false); //-- проще сразу скрыть родительское окно
+		UIWeaponBack.SetText(str_name.c_str());
+		UIWeaponSignAmmo.SetText(str_count.c_str());
+		SetAmmoIcon(icon_sect_name.c_str());
 	}
 }
 
@@ -975,13 +933,52 @@ void CUIMainIngameWnd::OnConnected()
 void CUIMainIngameWnd::reset_ui()
 {
 	m_pActor						= NULL;
-	m_pWeapon						= NULL;
-	m_pGrenade						= NULL;
-	m_pItem							= NULL;
+	//m_pWeapon						= NULL;
+	//m_pGrenade						= NULL;
+	//m_pItem							= NULL;
 	m_pPickUpItem					= NULL;
 	UIMotionIcon.ResetVisibility	();
 }
 
+bool CUIMainIngameWnd::IsHUDElementAllowed(EHUDElement element)
+{
+	if (Device.Paused() || m_pActor && !m_pActor->g_Alive()) return false;
+
+	bool allow_devices_hud = eHudOnKeyOff == g_eHudOnKey || OnKeyboardHold(get_action_dik(kSCORES)) || m_pActor->inventory().GetActiveSlot() == BOLT_SLOT;
+
+	switch (element)
+	{
+	case ePDA: //ПДА
+	{
+		return allow_devices_hud && m_pActor->GetPDA();
+	}break;
+	case eDetector: //Детектор (иконка радиационного заражения)
+	{
+		return allow_devices_hud && m_pActor->HasDetector();
+	}break;
+	case eActiveItem: //Информация об предмете в руках (для оружия - кол-во/тип заряженных патронов, режим огня)
+	{
+		return m_pActor->inventory().ActiveItem() && (eHudOnKeyOff == g_eHudOnKey || OnKeyboardHold(get_action_dik(kCHECKACTIVEITEM)));
+	}break;
+	case eGear: //Информация о снаряжении - панель артефактов, наполнение квикслотов, общее кол-во патронов к оружию в руках
+	{
+		return eHudOnKeyOff == g_eHudOnKey || OnKeyboardHold(get_action_dik(kCHECKGEAR));
+	}break;
+	case eArmor: //Иконка состояния брони
+	{
+		return eHudOnKeyOff != g_eHudOnKey && m_pActor->GetOutfit() && OnKeyboardHold(get_action_dik(kCHECKGEAR));
+	}break;
+	default:
+		Msg("! unknown hud element");
+		return false;
+		break;
+	}
+}
+
+bool CUIMainIngameWnd::OnKeyboardHold(int cmd)
+{
+	return Level().IR_GetKeyState(cmd);
+}
 
 using namespace luabind::detail;			
 
@@ -1190,156 +1187,99 @@ void CUIQuickSlotPanel::DrawItemInSlot(const PIItem itm, CUIStatic* m_QuickSlot_
 
 void CUIQuickSlotPanel::Update()
 {
-	CActor* pActor = smart_cast<CActor*>(Level().CurrentViewEntity());
+	auto pActor = smart_cast<CActor*>(Level().CurrentViewEntity());
 
-	if (pActor)
+	if (!pActor) return;
+
+	string32	str;
+	shared_str itm_name;
+	u32 count;
+	bool SearchRuck = !psActorFlags.test(AF_QUICK_FROM_BELT);
+
+	auto itm = pActor->inventory().m_slots[QUICK_SLOT_0].m_pIItem;
+
+	if (itm)
 	{
-
-		PIItem itm = 0;
-		string32	str;
-		shared_str itm_name;
-		u32 count;
-		bool SearchRuck = !psActorFlags.test(AF_QUICK_FROM_BELT);
-
-		itm = pActor->inventory().m_slots[QUICK_SLOT_0].m_pIItem;
-
-		if (itm)
-		{
-			sprintf_s(str, "%s", *CStringTable().translate("ui_quick_slot_use_str_0"));
-			m_UseQuickSlot_0_Text->SetText(str);
-			m_UseQuickSlot_0_Text->Show(/*true*/!itm->cast_weapon_ammo());
-
-			itm_name = itm->object().cNameSect();
-			count = pActor->inventory().GetSameItemCount(itm_name.c_str(), SearchRuck);
-			sprintf(str, "x%d", count);
-			m_CountItemQuickSlot_0_Text->SetText(str);
-			m_CountItemQuickSlot_0_Text->Show(true);
-			DrawItemInSlot(itm, m_QuickSlot_0_Icon, m_QuickSlot_0_Icon_Size);
-		}
-		else
-		{
-			m_UseQuickSlot_0_Text->Show(false);
-			m_CountItemQuickSlot_0_Text->Show(false);
-			m_QuickSlot_0_Icon->Show(false);
-		}
-
-		itm = pActor->inventory().m_slots[QUICK_SLOT_1].m_pIItem;
-
-		if (itm)
-		{
-			sprintf_s(str, "%s", *CStringTable().translate("ui_quick_slot_use_str_1"));
-			m_UseQuickSlot_1_Text->SetText(str);
-			m_UseQuickSlot_1_Text->Show(/*true*/!itm->cast_weapon_ammo());
-
-			itm_name = itm->object().cNameSect();
-			count = pActor->inventory().GetSameItemCount(itm_name.c_str(), SearchRuck);
-			sprintf(str, "x%d", count);
-			m_CountItemQuickSlot_1_Text->SetText(str);
-			m_CountItemQuickSlot_1_Text->Show(true);
-			DrawItemInSlot(itm, m_QuickSlot_1_Icon, m_QuickSlot_1_Icon_Size);
-		}
-		else
-		{
-			m_UseQuickSlot_1_Text->Show(false);
-			m_CountItemQuickSlot_1_Text->Show(false);
-			m_QuickSlot_1_Icon->Show(false);
-		}
-
-		itm = pActor->inventory().m_slots[QUICK_SLOT_2].m_pIItem;
-
-		if (itm)
-		{
-			sprintf_s(str, "%s", *CStringTable().translate("ui_quick_slot_use_str_2"));
-			m_UseQuickSlot_2_Text->SetText(str);
-			m_UseQuickSlot_2_Text->Show(/*true*/!itm->cast_weapon_ammo());
-
-			itm_name = itm->object().cNameSect();
-			count = pActor->inventory().GetSameItemCount(itm_name.c_str(), SearchRuck);
-			sprintf(str, "x%d", count);
-			m_CountItemQuickSlot_2_Text->SetText(str);
-			m_CountItemQuickSlot_2_Text->Show(true);
-			DrawItemInSlot(itm, m_QuickSlot_2_Icon, m_QuickSlot_2_Icon_Size);
-		}
-		else
-		{
-			m_UseQuickSlot_2_Text->Show(false);
-			m_CountItemQuickSlot_2_Text->Show(false);
-			m_QuickSlot_2_Icon->Show(false);
-		}
-
-		itm = pActor->inventory().m_slots[QUICK_SLOT_3].m_pIItem;
-
-		if (itm)
-		{
-			sprintf_s(str, "%s", *CStringTable().translate("ui_quick_slot_use_str_3"));
-			m_UseQuickSlot_3_Text->SetText(str);
-			m_UseQuickSlot_3_Text->Show(/*true*/!itm->cast_weapon_ammo());
-
-			itm_name = itm->object().cNameSect();
-			count = pActor->inventory().GetSameItemCount(itm_name.c_str(), SearchRuck);
-			sprintf(str, "x%d", count);
-			m_CountItemQuickSlot_3_Text->SetText(str);
-			m_CountItemQuickSlot_3_Text->Show(true);
-			DrawItemInSlot(itm, m_QuickSlot_3_Icon, m_QuickSlot_3_Icon_Size);
-		}
-		else
-		{
-			m_UseQuickSlot_3_Text->Show(false);
-			m_CountItemQuickSlot_3_Text->Show(false);
-			m_QuickSlot_3_Icon->Show(false);
-		}
+		sprintf_s(str, "%s", *CStringTable().translate("ui_quick_slot_use_str_0"));
+		m_UseQuickSlot_0_Text->SetText(str);
+		m_UseQuickSlot_0_Text->Show(/*true*/!itm->cast_weapon_ammo());
+		itm_name = itm->object().cNameSect();
+		count = pActor->inventory().GetSameItemCount(itm_name.c_str(), SearchRuck);
+		sprintf(str, "x%d", count);
+		m_CountItemQuickSlot_0_Text->SetText(str);
+		m_CountItemQuickSlot_0_Text->Show(true);
+		DrawItemInSlot(itm, m_QuickSlot_0_Icon, m_QuickSlot_0_Icon_Size);
 	}
-}
-
-void CUIQuickSlotPanel::Draw()
-{
-	CUIWindow::Draw();
-}
-
-void CUIQuickSlotPanel::Show()
-{
-	inherited::Show(true);
-}
-
-void CUIQuickSlotPanel::Hide()
-{
-	inherited::Show(false);
-}
-
-bool CUIMainIngameWnd::IsHUDElementAllowed(EHUDElement element)
-{
-	bool result = false;
-	bool allow_devices_hud = g_eHudOnKey == eHudOnKeyOff || OnKeyboardHold(kSCORES) || m_pActor->inventory().GetActiveSlot() == BOLT_SLOT;
-
-	switch (element)
+	else
 	{
-	case ePDA: //ПДА
-	{
-		if (allow_devices_hud && m_pActor->GetPDA()) result = true;
-	}break;
-	case eDetector: //Детектор (иконка радиационного заражения)
-	{
-		auto DetectorInSlot = m_pActor->HasDetector();
-		if (allow_devices_hud && DetectorInSlot /*&& DetectorInSlot->IsGeigerCounter()*/) result = true;
-	}break;
-	case eActiveItem: //Информация об предмете в руках (для оружия - кол-во/тип заряженных патронов, режим огня)
-	{
-		result = m_pActor->inventory().ActiveItem() && (g_eHudOnKey == eHudOnKeyOff || OnKeyboardHold(kCHECKACTIVEITEM));
-	}break;
-	case eGear: //Информация о снаряжении - панель артефактов, наполнение квикслотов, общее кол-во патронов к оружию в руках
-	{
-		result = g_eHudOnKey == eHudOnKeyOff || OnKeyboardHold(kCHECKGEAR);
-	}break;
-	case eArmor: //Иконка состояния брони
-	{
-		result = g_eHudOnKey != eHudOnKeyOff && m_pActor->GetOutfit() && OnKeyboardHold(kCHECKGEAR);
-	}break;
+		m_UseQuickSlot_0_Text->Show(false);
+		m_CountItemQuickSlot_0_Text->Show(false);
+		m_QuickSlot_0_Icon->Show(false);
 	}
 
-	return result;
-}
+	itm = pActor->inventory().m_slots[QUICK_SLOT_1].m_pIItem;
 
-bool CUIMainIngameWnd::OnKeyboardHold(int cmd)
-{
-	return !!Level().IR_GetKeyState(get_action_dik((EGameActions)cmd));
+	if (itm)
+	{
+		sprintf_s(str, "%s", *CStringTable().translate("ui_quick_slot_use_str_1"));
+		m_UseQuickSlot_1_Text->SetText(str);
+		m_UseQuickSlot_1_Text->Show(/*true*/!itm->cast_weapon_ammo());
+
+		itm_name = itm->object().cNameSect();
+		count = pActor->inventory().GetSameItemCount(itm_name.c_str(), SearchRuck);
+		sprintf(str, "x%d", count);
+		m_CountItemQuickSlot_1_Text->SetText(str);
+		m_CountItemQuickSlot_1_Text->Show(true);
+		DrawItemInSlot(itm, m_QuickSlot_1_Icon, m_QuickSlot_1_Icon_Size);
+	}
+	else
+	{
+		m_UseQuickSlot_1_Text->Show(false);
+		m_CountItemQuickSlot_1_Text->Show(false);
+		m_QuickSlot_1_Icon->Show(false);
+	}
+
+	itm = pActor->inventory().m_slots[QUICK_SLOT_2].m_pIItem;
+
+	if (itm)
+	{
+		sprintf_s(str, "%s", *CStringTable().translate("ui_quick_slot_use_str_2"));
+		m_UseQuickSlot_2_Text->SetText(str);
+		m_UseQuickSlot_2_Text->Show(/*true*/!itm->cast_weapon_ammo());
+
+		itm_name = itm->object().cNameSect();
+		count = pActor->inventory().GetSameItemCount(itm_name.c_str(), SearchRuck);
+		sprintf(str, "x%d", count);
+		m_CountItemQuickSlot_2_Text->SetText(str);
+		m_CountItemQuickSlot_2_Text->Show(true);
+		DrawItemInSlot(itm, m_QuickSlot_2_Icon, m_QuickSlot_2_Icon_Size);
+	}
+	else
+	{
+		m_UseQuickSlot_2_Text->Show(false);
+		m_CountItemQuickSlot_2_Text->Show(false);
+		m_QuickSlot_2_Icon->Show(false);
+	}
+
+	itm = pActor->inventory().m_slots[QUICK_SLOT_3].m_pIItem;
+
+	if (itm)
+	{
+		sprintf_s(str, "%s", *CStringTable().translate("ui_quick_slot_use_str_3"));
+		m_UseQuickSlot_3_Text->SetText(str);
+		m_UseQuickSlot_3_Text->Show(/*true*/!itm->cast_weapon_ammo());
+
+		itm_name = itm->object().cNameSect();
+		count = pActor->inventory().GetSameItemCount(itm_name.c_str(), SearchRuck);
+		sprintf(str, "x%d", count);
+		m_CountItemQuickSlot_3_Text->SetText(str);
+		m_CountItemQuickSlot_3_Text->Show(true);
+		DrawItemInSlot(itm, m_QuickSlot_3_Icon, m_QuickSlot_3_Icon_Size);
+	}
+	else
+	{
+		m_UseQuickSlot_3_Text->Show(false);
+		m_CountItemQuickSlot_3_Text->Show(false);
+		m_QuickSlot_3_Icon->Show(false);
+	}
 }

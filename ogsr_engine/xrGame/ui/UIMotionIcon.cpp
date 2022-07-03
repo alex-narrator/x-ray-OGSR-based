@@ -118,7 +118,7 @@ void CUIMotionIcon::SetLuminosity(float Pos)
 void CUIMotionIcon::Update()
 {
 	auto CurrentHUD = HUD().GetUI()->UIMainIngameWnd;
-	bool show_motion_icon = g_eHudOnKey != eHudOnKeyWarningIcon;
+	bool show_motion_icon = eHudOnKeyWarningIcon != g_eHudOnKey;
 	bool show_progress_bar = CurrentHUD->IsHUDElementAllowed(ePDA);
 
 	//статик положения персонажа и выносливости
@@ -152,7 +152,7 @@ void CUIMotionIcon::Update()
 	else //ранее этот код был в UIMainIngameWnd, использовался в мультиплеере
 	{
 		float		luminocity = smart_cast<CGameObject*>(Level().CurrentEntity())->ROS()->get_luminocity();
-		float		power = log(luminocity > .001f ? luminocity : .001f) * (1.f/*luminocity_factor*/);
+		float		power = log(luminocity > .001f ? luminocity : .001f);
 		luminocity = exp(power);
 
 		static float cur_lum = luminocity;
@@ -160,11 +160,9 @@ void CUIMotionIcon::Update()
 		SetLuminosity((s16)iFloor(cur_lum * 100.0f));
 	}
 
-	inherited::Update();
-
 	//m_luminosity_progress 
 	{
-		float len = m_noise_progress.GetRange_max() - m_noise_progress.GetRange_min();
+		float len = m_luminosity_progress.GetRange_max() - m_luminosity_progress.GetRange_min();
 		float cur_pos = m_luminosity_progress.GetProgressPos();
 		if (cur_pos != m_luminosity) {
 			float _diff = _abs(m_luminosity - cur_pos);
@@ -178,6 +176,8 @@ void CUIMotionIcon::Update()
 			m_luminosity_progress.SetProgressPos(cur_pos);
 		}
 	}
+
+	inherited::Update();
 }
 
 void CUIMotionIcon::SetActorVisibility		(u16 who_id, float value)
@@ -230,7 +230,7 @@ void CUIMotionIcon::InitStateColorize()
 
 void CUIMotionIcon::SetStateWarningColor(EState state)
 {
-	if (g_eHudOnKey != eHudOnKeyMotionIcon)
+	if (eHudOnKeyMotionIcon != g_eHudOnKey)
 	{
 		if (m_states[state].GetColor() != u_ColorDefault)
 			m_states[state].SetColor(u_ColorDefault);
@@ -252,7 +252,7 @@ void CUIMotionIcon::SetStateWarningColor(EState state)
 		// Сначала проверяем на точное соответсвие
 		rit = std::find(m_Thresholds.rbegin(), m_Thresholds.rend(), value);
 
-		// Если его нет, то берем последнее меньшее значение ()
+		// Если его нет, то берем последнее меньшее значение
 		if (rit == m_Thresholds.rend())
 			rit = std::find_if(m_Thresholds.rbegin(), m_Thresholds.rend(), std::bind(std::less<float>(), std::placeholders::_1, value));
 

@@ -1417,14 +1417,19 @@ void CActor::OnItemRuck		(CInventoryItem *inventory_item, EItemPlace previous_pl
 {
 	CInventoryOwner::OnItemRuck(inventory_item, previous_place);
 
-	if ( previous_place == eItemPlaceBelt )
+	if (previous_place == eItemPlaceBelt)
 		UpdateArtefactPanel();
+	else if (previous_place == eItemPlaceSlot)
+		UpdateQuickSlotPanel();
 }
 void CActor::OnItemBelt		(CInventoryItem *inventory_item, EItemPlace previous_place)
 {
 	CInventoryOwner::OnItemBelt(inventory_item, previous_place);
 
 	UpdateArtefactPanel();
+
+	if (previous_place == eItemPlaceSlot)
+		UpdateQuickSlotPanel();
 }
 
 void CActor::OnItemSlot(CInventoryItem* inventory_item, EItemPlace previous_place)
@@ -1433,6 +1438,8 @@ void CActor::OnItemSlot(CInventoryItem* inventory_item, EItemPlace previous_plac
 
 	if (previous_place == eItemPlaceBelt)
 		UpdateArtefactPanel();
+
+	UpdateQuickSlotPanel();
 }
 
 
@@ -1440,6 +1447,12 @@ void CActor::UpdateArtefactPanel()
 {
 	if (Level().CurrentViewEntity() && Level().CurrentViewEntity() == this) //Оно надо вообще без мультиплеера?
 		HUD().GetUI()->UIMainIngameWnd->m_artefactPanel->InitIcons(inventory().m_belt);
+}
+
+void CActor::UpdateQuickSlotPanel()
+{
+	if (Level().CurrentViewEntity() && Level().CurrentViewEntity() == this) //Оно надо вообще без мультиплеера?
+		HUD().GetUI()->UIMainIngameWnd->m_quickSlotPanel->Update();
 }
 
 //void CActor::ApplyArtefactEffects(ActorRestoreParams& r, CArtefact*	artefact)
@@ -2008,8 +2021,8 @@ bool CActor::IsHitToBackPack(SHit* pHDS)
 #include "SimpleDetectorSHOC.h"
 bool CActor::HasDetector()
 {
-	if (!psActorFlags.test(AF_ARTEFACT_DETECTOR_CHECK))
-		return true;
+	//if (!psActorFlags.test(AF_ARTEFACT_DETECTOR_CHECK))
+	//	return true;
 
 	auto item_in_det_slot = inventory().ItemFromSlot(DETECTOR_SLOT);
 	return (smart_cast<CCustomDetector*>(item_in_det_slot) || smart_cast<CSimpleDetectorSHOC*>(item_in_det_slot));

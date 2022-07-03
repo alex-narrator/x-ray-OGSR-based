@@ -1407,7 +1407,7 @@ u32 CInventory::GetSameItemCount(LPCSTR caSection, bool SearchRuck)
 			++l_dwCount;
 	}
 	//помимо пояса еще и в слотах поищем
-	if (!SearchRuck)
+	/*if (!SearchRuck)*/
 		for (u32 i = 0; i < m_slots.size(); ++i)
 		{
 			PIItem l_pIItem = m_slots[i].m_pIItem;
