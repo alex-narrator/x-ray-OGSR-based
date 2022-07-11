@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Actor.h"
+#include "ActorCondition.h"
 #include "../xr_3da/camerabase.h"
 #ifdef DEBUG
 #include "PHDebug.h"
@@ -163,7 +164,8 @@ void CActor::cam_Update(float dt, float fFOV)
 	// Alex ADD: smooth crouch fix
 	if (CurrentHeight != CameraHeight())
 	{
-		float smoothK = cam_HeightInterpolationSpeed * dt;
+		float power_factor = conditions().GetPowerKoef();
+		float smoothK = cam_HeightInterpolationSpeed * power_factor * dt;
 		if (smoothK > 1.0f)
 			smoothK = 1.0f;
 

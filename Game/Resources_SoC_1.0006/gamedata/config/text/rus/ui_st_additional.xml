@@ -79,10 +79,6 @@
 		<text>Автоприцеливание</text>
 	</string>
 	
-	<string id="ui_mm_ammo_from_belt">
-		<text>Патроны и гранаты с пояса</text>
-	</string>
-	
 	<string id="st_not_enough_money_to_trade">
 		<text>недостаточно денег</text>
 	</string>
@@ -90,7 +86,7 @@
 		<text>недостаточно товаров</text>
 	</string>
 	<string id="ui_st_barter">
-		<text>Бартер</text>
+		<text>Бартер [T]</text>
 	</string>
 	
 	<string id="st_current_ammo">
@@ -104,5 +100,288 @@
 	</string>
 	<string id="st_gl_mode">
 		<text>[гранатомёт]</text>
+	</string>
+	
+<!-- BEGIN Новые опции геймплея -->>
+	<string id="ui_mm_pickup_target_only">
+		<text>Подбор предметов непосредственно в прицеле</text>
+	</string>
+	<string id="ui_mm_use_luminosity">
+		<text>Освещённость вместо заметности</text>
+	</string>
+	<string id="ui_mm_stop_missile_playing">
+		<text>Отключить анимации подбрасывания болта и гранат</text>
+	</string>
+	<string id="ui_mm_ammo_from_belt">
+		<text>Патроны и гранаты с пояса</text>
+	</string>
+	<string id="ui_mm_quick_slot_from_belt">
+		<text>Предметы для быстрых слотов с пояса</text>
+	</string>
+	<string id="ui_mm_artefacts_from_all">
+		<text>Артефакты действуют из всего инвентаря</text>
+	</string>
+	<string id="ui_mm_artefact_detector_check">
+		<text>Детектор нужен для отображения свойств артефактов</text>
+	</string>
+	<string id="ui_mm_no_auto_reload">
+		<text>Запрет автоматической перезарядки оружия и сброса зума</text>
+	</string>
+	<string id="ui_mm_wpn_actions_reset_sprint">
+		<text>Действия с оружием сбрасывают спринт</text>
+	</string>
+	
+<!-- режимы свободных рук начало -->
+	<string id="ui_mm_free_hands">
+		<text>Для взаимодействия с предметами нужно освободить руки</text>
+	</string>
+	<string id="fh_off">
+		<text>отключено</text>
+	</string>	
+	<string id="fh_auto">
+		<text>освобождать автоматически</text>
+	</string>	
+	<string id="fh_manual">
+		<text>освобождать самостоятельно</text>
+	</string>	
+<!-- режимы свободных рук конец -->	
+
+<!-- HUD по нажатию клавиш начало -->
+	<string id="ui_mm_hud_laconic">
+		<text>Лаконичный HUD</text>
+	</string>
+	<string id="hl_off">
+		<text>отключено (классический UI)</text>
+	</string>	
+	<string id="hl_warning">
+		<text>включено (только иконки-индикаторы)</text>
+	</string>	
+	<string id="hl_motion">
+		<text>включено (иконка положения персонажа)</text>
+	</string>
+<!-- HUD по нажатию клавиш конец -->
+	
+	<string id="ui_mm_smooth_overweight">
+		<text>Плавный перегруз без обездвиживания</text>
+	</string>
+	<string id="ui_mm_survival_mode">
+		<text>Режим выживания</text>
+	</string>
+	
+	<string id="ui_mm_input_exclusive">
+		<text>Эксклюзивный режим ввода</text>
+	</string>
+<!-- END Новые опции геймплея -->>
+	<string id="ui_mm_build_crosshair">
+		<text>Круглый (билдовый) курсор</text>
+	</string>
+	<string id="ui_mm_crosshair_hard">
+		<text>Пули летят из ствола оружия</text>
+	</string>
+	<string id="ui_mm_keypress_on_start">
+		<text>Пауза после загрузки сохранения</text>
+	</string>
+
+	<string id="ui_mm_hold_to_aim">
+		<text>Удерживать клавишу [$$ACTION_WPN_ZOOM$$] для прицеливания</text>
+	</string>
+	<string id="ui_mm_missile_force_grow_speed">
+		<text>Скорость замаха при броске</text>
+	</string>
+	
+	<string id="ui_mm_cam_height_speed">
+		<text>Скорость приседания</text>
+	</string>
+	<string id="ui_mm_cam_lookout_speed">
+		<text>Скорость выглядывания</text>
+	</string>
+	
+	<string id="ui_inv_repack_ammo">
+		<text>Упорядочить патроны [E]</text>
+	</string>
+<!-- опции видео -->	
+	<string id="ui_mm_detail_scale">
+		<text>Высота травы</text>
+	</string>
+	<string id="video_settings_name_detail_scale">
+		<text>Высота травы - r__detail_scale</text>
+	</string>
+	<string id="video_settings_desc_detail_scale">
+		<text>Эта настройка регулирует высоту травы (а также размер отрисованных на асфальте листьев и прочих элементов дитейла), не оказывает влияния на производительность.</text>
+	</string>
+	<string id="video_settings_name_cam_height_speed">
+		<text>Скорость изменения высоты камеры - cam_height_speed</text>
+	</string>
+	<string id="video_settings_desc_cam_height_speed">
+		<text>Эта настройка регулирует скорость опускания/поднимания камеры при приседании/вставании. В "режиме выживания" (см. настройки геймплея) текущий запас сил также влияет на этот параметр.</text>
+	</string>
+	<string id="video_settings_name_cam_lookout_speed">
+		<text>Скорость перемещения камеры при выглядывании - cam_lookout_speed</text>
+	</string>
+	<string id="video_settings_desc_cam_lookout_speed">
+		<text>Эта настройка регулирует скорость перемещения камеры в положение выглядывания и обратно. В "режиме выживания" (см. настройки геймплея) текущий запас сил также влияет на этот параметр.</text>
+	</string>
+<!-- опции геймплея -->		
+	<string id="gameplay_settings_name_autopause">
+		<text>Пауза после загрузки сохранения - keypress_on_start</text>
+	</string>
+	<string id="gameplay_settings_desc_autopause">
+		<text>Автопауза после загрузки сохранения - "Нажмите любую клавишу для перехода к игре"</text>
+	</string>
+	<string id="gameplay_settings_name_tips">
+		<text>Распознавание НПС - hud_info</text>
+	</string>
+	<string id="gameplay_settings_desc_tips">
+		<text>Подсказки с именем при наведении прицела на NPC и окрашивание прицела при наведении на монстров</text>
+	</string>
+	<string id="gameplay_settings_name_crosshair">
+		<text>Показывать прицел - hud_crosshair</text>
+	</string>
+	<string id="gameplay_settings_desc_crosshair">
+		<text>crosshair</text>
+	</string>
+	<string id="gameplay_settings_name_dyn_crosshair">
+		<text>dyn_crosshair</text>
+	</string>
+	<string id="gameplay_settings_desc_dyn_crosshair">
+		<text>dyn_crosshair</text>
+	</string>
+	<string id="gameplay_settings_name_show_weapon">
+		<text>show_weapon</text>
+	</string>
+	<string id="gameplay_settings_desc_show_weapon">
+		<text>show_weapon</text>
+	</string>
+	<string id="gameplay_settings_name_pickup_target_only">
+		<text>pickup_target_only</text>
+	</string>
+	<string id="gameplay_settings_desc_pickup_target_only">
+		<text>pickup_target_only</text>
+	</string>
+	<string id="gameplay_settings_name_use_luminosity">
+		<text>use_luminosity</text>
+	</string>
+	<string id="gameplay_settings_desc_use_luminosity">
+		<text>use_luminosity</text>
+	</string>
+	<string id="gameplay_settings_name_stop_missile_playing">
+		<text>stop_missile_playing</text>
+	</string>
+	<string id="gameplay_settings_desc_stop_missile_playing">
+		<text>stop_missile_playing</text>
+	</string>
+	<string id="gameplay_settings_name_no_auto_reload">
+		<text>no_auto_reload</text>
+	</string>
+	<string id="gameplay_settings_desc_no_auto_reload">
+		<text>no_auto_reload</text>
+	</string>
+	<string id="gameplay_settings_name_wpn_actions_reset_sprint">
+		<text>wpn_actions_reset_sprint</text>
+	</string>
+	<string id="gameplay_settings_desc_wpn_actions_reset_sprint">
+		<text>wpn_actions_reset_sprint</text>
+	</string>
+	<string id="gameplay_settings_name_ammo_from_belt">
+		<text>ammo_from_belt</text>
+	</string>
+	<string id="gameplay_settings_desc_ammo_from_belt">
+		<text>ammo_from_belt</text>
+	</string>
+	<string id="gameplay_settings_name_quick_slot_from_belt">
+		<text>quick_slot_from_belt</text>
+	</string>
+	<string id="gameplay_settings_desc_quick_slot_from_belt">
+		<text>quick_slot_from_belt</text>
+	</string>
+	<string id="gameplay_settings_name_artefacts_from_all">
+		<text>artefacts_from_all</text>
+	</string>
+	<string id="gameplay_settings_desc_artefacts_from_all">
+		<text>artefacts_from_all</text>
+	</string>
+	<string id="gameplay_settings_name_artefact_detector_check">
+		<text>artefact_detector_check</text>
+	</string>
+	<string id="gameplay_settings_desc_artefact_detector_check">
+		<text>artefact_detector_check</text>
+	</string>
+	<string id="gameplay_settings_name_smooth_overweight">
+		<text>smooth_overweight</text>
+	</string>
+	<string id="gameplay_settings_desc_smooth_overweight">
+		<text>smooth_overweight</text>
+	</string>
+	<string id="gameplay_settings_name_survival_mode">
+		<text>survival_mode</text>
+	</string>
+	<string id="gameplay_settings_desc_survival_mode">
+		<text>survival_mode</text>
+	</string>
+	<string id="gameplay_settings_name_crosshair_hard">
+		<text>crosshair_hard</text>
+	</string>
+	<string id="gameplay_settings_desc_crosshair_hard">
+		<text>crosshair_hard</text>
+	</string>
+	<string id="gameplay_settings_name_ambient">
+		<text>ambient</text>
+	</string>
+	<string id="gameplay_settings_desc_ambient">
+		<text>ambient</text>
+	</string>
+	<string id="gameplay_settings_name_free_hands">
+		<text>free_hands</text>
+	</string>
+	<string id="gameplay_settings_desc_free_hands">
+		<text>free_hands</text>
+	</string>
+	<string id="gameplay_settings_name_hud_laconic">
+		<text>Лаконичный HUD - g_hud_laconic</text>
+	</string>
+	<string id="gameplay_settings_desc_hud_laconic">
+		<text>Эта опция отвечает за режимы отображения HUD. Если выбран режим "отключено (классический UI)", то все элементы интерфейса отображаются как в оригинальной игре. 
+		В режиме "только иконки индикаторы" все показатели состояния ГГ отображаються иконками в стиле радиации, голода и т.д. 
+		В режиме "иконка положения персонажа" уровень выносливости отображается как обычно а здоровье отображено расцветкой иконки положения.
+		При выборе режимов отличных от "отключено" такие элементы интерфейса как миникарта, индикатор радиации, здоровья, брони, 
+		информация о кол-ве патронов и режиме стрельбы оружия а также отображение содержимого пояса и быстрых слотов 
+		будут показаны только при удержании кнопок [$$ACTION_SCORES$$] | [$$ACTION_CHECK_ACTIVE_ITEM$$] | [$$ACTION_CHECK_GEAR$$].</text>
+	</string>
+	<string id="gameplay_settings_name_difficulty">
+		<text>Сложность - g_game_difficulty</text>
+	</string>
+	<string id="gameplay_settings_desc_difficulty">
+		<text>Выбор уровня сложности игры.</text>
+	</string>
+<!-- опции управления -->	
+	<string id="controls_settings_name_mousesens">
+		<text>Чувствительность мыши - mouse_sens</text>
+	</string>
+	<string id="controls_settings_desc_mousesens">
+		<text>Регулировка чувствительности мыши</text>
+	</string>
+	<string id="controls_settings_name_mouseinvert">
+		<text>Инвертировать мышь - mouse_invert</text>
+	</string>
+	<string id="controls_settings_desc_mouseinvert">
+		<text>Включить инверсию ввода с мыши</text>
+	</string>
+	<string id="controls_settings_name_missile_force_grow_speed">
+		<text>Скорость замаха при броске - missile_force_grow_speed</text>
+	</string>
+	<string id="controls_settings_desc_missile_force_grow_speed">
+		<text>Регулирует скорость, с которой будет возрастать сила броска болта/гранаты при зажатии [$$ACTION_WPN_ZOOM$$]</text>
+	</string>
+	<string id="controls_settings_name_hold_to_aim">
+		<text>Удерживать клавишу [$$ACTION_WPN_ZOOM$$] для прицеливания - g_hold_to_aim</text>
+	</string>
+	<string id="controls_settings_desc_hold_to_aim">
+		<text>Если опция включена, то для прицеливания необходимо будет удерживать клавишу [$$ACTION_WPN_ZOOM$$], как в оригинальной игре.</text>
+	</string>
+	<string id="controls_settings_name_input_exclusive">
+		<text>Эксклюзивный режим ввода - input_exclusive_mode</text>
+	</string>
+	<string id="controls_settings_desc_input_exclusive">
+		<text>Будучи включенной опция блокирует работу мультимедийных клавиш на клавиатуре. Отключение может вызывать проблемы из-за недозахвата управления и на многомониторных конфигурациях.</text>
 	</string>
 </string_table>

@@ -55,7 +55,7 @@
 		<text>час.</text>
 	</string>
 	<string id="ui_st_leave">
-		<text>Уйти</text>
+		<text>Говорить [Q]</text>
 	</string>
 	<string id="ui_st_mins">
 		<text>мин.</text>
@@ -73,13 +73,13 @@
 		<text>Пожалуйста, выберите хотя бы одну карту</text>
 	</string>
 	<string id="ui_st_take_all">
-		<text>Взять все</text>
+		<text>Взять все [Space]</text>
 	</string>
 	<string id="ui_st_time_remains">
 		<text>Осталось</text>
 	</string>
 	<string id="ui_st_trade">
-		<text>Торговать</text>
+		<text>Торговать [T]</text>
 	</string>
 	<string id="ui_st_voting_disabled">
 		<text>Голосование отключено</text>
@@ -237,10 +237,10 @@
 	</string>
 
 	<string id="inventory_item_use_or_drag">
-		<text>Поднять предмет ($$ACTION_USE$$) \n Перетащить предмет (SHIFT+$$ACTION_USE$$)</text>
+		<text>Поднять [$$ACTION_USE$$] \n Тащить [SHIFT+$$ACTION_USE$$]</text>
 	</string>
 	<string id="game_object_drag">
-		<text>Перетащить предмет (SHIFT+$$ACTION_USE$$)</text>
+		<text>Перетащить [SHIFT+$$ACTION_USE$$]</text>
 	</string>
 
 	<string id="st_press_any_key">

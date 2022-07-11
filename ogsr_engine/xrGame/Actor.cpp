@@ -2021,9 +2021,6 @@ bool CActor::IsHitToBackPack(SHit* pHDS)
 #include "SimpleDetectorSHOC.h"
 bool CActor::HasDetector()
 {
-	//if (!psActorFlags.test(AF_ARTEFACT_DETECTOR_CHECK))
-	//	return true;
-
 	auto item_in_det_slot = inventory().ItemFromSlot(DETECTOR_SLOT);
 	return (smart_cast<CCustomDetector*>(item_in_det_slot) || smart_cast<CSimpleDetectorSHOC*>(item_in_det_slot));
 }

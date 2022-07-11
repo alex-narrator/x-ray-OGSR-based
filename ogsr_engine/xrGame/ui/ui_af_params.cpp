@@ -219,7 +219,7 @@ void CUIArtefactParams::SetInfo(CInventoryItem* obj)
 	CActor *pActor = Actor();
 	if (!pActor) return;
 
-	bool show_window = pActor->HasDetector() /*|| outfit || backpack*/;
+	bool show_window = !psActorFlags.is(AF_ARTEFACT_DETECTOR_CHECK) || pActor->HasDetector() /*|| outfit || backpack*/;
 
 	Show(show_window);
 

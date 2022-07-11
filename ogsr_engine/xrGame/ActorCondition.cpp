@@ -762,6 +762,8 @@ void CActorCondition::UpdatePsyHealth()
 	{
 		m_fDeltaPsyHealth += m_change_v.m_fV_PsyHealth * m_fDeltaTime * GetRegenKoef();
 	}
+	else
+		health() = 0.0f;
 
 	CEffectorPP* ppe = object().Cameras().GetPPEffector((EEffectorPPType)effPsyHealth);
 
@@ -783,9 +785,6 @@ void CActorCondition::UpdatePsyHealth()
 		if (ppe)
 			RemoveEffector(m_object, effPsyHealth);
 	}
-	//смерть при нулевом пси-здоровье
-	if (fis_zero(GetPsyHealth()))
-		health() = 0.0f;
 }
 
 void CActorCondition::UpdateRadiation()
@@ -793,7 +792,7 @@ void CActorCondition::UpdateRadiation()
 	if (m_fRadiation > 0)
 	{
 		m_fDeltaRadiation -= m_change_v.m_fV_Radiation * m_fDeltaTime;
-		//радиация постоянно отнимает здоровье только если выкючена опция взаимозависимости параметров
+		//радиация постоянно отнимает здоровье только если выкюченрежим выживания
 		m_fDeltaHealth -= CanBeHarmed() && !psActorFlags.test(AF_SURVIVAL) ? m_change_v.m_fV_RadiationHealth * m_fRadiation * m_fDeltaTime : 0.0f;
 		//Msg("CActorCondition m_fDeltaHealth [%f]", m_fDeltaHealth);
 	}

@@ -241,9 +241,6 @@ void CUICarBodyWnd::Hide()
 
 	if (Actor())
 	{
-		if (Core.Features.test(xrCore::Feature::more_hide_weapon))
-			Actor()->SetWeaponHideState(INV_STATE_BLOCK_ALL, false);
-
 //		CBaseMonster* Monster = smart_cast<CBaseMonster*>(m_pOthersObject);
 //		if (g_eFreeHands == eFreeHandsManual && !Monster) Actor()->SetWeaponHideState(INV_STATE_INV_WND, false);  //восстановим показ оружия в руках, если обыскиваем не монстра
 
@@ -430,19 +427,13 @@ void CUICarBodyWnd::Update()
 
 void CUICarBodyWnd::Show() 
 { 
-	if (Core.Features.test(xrCore::Feature::more_hide_weapon))
-		Actor()->SetWeaponHideState(INV_STATE_BLOCK_ALL, true);
-
 	InventoryUtilities::SendInfoToActor		("ui_car_body");
 	inherited::Show							();
 	SetCurrentItem							(NULL);
 	InventoryUtilities::UpdateWeight		(*m_pUIOurBagWnd);
 
-	if (auto pActor = Actor())
+	if (Actor())
 	{
-		//if (Core.Features.test(xrCore::Feature::engine_ammo_repacker) && !Core.Features.test(xrCore::Feature::hard_ammo_reload))
-		//	pActor->RepackAmmo();
-
 		//CBaseMonster* Monster = smart_cast<CBaseMonster*>(m_pOthersObject);
 		//if (g_eFreeHands == eFreeHandsManual && !Monster) Actor()->SetWeaponHideState(INV_STATE_INV_WND, true);  //спрячем оружие в руках, если обыскиваем не монстра 
 		

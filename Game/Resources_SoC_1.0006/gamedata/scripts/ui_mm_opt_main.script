@@ -219,3 +219,30 @@ end
 function options_dialog:show_need_restart_wnd()
 	self:GetHolder():start_stop_menu(self.message_box, true)
 end
+
+function init_hint(handler, static, opt, hint_name, hint_text)
+	handler:Register(static, opt)
+	handler:AddCallback(
+		opt,
+		ui_events.STATIC_FOCUS_RECEIVED,
+		function()
+			handler.hint_name:SetText(game.translate_string(hint_name and game.translate_string(hint_name) or ""))
+			handler.hint_caption:SetText(game.translate_string(hint_text and game.translate_string(hint_text) or ""))
+		end
+	)
+end
+
+local control = {
+	["track"] = "InitTrackBar",
+	["list"]  = "InitComboBox",
+	["check"] = "InitCheck",
+}
+
+function get_control(ctrl)
+	for key, value in pairs(control) do
+		if ctrl == key then
+			return value
+		end
+	end
+		return nil
+end

@@ -162,11 +162,11 @@ void CUITalkDialogWnd::AddQuestion(LPCSTR str, LPCSTR value, int number)
 	++number; //zero-based index
 	if(number<=10)
 	{
-		if (Core.Features.test(xrCore::Feature::show_dialog_numbers)) {
+		//if (Core.Features.test(xrCore::Feature::show_dialog_numbers)) {
 			string16 buff;
 			sprintf_s(buff, "%d.", (number == 10) ? 0 : number);
 			itm->m_num_text->SetText(buff);
-		}
+		//}
 		itm->m_text->SetAccelerator		(DIK_ESCAPE+number, 0);
 	}
 	itm->SetWindowName				("question_item");
@@ -252,7 +252,7 @@ CUIQuestionItem::CUIQuestionItem			(CUIXml* xml_doc, LPCSTR path)
 	m_text->SetWindowName			("text_button");
 	AddCallback("text_button", BUTTON_CLICKED, fastdelegate::MakeDelegate(this, &CUIQuestionItem::OnTextClicked));
 
-	if (Core.Features.test(xrCore::Feature::show_dialog_numbers)) {
+	//if (Core.Features.test(xrCore::Feature::show_dialog_numbers)) {
 
 	m_num_text						= xr_new<CUIStatic>();
 	m_num_text->SetAutoDelete		(true);
@@ -260,7 +260,7 @@ CUIQuestionItem::CUIQuestionItem			(CUIXml* xml_doc, LPCSTR path)
 	strconcat						(sizeof(str),str,path,":num_text");
 	xml_init.InitStatic				(*xml_doc, str, 0, m_num_text);
 
-	}
+	//}
 }
 
 void CUIQuestionItem::Init			(LPCSTR val, LPCSTR text)

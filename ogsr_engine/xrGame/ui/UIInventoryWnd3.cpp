@@ -44,6 +44,7 @@ void CUIInventoryWnd::ActivatePropertiesBox()
 	CCustomOutfit*		pOutfit				= smart_cast<CCustomOutfit*>	(CurrentIItem());
 	CWeapon*			pWeapon				= smart_cast<CWeapon*>			(CurrentIItem());
 	CBottleItem*		pBottleItem			= smart_cast<CBottleItem*>		(CurrentIItem());
+	CWeaponAmmo*		pAmmo				= smart_cast<CWeaponAmmo*>		(CurrentIItem());
 
 	string1024			temp;
     
@@ -94,6 +95,44 @@ void CUIInventoryWnd::ActivatePropertiesBox()
 	{
 		UIPropertiesBox.AddItem("st_dress_outfit",  NULL, INVENTORY_TO_SLOT_ACTION);
 		b_show = true;
+	}
+
+	if (pAmmo)
+	{
+		LPCSTR _ammo_sect;
+
+		if (pAmmo->IsBoxReloadable())
+		{
+			//unload AmmoBox
+			UIPropertiesBox.AddItem("st_unload_magazine", NULL, INVENTORY_UNLOAD_AMMO_BOX);
+			b_show = true;
+			//reload AmmoBox
+			if (pAmmo->m_boxCurr < pAmmo->m_boxSize)
+			{
+				if (m_pInv->GetAmmo(*pAmmo->m_ammoSect, true))
+				{
+					strconcat(sizeof(temp), temp, *CStringTable().translate("st_load_ammo_type"), " ",
+						*CStringTable().translate(pSettings->r_string(pAmmo->m_ammoSect, "inv_name_short")));
+					_ammo_sect = *pAmmo->m_ammoSect;
+					UIPropertiesBox.AddItem(temp, (void*)_ammo_sect, INVENTORY_RELOAD_AMMO_BOX);
+					b_show = true;
+				}
+			}
+		}
+		else if (pAmmo->IsBoxReloadableEmpty())
+		{
+			for (u8 i = 0; i < pAmmo->m_ammoTypes.size(); ++i)
+			{
+				if (m_pInv->GetAmmo(*pAmmo->m_ammoTypes[i], true))
+				{
+					strconcat(sizeof(temp), temp, *CStringTable().translate("st_load_ammo_type"), " ",
+						*CStringTable().translate(pSettings->r_string(pAmmo->m_ammoTypes[i], "inv_name_short")));
+					_ammo_sect = *pAmmo->m_ammoTypes[i];
+					UIPropertiesBox.AddItem(temp, (void*)_ammo_sect, INVENTORY_RELOAD_AMMO_BOX);
+					b_show = true;
+				}
+			}
+		}
 	}
 	
 	//отсоединение аддонов от вещи
@@ -285,35 +324,62 @@ void CUIInventoryWnd::ProcessPropertiesBoxClicked	()
 		case INVENTORY_RELOAD_MAGAZINE:
 		{
 			void* d = UIPropertiesBox.GetClickedItem()->GetData();
-			(smart_cast<CWeapon*>(CurrentIItem()))->m_set_next_ammoType_on_reload = (u32)(__int64)d;
-			(smart_cast<CWeapon*>(CurrentIItem()))->ReloadWeapon();
+			auto Wpn = smart_cast<CWeapon*>(CurrentIItem());
+			Wpn->m_set_next_ammoType_on_reload = (u32)(__int64)d;
+			Wpn->ReloadWeapon();
 		}break;
 		case INVENTORY_UNLOAD_MAGAZINE:
-			{
-				auto ProcessUnload = [](void* pWpn) {
-					auto WpnMagaz = static_cast<CWeaponMagazined*>(pWpn);
-					WpnMagaz->UnloadMagazine();
-					WpnMagaz->PullShutter();
-					if (auto WpnMagazWgl = smart_cast<CWeaponMagazinedWGrenade*>(WpnMagaz))
-					{
-						if (WpnMagazWgl->IsGrenadeLauncherAttached())
-						{
-							WpnMagazWgl->PerformSwitchGL();
-							WpnMagazWgl->UnloadMagazine();
-							WpnMagazWgl->PerformSwitchGL();
-						}
-					}
-				};
-
-				auto itm = CurrentItem();
-				ProcessUnload(itm->m_pData);
-
-				for (u32 i = 0; i < itm->ChildsCount(); ++i)
+		{
+			auto ProcessUnload = [](void* pWpn) {
+				auto WpnMagaz = static_cast<CWeaponMagazined*>(pWpn);
+				WpnMagaz->UnloadMagazine();
+				WpnMagaz->PullShutter();
+				if (auto WpnMagazWgl = smart_cast<CWeaponMagazinedWGrenade*>(WpnMagaz))
 				{
-					auto child_itm = itm->Child(i);
-					ProcessUnload(child_itm->m_pData);
+					if (WpnMagazWgl->IsGrenadeLauncherAttached())
+					{
+						WpnMagazWgl->PerformSwitchGL();
+						WpnMagazWgl->UnloadMagazine();
+						WpnMagazWgl->PullShutter();
+						WpnMagazWgl->PerformSwitchGL();
+					}
 				}
-			}break;
+			};
+
+			auto itm = CurrentItem();
+			ProcessUnload(itm->m_pData);
+
+			for (u32 i = 0; i < itm->ChildsCount(); ++i)
+			{
+				auto child_itm = itm->Child(i);
+				ProcessUnload(child_itm->m_pData);
+			}
+		}break;
+		case INVENTORY_RELOAD_AMMO_BOX:
+		{
+			//Msg("load %s to %s", (LPCSTR)UIPropertiesBox.GetClickedItem()->GetData(), pAmmo->cNameSect().c_str());
+			(smart_cast<CWeaponAmmo*>(CurrentIItem()))->ReloadBox((LPCSTR)UIPropertiesBox.GetClickedItem()->GetData());
+			//SetCurrentItem(NULL);
+			PlaySnd(eInvMagLoad);
+			m_b_need_reinit = true;
+		}break;
+		case INVENTORY_UNLOAD_AMMO_BOX:
+		{
+			auto ProcessUnload = [](void* pAmmo) {
+				auto AmmoBox = static_cast<CWeaponAmmo*>(pAmmo);
+				AmmoBox->UnloadBox();
+			};
+
+			auto itm = CurrentItem();
+			ProcessUnload(itm->m_pData);
+			for (u32 i = 0; i < itm->ChildsCount(); ++i)
+			{
+				auto child_itm = itm->Child(i);
+				ProcessUnload(child_itm->m_pData);
+			}
+			//SetCurrentItem(NULL);
+			PlaySnd(eInvMagUnload);
+		}break;
 		}
 	}
 }

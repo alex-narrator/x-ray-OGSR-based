@@ -18,16 +18,17 @@
 CUIItemInfo::CUIItemInfo()
 {
 	UIItemImageSize.set			(0.0f,0.0f);
-	UICondProgresBar			= NULL;
-	UICondition					= NULL;
-	UICost						= NULL;
-	UIWeight					= NULL;
-	UIItemImage					= NULL;
-	UIDesc						= NULL;
-	UIWpnParams					= NULL;
-	UIArtefactParams			= NULL;
-	UIName						= NULL;
-	m_pInvItem					= NULL;
+	UICondProgresBar			= nullptr;
+	UICondition					= nullptr;
+	UICost						= nullptr;
+	UIWeight					= nullptr;
+	UIVolume					= nullptr;
+	UIItemImage					= nullptr;
+	UIDesc						= nullptr;
+	UIWpnParams					= nullptr;
+	UIArtefactParams			= nullptr;
+	UIName						= nullptr;
+	m_pInvItem					= nullptr;
 	m_b_force_drawing			= false;
 }
 
@@ -62,22 +63,28 @@ void CUIItemInfo::Init(LPCSTR xml_name){
 		UIName						= xr_new<CUIStatic>();	 
 		AttachChild					(UIName);		
 		UIName->SetAutoDelete		(true);
-		xml_init.InitStatic			(uiXml, "static_name", 0,	UIName);
+		xml_init.InitStatic			(uiXml, "static_name", 0, UIName);
 	}
 	if(uiXml.NavigateToNode("static_weight",0))
 	{
 		UIWeight				= xr_new<CUIStatic>();	 
 		AttachChild				(UIWeight);		
 		UIWeight->SetAutoDelete(true);
-		xml_init.InitStatic		(uiXml, "static_weight", 0,			UIWeight);
+		xml_init.InitStatic		(uiXml, "static_weight", 0, UIWeight);
 	}
-
+	if(uiXml.NavigateToNode("static_volume", 0))
+	{
+		UIVolume				= xr_new<CUIStatic>();
+		AttachChild				(UIVolume);
+		UIVolume->SetAutoDelete	(true);
+		xml_init.InitStatic		(uiXml, "static_volume", 0, UIVolume);
+	}
 	if(uiXml.NavigateToNode("static_cost",0))
 	{
 		UICost					= xr_new<CUIStatic>();	 
 		AttachChild				(UICost);
 		UICost->SetAutoDelete	(true);
-		xml_init.InitStatic		(uiXml, "static_cost", 0,			UICost);
+		xml_init.InitStatic		(uiXml, "static_cost", 0, UICost);
 	}
 
 	if(uiXml.NavigateToNode("static_condition",0))
@@ -85,7 +92,7 @@ void CUIItemInfo::Init(LPCSTR xml_name){
 		UICondition					= xr_new<CUIStatic>();	 
 		AttachChild					(UICondition);
 		UICondition->SetAutoDelete	(true);
-		xml_init.InitStatic			(uiXml, "static_condition", 0,		UICondition);
+		xml_init.InitStatic			(uiXml, "static_condition", 0, UICondition);
 	}
 
 	if(uiXml.NavigateToNode("condition_progress",0))
@@ -145,12 +152,17 @@ void CUIItemInfo::InitItem(CInventoryItem* pInvItem)
 	}
 	if(UIWeight)
 	{
-		sprintf_s				(str, "%3.2f %s", pInvItem->Weight(), CStringTable().translate("st_kg").c_str());
+		sprintf_s			(str, "%3.2f %s", pInvItem->Weight(), CStringTable().translate("st_kg").c_str());
 		UIWeight->SetText	(str);
+	}
+	if (UIVolume)
+	{
+		sprintf_s			(str, "%3.2f %s", pInvItem->Volume(), *CStringTable().translate("st_l"));
+		UIVolume->SetText	(str);
 	}
 	if( UICost )
 	{
-		sprintf_s				(str, "%d %s", pInvItem->Cost(), CStringTable().translate("ui_st_money_regional").c_str());		// will be owerwritten in multiplayer
+		sprintf_s			(str, "%d %s", pInvItem->Cost(), CStringTable().translate("ui_st_money_regional").c_str());		// will be owerwritten in multiplayer
 		UICost->SetText		(str);
 	}
 
@@ -232,4 +244,24 @@ void CUIItemInfo::Draw()
 {
 	if(m_pInvItem || m_b_force_drawing)
 		inherited::Draw();
+}
+
+void CUIItemInfo::Update()
+{
+	if (!m_pInvItem || m_pInvItem->GetDropManual()) return;
+
+	if (UICondProgresBar)
+	{
+		float cond = m_pInvItem->GetConditionToShow();
+		if (!UICondProgresBar->IsShown())
+			UICondProgresBar->Show(true);
+		UICondProgresBar->SetProgressPos(cond * 100.0f + 1.0f - EPS);
+	}
+
+	if (UIArtefactParams)
+	{
+		UIArtefactParams->SetInfo(m_pInvItem);
+	}
+
+	inherited::Update();
 }

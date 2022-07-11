@@ -254,6 +254,8 @@ void CUIInventoryWnd::Init()
 	::Sound->create						(sounds[eInvAttachAddon],	uiXml.Read("snd_attach_addon",	0,	NULL),st_Effect,sg_SourceType);
 	::Sound->create						(sounds[eInvDetachAddon],	uiXml.Read("snd_detach_addon",	0,	NULL),st_Effect,sg_SourceType);
 	::Sound->create						(sounds[eInvItemUse],		uiXml.Read("snd_item_use",		0,	NULL),st_Effect,sg_SourceType);
+	::Sound->create						(sounds[eInvMagLoad],		uiXml.Read("snd_mag_load",		0,	NULL),st_Effect,sg_SourceType);
+	::Sound->create						(sounds[eInvMagUnload],		uiXml.Read("snd_mag_unload",	0,	NULL),st_Effect,sg_SourceType);
 
 	uiXml.SetLocalRoot					(stored_root);
 }
@@ -332,7 +334,7 @@ void CUIInventoryWnd::Update()
 		UIProgressBarSatiety.SetProgressPos(v);
 
 		v = cond->GetRadiation()*100.0f;
-		if (Actor()->inventory().ItemFromSlot(DETECTOR_SLOT)) //удаляем шкалу радиации для прогрессбара в инвентаре если не экипирован детектор -- NO_RAD_UI_WITHOUT_DETECTOR_IN_SLOT
+		if (Actor()->HasDetector()) //удаляем шкалу радиации для прогрессбара в инвентаре если не экипирован детектор -- NO_RAD_UI_WITHOUT_DETECTOR_IN_SLOT
 		{
 			UIProgressBackRadiation.Show(true);
 			UIProgressBarRadiation.Show(true);
@@ -371,9 +373,6 @@ void CUIInventoryWnd::Show()
 	InitInventory			();
 	inherited::Show			();
 
-	if (Core.Features.test(xrCore::Feature::more_hide_weapon))
-		Actor()->SetWeaponHideState(INV_STATE_INV_WND, true);
-
 	SendInfoToActor						("ui_inventory");
 
 	Update								();
@@ -381,7 +380,7 @@ void CUIInventoryWnd::Show()
 
 	m_b_need_update_stats = true;
 
-	if (auto pActor = Actor())
+	if (Actor())
 	{
 		if (g_eFreeHands == eFreeHandsManual) Actor()->SetWeaponHideState(INV_STATE_INV_WND, true); //спрячем оружие в руках
 		Actor()->inventory().TryToHideWeapon(true);

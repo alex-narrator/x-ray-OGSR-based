@@ -122,7 +122,7 @@ void CPda::feel_touch_delete(CObject* O)
 	if(!H_Parent())							return;
 	CInventoryOwner* pLostContactInvOwner	= smart_cast<CInventoryOwner*>(O);
 	CInventoryOwner* pOwner					= smart_cast<CInventoryOwner*>( H_Parent() );VERIFY(pOwner);
-
+	if (!pOwner) return;
 	pOwner->LostPdaContact					(pLostContactInvOwner);
         m_changed = true;
 }

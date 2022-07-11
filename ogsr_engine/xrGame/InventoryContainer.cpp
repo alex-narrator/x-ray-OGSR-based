@@ -28,7 +28,7 @@ float CInventoryContainer::RadiationRestoreSpeed() const
 	SItemsInfo info;
 	CalcItems(info);
 
-	return Core.Features.test(xrCore::Feature::objects_radioactive) ? ( m_fRadiationRestoreSpeed + info.info[0] ) : info.info[0];
+	return /*Core.Features.test(xrCore::Feature::objects_radioactive) ? */( m_fRadiationRestoreSpeed + info.info[0] )/* : info.info[0]*/;
 }
 
 float CInventoryContainer::Weight() const

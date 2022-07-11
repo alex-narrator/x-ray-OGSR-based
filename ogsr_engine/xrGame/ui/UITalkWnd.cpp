@@ -258,9 +258,6 @@ void CUITalkWnd::Draw()
 
 void CUITalkWnd::Show()
 {
-	if (Core.Features.test(xrCore::Feature::more_hide_weapon))
-		Actor()->SetWeaponHideState(INV_STATE_BLOCK_ALL, true);
-
 	InitTalkDialog				();
 	inherited::Show				();
 }
@@ -280,8 +277,6 @@ void CUITalkWnd::Hide()
 
 	if (m_pActor->IsTalking()) m_pActor->StopTalk();
 
-	if (Core.Features.test(xrCore::Feature::more_hide_weapon))
-		m_pActor->SetWeaponHideState(INV_STATE_BLOCK_ALL, false);
 	// режим бартерной торговли
 	if (!m_pActor->GetPDA())
 	{

@@ -16,8 +16,6 @@ CWeaponShotgun::CWeaponShotgun(void) : CWeaponCustomPistol("TOZ34")
     m_eSoundShotBoth		= ESoundTypes(SOUND_TYPE_WEAPON_SHOOTING);
 	m_eSoundClose			= ESoundTypes(SOUND_TYPE_WEAPON_RECHARGING);
 	m_eSoundAddCartridge	= ESoundTypes(SOUND_TYPE_WEAPON_RECHARGING);
-//	m_bLockType = true; // Запрещает заряжать в дробовики патроны разного типа
-	m_stop_triStateReload = false;
 }
 
 CWeaponShotgun::~CWeaponShotgun(void)
@@ -62,8 +60,7 @@ void CWeaponShotgun::OnShot ()
 
 void CWeaponShotgun::Fire2Start () 
 {
-	if (IsPending()) 
-		return;
+	if (IsPending()) return;
 
 	inherited::Fire2Start();
 
@@ -153,9 +150,6 @@ void CWeaponShotgun::UpdateCL()
 		switch (GetState())
 		{
 		case eFire2:
-			//if (iAmmoElapsed > 0)
-			//	state_Fire(dt);
-
 			if (fTime <= 0)
 			{
 				if (iAmmoElapsed == 0)
@@ -171,8 +165,7 @@ void CWeaponShotgun::UpdateCL()
 		}
 	}
 
-	inherited::UpdateCL();
-	
+	inherited::UpdateCL();	
 }
 
 void CWeaponShotgun::switch2_Fire	()
@@ -232,66 +225,8 @@ void CWeaponShotgun::UpdateSounds	()
 	if (m_sndClose.playing())        m_sndClose.set_position        (get_LastFP());
 }
 
-//#ifdef DUPLET_STATE_SWITCH
-//void CWeaponShotgun::SwitchDuplet()
-//{
-//	is_duplet_enabled = !is_duplet_enabled;
-//}
-//#endif
-
 bool CWeaponShotgun::Action			(s32 cmd, u32 flags) 
 {
-//#ifdef DUPLET_STATE_SWITCH
-//
-//	if (is_duplet_enabled)
-//	{
-//		switch (cmd)
-//		{
-//		case kWPN_FIRE:
-//		{
-//			if (flags&CMD_START)
-//			{
-//				if (IsPending()) return false;
-//				Fire2Start();
-//			}
-//			else
-//				Fire2End();
-//
-//			return true;
-//		}
-//		}
-//	}
-//
-//#endif // !DUPLET_STATE_SWITCH
-//
-//	if(inherited::Action(cmd, flags)) return true;
-//
-//	if(	m_bTriStateReload && GetState()==eReload &&
-//		( cmd == kWPN_FIRE || cmd == kWPN_NEXT ) && flags&CMD_START &&
-//		(m_sub_state==eSubstateReloadInProcess	|| m_sub_state == eSubstateReloadBegin) )//остановить перезагрузку
-//	{
-//		m_stop_triStateReload = true;
-//		return true;
-//	}
-//
-//#ifndef DUPLET_STATE_SWITCH
-//
-//	//если оружие чем-то занято, то ничего не делать
-//	if (IsPending()) return false;
-//
-//	switch(cmd) 
-//	{
-//		case kWPN_ZOOM : 
-//			{
-//				if(flags&CMD_START) Fire2Start();
-//				else Fire2End();
-//			}
-//			return true;
-//	}
-//
-//#endif // !DUPLET_STATE_SWITCH
-//
-//	return false;
 	if (GetCurrentFireMode() == 2)
 	{
 		switch (cmd)
@@ -315,11 +250,10 @@ bool CWeaponShotgun::Action			(s32 cmd, u32 flags)
 
 	if (m_bTriStateReload && GetState() == eReload &&
 		(cmd == kWPN_FIRE || cmd == kWPN_NEXT || cmd == kWPN_RELOAD) && flags & CMD_START &&
-		m_sub_state == eSubstateReloadInProcess || m_sub_state == eSubstateReloadBegin)//остановить перезагрузку
+		m_sub_state == eSubstateReloadInProcess)//остановить перезагрузку
 	{
-		//AddCartridge(1);
-		//m_sub_state = eSubstateReloadEnd;
-		m_stop_triStateReload = true;
+		AddCartridge(1);
+		m_sub_state = eSubstateReloadEnd;
 		return true;
 	}
 
@@ -338,7 +272,7 @@ void CWeaponShotgun::OnAnimationEnd(u32 state)
 		}break;
 
 		case eSubstateReloadInProcess:{
-			if( 0 != AddCartridge(1) || m_stop_triStateReload){
+			if( 0 != AddCartridge(1)){
 				m_sub_state = eSubstateReloadEnd;
 			}
 			SwitchState(eReload);
@@ -356,10 +290,10 @@ void CWeaponShotgun::Reload()
 {
 	OnZoomOut();
 	if(m_bTriStateReload){
-		m_stop_triStateReload = false;
 		TriStateReload();
-	}else
-		TryReload();
+	}
+	else
+		inherited::Reload();
 }
 
 void CWeaponShotgun::TriStateReload()
@@ -510,41 +444,6 @@ u8 CWeaponShotgun::AddCartridge		(u8 cnt)
 		m_pAmmo->SetDropManual(TRUE);
 
 	return cnt;
-}
-
-
-//void CWeaponShotgun::net_Export( CSE_Abstract* E ) {
-//  inherited::net_Export( E );
-//  CSE_ALifeItemWeaponShotGun* sg = smart_cast<CSE_ALifeItemWeaponShotGun*>( E );
-//  sg->m_AmmoIDs.clear();
-//  for ( u32 i = 0; i < m_magazine.size(); i++ ) {
-//    CCartridge& l_cartridge = *( m_magazine.begin() + i );
-//    sg->m_AmmoIDs.push_back( l_cartridge.m_LocalAmmoType );
-//  }
-//}
-
-
-void CWeaponShotgun::TryReload() {
-  if ( m_pCurrentInventory ) {
-    if ( HaveCartridgeInInventory( 1 ) || unlimited_ammo() || ( IsMisfire() && iAmmoElapsed ) ) {
-      SetPending(TRUE);
-      SwitchState( eReload ); 
-      return;
-    }
-  }
-  SwitchState( eIdle );
-}
-
-
-void CWeaponShotgun::ReloadMagazine() {
-  m_dwAmmoCurrentCalcFrame = 0;	
-  if ( IsMisfire() ) bMisfire = false;
-  if ( !m_pCurrentInventory ) return;
-
-  u8 cnt = AddCartridge( 1 );
-  while ( cnt == 0 ) {
-    cnt = AddCartridge( 1 );
-  }
 }
 
 

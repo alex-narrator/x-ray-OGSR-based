@@ -386,14 +386,14 @@ void CUIMainIngameWnd::Update()
 		}
 
 		// Health bar
-		bool show_bar = eHudOnKeyOff == g_eHudOnKey;
+		bool show_bar = eHudLaconicOff == g_eHudLaconic;
 		UIHealthBar.Show(show_bar);
 		UIStaticHealth.Show(show_bar);
 		if(show_bar)
 			UIHealthBar.SetProgressPos(m_pActor->GetfHealth() * 100.0f);
 		// Armor bar
 		PIItem	Outfit = m_pActor->inventory().ItemFromSlot(OUTFIT_SLOT);
-		show_bar = Outfit && eHudOnKeyOff == g_eHudOnKey;
+		show_bar = Outfit && eHudLaconicOff == g_eHudLaconic;
 		UIArmorBar.Show					(show_bar);
 		UIStaticArmor.Show				(show_bar);
 		if(show_bar)
@@ -401,7 +401,7 @@ void CUIMainIngameWnd::Update()
 
 		UpdateActiveItemInfo				();
 
-		bool b_show_icon = eHudOnKeyWarningIcon == g_eHudOnKey;
+		bool b_show_icon = eHudLaconicWarning == g_eHudLaconic;
 		auto cond = &m_pActor->conditions();
 
 		EWarningIcons i = ewiWeaponJammed;
@@ -944,7 +944,7 @@ bool CUIMainIngameWnd::IsHUDElementAllowed(EHUDElement element)
 {
 	if (Device.Paused() || m_pActor && !m_pActor->g_Alive()) return false;
 
-	bool allow_devices_hud = eHudOnKeyOff == g_eHudOnKey || OnKeyboardHold(get_action_dik(kSCORES)) || m_pActor->inventory().GetActiveSlot() == BOLT_SLOT;
+	bool allow_devices_hud = eHudLaconicOff == g_eHudLaconic || OnKeyboardHold(get_action_dik(kSCORES)) || m_pActor->inventory().GetActiveSlot() == BOLT_SLOT;
 
 	switch (element)
 	{
@@ -958,15 +958,15 @@ bool CUIMainIngameWnd::IsHUDElementAllowed(EHUDElement element)
 	}break;
 	case eActiveItem: //Информация об предмете в руках (для оружия - кол-во/тип заряженных патронов, режим огня)
 	{
-		return m_pActor->inventory().ActiveItem() && (eHudOnKeyOff == g_eHudOnKey || OnKeyboardHold(get_action_dik(kCHECKACTIVEITEM)));
+		return m_pActor->inventory().ActiveItem() && (eHudLaconicOff == g_eHudLaconic || OnKeyboardHold(get_action_dik(kCHECKACTIVEITEM)));
 	}break;
 	case eGear: //Информация о снаряжении - панель артефактов, наполнение квикслотов, общее кол-во патронов к оружию в руках
 	{
-		return eHudOnKeyOff == g_eHudOnKey || OnKeyboardHold(get_action_dik(kCHECKGEAR));
+		return eHudLaconicOff == g_eHudLaconic || OnKeyboardHold(get_action_dik(kCHECKGEAR));
 	}break;
 	case eArmor: //Иконка состояния брони
 	{
-		return eHudOnKeyOff != g_eHudOnKey && m_pActor->GetOutfit() && OnKeyboardHold(get_action_dik(kCHECKGEAR));
+		return eHudLaconicOff != g_eHudLaconic && m_pActor->GetOutfit() && OnKeyboardHold(get_action_dik(kCHECKGEAR));
 	}break;
 	default:
 		Msg("! unknown hud element");

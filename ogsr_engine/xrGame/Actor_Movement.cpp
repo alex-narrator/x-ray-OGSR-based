@@ -521,7 +521,8 @@ void CActor::g_Orientate	(u32 mstate_rl, float dt)
 			tgt_roll	= 0.0f;
 	}
 	if (!fsimilar(tgt_roll,r_torso_tgt_roll,EPS)){
-		r_torso_tgt_roll = angle_inertion_var(r_torso_tgt_roll, tgt_roll, 0.f, CurrentHeight * PI_MUL_2 * cam_LookoutSpeed, PI_DIV_2, dt);
+		float power_factor = conditions().GetPowerKoef();
+		r_torso_tgt_roll = angle_inertion_var(r_torso_tgt_roll, tgt_roll, 0.f, CurrentHeight * PI_MUL_2 * cam_LookoutSpeed * power_factor, PI_DIV_2, dt);
 		r_torso_tgt_roll= angle_normalize_signed(r_torso_tgt_roll);
 	}
 }

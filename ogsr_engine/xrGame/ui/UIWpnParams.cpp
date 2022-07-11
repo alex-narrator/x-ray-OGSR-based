@@ -113,6 +113,11 @@ void CUIWpnParams::SetInfo(CInventoryItem* obj)
 	m_textMagSizeFiremode.SetText(text_to_show);
 }
 
+#include "WeaponBinoculars.h"
+#include "WeaponKnife.h"
+#include "Silencer.h"
+#include "Scope.h"
+#include "GrenadeLauncher.h"
 bool CUIWpnParams::Check(CInventoryItem* obj)
 {
 	if (!READ_IF_EXISTS(pSettings, r_bool, obj->object().cNameSect(), "show_wpn_properties", true)) // allow to suppress default wpn params
@@ -130,11 +135,18 @@ bool CUIWpnParams::Check(CInventoryItem* obj)
         if (0==xr_strcmp(wpn_section, "mp_wpn_binoc"))
             return false;*/
 
-		if (obj->object().CLS_ID == CLSID_OBJECT_W_BINOCULAR ||
-			obj->object().CLS_ID == CLSID_OBJECT_W_KNIFE ||
-			obj->object().CLS_ID == CLSID_OBJECT_W_SILENCER ||
-			obj->object().CLS_ID == CLSID_OBJECT_W_SCOPE ||
-			obj->object().CLS_ID == CLSID_OBJECT_W_GLAUNCHER)
+		//if (obj->object().CLS_ID == CLSID_OBJECT_W_BINOCULAR ||
+		//	obj->object().CLS_ID == CLSID_OBJECT_W_KNIFE ||
+		//	obj->object().CLS_ID == CLSID_OBJECT_W_SILENCER ||
+		//	obj->object().CLS_ID == CLSID_OBJECT_W_SCOPE ||
+		//	obj->object().CLS_ID == CLSID_OBJECT_W_GLAUNCHER)
+		//	return false;
+
+		if (smart_cast<CWeaponBinoculars*>(obj) ||
+			smart_cast<CWeaponKnife*>(obj) ||
+			smart_cast<CSilencer*>(obj) ||
+			smart_cast<CScope*>(obj) ||
+			smart_cast<CGrenadeLauncher*>(obj))
 			return false;
 
         return true;		

@@ -155,7 +155,7 @@ public:
 	virtual void				OnMoveToSlot		(EItemPlace prevPlace);
 	virtual void				OnMoveToBelt		(EItemPlace prevPlace);
 	virtual void				OnMoveToRuck		(EItemPlace prevPlace);
-	virtual void				OnMoveOut			(EItemPlace prevPlace){};
+	virtual void				OnMoveOut			(EItemPlace prevPlace);
 //	virtual void				OnDrop() {};
 
 			int					GetGridWidth		() const ;

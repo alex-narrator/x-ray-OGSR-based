@@ -82,11 +82,11 @@ xr_token	free_hands_token[] = {
 };
 
 //элементы HUD выводятся по нажатию клавиш
-EHudOnKeyMode g_eHudOnKey = eHudOnKeyOff; //элементы HUD выводятся по нажатию клавиш: 0 - отключено, 1 - только warning-иконки, 2 - иконка положения персонажа в качестве warning-иконки здоровья
-xr_token	hud_on_key_token[] = {
-	{ "hk_off",		eHudOnKeyOff			}, //отключено
-	{ "hk_warning", eHudOnKeyWarningIcon	}, //только warning-иконки
-	{ "hk_motion",	eHudOnKeyMotionIcon		}, //иконка положения персонажа в качестве warning-иконки здоровья
+EHudLaconicMode g_eHudLaconic = eHudLaconicOff; //элементы HUD выводятся по нажатию клавиш: 0 - отключено, 1 - только warning-иконки, 2 - иконка положения персонажа в качестве warning-иконки здоровья
+xr_token	hud_laconic_token[] = {
+	{ "hl_off",		eHudLaconicOff			}, //отключено
+	{ "hl_warning", eHudLaconicWarning	}, //только warning-иконки
+	{ "hl_motion",	eHudLaconicMotion		}, //иконка положения персонажа в качестве warning-иконки здоровья
 	{ 0,			0						}
 };
 
@@ -1165,15 +1165,15 @@ void CCC_RegisterCommands()
 	CMD1(CCC_MemStats,			"stat_memory"			);
 	// game
 	psActorFlags.set(AF_ALWAYSRUN, true);
-	CMD3(CCC_Mask,				"g_always_run",			&psActorFlags,	AF_ALWAYSRUN);
+	CMD3(CCC_Mask,				"g_always_run",			&psActorFlags,			AF_ALWAYSRUN);
 	CMD1(CCC_GameDifficulty,	"g_game_difficulty"		);
 
-	CMD3(CCC_Mask,				"g_dof_scope",			&psActorFlags,	AF_DOF_SCOPE);
-	CMD3(CCC_Mask,				"g_dof_zoom",			&psActorFlags,	AF_DOF_ZOOM);
-	CMD4( CCC_Integer, "g_dof_zoom_far",  &g_dof_zoom_far,  10, 100 );
-	CMD4( CCC_Integer, "g_dof_zoom_near", &g_dof_zoom_near, 10, 100 );
+	CMD3(CCC_Mask,				"g_dof_scope",			&psActorFlags,			AF_DOF_SCOPE);
+	CMD3(CCC_Mask,				"g_dof_zoom",			&psActorFlags,			AF_DOF_ZOOM);
+	CMD4(CCC_Integer,			"g_dof_zoom_far",		&g_dof_zoom_far,		10, 100 );
+	CMD4(CCC_Integer,			"g_dof_zoom_near",		&g_dof_zoom_near,		10, 100 );
 
-	CMD3(CCC_Mask, "wpn_aim_toggle", &psActorFlags, AF_WPN_AIM_TOGGLE);
+	CMD3(CCC_Mask,				"g_hold_to_aim",		&psActorFlags,			AF_HOLD_TO_AIM);
 
 	// alife
 #ifdef DEBUG
@@ -1192,22 +1192,23 @@ void CCC_RegisterCommands()
 	CMD1(CCC_ALifeSwitchFactor,		"al_switch_factor"		);		// set switch factor
 #endif // MASTER_GOLD
 
-	CMD3(CCC_Mask,				"hud_weapon",			&psHUD_Flags,	HUD_WEAPON);
-	CMD3(CCC_Mask,				"hud_info",				&psHUD_Flags,	HUD_INFO);
-	CMD3(CCC_Mask,				"hud_draw",				&psHUD_Flags,	HUD_DRAW);
-	CMD3(CCC_Mask,				"hud_crosshair_build",	&psHUD_Flags,	HUD_CROSSHAIR_BUILD); // билдокурсор
-	CMD3(CCC_Mask, "hud_crosshair_hard", &psHUD_Flags, HUD_CROSSHAIR_HARD);
-	CMD3( CCC_Mask, "hud_small_font", &psHUD_Flags, HUD_SMALL_FONT); // использовать уменьшенный размер шрифта
-	CMD3(CCC_Mask, "hud_stop_missile_playing", &psHUD_Flags, HUD_STOP_MISSILE_PLAYING);	//отключение анимаций подбрасывания для гранат и болта
-	CMD3(CCC_Mask, "hud_use_luminosity", &psHUD_Flags, HUD_USE_LUMINOSITY);	//использование освещённости вместо заметности на худовой шкале
-	CMD3(CCC_Token, "hud_show_on_key", (u32*)&g_eHudOnKey, hud_on_key_token);	//элементы HUD выводятся по нажатию клавиш
+	CMD3(CCC_Token,				"hud_laconic",			(u32*)&g_eHudLaconic,		hud_laconic_token);	//элементы HUD выводятся по нажатию клавиш
 
-	CMD3(CCC_Mask,				"hud_crosshair",		&psHUD_Flags,	HUD_CROSSHAIR);
-	CMD3(CCC_Mask,				"hud_crosshair_dist",	&psHUD_Flags,	HUD_CROSSHAIR_DIST);
+	CMD3(CCC_Mask,				"hud_weapon",			&psHUD_Flags,			HUD_WEAPON);
+	CMD3(CCC_Mask,				"hud_info",				&psHUD_Flags,			HUD_INFO);
+	CMD3(CCC_Mask,				"hud_draw",				&psHUD_Flags,			HUD_DRAW);
+	CMD3(CCC_Mask,				"hud_crosshair_build",	&psHUD_Flags,			HUD_CROSSHAIR_BUILD); // билдокурсор
+	CMD3(CCC_Mask,				"hud_crosshair_hard",	&psHUD_Flags,			HUD_CROSSHAIR_HARD);
+
+	CMD3(CCC_Mask,				"hud_stop_missile_playing", &psHUD_Flags,		HUD_STOP_MISSILE_PLAYING);	//отключение анимаций подбрасывания для гранат и болта
+	CMD3(CCC_Mask,				"hud_use_luminosity",	&psHUD_Flags,			HUD_USE_LUMINOSITY);	//использование освещённости вместо заметности на худовой шкале
+
+	CMD3(CCC_Mask,				"hud_crosshair",		&psHUD_Flags,			HUD_CROSSHAIR);
+	CMD3(CCC_Mask,				"hud_crosshair_dist",	&psHUD_Flags,			HUD_CROSSHAIR_DIST);
 
 //#ifdef DEBUG
-	CMD4(CCC_Float,				"hud_fov",				&psHUD_FOV_def,		0.1f,	1.0f);
-	CMD4(CCC_Float,				"fov",					&g_fov,			5.0f,	140.0f);
+	CMD4(CCC_Float,				"hud_fov",				&psHUD_FOV_def,			0.1f,	1.0f);
+	CMD4(CCC_Float,				"fov",					&g_fov,					5.0f,	140.0f);
 //#endif // DEBUG
 
 	// Demo
@@ -1288,8 +1289,8 @@ void CCC_RegisterCommands()
 	CMD1(CCC_PHFps,				"ph_frequency"																					);
 	CMD1(CCC_PHIterations,		"ph_iterations"																					);
 
-	CMD1(CCC_PHGravity, "ph_gravity");
-	CMD4(CCC_FloatBlock, "ph_timefactor", &phTimefactor, 0.0001f, 1000.f);
+	CMD1(CCC_PHGravity,			"ph_gravity");
+	CMD4(CCC_FloatBlock,		"ph_timefactor", &phTimefactor, 0.0001f, 1000.f);
 
 #ifdef DEBUG
 	CMD4(CCC_FloatBlock,		"ph_break_common_factor",		&phBreakCommonFactor		,			0.f		,1000000000.f	);
@@ -1302,15 +1303,15 @@ void CCC_RegisterCommands()
 //#ifndef MASTER_GOLD
 	CMD1(CCC_JumpToLevel,	"jump_to_level");
 	CMD1(CCC_Spawn,			"g_spawn");
-	CMD3(CCC_Mask,			"g_god",				&psActorFlags,	AF_GODMODE	);
-	CMD3(CCC_Mask,			"g_unlimitedammo",		&psActorFlags,	AF_UNLIMITEDAMMO);
-	CMD3(CCC_Mask,			"g_ammo_from_belt",	&psActorFlags,	AF_AMMO_FROM_BELT);
-	CMD3(CCC_Mask,			"g_3d_scopes",			&psActorFlags,	AF_3D_SCOPES);
-	CMD4(CCC_Integer, "g_3d_scopes_fps_factor", &g_3dscopes_fps_factor, 2, 5);
-	CMD3(CCC_Mask,			"g_crosshair_dbg",		&psActorFlags,	AF_CROSSHAIR_DBG);
-	CMD3(CCC_Mask, "g_camera_collision", &psActorFlags, AF_CAM_COLLISION);
+	CMD3(CCC_Mask,			"g_god",					&psActorFlags,			AF_GODMODE	);
+	CMD3(CCC_Mask,			"g_unlimitedammo",			&psActorFlags,			AF_UNLIMITEDAMMO);
+	CMD3(CCC_Mask,			"g_ammo_from_belt",			&psActorFlags,			AF_AMMO_FROM_BELT);
+	CMD3(CCC_Mask,			"g_3d_scopes",				&psActorFlags,			AF_3D_SCOPES);
+	CMD4(CCC_Integer,		"g_3d_scopes_fps_factor",	&g_3dscopes_fps_factor, 2, 5);
+	CMD3(CCC_Mask,			"g_crosshair_dbg",			&psActorFlags,			AF_CROSSHAIR_DBG);
+	CMD3(CCC_Mask,			"g_camera_collision",		&psActorFlags,			AF_CAM_COLLISION);
 
-	CMD3(CCC_Mask, "g_mouse_wheel_switch_slot", &psActorFlags, AF_MOUSE_WHEEL_SWITCH_SLOTS);
+	CMD3(CCC_Mask,			"g_mouse_wheel_switch_slot", &psActorFlags,			AF_MOUSE_WHEEL_SWITCH_SLOTS);
 
 
 
@@ -1318,15 +1319,15 @@ void CCC_RegisterCommands()
 	CMD1(CCC_SetWeather,	"set_weather");
 //#endif // MASTER_GOLD
 
-	CMD3(CCC_Mask,		"g_music_tracks",		&psActorFlags,	AF_MUSIC_TRACKS);
+	CMD3(CCC_Mask,		"g_music_tracks",			&psActorFlags,			AF_MUSIC_TRACKS);
 
-	CMD1(CCC_LuaHelp, "lua_help");
+	CMD1(CCC_LuaHelp,	"lua_help");
 
-	CMD3(CCC_Mask, "g_zones_dbg", &psActorFlags, AF_ZONES_DBG);
-	CMD3(CCC_Mask, "g_vertex_dbg", &psActorFlags, AF_VERTEX_DBG);
-	CMD3(CCC_Mask, "keypress_on_start", &psActorFlags, AF_KEYPRESS_ON_START);
+	CMD3(CCC_Mask,		"g_zones_dbg",				&psActorFlags,			AF_ZONES_DBG);
+	CMD3(CCC_Mask,		"g_vertex_dbg",				&psActorFlags,			AF_VERTEX_DBG);
+	CMD3(CCC_Mask,		"keypress_on_start",		&psActorFlags,			AF_KEYPRESS_ON_START);
 
-	CMD4(CCC_Integer, "g_cop_death_anim", &g_bCopDeathAnim, 0, 1);
+	CMD4(CCC_Integer,	"g_cop_death_anim",			&g_bCopDeathAnim,		0, 1);
 
 #ifdef DEBUG
 	CMD3(CCC_Mask,		"dbg_draw_actor_alive",		&dbg_net_Draw_Flags,	(1<<0));
@@ -1419,14 +1420,14 @@ void CCC_RegisterCommands()
 	CMD4(CCC_Integer,		"dbg_dump_physics_step", &g_bDebugDumpPhysicsStep, 0, 1);
 #endif
 
-	CMD4(CCC_Integer,	"show_wnd_rect",				&g_show_wnd_rect, 0, 1);
-	CMD4(CCC_Integer,	"show_wnd_rect_all",			&g_show_wnd_rect2, 0, 1);
-	CMD4(CCC_Integer, "show_wnd_rect_names", &g_show_wnd_rect_text, 0, 1);
+	CMD4(CCC_Integer,			"show_wnd_rect",				&g_show_wnd_rect,					0, 1);
+	CMD4(CCC_Integer,			"show_wnd_rect_all",			&g_show_wnd_rect2,					0, 1);
+	CMD4(CCC_Integer,			"show_wnd_rect_names",			&g_show_wnd_rect_text,				0, 1);
 
 	*g_last_saved_game	= 0;
 
-	CMD4( CCC_Float, "g_cam_height_speed",  &cam_HeightInterpolationSpeed, 4.0f, 16.0f );
-	CMD4( CCC_Float, "g_cam_lookout_speed", &cam_LookoutSpeed,             1.0f,  4.0f );
+	CMD4( CCC_Float,			"cam_height_speed",				&cam_HeightInterpolationSpeed,		4.0f, 16.0f );
+	CMD4( CCC_Float,			"cam_lookout_speed",			&cam_LookoutSpeed,					1.0f,  4.0f );
 
 	//взаимодействие с предметами
 	CMD3(CCC_Token,             "g_free_hands",					(u32*)&g_eFreeHands,  free_hands_token			);	//режимы "свободных рук"

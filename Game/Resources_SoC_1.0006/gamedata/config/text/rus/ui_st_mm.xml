@@ -9,7 +9,7 @@
 		<text>Загрузить</text>
 	</string>
 	<string id="ui_mm_last_save">
-		<text>Последняя запись</text>
+		<text>Последнее сохранение</text>
 	</string>
 	<string id="ui_mm_options_n">
 		<text>Настройки</text>
@@ -32,20 +32,20 @@
 	</string>
 	<!-- Первый экран (после смерти, недостающие строки) -->
 	<string id="st_game_over_press_jump">
-		<text>Нажмите ($$ACTION_JUMP$$) для выхода в главное меню</text>
+		<text>Нажмите [$$ACTION_JUMP$$] для выхода в главное меню</text>
 	</string>
 	<!-- Окно выбора сложности -->
 	<string id="ui_mm_novice">
 		<text>Новичок</text>
 	</string>
 	<string id="ui_mm_stalker">
-		<text>Опытный</text>
+		<text>Сталкер</text>
 	</string>
 	<string id="ui_mm_veteran">
 		<text>Ветеран</text>
 	</string>
 	<string id="ui_mm_master">
-		<text>Легенда</text>
+		<text>Мастер</text>
 	</string>
 	<string id="ui_mm_back">
 		<text>Назад</text>
@@ -82,11 +82,11 @@
 	</string>
 	<!-- Запрос на прерывание игры -->
 	<string id="ui_mm_quit_game_message">
-		<text>Прервать игру?</text>
+		<text>Завершить текущую игру?</text>
 	</string>
 	<!-- Запрос на выход в Windows -->
 	<string id="ui_mm_quit_windows_message">
-		<text>Покинуть ЗОНУ?</text>
+		<text>Выйти из игры?</text>
 	</string>
 	<!-- Общие -->
 	<string id="ui_mm_cancel">
@@ -539,22 +539,19 @@
 		<text>Игра</text>
 	</string>
 	<string id="ui_mm_difficulty">
-		<text>Сложность</text>
+		<text>Сложность игры</text>
 	</string>
 	<string id="gd_novice">
 		<text>Новичок</text>
 	</string>
 	<string id="gd_stalker">
-		<text>Опытный</text>
+		<text>Сталкер</text>
 	</string>
 	<string id="gd_veteran">
 		<text>Ветеран</text>
 	</string>
 	<string id="gd_master">
 		<text>Мастер</text>
-	</string>
-	<string id="ui_mm_keypress_on_start">
-		<text>Пауза после загрузки сейва</text>
 	</string>
 	<string id="ui_mm_show_crosshair">
 		<text>Показывать прицел</text>
@@ -570,15 +567,6 @@
 	</string>
 	<string id="ui_mm_tips">
 		<text>Распознавание НПС</text>
-	</string>
-	<string id="ui_mm_build_crosshair">
-		<text>Круглый курсор, как в билдах</text>
-	</string>
-	<string id="ui_mm_small_font">
-		<text>Уменьшенный шрифт (требуется перезапуск игры)</text>
-	</string>
-	<string id="ui_mm_crosshair_hard">
-		<text>Реалистичный прицел</text>
 	</string>
 	<!-- Окно "Управление" -->
 	<string id="ui_mm_controls">

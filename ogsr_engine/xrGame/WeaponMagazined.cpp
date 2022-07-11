@@ -1922,7 +1922,6 @@ void CWeaponMagazined::switch2_Shutter()
 	PlaySound(sndShutter, get_LastFP());
 	PlayAnimShutter();
 	SetPending(TRUE);
-//	m_bPending = true;
 }
 //
 void CWeaponMagazined::PlayAnimShutter()

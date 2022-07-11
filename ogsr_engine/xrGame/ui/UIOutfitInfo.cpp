@@ -152,7 +152,7 @@ void CUIOutfitInfo::Update()
 
 	m_listWnd->Clear(false); // clear existing items and do not scroll to top
 
-	if (!Actor()->HasDetector()) return;
+	if (psActorFlags.is(AF_ARTEFACT_DETECTOR_CHECK) && !Actor()->HasDetector()) return;
 
 	for (u32 i = _item_start; i < _max_item_index; ++i)
 	{

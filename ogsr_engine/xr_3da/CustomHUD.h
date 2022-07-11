@@ -17,7 +17,7 @@ enum HUD_Flags: u32 {
 	HUD_CROSSHAIR_RT2 = 1 << 9,
 	HUD_DRAW_RT = 1 << 10,
 	HUD_CROSSHAIR_BUILD = 1 << 11, // старый стиль курсора
-	HUD_SMALL_FONT = 1 << 12, // использовать уменьшенный шрифт
+	//HUD_SMALL_FONT = 1 << 12, // использовать уменьшенный шрифт
 	HUD_STOP_MISSILE_PLAYING = 1 << 13, //отключение анимаций подбрасывания для гранат и болта
 	HUD_USE_LUMINOSITY = 1 << 14,
 };
@@ -53,11 +53,11 @@ public:
 extern ENGINE_API CCustomHUD* g_hud;
 
 //элементы HUD выводятся по нажатию клавиш
-enum EHudOnKeyMode
+enum EHudLaconicMode
 {
-	eHudOnKeyOff,			//отключено
-	eHudOnKeyWarningIcon,	//только warning-иконки
-	eHudOnKeyMotionIcon		//иконка положения персонажа в качестве warning-иконки здоровья
+	eHudLaconicOff,			//отключено
+	eHudLaconicWarning,	//только warning-иконки
+	eHudLaconicMotion		//иконка положения персонажа в качестве warning-иконки здоровья
 };
 
-extern EHudOnKeyMode g_eHudOnKey; //элементы HUD выводятся по нажатию клавиш: 0 - отключено, 1 - только warning-иконки, 2 - иконка положения персонажа в качестве warning-иконки здоровья
+extern EHudLaconicMode g_eHudLaconic; //элементы HUD выводятся по нажатию клавиш: 0 - отключено, 1 - только warning-иконки, 2 - иконка положения персонажа в качестве warning-иконки здоровья

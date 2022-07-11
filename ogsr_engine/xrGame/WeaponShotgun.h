@@ -13,10 +13,9 @@ public:
 	virtual void	Load			(LPCSTR section);
 	
 	virtual void	net_Destroy			();
-	//virtual void net_Export( CSE_Abstract* E );
 
 	virtual void	Reload				();
-	void TryReload();
+
 	virtual void	Fire2Start			();
 	virtual void	Fire2End			();
 	virtual void	OnShot				();
@@ -37,11 +36,6 @@ public:
 
 	virtual bool	Action(s32 cmd, u32 flags);
 
-//#ifdef DUPLET_STATE_SWITCH
-//	bool is_duplet_enabled = false;
-//	void SwitchDuplet();
-//#endif // !DUPLET_STATE_SWITCH
-
 protected:
 	virtual void	OnAnimationEnd		(u32 state);
 	void			TriStateReload		();
@@ -49,7 +43,6 @@ protected:
 
 	bool			HaveCartridgeInInventory(u8 cnt);
 	virtual u8		AddCartridge		(u8 cnt);
-	virtual void	ReloadMagazine	();
 
 	HUD_SOUND		sndShotBoth;
 	ESoundTypes		m_eSoundShotBoth;
@@ -60,8 +53,6 @@ protected:
 	HUD_SOUND		m_sndOpen;
 	HUD_SOUND		m_sndAddCartridge;
 	HUD_SOUND		m_sndClose;
-
-	bool			m_stop_triStateReload;
 
 	DECLARE_SCRIPT_REGISTER_FUNCTION
 };

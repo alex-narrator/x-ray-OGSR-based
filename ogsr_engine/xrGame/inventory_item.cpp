@@ -769,6 +769,10 @@ void CInventoryItem::OnMoveToRuck(EItemPlace prevPlace) {
   }
 };
 
+void CInventoryItem::OnMoveOut(EItemPlace prevPlace) {
+	OnMoveToRuck(prevPlace);
+};
+
 float	CInventoryItem::GetControlInertionFactor()
 {
 	//значение задано принудительно

@@ -35,9 +35,11 @@ public:
 	void				TryAddCustomInfo	(CInventoryItem* obj);
 
 	virtual void		Draw				();
+	virtual void		Update				();
 	bool				m_b_force_drawing;
 	CUIStatic*			UIName;
 	CUIStatic*			UIWeight;
+	CUIStatic*			UIVolume;
 	CUIStatic*			UICost;
 	CUIStatic*			UICondition;
 	CUIScrollView*		UIDesc;

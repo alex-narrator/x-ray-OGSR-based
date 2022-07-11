@@ -152,8 +152,8 @@ void CUIPdaWnd::SendMessage(CUIWindow* pWnd, s16 msg, void* pData)
 
 void CUIPdaWnd::Show()
 {
-	if (Core.Features.test(xrCore::Feature::more_hide_weapon))
-		Actor()->SetWeaponHideState(INV_STATE_BLOCK_ALL, true);
+	if (g_eFreeHands == eFreeHandsManual) Actor()->SetWeaponHideState(INV_STATE_BLOCK_ALL, true);  //спрячем оружие в руках
+	Actor()->inventory().TryToHideWeapon(true);
 
 	InventoryUtilities::SendInfoToActor("ui_pda");
 
@@ -167,8 +167,8 @@ void CUIPdaWnd::Hide()
 	InventoryUtilities::SendInfoToActor("ui_pda_hide");
 	HUD().GetUI()->UIMainIngameWnd->SetFlashIconState_(CUIMainIngameWnd::efiPdaTask, false);
 
-	if (Core.Features.test(xrCore::Feature::more_hide_weapon))
-		Actor()->SetWeaponHideState(INV_STATE_BLOCK_ALL, false);
+	if (g_eFreeHands == eFreeHandsManual) Actor()->SetWeaponHideState(INV_STATE_BLOCK_ALL, false);  //спрячем оружие в руках
+	Actor()->inventory().TryToHideWeapon(false);
 }
 
 void CUIPdaWnd::UpdateDateTime()
@@ -189,6 +189,11 @@ void CUIPdaWnd::Update()
 {
 	inherited::Update		();
 	UpdateDateTime			();
+
+	// Real Wolf: если предмет убрали, когда окно было открыто, то закрываем его. 07.08.2014.
+	auto PDA = Actor()->GetPDA();
+	if (!PDA && IsShown())
+		GetHolder()->StartStopMenu(this, true);
 }
 
 void CUIPdaWnd::SetActiveSubdialog(EPdaTabs section)

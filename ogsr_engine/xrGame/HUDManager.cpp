@@ -70,7 +70,7 @@ LPCSTR CFontManager::GetFontTexName (LPCSTR section)
 	if(h<=600)		idx = 0;
 	else if(h<1024)	idx = 1;
 	else 			idx = 2;
-	if ( psHUD_Flags.test( HUD_SMALL_FONT ) && idx > 0 ) idx--;
+	if ( Core.Features.test(xrCore::Feature::small_font) && idx > 0 ) idx--;
 
   while (idx >= 0) {
     if (pSettings->line_exist(section, tex_names[idx]))

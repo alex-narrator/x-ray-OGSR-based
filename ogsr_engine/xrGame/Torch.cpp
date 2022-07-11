@@ -220,6 +220,8 @@ void CTorch::Switch	(bool light_on)
 {
 	if (!m_bTorchLightEnabled) return;
 
+	bool was_switched_on = m_switched_on;
+
 	m_switched_on			= light_on;
 	if (can_use_dynamic_lights())
 	{
@@ -240,7 +242,11 @@ void CTorch::Switch	(bool light_on)
 	auto pA = smart_cast<CActor*>(H_Parent());
 	if (pA){
 		bool bPlaySoundFirstPerson = (pA == Level().CurrentViewEntity());
-		HUD_SOUND::PlaySound(m_switched_on ? SndTorchOn : SndTorchOff, pA->Position(), pA, bPlaySoundFirstPerson);
+
+		if(m_switched_on && !was_switched_on)
+			HUD_SOUND::PlaySound(SndTorchOn, pA->Position(), pA, bPlaySoundFirstPerson);
+		else if(!m_switched_on && was_switched_on)
+			HUD_SOUND::PlaySound(SndTorchOff, pA->Position(), pA, bPlaySoundFirstPerson);
 	}
 }
 

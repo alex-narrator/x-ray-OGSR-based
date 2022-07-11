@@ -7,24 +7,63 @@ end
 function opt_gameplay:__finalize()
 end
 
-function opt_gameplay:InitControls(x, y, xml)
+local tab = "gameplay"
+local mm = ui_mm_opt_main
+
+local gameplay_opt_params = {
+	--"option name", "option control type", "option tip name", "option tip text"
+	{ "free_hands", 				"list", "gameplay_settings_name_free_hands", 					"gameplay_settings_desc_free_hands"					},
+	{ "hud_laconic", 				"list", "gameplay_settings_name_hud_laconic", 					"gameplay_settings_desc_hud_laconic"				},
+	{ "difficulty", 				"list", "gameplay_settings_name_difficulty", 					"gameplay_settings_desc_difficulty"					},
+	
+	{ "autopause", 					"check", "gameplay_settings_name_autopause", 					"gameplay_settings_desc_autopause"					},
+	
+	{ "tips", 						"check", "gameplay_settings_name_tips", 						"gameplay_settings_desc_tips"						},
+	{ "crosshair", 					"check", "gameplay_settings_name_crosshair", 					"gameplay_settings_desc_crosshair"					},
+	{ "dyn_crosshair", 				"check", "gameplay_settings_name_dyn_crosshair", 				"gameplay_settings_desc_dyn_crosshair"				},
+	{ "build_crosshair", 			"check", "gameplay_settings_name_build_crosshair", 				"gameplay_settings_desc_build_crosshair"			},
+	{ "show_weapon", 				"check", "gameplay_settings_name_show_weapon", 					"gameplay_settings_desc_show_weapon"				},
+	
+	{ "pickup_target_only", 		"check", "gameplay_settings_name_pickup_target_only", 			"gameplay_settings_desc_pickup_target_only"			},
+	{ "use_luminosity", 			"check", "gameplay_settings_name_use_luminosity", 				"gameplay_settings_desc_use_luminosity"				},
+	
+	{ "stop_missile_playing", 		"check", "gameplay_settings_name_stop_missile_playing", 		"gameplay_settings_desc_stop_missile_playing"		},
+	{ "no_auto_reload", 			"check", "gameplay_settings_name_no_auto_reload", 				"gameplay_settings_desc_no_auto_reload"				},
+	{ "wpn_actions_reset_sprint", 	"check", "gameplay_settings_name_wpn_actions_reset_sprint", 	"gameplay_settings_desc_wpn_actions_reset_sprint"	},
+	
+	{ "ammo_from_belt", 			"check", "gameplay_settings_name_ammo_from_belt", 				"gameplay_settings_desc_ammo_from_belt"				},
+	{ "quick_slot_from_belt", 		"check", "gameplay_settings_name_quick_slot_from_belt", 		"gameplay_settings_desc_quick_slot_from_belt"		},
+	{ "artefacts_from_all", 		"check", "gameplay_settings_name_artefacts_from_all", 			"gameplay_settings_desc_artefacts_from_all"			},
+	
+	{ "artefact_detector_check", 	"check", "gameplay_settings_name_artefact_detector_check", 		"gameplay_settings_desc_artefact_detector_check"	},
+	
+	{ "smooth_overweight", 			"check", "gameplay_settings_name_smooth_overweight", 			"gameplay_settings_desc_smooth_overweight"			},
+	{ "survival_mode", 				"check", "gameplay_settings_name_survival_mode", 				"gameplay_settings_desc_survival_mode"				},
+	{ "crosshair_hard", 			"check", "gameplay_settings_name_crosshair_hard", 				"gameplay_settings_desc_crosshair_hard"				},
+	{ "ambient", 					"check", "gameplay_settings_name_ambient", 						"gameplay_settings_desc_ambient"					},
+}
+
+function opt_gameplay:InitControls(x, y, xml, handler)
 	self:Init(x, y, 738, 416)
 	self:SetAutoDelete(true)
 
 	xml:InitFrame("frame", self)
+	xml:InitFrame("frame_gameplay", self)
+	self.scroll_view = xml:InitScrollView("tab_gameplay:scroll_view", self)
 
-	xml:InitStatic("tab_gameplay:cap_difficulty", self)
-
-	xml:InitCheck("tab_gameplay:check_autopause", self)
-	xml:InitCheck("tab_gameplay:check_tips", self)
-	xml:InitCheck("tab_gameplay:check_crosshair", self)
-	xml:InitCheck("tab_gameplay:check_dyn_crosshair", self)
-	xml:InitCheck("tab_gameplay:check_show_weapon", self)
-	xml:InitCheck("tab_gameplay:check_dist", self)
-	xml:InitCheck("tab_gameplay:check_ambient", self)
-	xml:InitCheck("tab_gameplay:check_ammo_from_belt", self)
-	xml:InitCheck("tab_gameplay:check_build_crosshair", self)
-	xml:InitCheck("tab_gameplay:check_small_font", self)
-	xml:InitCheck("tab_gameplay:check_crosshair_hard", self)
-	xml:InitComboBox("tab_gameplay:list_difficulty", self)
+	for i =1,#gameplay_opt_params do
+		local opt, ctrl, tip_name, tip_text = unpack(gameplay_opt_params[i])
+		
+		local static
+		
+		if ctrl == "list" then --окремий випадок для комбобоксів
+			static = xml:InitStatic("tab_"..tab..":cap_"..opt, self) 				--статик з описом оції у меню
+			xml[mm.get_control(ctrl)](xml, "tab_"..tab..":"..ctrl.."_"..opt, self)	--сам комбобокс
+		else
+			static = xml[mm.get_control(ctrl)](xml, "tab_"..tab..":"..ctrl.."_"..opt, self.scroll_view)
+		end
+		
+		mm.init_hint(handler, static, opt, tip_name, tip_text)
+		
+	end
 end

@@ -118,7 +118,7 @@ void CUIMotionIcon::SetLuminosity(float Pos)
 void CUIMotionIcon::Update()
 {
 	auto CurrentHUD = HUD().GetUI()->UIMainIngameWnd;
-	bool show_motion_icon = eHudOnKeyWarningIcon != g_eHudOnKey;
+	bool show_motion_icon = eHudLaconicWarning != g_eHudLaconic;
 	bool show_progress_bar = CurrentHUD->IsHUDElementAllowed(ePDA);
 
 	//статик положения персонажа и выносливости
@@ -230,7 +230,7 @@ void CUIMotionIcon::InitStateColorize()
 
 void CUIMotionIcon::SetStateWarningColor(EState state)
 {
-	if (eHudOnKeyMotionIcon != g_eHudOnKey)
+	if (eHudLaconicMotion != g_eHudLaconic)
 	{
 		if (m_states[state].GetColor() != u_ColorDefault)
 			m_states[state].SetColor(u_ColorDefault);

@@ -1297,14 +1297,14 @@ bool CWeapon::Action(s32 cmd, u32 flags)
 				{
 					if (flags & CMD_START && !IsPending())
 					{
-						if (psActorFlags.is(AF_WPN_AIM_TOGGLE) && IsZoomed())
+						if (!psActorFlags.is(AF_HOLD_TO_AIM) && IsZoomed())
 						{
 							OnZoomOut();
 						}
 						else
 							OnZoomIn();
 					}
-					else if (IsZoomed() && !psActorFlags.is(AF_WPN_AIM_TOGGLE))
+					else if (IsZoomed() && psActorFlags.is(AF_HOLD_TO_AIM))
 					{
 						OnZoomOut();
 					}

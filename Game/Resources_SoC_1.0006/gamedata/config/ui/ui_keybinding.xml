@@ -17,7 +17,8 @@
 		<command id="kb_always_run"					exe="accel"/>
 		<command id="kb_sprint"						exe="sprint_toggle"/>		
 		<command id="kb_left_lookout"				exe="llookout"/>
-		<command id="kb_right_lookout"				exe="rlookout"/>		
+		<command id="kb_right_lookout"				exe="rlookout"/>	
+		<command id="kb_turn_engine"				exe="turn_engine"/>				
 	</group>
 	<group name="kb_grp_weapons">
 		<command id="kb_weapon1"					exe="wpn_1"/>
