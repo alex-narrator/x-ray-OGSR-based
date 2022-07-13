@@ -379,7 +379,7 @@ CWound* CActorCondition::ConditionHit(SHit* pHDS)
 {
 	if (GodMode()) return NULL;
 
-	if (pHDS->type() == ALife::eHitTypeTelepatic && psActorFlags.test(AF_SURVIVAL))
+	if (pHDS->hit_type == ALife::eHitTypeTelepatic && psActorFlags.test(AF_SURVIVAL))
 		pHDS->power *= (1.0f - GetAlcohol());
 
 	return inherited::ConditionHit(pHDS);

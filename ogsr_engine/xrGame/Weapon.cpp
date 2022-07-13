@@ -39,7 +39,7 @@
 #include "string_table.h"
 #include "Torch.h"
 
-#define ROTATION_TIME			0.25f
+constexpr auto ROTATION_TIME = 0.25f;
 
 extern ENGINE_API Fvector4 w_states;
 extern ENGINE_API Fvector3 w_timers;

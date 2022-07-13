@@ -1445,4 +1445,5 @@ void CCC_RegisterCommands()
 	CMD3(CCC_Mask,				"g_smooth_overweight",			&psActorFlags,	AF_SMOOTH_OVERWEIGHT			);	//плавный перегруз без обездвиживания
 	CMD3(CCC_Mask,				"g_survival_mode",				&psActorFlags,	AF_SURVIVAL						);	//взаимозависимость параметров здоровья ГГ
 	CMD3(CCC_Mask,				"g_pickup_target_only",			&psActorFlags,	AF_PICKUP_TARGET_ONLY			);	//можно подобрать только те предметы на которые непосредственно смотрит прицел
+	CMD3(CCC_Mask,				"g_knife_to_cut_part",			&psActorFlags,	AF_KNIFE_TO_CUT_PART			);	//ніж потрібен для зрізання частин монстрів
 }

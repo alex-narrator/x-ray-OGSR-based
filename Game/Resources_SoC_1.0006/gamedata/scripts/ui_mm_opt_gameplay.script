@@ -25,6 +25,7 @@ local gameplay_opt_params = {
 	{ "show_weapon", 				"check", "gameplay_settings_name_show_weapon", 					"gameplay_settings_desc_show_weapon"				},
 	
 	{ "pickup_target_only", 		"check", "gameplay_settings_name_pickup_target_only", 			"gameplay_settings_desc_pickup_target_only"			},
+	{ "knife_to_cut_part", 			"check", "gameplay_settings_name_knife_to_cut_part", 			"gameplay_settings_desc_knife_to_cut_part"			},
 	{ "use_luminosity", 			"check", "gameplay_settings_name_use_luminosity", 				"gameplay_settings_desc_use_luminosity"				},
 	
 	{ "stop_missile_playing", 		"check", "gameplay_settings_name_stop_missile_playing", 		"gameplay_settings_desc_stop_missile_playing"		},

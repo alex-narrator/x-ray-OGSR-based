@@ -1074,7 +1074,7 @@ void CBaseMonster::TrySpawnInventoryItem()
 			  CSE_Abstract* object = Level().spawn_item(item, Position(), ai_location().level_vertex_id(), ID(), true);
 			  CSE_ALifeObject* alife_object = smart_cast<CSE_ALifeObject*>(object);
 			  if (alife_object)
-				  alife_object->m_flags.set(CSE_ALifeObject::flCanSave, FALSE);
+				  alife_object->m_flags.set(CSE_ALifeObject::flCanSave, TRUE);
 
 			  {
 				  NET_Packet				P;

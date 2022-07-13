@@ -745,11 +745,6 @@
 			<text font="letterica16" r="215" g="195" b="170">ui_mm_build_crosshair</text>
 		</check_build_crosshair>
 
-<!-- 		<check_small_font x="20" y="280" width="243" height="21">
-			<options_item entry="hud_small_font" group="mm_opt_gameplay"/>
-			<text font="letterica16" r="215" g="195" b="170">ui_mm_small_font</text>
-		</check_small_font> -->
-
 		<check_crosshair_hard x="0" y="0" width="415" height="21">
 			<options_item entry="hud_crosshair_hard" group="mm_opt_gameplay"/>
 			<text font="letterica16" r="215" g="195" b="170">ui_mm_crosshair_hard</text>
@@ -760,6 +755,11 @@
 			<options_item entry="g_pickup_target_only" group="mm_opt_gameplay"/>
 			<text font="letterica16" r="215" g="195" b="170">ui_mm_pickup_target_only</text>
 		</check_pickup_target_only>
+		
+		<check_knife_to_cut_part x="0" y="0" width="415" height="21">
+			<options_item entry="g_knife_to_cut_part" group="mm_opt_gameplay"/>
+			<text font="letterica16" r="215" g="195" b="170">ui_mm_knife_to_cut_part</text>
+		</check_knife_to_cut_part>
 
 		<check_use_luminosity x="0" y="0" width="415" height="21">
 			<options_item entry="hud_use_luminosity" group="mm_opt_gameplay"/>

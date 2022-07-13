@@ -502,67 +502,74 @@ bool CActor::use_Holder				(CHolderCustom* holder)
 
 extern bool g_bDisableAllInput;
 void CActor::ActorUse() {
-  if ( g_bDisableAllInput || HUD().GetUI()->MainInputReceiver() ) return;
+  if (g_bDisableAllInput || HUD().GetUI()->MainInputReceiver()) return;
 
-  if ( m_holder ) {
-    CGameObject*  GO = smart_cast<CGameObject*>( m_holder );
+  if (m_holder) {
+    CGameObject*  GO = smart_cast<CGameObject*>(m_holder);
     NET_Packet    P;
-    CGameObject::u_EventGen( P, GEG_PLAYER_DETACH_HOLDER, ID() );
-    P.w_u32( GO->ID() );
-    CGameObject::u_EventSend( P );
+    CGameObject::u_EventGen(P, GEG_PLAYER_DETACH_HOLDER, ID());
+    P.w_u32(GO->ID());
+    CGameObject::u_EventSend(P);
     return;
   }
 
-  if ( character_physics_support()->movement()->PHCapture() ) {
+  if (character_physics_support()->movement()->PHCapture()) {
 	  ActorThrow();
 	  character_physics_support()->movement()->PHReleaseObject();
 	  return;
   }
 
-  if ( m_pUsableObject ) {
-    m_pUsableObject->use( this );
-    if ( g_bDisableAllInput || HUD().GetUI()->MainInputReceiver() ) return;
+  auto pTargetPerson = smart_cast<CEntityAlive*>(m_pPersonWeLookingAt);
+  bool looking_at_alive_person = pTargetPerson && pTargetPerson->g_Alive();
+
+  if (m_pUsableObject) {
+	  if (looking_at_alive_person || inventory().IsFreeHands()) { //чтобы можно было слышать просьбы убрать оружие при попытке поговорить со сталкерами с оружием в руках
+		  inventory().TryToHideWeapon(true, false);
+		  m_pUsableObject->use(this);
+		  if (g_bDisableAllInput || HUD().GetUI()->MainInputReceiver()) return;
+	  }
   }
 
-  if ( m_pInvBoxWeLookingAt && m_pInvBoxWeLookingAt->object().nonscript_usable() && m_pInvBoxWeLookingAt->IsOpened() ) {
+  if (m_pInvBoxWeLookingAt && m_pInvBoxWeLookingAt->object().nonscript_usable() && m_pInvBoxWeLookingAt->IsOpened()) {
     // если контейнер открыт
-    CUIGameSP* pGameSP = smart_cast<CUIGameSP*>( HUD().GetUI()->UIGame() );
-    if ( pGameSP ) pGameSP->StartCarBody( this, m_pInvBoxWeLookingAt );
+    CUIGameSP* pGameSP = smart_cast<CUIGameSP*>(HUD().GetUI()->UIGame());
+    if (pGameSP && inventory().IsFreeHands()) pGameSP->StartCarBody(this, m_pInvBoxWeLookingAt);
     return;
   }
   
-  else if ( !m_pUsableObject || m_pUsableObject->nonscript_usable() ) {
-    if ( m_pPersonWeLookingAt ) {
-      CEntityAlive* pEntityAliveWeLookingAt = smart_cast<CEntityAlive*>( m_pPersonWeLookingAt );
-      VERIFY( pEntityAliveWeLookingAt );
-      if ( pEntityAliveWeLookingAt->g_Alive() ) {
+  else if (!m_pUsableObject || m_pUsableObject->nonscript_usable()) {
+    if (m_pPersonWeLookingAt) {
+      if (looking_at_alive_person) {
         TryToTalk();
         return;
       }
       //обыск трупа
-      else if ( !Level().IR_GetKeyState( DIK_LSHIFT ) ) {
+      else if (!Level().IR_GetKeyState(DIK_LSHIFT)) {
         //только если находимся в режиме single
-        CUIGameSP* pGameSP = smart_cast<CUIGameSP*>( HUD().GetUI()->UIGame() );
-        if ( pGameSP ) pGameSP->StartCarBody( this, m_pPersonWeLookingAt );
+        CUIGameSP* pGameSP = smart_cast<CUIGameSP*>(HUD().GetUI()->UIGame());
+		if (pGameSP && inventory().IsFreeHands()) pGameSP->StartCarBody(this, m_pPersonWeLookingAt);
         return;
       }
     }
 
     collide::rq_result& RQ      = HUD().GetCurrentRayQuery();
-    CPhysicsShellHolder* object = smart_cast<CPhysicsShellHolder*>( RQ.O );
-    if ( object ) {
-      if ( Level().IR_GetKeyState( DIK_LSHIFT ) ) {
-        if ( object->ActorCanCapture() ) {
-          //Msg("--[%s] Actor Captured object: [%s]", __FUNCTION__, object->cName().c_str());
-          character_physics_support()->movement()->PHCaptureObject( object, (u16)RQ.element );
+    CPhysicsShellHolder* object = smart_cast<CPhysicsShellHolder*>(RQ.O);
+    if (object) {
+      if (Level().IR_GetKeyState(DIK_LSHIFT)) {
+        if (object->ActorCanCapture() && inventory().IsFreeHands()) {
+			if (!conditions().IsCantWalk())
+				//Msg("--[%s] Actor Captured object: [%s]", __FUNCTION__, object->cName().c_str());
+				character_physics_support()->movement()->PHCaptureObject(object, (u16)RQ.element);
+			else 
+				HUD().GetUI()->AddInfoMessage("cant_walk");
         }
         return;
       }
-      else if ( smart_cast<CHolderCustom*>( object ) && RQ.range < inventory().GetTakeDist() ) {
+      else if (smart_cast<CHolderCustom*>(object) && RQ.range < inventory().GetTakeDist()) {
         NET_Packet P;
-        CGameObject::u_EventGen( P, GEG_PLAYER_ATTACH_HOLDER, ID() );
-        P.w_u32( object->ID() );
-        CGameObject::u_EventSend( P );
+        CGameObject::u_EventGen(P, GEG_PLAYER_ATTACH_HOLDER, ID());
+        P.w_u32(object->ID());
+        CGameObject::u_EventSend(P);
         return;
       }
     }
@@ -688,7 +695,7 @@ void CActor::ActorThrow()
 
 	float mass_f = GetTotalMass(capture->taget_object());
 
-	bool drop_not_throw = !!Level().IR_GetKeyState(DIK_LSHIFT); //отпустить или отбросить предмет
+	bool drop_not_throw = Level().IR_GetKeyState(DIK_LSHIFT); //отпустить или отбросить предмет
 
 	float throw_impulse = drop_not_throw ?
 		0.5f :											//отпустить

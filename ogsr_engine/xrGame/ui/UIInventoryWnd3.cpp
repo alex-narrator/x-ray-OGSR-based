@@ -170,7 +170,7 @@ void CUIInventoryWnd::ActivatePropertiesBox()
 		if(smart_cast<CWeaponMagazined*>(pWeapon))
 		{
 			auto WpnMagazWgl = smart_cast<CWeaponMagazinedWGrenade*>(pWeapon);
-			bool b = pWeapon->GetAmmoElapsed() > 0 || ( WpnMagazWgl && !WpnMagazWgl->m_magazine2.empty() );
+			bool b = pWeapon->GetAmmoElapsed() > 0 || WpnMagazWgl && !WpnMagazWgl->m_magazine2.empty() || smart_cast<CWeaponMagazined*>(pWeapon)->IsMagazineAttached();
 
 			if(!b)
 			{

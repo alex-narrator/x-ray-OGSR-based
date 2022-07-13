@@ -28,8 +28,10 @@
 #include "../BottleItem.h"
 #include "../xr_3da/xr_input.h"
 
-#define				CAR_BODY_XML		"carbody_new.xml"
-#define				CARBODY_ITEM_XML	"carbody_item.xml"
+#include "WeaponKnife.h"
+
+constexpr auto CAR_BODY_XML		= "carbody_new.xml";
+constexpr auto CARBODY_ITEM_XML = "carbody_item.xml";
 
 void move_item (u16 from_id, u16 to_id, u16 what_id);
 
@@ -241,8 +243,8 @@ void CUICarBodyWnd::Hide()
 
 	if (Actor())
 	{
-//		CBaseMonster* Monster = smart_cast<CBaseMonster*>(m_pOthersObject);
-//		if (g_eFreeHands == eFreeHandsManual && !Monster) Actor()->SetWeaponHideState(INV_STATE_INV_WND, false);  //восстановим показ оружия в руках, если обыскиваем не монстра
+		bool using_knife_to_cut = psActorFlags.test(AF_KNIFE_TO_CUT_PART) && smart_cast<CBaseMonster*>(m_pOthersObject) && smart_cast<CWeaponKnife*>(Actor()->inventory().ActiveItem());
+		if (g_eFreeHands == eFreeHandsManual && !using_knife_to_cut) Actor()->SetWeaponHideState(INV_STATE_INV_WND, false);  //восстановим показ оружия в руках, если обыскиваем не монстра
 
 		Actor()->inventory().TryToHideWeapon(false);
 		if (psActorFlags.test(AF_AMMO_FROM_BELT)) Actor()->SetAmmoPlacement(false); //сбросим флаг перезарядки из рюкзака
@@ -434,8 +436,8 @@ void CUICarBodyWnd::Show()
 
 	if (Actor())
 	{
-		//CBaseMonster* Monster = smart_cast<CBaseMonster*>(m_pOthersObject);
-		//if (g_eFreeHands == eFreeHandsManual && !Monster) Actor()->SetWeaponHideState(INV_STATE_INV_WND, true);  //спрячем оружие в руках, если обыскиваем не монстра 
+		bool using_knife_to_cut = psActorFlags.test(AF_KNIFE_TO_CUT_PART) && smart_cast<CBaseMonster*>(m_pOthersObject) && smart_cast<CWeaponKnife*>(Actor()->inventory().ActiveItem());
+		if (g_eFreeHands == eFreeHandsManual && !using_knife_to_cut) Actor()->SetWeaponHideState(INV_STATE_INV_WND, true);  //спрячем оружие в руках, если обыскиваем не монстра 
 		
 		Actor()->inventory().TryToHideWeapon(true);
 		if (psActorFlags.test(AF_AMMO_FROM_BELT)) Actor()->SetAmmoPlacement(true); //установим флаг перезарядки из рюкзака
@@ -718,7 +720,7 @@ void CUICarBodyWnd::ActivatePropertiesBox()
 		if (smart_cast<CWeaponMagazined*>(pWeapon))
 		{
 			auto WpnMagazWgl = smart_cast<CWeaponMagazinedWGrenade*>(pWeapon);
-			bool b = pWeapon->GetAmmoElapsed() > 0 || ( WpnMagazWgl && !WpnMagazWgl->m_magazine2.empty() );
+			bool b = pWeapon->GetAmmoElapsed() > 0 || WpnMagazWgl && !WpnMagazWgl->m_magazine2.empty() || smart_cast<CWeaponMagazined*>(pWeapon)->IsMagazineAttached();
 
 			if (!b)
 			{
@@ -727,7 +729,7 @@ void CUICarBodyWnd::ActivatePropertiesBox()
 				{
 					auto pWeaponChild = static_cast<CWeaponMagazined*>(itm->Child(i)->m_pData);
 					auto WpnMagazWglChild = smart_cast<CWeaponMagazinedWGrenade*>(pWeaponChild);
-					if (pWeaponChild->GetAmmoElapsed() > 0 || ( WpnMagazWglChild && !WpnMagazWglChild->m_magazine2.empty() ))
+					if (pWeaponChild->GetAmmoElapsed() > 0 || WpnMagazWglChild && !WpnMagazWglChild->m_magazine2.empty())
 					{
 						b = true;
 						break;
@@ -768,7 +770,13 @@ void CUICarBodyWnd::ActivatePropertiesBox()
 	if (hasMany)
 		m_pUIPropertiesBox->AddItem("st_move_all", (void*)33, INVENTORY_MOVE_ACTION);
 
-	m_pUIPropertiesBox->AddItem("st_drop", NULL, INVENTORY_DROP_ACTION);
+	//bool knife_to_cut = psActorFlags.test(AF_KNIFE_TO_CUT_PART) 
+	//	&& smart_cast<CBaseMonster*>(m_pOthersObject) 
+	//	&& smart_cast<CWeaponKnife*>(Actor()->inventory().ActiveItem()) 
+	//	&& Actor()->inventory().ActiveItem() == CurrentIItem();
+
+	//if(!knife_to_cut)
+		m_pUIPropertiesBox->AddItem("st_drop", NULL, INVENTORY_DROP_ACTION);
 
 	if (hasMany)
 		m_pUIPropertiesBox->AddItem("st_drop_all", (void*)33, INVENTORY_DROP_ACTION);
@@ -924,7 +932,18 @@ bool CUICarBodyWnd::TransferItem(PIItem itm, CInventoryOwner* owner_from, CInven
 		float itmWeight						= itm->Weight();
 		if(invWeight+itmWeight >=maxWeight)	return false;
 	}
-
+	//
+	auto monster = smart_cast<CBaseMonster*>(go_from);
+	if (psActorFlags.test(AF_KNIFE_TO_CUT_PART) && monster){
+		auto knife = smart_cast<CWeaponKnife*>(m_pOurObject->inventory().ActiveItem());
+		if (knife) {
+			knife->Fire2Start();                                         //нанесём удар ножом
+			itm->ChangeCondition(-(1 - knife->GetCondition()));        //уменьшим Condition части монстра на величину износа ножа (1 - Knife->GetCondition())
+			knife->ChangeCondition(-knife->GetCondDecPerShotOnHit() * monster->m_fSkinDensityK); //уменьшим Condition ножа износ за удар * коэф плотности кожи монстра
+		}
+		else return false;
+	}
+	//
 	if (owner_from == m_pOurObject)
 		itm->OnMoveOut(itm->m_eItemPlace);
 

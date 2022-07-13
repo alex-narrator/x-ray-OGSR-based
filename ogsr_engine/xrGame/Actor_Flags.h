@@ -25,6 +25,7 @@ enum{
 		AF_ARTEFACTS_FROM_ALL		= 1<<21,
 		AF_ARTEFACT_DETECTOR_CHECK	= 1<<22,
 		AF_NO_AUTO_RELOAD			= 1<<23,
+		AF_KNIFE_TO_CUT_PART		= 1<<24,
 };
 
 enum {
