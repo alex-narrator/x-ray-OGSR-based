@@ -65,6 +65,8 @@ eat_radiation = 0
 wounds_heal_perc = 0
 eat_portions_num = 2
 
+menu_use_tip = st_eat
+
 ; food item
 animation_slot		= 4
 
@@ -109,6 +111,8 @@ eat_power = 0
 eat_radiation = 0
 wounds_heal_perc = 0
 eat_portions_num = -1
+
+menu_use_tip = st_eat
 
 ; food item
 animation_slot		= 4
@@ -169,6 +173,8 @@ eat_power = 0
 eat_radiation = 0
 wounds_heal_perc = 0
 eat_portions_num = -1
+
+menu_use_tip = st_eat
 
 ; food item
 animation_slot		= 4
@@ -253,12 +259,16 @@ eat_alcohol		= 0.066
 wounds_heal_perc 	= 0
 eat_portions_num 	= 5
 
+menu_use_tip = st_drink
+
 ; food item
 animation_slot		= 4
 
 ;hud item
 hud = wpn_vodka_hud
 
+use_condition = true
+break_on_zero_condition = true
 break_particles		= explosions\explosion_bottle
 break_sound			= material\bottle\collide\bottle_break_1
 

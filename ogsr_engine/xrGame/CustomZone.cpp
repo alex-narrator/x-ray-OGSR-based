@@ -340,11 +340,14 @@ BOOL CCustomZone::net_Spawn(CSE_Abstract* DC)
 	m_fAttenuation				= pSettings->r_float(cNameSect(), "attenuation");
 	m_dwPeriod					= pSettings->r_u32(cNameSect(), "period");
 	m_owner_id					= Z->m_owner_id;
-	m_ttl						= Z->m_ttl;
-	if(m_owner_id != u32(-1))
-		m_ttl					= Device.dwTimeGlobal + 1000 * m_ttl;// ttl in seconds
+	m_zone_ttl					= Z->m_zone_ttl;
+	if (m_owner_id != u32(-1))
+	{
+		m_ttl = Device.dwTimeGlobal + 1000 * m_zone_ttl;// ttl in seconds
+		Msg("anomaly [%s] spawned with ttl [%d]", Name_script(), m_zone_ttl);
+	}
 	else
-		m_ttl					= u32(-1);
+		m_ttl					= m_zone_ttl;
 
 	m_TimeToDisable				= Z->m_disabled_time*1000;
 	m_TimeToEnable				= Z->m_enabled_time*1000;
@@ -596,7 +599,7 @@ void CCustomZone::shedule_Update(u32 dt)
 
 	UpdateOnOffState	();
 
-	if (LastBlowoutTime && (Device.dwTimeGlobal - LastBlowoutTime) > 300)
+	if (Device.dwTimeGlobal > m_ttl || LastBlowoutTime && (Device.dwTimeGlobal - LastBlowoutTime) > 300)
 		DestroyObject();
 }
 

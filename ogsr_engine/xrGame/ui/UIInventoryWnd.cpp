@@ -382,8 +382,10 @@ void CUIInventoryWnd::Show()
 
 	if (Actor())
 	{
-		if (g_eFreeHands == eFreeHandsManual) Actor()->SetWeaponHideState(INV_STATE_INV_WND, true); //спрячем оружие в руках
-		Actor()->inventory().TryToHideWeapon(true);
+		if (g_eFreeHands == eFreeHandsManual) 
+			Actor()->SetWeaponHideState(INV_STATE_INV_WND, true); //спрячем оружие в руках
+		else
+			Actor()->inventory().TryToHideWeapon(true);
 		if (psActorFlags.test(AF_AMMO_FROM_BELT)) Actor()->SetAmmoPlacement(true); //установим флаг перезарядки из рюкзака
 	}
 }
@@ -407,8 +409,10 @@ void CUIInventoryWnd::Hide()
 
 	if (pActor)
 	{
-		if (g_eFreeHands == eFreeHandsManual) pActor->SetWeaponHideState(INV_STATE_INV_WND, false); //восстановим показ оружия в руках
-		pActor->inventory().TryToHideWeapon(false);
+		if (g_eFreeHands == eFreeHandsManual) 
+			pActor->SetWeaponHideState(INV_STATE_INV_WND, false); //восстановим показ оружия в руках
+		else
+			pActor->inventory().TryToHideWeapon(false);
 		if (psActorFlags.test(AF_AMMO_FROM_BELT)) pActor->SetAmmoPlacement(false); //сбросим флаг перезарядки из рюкзака
 	}
 
@@ -591,30 +595,6 @@ bool CUIInventoryWnd::OnKeyboard(int dik, EUIMessages keyboard_action)
 
 	return false;
 }
-
-//void CUIInventoryWnd::UpdateOutfit()
-//{
-//	if (dont_update_belt_flag) { //Чтобы арты не перемещались в рюкзак, при смене костюма
-//		dont_update_belt_flag = false;
-//		return;
-//	}
-//
-//	auto& inv = Actor()->inventory();
-//	const u32 new_slots_count = inv.BeltSlotsCount();
-//	m_pUIBeltList->SetCellsAvailable(new_slots_count);
-//
-//	auto& l_blist = inv.m_belt;
-//	bool modified{};
-//	while (l_blist.size() > new_slots_count) {
-//		inv.Ruck(l_blist.back());
-//		modified = true;
-//	}
-//
-//	if (modified) {
-//		extern void update_inventory_window(); //некрасиво, зато просто
-//		update_inventory_window();
-//	}
-//}
 
 void CUIInventoryWnd::UpdateCustomDraw()
 {

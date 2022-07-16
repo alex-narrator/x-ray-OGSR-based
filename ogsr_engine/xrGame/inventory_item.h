@@ -92,8 +92,8 @@ public:
 	virtual bool				CanAttach			(PIItem pIItem) {return false;}
 	virtual bool				CanDetach			(LPCSTR item_section_name) {return false;}
 
-	virtual EHandDependence		HandDependence		()	const	{return hd1Hand;};
-	virtual bool				IsSingleHanded		()	const	{return true;};	
+	virtual EHandDependence		HandDependence		()	const	{return /*hd1Hand*/eHandDependence;};
+	virtual bool				IsSingleHanded		()	const	{return /*true*/m_bIsSingleHanded;};
 	virtual bool				Activate( bool = false );									// !!! Переопределить. (см. в Inventory.cpp)
 	virtual void				Deactivate( bool = false );								// !!! Переопределить. (см. в Inventory.cpp)
 	virtual bool				Action				(s32 cmd, u32 flags) {return false;}	// true если известная команда, иначе false
@@ -205,6 +205,10 @@ protected:
 	float						m_fControlInertionFactor;
 	shared_str					m_icon_name;
 	bool m_need_brief_info;
+
+	// 0-используется без участия рук, 1-одна рука, 2-две руки
+	EHandDependence				eHandDependence;
+	bool						m_bIsSingleHanded;
 
 	////////// network //////////////////////////////////////////////////
 public:

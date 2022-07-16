@@ -195,10 +195,10 @@ public:
 	//сокрытие/восстановлени показа оружия в режиме AF_FREE_HANDS
 	void                    TryToHideWeapon(bool b_hide_state, bool b_save_prev_slot = true);
 	PIItem					GetSame(const PIItem pIItem, bool bSearchRuck) const;	//получаем айтем из всего инвентаря или с пояса
-		//считаем предметы в рюкзаке или на поясе + в слотах
+	//считаем предметы в рюкзаке или на поясе + в слотах
 	virtual u32				GetSameItemCount(LPCSTR caSection, bool SearchRuck);
 	PIItem					GetFromSlots(const char* name) const;						//получаем айтем из слотов
-		//размещение патронов на поясе при разрядке оружия в руках
+	//размещение патронов на поясе при разрядке оружия в руках
 	void					TryAmmoCustomPlacement(CInventoryItem* pIItem);
 
 	u32						BeltWidth	() const;

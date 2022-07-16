@@ -244,9 +244,10 @@ void CUICarBodyWnd::Hide()
 	if (Actor())
 	{
 		bool using_knife_to_cut = psActorFlags.test(AF_KNIFE_TO_CUT_PART) && smart_cast<CBaseMonster*>(m_pOthersObject) && smart_cast<CWeaponKnife*>(Actor()->inventory().ActiveItem());
-		if (g_eFreeHands == eFreeHandsManual && !using_knife_to_cut) Actor()->SetWeaponHideState(INV_STATE_INV_WND, false);  //восстановим показ оружия в руках, если обыскиваем не монстра
-
-		Actor()->inventory().TryToHideWeapon(false);
+		if (g_eFreeHands == eFreeHandsManual && !using_knife_to_cut) 
+			Actor()->SetWeaponHideState(INV_STATE_INV_WND, false);  //восстановим показ оружия в руках, если обыскиваем не монстра
+		else
+			Actor()->inventory().TryToHideWeapon(false);
 		if (psActorFlags.test(AF_AMMO_FROM_BELT)) Actor()->SetAmmoPlacement(false); //сбросим флаг перезарядки из рюкзака
 	}
 
@@ -362,17 +363,14 @@ void CUICarBodyWnd::SendMessage(CUIWindow *pWnd, s16 msg, void *pData)
 					void* d = m_pUIPropertiesBox->GetClickedItem()->GetData();
 					bool b_all = (d == (void*)33);
 
-					if (b_all)
-						MoveItems(CurrentItem());
-					else
-						MoveItem(CurrentItem());
+					MoveItems(CurrentItem(), b_all);
 				}break;
 				case INVENTORY_DROP_ACTION:
 				{
 					void* d = m_pUIPropertiesBox->GetClickedItem()->GetData();
 					bool b_all = (d == (void*)33);
 
-					DropItemsfromCell(b_all);
+					DropItems(b_all);
 				}break;
 			}
 
@@ -437,9 +435,10 @@ void CUICarBodyWnd::Show()
 	if (Actor())
 	{
 		bool using_knife_to_cut = psActorFlags.test(AF_KNIFE_TO_CUT_PART) && smart_cast<CBaseMonster*>(m_pOthersObject) && smart_cast<CWeaponKnife*>(Actor()->inventory().ActiveItem());
-		if (g_eFreeHands == eFreeHandsManual && !using_knife_to_cut) Actor()->SetWeaponHideState(INV_STATE_INV_WND, true);  //спрячем оружие в руках, если обыскиваем не монстра 
-		
-		Actor()->inventory().TryToHideWeapon(true);
+		if (g_eFreeHands == eFreeHandsManual && !using_knife_to_cut) 
+			Actor()->SetWeaponHideState(INV_STATE_INV_WND, true);  //спрячем оружие в руках, если обыскиваем не монстра 
+		else
+			Actor()->inventory().TryToHideWeapon(true);
 		if (psActorFlags.test(AF_AMMO_FROM_BELT)) Actor()->SetAmmoPlacement(true); //установим флаг перезарядки из рюкзака
 	}
 
@@ -514,7 +513,7 @@ void CUICarBodyWnd::TakeAll()
 	}
 }
 
-void CUICarBodyWnd::MoveItems(CUICellItem* itm)
+void CUICarBodyWnd::MoveItems(CUICellItem* itm, bool b_all)
 {
 	u16 tmp_id = 0;
 	if (m_pInventoryBox) {
@@ -524,51 +523,45 @@ void CUICarBodyWnd::MoveItems(CUICellItem* itm)
 	CUIDragDropListEx* owner_list = itm->OwnerList();
 
 	if (owner_list != m_pUIOthersBagList)
-	{ // from actor to box
-		for (u32 j = 0; j < itm->ChildsCount(); ++j)
+	{ //actor -> other
+		CUICellItem* ci = CurrentItem();
+		for (u32 j = 0; j < ci->ChildsCount() && b_all; ++j)
 		{
-			PIItem _itm = (PIItem)(itm->Child(j)->m_pData);
-			if (m_pOthersObject)
-				TransferItem(_itm, m_pOurObject, m_pOthersObject, true);
-			else
-			{
-				move_item(tmp_id, m_pInventoryBox->object().ID(), _itm->object().ID());
-				//. Actor()->callback(GameObject::eInvBoxItemTake)( m_pInventoryBox->lua_game_object(), _itm->object().lua_game_object() );
-			}
-		}
+			PIItem _itm = (PIItem)(ci->Child(j)->m_pData);
 
-		PIItem p_itm = (PIItem)(itm->m_pData);
-		if (m_pOthersObject)
-			TransferItem(p_itm, m_pOurObject, m_pOthersObject, true);
-		else
-		{
-			move_item(tmp_id, m_pInventoryBox->object().ID(), p_itm->object().ID());
-			//. Actor()->callback(GameObject::eInvBoxItemTake)(m_pInventoryBox->lua_game_object(), itm->object().lua_game_object() );
+			if (m_pOthersObject)
+				TransferItem(_itm, m_pOurObject, m_pOthersObject, false);
+			else
+				move_item(tmp_id, m_pInventoryBox->object().ID(), _itm->object().ID());
 		}
+		PIItem itm = (PIItem)(ci->m_pData);
+
+		if (m_pOthersObject)
+			TransferItem(itm, m_pOurObject, m_pOthersObject, false);
+		else
+			move_item(tmp_id, m_pInventoryBox->object().ID(), itm->object().ID());
 	}
 	else
-	{ // from box to actor
-		for (u32 j = 0; j < itm->ChildsCount(); ++j)
+	{ // other -> actor
+		CUICellItem* ci = CurrentItem();
+		for (u32 j = 0; j < ci->ChildsCount() && b_all; ++j)
 		{
-			PIItem _itm = (PIItem)(itm->Child(j)->m_pData);
+			PIItem _itm = (PIItem)(ci->Child(j)->m_pData);
+
 			if (m_pOthersObject)
 				TransferItem(_itm, m_pOthersObject, m_pOurObject, false);
 			else
-			{
 				move_item(m_pInventoryBox->object().ID(), tmp_id, _itm->object().ID());
-				//. Actor()->callback(GameObject::eInvBoxItemTake)( m_pInventoryBox->lua_game_object(), _itm->object().lua_game_object() );
-			}
 		}
+		PIItem itm = (PIItem)(ci->m_pData);
 
-		PIItem p_itm = (PIItem)(itm->m_pData);
 		if (m_pOthersObject)
-			TransferItem(p_itm, m_pOthersObject, m_pOurObject, false);
+			TransferItem(itm, m_pOthersObject, m_pOurObject, false);
 		else
-		{
-			move_item(m_pInventoryBox->object().ID(), tmp_id, p_itm->object().ID());
-			//. Actor()->callback(GameObject::eInvBoxItemTake)(m_pInventoryBox->lua_game_object(), itm->object().lua_game_object() );
-		}
+			move_item(m_pInventoryBox->object().ID(), tmp_id, itm->object().ID());
 	}
+
+	/*PlaySnd(eInvMoveItem);*/
 
 	owner_list->RemoveItem(itm, true);
 
@@ -586,7 +579,7 @@ void SendEvent_Item_Drop(u16 from_id, PIItem	pItem)
 	pItem->object().u_EventSend(P);
 }
 
-void CUICarBodyWnd::DropItemsfromCell(bool b_all)
+void CUICarBodyWnd::DropItems(bool b_all)
 {
 	CActor *pActor = smart_cast<CActor*>(Level().CurrentEntity());
 	if (!pActor)
@@ -692,13 +685,10 @@ void CUICarBodyWnd::ActivatePropertiesBox()
 	
 	CWeapon*			pWeapon			= smart_cast<CWeapon*>			(CurrentIItem());
 	CEatableItem*		pEatableItem	= smart_cast<CEatableItem*>		(CurrentIItem());
-	CMedkit*			pMedkit			= smart_cast<CMedkit*>			(CurrentIItem());
-	CAntirad*			pAntirad		= smart_cast<CAntirad*>			(CurrentIItem());
-	CBottleItem*		pBottleItem		= smart_cast<CBottleItem*>		(CurrentIItem());
 
     bool b_show			= false;
 	
-	LPCSTR _action		= NULL;
+	LPCSTR _action		= nullptr;
 
 	if (pWeapon)
 	{
@@ -744,18 +734,8 @@ void CUICarBodyWnd::ActivatePropertiesBox()
 		}
 	}
 
-	if(pMedkit || pAntirad)
-	{
-		_action						= "st_use";
-	}
-	else if(pEatableItem)
-	{
-		if(pBottleItem)
-			_action					= "st_drink";
-		else
-			_action					= "st_eat";
-		
-	}
+	if(pEatableItem)
+		_action = pEatableItem->GetUseMenuTip();
 	if (_action) {
 		m_pUIPropertiesBox->AddItem(_action, NULL, INVENTORY_EAT_ACTION);
 		b_show = true;
@@ -770,13 +750,7 @@ void CUICarBodyWnd::ActivatePropertiesBox()
 	if (hasMany)
 		m_pUIPropertiesBox->AddItem("st_move_all", (void*)33, INVENTORY_MOVE_ACTION);
 
-	//bool knife_to_cut = psActorFlags.test(AF_KNIFE_TO_CUT_PART) 
-	//	&& smart_cast<CBaseMonster*>(m_pOthersObject) 
-	//	&& smart_cast<CWeaponKnife*>(Actor()->inventory().ActiveItem()) 
-	//	&& Actor()->inventory().ActiveItem() == CurrentIItem();
-
-	//if(!knife_to_cut)
-		m_pUIPropertiesBox->AddItem("st_drop", NULL, INVENTORY_DROP_ACTION);
+	m_pUIPropertiesBox->AddItem("st_drop", NULL, INVENTORY_DROP_ACTION);
 
 	if (hasMany)
 		m_pUIPropertiesBox->AddItem("st_drop_all", (void*)33, INVENTORY_DROP_ACTION);
@@ -823,64 +797,17 @@ bool CUICarBodyWnd::OnItemDrop(CUICellItem* itm)
 	if(old_owner==new_owner || !old_owner || !new_owner)
 		return false;
 
-	if (Level().IR_GetKeyState(DIK_LSHIFT) || Level().IR_GetKeyState(DIK_RSHIFT)) {
-		MoveItems(itm);
-	}
-	else {
-		MoveItem(itm);
-	}
+	bool b_all = Level().IR_GetKeyState(DIK_LSHIFT) || Level().IR_GetKeyState(DIK_RSHIFT);
+	MoveItems(itm, b_all);
 
 	return true;
 }
 
 bool CUICarBodyWnd::OnItemDbClick(CUICellItem* itm)
 {
-	if (Level().IR_GetKeyState(DIK_LSHIFT) || Level().IR_GetKeyState(DIK_RSHIFT)) {
-		MoveItems(itm);
-	}
-	else {
-		MoveItem(itm);
-	}
+	bool b_all = Level().IR_GetKeyState(DIK_LSHIFT) || Level().IR_GetKeyState(DIK_RSHIFT);
+	MoveItems(itm, b_all);
 	return true;
-}
-
-void CUICarBodyWnd::MoveItem(CUICellItem* itm) 
-{
-	CUIDragDropListEx*	old_owner = itm->OwnerList();
-	CUIDragDropListEx*	new_owner = (old_owner == m_pUIOthersBagList) ? m_pUIOurBagList : m_pUIOthersBagList;
-
-	PIItem p_itm = (PIItem)itm->m_pData;
-
-	bool bMoveDirection = (old_owner == m_pUIOthersBagList);
-
-	if (m_pOthersObject)
-	{
-		if (TransferItem(p_itm,
-			bMoveDirection ? m_pOthersObject : m_pOurObject,
-			bMoveDirection ? m_pOurObject : m_pOthersObject,
-			!bMoveDirection)
-			)
-		{
-			CUICellItem* ci = old_owner->RemoveItem(CurrentItem(), false);
-			new_owner->SetItem(ci);
-		}
-	}
-	else
-	{
-		u16 tmp_id = (smart_cast<CGameObject*>(m_pOurObject))->ID();
-
-		move_item(
-			bMoveDirection ? m_pInventoryBox->object().ID() : tmp_id,
-			bMoveDirection ? tmp_id : m_pInventoryBox->object().ID(),
-			p_itm->object().ID());
-
-		//.		Actor()->callback		(GameObject::eInvBoxItemTake)(m_pInventoryBox->lua_game_object(), CurrentIItem()->object().lua_game_object() );
-
-		CUICellItem* ci = old_owner->RemoveItem(CurrentItem(), false);
-		new_owner->SetItem(ci);
-
-	}
-	SetCurrentItem(NULL);
 }
 
 bool CUICarBodyWnd::OnItemSelected(CUICellItem* itm)

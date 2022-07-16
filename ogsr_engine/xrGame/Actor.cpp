@@ -67,13 +67,17 @@
 #include "CustomDetector.h"
 
 // Tip for action for object we're looking at
-constexpr const char* m_sCarCharacterUseAction        = "car_character_use";
-constexpr const char* m_sCharacterUseAction           = "character_use";
-constexpr const char* m_sDeadCharacterUseAction       = "dead_character_use";
-constexpr const char* m_sDeadCharacterUseOrDragAction = "dead_character_use_or_drag";
-constexpr const char* m_sInventoryItemUseAction       = "inventory_item_use";
-constexpr const char* m_sInventoryItemUseOrDragAction = "inventory_item_use_or_drag";
-constexpr const char* m_sGameObjectDragAction         = "game_object_drag";
+constexpr const char* m_sCarCharacterUseAction			= "car_character_use";
+constexpr const char* m_sCharacterUseAction				= "character_use";
+constexpr const char* m_sDeadCharacterUseAction			= "dead_character_use";
+constexpr const char* m_sDeadCharacterUseOrDragAction	= "dead_character_use_or_drag";
+constexpr const char* m_sInventoryItemUseAction			= "inventory_item_use";
+constexpr const char* m_sInventoryItemUseOrDragAction	= "inventory_item_use_or_drag";
+constexpr const char* m_sGameObjectDragAction			= "game_object_drag";
+
+constexpr const char* m_sGameObjectThrowDropAction		= "game_object_throw_drop";			//Отбросить/отпустить предмет
+constexpr const char* m_sHandsNotFree					= "hands_not_free";					//руки заняты
+constexpr const char* m_sNoPlaceAvailable				= "no_place_available";				//нет места
 
 const u32		patch_frames	= 50;
 const float		respawn_delay	= 1.f;
@@ -1148,15 +1152,23 @@ void CActor::shedule_Update	(u32 DT)
 		auto pEntityAlive     = smart_cast<CEntityAlive*>(RQ.O);
 		auto ph_shell_holder  = smart_cast<CPhysicsShellHolder*>(RQ.O);
 
+		auto capture = character_physics_support()->movement()->PHCapture();
+
 		bool b_allow_drag = ph_shell_holder && ph_shell_holder->ActorCanCapture();
 
-		if (HUD().GetUI()->MainInputReceiver() || m_holder || character_physics_support()->movement()->PHCapture())
+		bool b_free_hands = inventory().IsFreeHands();
+
+		if (HUD().GetUI()->MainInputReceiver() || m_holder/* || character_physics_support()->movement()->PHCapture()*/)
 		{
 			m_sDefaultObjAction = nullptr;
 		}
-		else if (m_pUsableObject && m_pUsableObject->tip_text())
+		else if (capture && capture->taget_object()) //щось у руках
 		{
-			m_sDefaultObjAction = CStringTable().translate(m_pUsableObject->tip_text()).c_str();
+			m_sDefaultObjAction = m_sGameObjectThrowDropAction;
+		}
+		else if (!m_pPersonWeLookingAt && m_pUsableObject && m_pUsableObject->tip_text())
+		{
+			m_sDefaultObjAction = b_free_hands ? CStringTable().translate(m_pUsableObject->tip_text()).c_str() : m_sHandsNotFree;
 		}
 		else if (pEntityAlive)
 		{
@@ -1166,7 +1178,9 @@ void CActor::shedule_Update	(u32 DT)
 			}
 			else if (!pEntityAlive->g_Alive())
 			{
-				if (b_allow_drag)
+				if (!b_free_hands)
+					m_sDefaultObjAction = m_sHandsNotFree;
+				else if (b_allow_drag)
 					m_sDefaultObjAction = m_sDeadCharacterUseOrDragAction;
 				else
 					m_sDefaultObjAction = m_sDeadCharacterUseAction;
@@ -1174,18 +1188,24 @@ void CActor::shedule_Update	(u32 DT)
 		}
 		else if (m_pVehicleWeLookingAt)
 		{
-			m_sDefaultObjAction = m_sCarCharacterUseAction;
+			m_sDefaultObjAction = b_free_hands ? m_sCarCharacterUseAction : m_sHandsNotFree;
 		}
 		else if (inventory().m_pTarget && inventory().m_pTarget->CanTake())
 		{
-			if (b_allow_drag)
-				m_sDefaultObjAction = m_sInventoryItemUseOrDragAction;
-			else
-				m_sDefaultObjAction = m_sInventoryItemUseAction;
+			if (inventory().CanTakeItem(inventory().m_pTarget))
+			{
+				if (!b_free_hands)
+					m_sDefaultObjAction = m_sHandsNotFree;
+				else if (b_allow_drag)
+					m_sDefaultObjAction = m_sInventoryItemUseOrDragAction;
+				else
+					m_sDefaultObjAction = m_sInventoryItemUseAction;
+			}
+			else m_sDefaultObjAction = m_sNoPlaceAvailable;
 		}
 		else if (b_allow_drag)
 		{
-			m_sDefaultObjAction = m_sGameObjectDragAction;
+			m_sDefaultObjAction = b_free_hands ? m_sGameObjectDragAction : m_sHandsNotFree;
 		}
 		else
 		{
@@ -1497,7 +1517,7 @@ void CActor::UpdateQuickSlotPanel()
 //	}
 //}
 
-#define ARTEFACTS_UPDATE_TIME 0.100f
+constexpr auto ARTEFACTS_UPDATE_TIME = 0.100f;
 
 void CActor::UpdateArtefactsOnBelt()
 {

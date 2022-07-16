@@ -1900,9 +1900,9 @@ void CWeaponMagazined::HandleCartridgeInChamber()
 	if (*m_magazine.back().m_ammoSect != *m_magazine.front().m_ammoSect) //первый и последний патрон различны, значит зарядка смешанная
 	{//конец заряжания магазина
 		//перекладываем патрон отличного типа (первый заряженный, он же последний на отстрел) из начала вектора в конец
-		Msg("~~ weapon:[%s]|back:[%s]|front:[%s]|[1]:[%s] on reloading", Name_script(), *m_magazine.back().m_ammoSect, *m_magazine.front().m_ammoSect, *m_magazine[1].m_ammoSect);
+		//Msg("~~ weapon:[%s]|back:[%s]|front:[%s]|[1]:[%s] on reloading", Name_script(), *m_magazine.back().m_ammoSect, *m_magazine.front().m_ammoSect, *m_magazine[1].m_ammoSect);
 		rotate(m_magazine.begin(), m_magazine.begin() + 1, m_magazine.end());
-		Msg("~~ weapon:[%s]|back:[%s]|front:[%s]|[1]:[%s] after rotate on reloading", Name_script(), *m_magazine.back().m_ammoSect, *m_magazine.front().m_ammoSect, *m_magazine[1].m_ammoSect);
+		//Msg("~~ weapon:[%s]|back:[%s]|front:[%s]|[1]:[%s] after rotate on reloading", Name_script(), *m_magazine.back().m_ammoSect, *m_magazine.front().m_ammoSect, *m_magazine[1].m_ammoSect);
 	}
 }
 
@@ -1935,19 +1935,16 @@ void CWeaponMagazined::PlayAnimShutter()
 //
 void CWeaponMagazined::ShutterAction() //передёргивание затвора
 {
-	if (IsMisfire())
-	{
+	if (IsMisfire()){
 		bMisfire = false;
-		if (smart_cast<CActor*>(this->H_Parent()) && (Level().CurrentViewEntity() == H_Parent()))
-		{
+		if (smart_cast<CActor*>(this->H_Parent()) && (Level().CurrentViewEntity() == H_Parent())){
 			HUD().GetUI()->UIGame()->RemoveCustomStatic("gun_jammed");
 			HUD().GetUI()->AddInfoMessage("gun_not_jammed");
 		}
 	}
-	/*else*/ if (HasChamber() && !m_magazine.empty())
-	{
+	
+	if (HasChamber() && !m_magazine.empty()){
 		UnloadAmmo(1);
-
 		// Shell Drop
 		Fvector vel;
 		PHGetLinearVell(vel);

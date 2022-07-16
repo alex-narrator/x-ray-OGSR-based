@@ -30,6 +30,8 @@ public:
 			bool			Empty						()	const				{return m_iPortionsNum==0;};
 	virtual	void			ZeroAllEffects				();
 			void			SetRadiation				(float rad);
+			
+			LPCSTR			GetUseMenuTip				() const				{ return m_sUseMenuTip; };
 protected:	
 	//влияние при поедании вещи на параметры игрока
 	float					m_fHealthInfluence{};
@@ -56,5 +58,7 @@ protected:
 	float					GetOnePortionWeight	();
 	float					GetOnePortionVolume	();
 	u32						GetOnePortionCost	();
+
+	LPCSTR					m_sUseMenuTip;
 };
 

@@ -319,10 +319,6 @@ public:
 	virtual float			GetControlInertionFactor()/* const*/;
 
 public:
-    virtual EHandDependence		HandDependence		()	const		{	return eHandDependence;}
-			bool				IsSingleHanded		()	const		{	return m_bIsSingleHanded; }
-
-public:
 	IC		LPCSTR			strap_bone0			() const {return m_strap_bone0;}
 	IC		LPCSTR			strap_bone1			() const {return m_strap_bone1;}
 	IC		void			strapped_mode		(bool value) {m_strapped_mode = value;}
@@ -336,9 +332,6 @@ protected:
 	bool					m_can_be_strapped;
 
 	Fmatrix					m_Offset;
-	// 0-используется без участия рук, 1-одна рука, 2-две руки
-	EHandDependence			eHandDependence;
-	bool					m_bIsSingleHanded;
 
 public:
 	//загружаемые параметры

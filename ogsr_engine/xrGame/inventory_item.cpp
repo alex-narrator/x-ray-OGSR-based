@@ -122,19 +122,6 @@ void CInventoryItem::Load(LPCSTR section)
             SetSlot( m_slots[ 0 ] );
 	}
 
-/*	if (Core.Features.test(xrCore::Feature::forcibly_equivalent_slots)) {
-		// В OGSR, первый и второй оружейные слоты принудительно
-        // равнозначны. Что бы сохранить совместимость с этим, если
-        // для предмета указан только один слот и это оружейный слот,
-        // добавим к нему соотв. второй оружейный слот.
-        if ( GetSlotsCount() == 1 ) {
-          if ( m_slots[ 0 ] == FIRST_WEAPON_SLOT )
-            m_slots.push_back( SECOND_WEAPON_SLOT );
-          else if ( m_slots[ 0 ] == SECOND_WEAPON_SLOT )
-            m_slots.push_back( FIRST_WEAPON_SLOT );
-        }
-	}*/
-
 	// Description
 	if ( pSettings->line_exist(section, "description") )
 		m_Description = CStringTable().translate( pSettings->r_string(section, "description") );
@@ -144,21 +131,19 @@ void CInventoryItem::Load(LPCSTR section)
 	m_flags.set(FCanTake,		READ_IF_EXISTS(pSettings, r_bool, section, "can_take",			TRUE));
 	m_flags.set(FCanTrade,		READ_IF_EXISTS(pSettings, r_bool, section, "can_trade",			TRUE));
 	m_flags.set(FIsQuestItem,	READ_IF_EXISTS(pSettings, r_bool, section, "quest_item",		FALSE));
+	m_flags.set(FAllowSprint,	READ_IF_EXISTS(pSettings, r_bool, section,"sprint_allowed",		TRUE));
 
-	m_flags.set					(FAllowSprint,READ_IF_EXISTS	(pSettings, r_bool, section,"sprint_allowed",			TRUE));
 	m_fControlInertionFactor	= READ_IF_EXISTS(pSettings, r_float,section,"control_inertion_factor",	1.0f);
 	m_icon_name					= READ_IF_EXISTS(pSettings, r_string,section,"icon_name",				NULL);
 
-	//m_fPsyHealthRestoreSpeed = READ_IF_EXISTS( pSettings, r_float, section,	"psy_health_restore_speed", 0.f );
-	//m_fRadiationRestoreSpeed = READ_IF_EXISTS( pSettings, r_float, section,	"radiation_restore_speed", 0.f );
-	m_always_ungroupable = READ_IF_EXISTS( pSettings, r_bool, section, "always_ungroupable", false );
+	m_always_ungroupable		= READ_IF_EXISTS( pSettings, r_bool, section, "always_ungroupable", false );
 
-	m_need_brief_info = READ_IF_EXISTS( pSettings, r_bool, section, "show_brief_info", true );
+	m_need_brief_info			= READ_IF_EXISTS( pSettings, r_bool, section, "show_brief_info", true );
 
-	if (pSettings->line_exist(section, "use_condition"))
-		m_flags.set(FUsingCondition, pSettings->r_bool(section, "use_condition"));
+	m_bBreakOnZeroCondition		= !!READ_IF_EXISTS(pSettings, r_bool, section, "break_on_zero_condition", FALSE);
 
-	m_bBreakOnZeroCondition = !!READ_IF_EXISTS(pSettings, r_bool, section, "break_on_zero_condition", FALSE);
+	//щоб не вказувати зайвий раз use_condition = true. предмет має використовувати кондицію якщо при нульовій ми хочемо його ламати
+	m_flags.set(FUsingCondition, READ_IF_EXISTS(pSettings, r_bool, section, "use_condition", m_bBreakOnZeroCondition));
 
 	if (pSettings->line_exist(section, "break_particles"))
 		m_sBreakParticles = pSettings->r_string(section, "break_particles");
@@ -172,6 +157,9 @@ void CInventoryItem::Load(LPCSTR section)
 	m_fRadiationAccumLimit		=	READ_IF_EXISTS	( pSettings, r_float, section,	"radiation_accum_limit",   0.f );	
 	//
 	m_fTTLOnDecrease			=	READ_IF_EXISTS	(pSettings, r_float, section,	"ttl_on_dec", 0.f);
+	// hands
+	eHandDependence				= EHandDependence(READ_IF_EXISTS(pSettings, r_u32, section, "hand_dependence", hdNone));
+	m_bIsSingleHanded			= !!READ_IF_EXISTS(pSettings, r_bool, section, "single_handed", TRUE);
 }
 
 

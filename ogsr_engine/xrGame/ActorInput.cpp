@@ -100,13 +100,6 @@ void CActor::IR_OnKeyboardPress(int cmd)
 //				u_EventSend(P);
 			}
 		}break;
-/*	case kCROUCH_TOGGLE:
-		{
-			g_bAutoClearCrouch = !g_bAutoClearCrouch;
-			if (!g_bAutoClearCrouch)
-				mstate_wishful |= mcCrouch;
-
-		}break;*/
 	case kCROUCH:
 	{
 		if (mstate_wishful & (mcSprint | mcLookout))
@@ -214,8 +207,8 @@ void CActor::IR_OnKeyboardPress(int cmd)
 	case kUSE_QUICK_SLOT_2:
 	case kUSE_QUICK_SLOT_3:
 	{
-		if (!GetTrade()->IsInTradeState() && inventory().IsFreeHands())
-		{
+		if (!GetTrade()->IsInTradeState())
+		{	
 			inventory().TryToHideWeapon(true, false);
 			//
 			PIItem itm = nullptr;
@@ -235,13 +228,9 @@ void CActor::IR_OnKeyboardPress(int cmd)
 			}
 
 			if (itm) {
-				auto pMedkit		= smart_cast<CMedkit*>		(itm);
-				auto pAntirad		= smart_cast<CAntirad*>		(itm);
-				auto pEatableItem	= smart_cast<CEatableItem*>	(itm);
-				auto pBottleItem	= smart_cast<CBottleItem*>	(itm);
 				string1024			str;
 
-				if (pMedkit || pAntirad || pEatableItem || pBottleItem)
+				if (itm->cast_eatable_item())
 				{
 					bool SearchRuck = !psActorFlags.test(AF_QUICK_FROM_BELT);
 					PIItem iitm = inventory().GetSame(itm, SearchRuck);
@@ -267,12 +256,6 @@ void CActor::IR_OnKeyboardPress(int cmd)
 				_s->wnd()->SetText(CStringTable().translate("st_quick_slot_empty").c_str());
 				_s->m_endTime = Device.fTimeGlobal + 1.0f;// 3sec
 			}
-		}
-		else
-		{
-			SDrawStaticStruct* _s = HUD().GetUI()->UIGame()->AddCustomStatic("item_used", true);
-			_s->wnd()->SetText(CStringTable().translate("st_no_free_hands").c_str());
-			_s->m_endTime = Device.fTimeGlobal + 1.0f;// 3sec
 		}
 	}break;
 	case kLASER_ON:
@@ -409,8 +392,6 @@ void CActor::IR_OnKeyboardHold(int cmd)
 	case kFWD:		mstate_wishful |= mcFwd;									break;
 	case kBACK:		mstate_wishful |= mcBack;									break;
 //	case kCROUCH:	mstate_wishful |= mcCrouch;									break;
-
-
 	}
 }
 

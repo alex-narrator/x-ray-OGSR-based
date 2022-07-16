@@ -1359,7 +1359,7 @@ bool CInventory::IsFreeHands()
 
 void CInventory::TryToHideWeapon(bool b_hide_state, bool b_save_prev_slot)
 {
-	if (g_eFreeHands != eFreeHandsAuto) return; //только для авторежима свободных рук
+	if (g_eFreeHands == eFreeHandsOff) return;
 
 	if (b_hide_state)
 	{

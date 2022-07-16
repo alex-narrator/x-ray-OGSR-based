@@ -67,9 +67,7 @@ CWeapon::CWeapon(LPCSTR name)
 	iMagazineSize			= -1;
 	m_ammoType				= 0;
 
-	eHandDependence			= hdNone;
-
-	m_fZoomFactor			= 1.f;//Core.Features.test(xrCore::Feature::ogse_wpn_zoom_system) ? 1.f : g_fov;
+	m_fZoomFactor			= 1.f;
 
 	m_fZoomRotationFactor	= 0.f;
 	//
@@ -104,8 +102,8 @@ CWeapon::CWeapon(LPCSTR name)
 	conditionDecreasePerShotSilencer = 1.f;
 	conditionDecreasePerShotSilencerSelf = 0.f;
 	//
-	m_cur_scope = 0;
-	m_cur_silencer = 0;
+	m_cur_scope		= 0;
+	m_cur_silencer	= 0;
 	m_cur_glauncher = 0;
 }
 
@@ -366,13 +364,7 @@ void CWeapon::Load		(LPCSTR section)
 		vLoadedFirePoint2= pSettings->r_fvector3	(section,"fire_point2");
 	else 
 		vLoadedFirePoint2= vLoadedFirePoint;
-
-	// hands
-	eHandDependence		= EHandDependence(pSettings->r_s32(section,"hand_dependence"));
-	m_bIsSingleHanded	= true;
-	if (pSettings->line_exist(section, "single_handed"))
-		m_bIsSingleHanded	= !!pSettings->r_bool(section, "single_handed");
-	// 
+ 
 	m_fMinRadius		= pSettings->r_float		(section,"min_radius");
 	m_fMaxRadius		= pSettings->r_float		(section,"max_radius");
 

@@ -113,6 +113,7 @@ protected:
 	};
 	u32					m_owner_id;		//if created from artefact
 	u32					m_ttl;
+	u32                 m_zone_ttl;
 	Flags32				m_zone_flags;
 	//список объетков, находящихся в зоне
 	CActor*				m_pLocalActor;

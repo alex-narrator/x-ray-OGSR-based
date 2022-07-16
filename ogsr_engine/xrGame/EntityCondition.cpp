@@ -10,13 +10,13 @@
 #include "../Include/xrRender/Kinematics.h"
 #include "object_broker.h"
 
-#define MAX_HEALTH 1.0f
-#define MIN_HEALTH -0.01f
+constexpr auto MAX_HEALTH = 1.0f;
+constexpr auto MIN_HEALTH = -0.01f;
 
 
-#define MAX_POWER 1.0f
-#define MAX_RADIATION 1.0f
-#define MAX_PSY_HEALTH 1.0f
+constexpr auto MAX_POWER		= 1.0f;
+constexpr auto MAX_RADIATION	= 1.0f;
+constexpr auto MAX_PSY_HEALTH	= 1.0f;
 
 CEntityConditionSimple::CEntityConditionSimple()
 {

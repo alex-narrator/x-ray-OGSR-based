@@ -38,12 +38,9 @@ void CUIInventoryWnd::ActivatePropertiesBox()
 
 	UIPropertiesBox.RemoveAll();
 
-	CMedkit*			pMedkit				= smart_cast<CMedkit*>			(CurrentIItem());
-	CAntirad*			pAntirad			= smart_cast<CAntirad*>			(CurrentIItem());
 	CEatableItem*		pEatableItem		= smart_cast<CEatableItem*>		(CurrentIItem());
 	CCustomOutfit*		pOutfit				= smart_cast<CCustomOutfit*>	(CurrentIItem());
 	CWeapon*			pWeapon				= smart_cast<CWeapon*>			(CurrentIItem());
-	CBottleItem*		pBottleItem			= smart_cast<CBottleItem*>		(CurrentIItem());
 	CWeaponAmmo*		pAmmo				= smart_cast<CWeaponAmmo*>		(CurrentIItem());
 
 	string1024			temp;
@@ -52,24 +49,14 @@ void CUIInventoryWnd::ActivatePropertiesBox()
 
 	if (!pOutfit && CurrentIItem()->GetSlot() != NO_ACTIVE_SLOT) {
 		auto slots = CurrentIItem()->GetSlots();
-		//bool multi_slot = slots.size() > 1;
 		for (u8 i = 0; i < (u8)slots.size(); ++i) {
 			auto slot = slots[i];
-			if (slot != NO_ACTIVE_SLOT/* && slot != GRENADE_SLOT*/) {
+			if (slot != NO_ACTIVE_SLOT) {
 				if (!m_pInv->m_slots[slot].m_pIItem || m_pInv->m_slots[slot].m_pIItem != CurrentIItem()) {
-					//if (multi_slot && Core.Features.test(xrCore::Feature::slots_extend_menu))
-					{
-						string128 full_action_text;
-						strconcat(sizeof(full_action_text), full_action_text, "st_move_to_slot_", std::to_string(slot).c_str());
-						UIPropertiesBox.AddItem(full_action_text, (void*)(__int64)slot, INVENTORY_TO_SLOT_ACTION);
-						b_show = true;
-					}
-					//else 
-					//{
-					//	UIPropertiesBox.AddItem("st_move_to_slot", NULL, INVENTORY_TO_SLOT_ACTION);
-					//	b_show = true;
-					//	break;
-					//}
+					string128 full_action_text;
+					strconcat(sizeof(full_action_text), full_action_text, "st_move_to_slot_", std::to_string(slot).c_str());
+					UIPropertiesBox.AddItem(full_action_text, (void*)(__int64)slot, INVENTORY_TO_SLOT_ACTION);
+					b_show = true;
 				}
 			}
 		}
@@ -84,10 +71,8 @@ void CUIInventoryWnd::ActivatePropertiesBox()
 
 	if(CurrentIItem()->Ruck() && m_pInv->CanPutInRuck(CurrentIItem()) && (CurrentIItem()->GetSlot() == NO_ACTIVE_SLOT || !m_pInv->m_slots[CurrentIItem()->GetSlot()].m_bPersistent) )
 	{
-		if(!pOutfit)
-			UIPropertiesBox.AddItem("st_move_to_bag",  NULL, INVENTORY_TO_BAG_ACTION);
-		else
-			UIPropertiesBox.AddItem("st_undress_outfit",  NULL, INVENTORY_TO_BAG_ACTION);
+		UIPropertiesBox.AddItem(pOutfit ? "st_undress_outfit" : "st_move_to_bag", NULL, INVENTORY_TO_BAG_ACTION);
+
 		bAlreadyDressed = true;
 		b_show			= true;
 	}
@@ -216,27 +201,14 @@ void CUIInventoryWnd::ActivatePropertiesBox()
 
 	LPCSTR _action = nullptr;
 
-	if(pMedkit || pAntirad)
-	{
-		_action					= "st_use";
-	}
-	else if(pEatableItem)
-	{
-		if(pBottleItem)
-			_action					= "st_drink";
-		else
-			_action					= "st_eat";
-	}
-
+	if (pEatableItem)
+		_action = pEatableItem->GetUseMenuTip();
 	if(_action){
 		UIPropertiesBox.AddItem(_action,  NULL, INVENTORY_EAT_ACTION);
 		b_show			= true;
 	}
 
-	bool disallow_drop	= (pOutfit&&bAlreadyDressed);
-	disallow_drop		|= !!CurrentIItem()->IsQuestItem();
-
-	if(!disallow_drop)
+	if(!CurrentIItem()->IsQuestItem())
 	{
 
 		UIPropertiesBox.AddItem("st_drop", NULL, INVENTORY_DROP_ACTION);

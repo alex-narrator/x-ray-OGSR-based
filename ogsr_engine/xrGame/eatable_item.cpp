@@ -31,6 +31,8 @@ CEatableItem::CEatableItem()
 	m_iPortionsNum = -1;
 
 	m_physic_item	= 0;
+
+	m_sUseMenuTip = nullptr;
 }
 
 CEatableItem::~CEatableItem()
@@ -64,6 +66,8 @@ void CEatableItem::Load(LPCSTR section)
 	m_bUsePortionVolume			= !!READ_IF_EXISTS(pSettings, r_bool, section, "use_portion_volume", false);
 
 	m_fSelfRadiationInfluence	= READ_IF_EXISTS(pSettings, r_float, section, "eat_radiation_self", 0.1f);
+
+	m_sUseMenuTip				= READ_IF_EXISTS(pSettings, r_string, section, "menu_use_tip", "st_use");
 }
 
 BOOL CEatableItem::net_Spawn				(CSE_Abstract* DC)
