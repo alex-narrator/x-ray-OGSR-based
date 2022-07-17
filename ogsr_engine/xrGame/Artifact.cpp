@@ -717,7 +717,7 @@ void SArtefactActivation::SpawnAnomaly()
 		Level().Send				(P,net_flags(TRUE));
 		F_entity_Destroy			(object);
 //. #ifdef DEBUG
-		Msg("artefact [%s] spawned a zone [%s] at [%f]", *m_af->cName(), zone_sect, Device.fTimeGlobal);
+		//Msg("artefact [%s] spawned a zone [%s] at [%f]", *m_af->cName(), zone_sect, Device.fTimeGlobal);
 //. #endif
 }
 

@@ -63,8 +63,8 @@ void CUIInventoryWnd::SendMessage(CUIWindow *pWnd, s16 msg, void *pData)
 
 void CUIInventoryWnd::InitInventory_delayed()
 {
-	m_b_need_reinit = true;
-	m_b_need_update_stats = true;
+	m_b_need_reinit			= true;
+	m_b_need_update_stats	= true;
 }
 
 void CUIInventoryWnd::InitInventory() 
@@ -103,15 +103,15 @@ void CUIInventoryWnd::InitInventory()
 	_itm								= m_pInv->m_slots[APPARATUS_SLOT].m_pIItem;
 	if (_itm)
 	{
-		CUICellItem* itm = create_cell_item(_itm);
-		m_pUIBinocularList->SetItem(itm);
+		CUICellItem* itm				= create_cell_item(_itm);
+		m_pUIBinocularList->SetItem		(itm);
 	}
 
 	_itm								= m_pInv->m_slots[GRENADE_SLOT].m_pIItem;
 	if(_itm)
 	{
-		CUICellItem* itm = create_cell_item( _itm );
-		m_pUIGrenadeList->SetItem( itm );
+		CUICellItem* itm				= create_cell_item( _itm );
+		m_pUIGrenadeList->SetItem		(itm);
 	}
 	_itm								= m_pInv->m_slots[ARTEFACT_SLOT].m_pIItem;
 	if(_itm)
@@ -123,29 +123,22 @@ void CUIInventoryWnd::InitInventory()
 	_itm								= m_pInv->m_slots[DETECTOR_SLOT].m_pIItem;
 	if (_itm)
 	{
-		CUICellItem* itm = create_cell_item(_itm);
-		m_pUIDetectorList->SetItem(itm);
+		CUICellItem* itm				= create_cell_item(_itm);
+		m_pUIDetectorList->SetItem		(itm);
 	}
 
 	_itm								= m_pInv->m_slots[TORCH_SLOT].m_pIItem;
 	if (_itm)
 	{
-		CUICellItem* itm = create_cell_item(_itm);
-		m_pUITorchList->SetItem(itm);
-	}
-
-	_itm								= m_pInv->m_slots[HELMET_SLOT].m_pIItem;
-	if (_itm)
-	{
-		CUICellItem* itm = create_cell_item(_itm);
-		m_pUIHelmetList->SetItem(itm);
+		CUICellItem* itm				= create_cell_item(_itm);
+		m_pUITorchList->SetItem			(itm);
 	}
 
 	_itm								= m_pInv->m_slots[PDA_SLOT].m_pIItem;
 	if (_itm)
 	{
-		CUICellItem* itm = create_cell_item(_itm);
-		m_pUIPdaList->SetItem(itm);
+		CUICellItem* itm				= create_cell_item(_itm);
+		m_pUIPdaList->SetItem			(itm);
 	}
 
 	_itm								= m_pInv->m_slots[QUICK_SLOT_0].m_pIItem;
@@ -173,6 +166,26 @@ void CUIInventoryWnd::InitInventory()
 		m_pUIQuickList_3->SetItem		(itm);
 	}
 
+	_itm								= m_pInv->m_slots[HELMET_SLOT].m_pIItem;
+	if (_itm)
+	{
+		CUICellItem* itm				= create_cell_item(_itm);
+		m_pUIHelmetList->SetItem		(itm);
+	}
+
+	_itm								= m_pInv->m_slots[WARBELT_SLOT].m_pIItem;
+	if (_itm)
+	{
+		CUICellItem* itm				= create_cell_item(_itm);
+		m_pUIWarBeltList->SetItem		(itm);
+	}
+
+	_itm								= m_pInv->m_slots[BACKPACK_SLOT].m_pIItem;
+	if (_itm)
+	{
+		CUICellItem* itm				= create_cell_item(_itm);
+		m_pUIBackPackList->SetItem		(itm);
+	}
 
 	PIItem _outfit						= m_pInv->m_slots[OUTFIT_SLOT].m_pIItem;
 	CUICellItem* outfit					= (_outfit)?create_cell_item(_outfit):NULL;
@@ -295,10 +308,17 @@ bool CUIInventoryWnd::ToSlot(CUICellItem* itm, bool force_place)
 		return ToSlot(itm, false);
 	}
 
-	if (result && _slot == DETECTOR_SLOT)
-	{
-		if (auto det = smart_cast<CCustomDetector*>(iitem))
-			det->ToggleDetector(g_player_hud->attached_item(0) != nullptr);
+	if(result){ 
+		switch (_slot)
+		{
+		case DETECTOR_SLOT:{
+			if (auto det = smart_cast<CCustomDetector*>(iitem))
+				det->ToggleDetector(g_player_hud->attached_item(0) != nullptr);
+		}break;
+		case WARBELT_SLOT:{
+			UpdateCustomDraw();
+		}break;
+		}
 	}
 
 	return result;
@@ -335,7 +355,11 @@ bool CUIInventoryWnd::ToBag(CUICellItem* itm, bool b_use_cursor_pos)
 		else
 			new_owner->SetItem				(i);
 
+		if (iitem->GetSlot() == WARBELT_SLOT)
+			UpdateCustomDraw();
+
 		SendEvent_Item2Ruck					(iitem);
+
 		return true;
 	}
 	return false;

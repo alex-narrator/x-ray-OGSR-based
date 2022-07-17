@@ -204,5 +204,7 @@ public:
 	u32						BeltWidth	() const;
 	u32						BeltHeight	() const;
 
+	void					DropBeltToRuck();
+
 	bool					activate_slot(u32 slot);
 };

@@ -26,6 +26,7 @@
 #include "../script_callback_ex.h"
 #include "../script_game_object.h"
 #include "../BottleItem.h"
+#include "Warbelt.h"
 #include "../xr_3da/xr_input.h"
 
 #include "WeaponKnife.h"
@@ -365,6 +366,12 @@ void CUICarBodyWnd::SendMessage(CUIWindow *pWnd, s16 msg, void *pData)
 
 					MoveItems(CurrentItem(), b_all);
 				}break;
+				case INVENTORY_MOVE_WITH_CONTENT:
+				{
+					auto iitem = CurrentIItem();
+					u32 slot = iitem->GetSlot();
+					MoveItemWithContent(CurrentItem(), slot);
+				}
 				case INVENTORY_DROP_ACTION:
 				{
 					void* d = m_pUIPropertiesBox->GetClickedItem()->GetData();
@@ -683,8 +690,11 @@ void CUICarBodyWnd::ActivatePropertiesBox()
 {		
 	m_pUIPropertiesBox->RemoveAll();
 	
-	CWeapon*			pWeapon			= smart_cast<CWeapon*>			(CurrentIItem());
-	CEatableItem*		pEatableItem	= smart_cast<CEatableItem*>		(CurrentIItem());
+	auto pWeapon		= smart_cast<CWeapon*>		(CurrentIItem());
+	auto pEatableItem	= smart_cast<CEatableItem*> (CurrentIItem());
+	auto pWarbelt		= smart_cast<CWarbelt*>		(CurrentIItem());
+
+	auto owner			= CurrentItem()->OwnerList();
 
     bool b_show			= false;
 	
@@ -745,13 +755,15 @@ void CUICarBodyWnd::ActivatePropertiesBox()
 
 	bool hasMany = CurrentItem()->ChildsCount() > 0;
 
-	m_pUIPropertiesBox->AddItem("st_move", NULL, INVENTORY_MOVE_ACTION);
-
-	if (hasMany)
-		m_pUIPropertiesBox->AddItem("st_move_all", (void*)33, INVENTORY_MOVE_ACTION);
+	if ((pWarbelt/* || pBackPack*/) && owner == m_pUIOurBagList && m_pOurObject->inventory().InSlot(CurrentIItem())){
+		m_pUIPropertiesBox->AddItem("st_move_with_content", NULL, INVENTORY_MOVE_WITH_CONTENT);
+	} else {
+		m_pUIPropertiesBox->AddItem("st_move", NULL, INVENTORY_MOVE_ACTION);
+		if (hasMany)
+			m_pUIPropertiesBox->AddItem("st_move_all", (void*)33, INVENTORY_MOVE_ACTION);
+	}
 
 	m_pUIPropertiesBox->AddItem("st_drop", NULL, INVENTORY_DROP_ACTION);
-
 	if (hasMany)
 		m_pUIPropertiesBox->AddItem("st_drop_all", (void*)33, INVENTORY_DROP_ACTION);
 
@@ -892,4 +904,35 @@ void CUICarBodyWnd::PlaySnd(eInventorySndAction a)
 {
 	if (sounds[a]._handle())
 		sounds[a].play(NULL, sm_2D);
+}
+
+void CUICarBodyWnd::MoveItemWithContent(CUICellItem* itm, u32 slot)
+{
+	EItemPlace move_from = eItemPlaceUndefined;
+
+	switch (slot)
+	{
+	case WARBELT_SLOT:
+		move_from = eItemPlaceBelt;
+		break;
+	case BACKPACK_SLOT:
+		move_from = eItemPlaceRuck;
+		break;
+	}
+
+	auto inv_all = m_pOurObject->inventory().m_all;
+
+	for (TIItemContainer::iterator it = inv_all.begin(); inv_all.end() != it; ++it){
+		PIItem iitem = *it;
+
+		if (iitem->m_eItemPlace == move_from){
+			if (m_pOthersObject)
+				TransferItem(iitem, m_pOurObject, m_pOthersObject, false);
+			else
+				move_item(0, m_pInventoryBox->object().ID(), iitem->object().ID());
+		}
+	}
+
+	if (itm) MoveItems(itm, false);
+	//PlaySnd(eInvMoveItem);
 }

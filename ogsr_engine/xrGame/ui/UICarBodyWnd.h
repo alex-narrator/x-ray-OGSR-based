@@ -86,6 +86,7 @@ protected:
 	void					TakeAll						();
 	void					MoveItems					(CUICellItem* itm, bool b_all);
 	void					DropItems					(bool b_all);
+	void					MoveItemWithContent			(CUICellItem* itm, u32 slot);
 
 
 	bool			OnItemDrop					(CUICellItem* itm);

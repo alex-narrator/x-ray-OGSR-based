@@ -1,0 +1,30 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;WARBELT;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+[warbelt]:identity_immunities
+GroupControlSection	= spawn_group
+discovery_dependency =
+$spawn 				= "devices\detector_simple"
+$prefetch 			= 32
+class				= II_WRBLT
+cform				= skeleton
+visual				= equipments\item_datchik1.ogf
+description			= warbelt_descr
+slot				= 16
+
+max_belt_width 		= 4
+;max_belt_height 	= 2
+drop_pouch 			= true
+
+inv_name			= Warbelt
+inv_name_short		= Warbelt
+inv_weight			= 0.1
+
+inv_grid_width		= 1
+inv_grid_height		= 1
+inv_grid_x			= 9
+inv_grid_y			= 14
+cost				= 500	;30
+default_to_ruck		= false
+
+[warbelt_adv]:warbelt
+max_belt_width 		= 4
+max_belt_height 	= 2

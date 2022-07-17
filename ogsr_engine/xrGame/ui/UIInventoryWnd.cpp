@@ -53,7 +53,7 @@ CUIInventoryWnd::CUIInventoryWnd() :
 
 	g_pInvWnd							= this;	
 	m_b_need_reinit						= false;
-	m_b_need_update_stats = false;
+	m_b_need_update_stats				= false;
 	Hide								();	
 }
 
@@ -199,27 +199,27 @@ void CUIInventoryWnd::Init()
 
 	for ( u8 i = 0; i < SLOTS_TOTAL; i++ )
 		m_slots_array[ i ] = NULL;
-	m_slots_array[OUTFIT_SLOT] = m_pUIOutfitList;
-	m_slots_array[HELMET_SLOT] = m_pUIHelmetList;
-	m_slots_array[WARBELT_SLOT] = m_pUIWarBeltList;
-	m_slots_array[BACKPACK_SLOT] = m_pUIBackPackList;
+	m_slots_array[OUTFIT_SLOT]			= m_pUIOutfitList;
+	m_slots_array[HELMET_SLOT]			= m_pUIHelmetList;
+	m_slots_array[WARBELT_SLOT]			= m_pUIWarBeltList;
+	m_slots_array[BACKPACK_SLOT]		= m_pUIBackPackList;
 
-	m_slots_array[KNIFE_SLOT] = m_pUIKnifeList;
-	m_slots_array[FIRST_WEAPON_SLOT] = m_pUIPistolList;
-	m_slots_array[SECOND_WEAPON_SLOT] = m_pUIAutomaticList;
-	m_slots_array[APPARATUS_SLOT] = m_pUIBinocularList;
+	m_slots_array[KNIFE_SLOT]			= m_pUIKnifeList;
+	m_slots_array[FIRST_WEAPON_SLOT]	= m_pUIPistolList;
+	m_slots_array[SECOND_WEAPON_SLOT]	= m_pUIAutomaticList;
+	m_slots_array[APPARATUS_SLOT]		= m_pUIBinocularList;
 
-	m_slots_array[GRENADE_SLOT] = m_pUIGrenadeList;
-	m_slots_array[ARTEFACT_SLOT] = m_pUIArtefactList;
+	m_slots_array[GRENADE_SLOT]			= m_pUIGrenadeList;
+	m_slots_array[ARTEFACT_SLOT]		= m_pUIArtefactList;
 
-	m_slots_array[DETECTOR_SLOT] = m_pUIDetectorList;
-	m_slots_array[TORCH_SLOT] = m_pUITorchList;
-	m_slots_array[PDA_SLOT] = m_pUIPdaList;
+	m_slots_array[DETECTOR_SLOT]		= m_pUIDetectorList;
+	m_slots_array[TORCH_SLOT]			= m_pUITorchList;
+	m_slots_array[PDA_SLOT]				= m_pUIPdaList;
 
-	m_slots_array[QUICK_SLOT_0] = m_pUIQuickList_0;
-	m_slots_array[QUICK_SLOT_1] = m_pUIQuickList_1;
-	m_slots_array[QUICK_SLOT_2] = m_pUIQuickList_2;
-	m_slots_array[QUICK_SLOT_3] = m_pUIQuickList_3;
+	m_slots_array[QUICK_SLOT_0]			= m_pUIQuickList_0;
+	m_slots_array[QUICK_SLOT_1]			= m_pUIQuickList_1;
+	m_slots_array[QUICK_SLOT_2]			= m_pUIQuickList_2;
+	m_slots_array[QUICK_SLOT_3]			= m_pUIQuickList_3;
 
 	//pop-up menu
 	AttachChild							(&UIPropertiesBox);
@@ -598,19 +598,14 @@ bool CUIInventoryWnd::OnKeyboard(int dik, EUIMessages keyboard_action)
 
 void CUIInventoryWnd::UpdateCustomDraw()
 {
-	CActor* pActor = smart_cast<CActor*>(Level().CurrentEntity());
-
-	if (!pActor) return;
+	if (!smart_cast<CActor*>(Level().CurrentEntity())) return;
 
 	auto& inv = Actor()->inventory();
 
 	u32 belt_width = inv.BeltWidth();
 	u32 belt_height = inv.BeltHeight();
 
-	Ivector2 belt_array{};
-	belt_array.x = belt_width;
-	belt_array.y = belt_height;
-
-//	m_pUIBeltList->SetCellsCapacity(belt_array);
 	m_pUIBeltList->SetCellsAvailable(belt_width * belt_height);
+
+	InitInventory_delayed();
 }
