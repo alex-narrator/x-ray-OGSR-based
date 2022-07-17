@@ -92,8 +92,8 @@ public:
 	virtual bool				CanAttach			(PIItem pIItem) {return false;}
 	virtual bool				CanDetach			(LPCSTR item_section_name) {return false;}
 
-	virtual EHandDependence		HandDependence		()	const	{return /*hd1Hand*/eHandDependence;};
-	virtual bool				IsSingleHanded		()	const	{return /*true*/m_bIsSingleHanded;};
+	virtual EHandDependence		HandDependence		()	const	{return eHandDependence;};
+	virtual bool				IsSingleHanded		()	const	{return m_bIsSingleHanded;};
 	virtual bool				Activate( bool = false );									// !!! Переопределить. (см. в Inventory.cpp)
 	virtual void				Deactivate( bool = false );								// !!! Переопределить. (см. в Inventory.cpp)
 	virtual bool				Action				(s32 cmd, u32 flags) {return false;}	// true если известная команда, иначе false
@@ -117,20 +117,16 @@ public:
 
 			BOOL				IsInvalid			() const;
 
-			BOOL				IsQuestItem			()	const	{return m_flags.test(FIsQuestItem);}			
-	virtual u32					Cost				()	const	{ return m_cost; }
-	virtual	void				SetCost				(u32 cost) 	{ m_cost = cost; }
-	virtual float				Weight				() /*const*/	{ return m_weight;}		
-	virtual void                SetWeight			(float w) { m_weight = w; }
-	virtual float				Volume				() { return m_volume; }
-	virtual void                SetVolume			(float v) { m_volume = v; }
+			BOOL				IsQuestItem			()	const	{return m_flags.test(FIsQuestItem);}	
 
+	virtual u32					Cost				()	const	{ return m_cost;	}
+	virtual	void				SetCost				(u32 cost) 	{ m_cost = cost;	}
 
-	//float m_fPsyHealthRestoreSpeed;
-	//virtual float PsyHealthRestoreSpeed() const { return m_fPsyHealthRestoreSpeed; }
+	virtual float				Weight				()	const	{ return m_weight;	}		
+	virtual void                SetWeight			(float w)	{ m_weight = w;		}
 
-	//float m_fRadiationRestoreSpeed;
-	//virtual float RadiationRestoreSpeed() const { return m_fRadiationRestoreSpeed; }
+	virtual float				Volume				() const	{ return m_volume;	}
+	virtual void                SetVolume			(float v)	{ m_volume = v;		}
 
 	float 						m_fRadiationRestoreSpeed;
 	float 						m_fRadiationAccumFactor;          // alpet: скорость появления вторичной радиактивности
@@ -219,7 +215,7 @@ public:
 
 	virtual	bool				IsSprintAllowed				() const		{return !!m_flags.test(FAllowSprint);} ;
 
-	virtual	float				GetControlInertionFactor	()/* const			{return m_fControlInertionFactor;}*/;
+	virtual	float				GetControlInertionFactor	() const;
 
 	virtual bool				StopSprintOnFire() { return true; }
 

@@ -761,7 +761,7 @@ void CInventoryItem::OnMoveOut(EItemPlace prevPlace) {
 	OnMoveToRuck(prevPlace);
 };
 
-float	CInventoryItem::GetControlInertionFactor()
+float	CInventoryItem::GetControlInertionFactor() const
 {
 	//значение задано принудительно
 	bool b_manually_set = !!pSettings->line_exist(object().cNameSect(), "control_inertion_factor");

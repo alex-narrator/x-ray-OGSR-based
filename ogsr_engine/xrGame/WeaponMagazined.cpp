@@ -2081,7 +2081,7 @@ LPCSTR CWeaponMagazined::GetMagazineEmptySect() const
 	return empty_sect;
 }
 
-float CWeaponMagazined::Weight()
+float CWeaponMagazined::Weight() const
 {
 	float res = inherited::Weight();
 

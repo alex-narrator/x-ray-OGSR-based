@@ -314,9 +314,9 @@ public:
 			bool			IsRotatingToZoom	() const		{	return (m_fZoomRotationFactor<1.f);}
 			bool			IsRotatingFromZoom() const { return m_fZoomRotationFactor > 0.f; }
 
-	virtual float			Weight				() /*const*/;		
-	virtual u32				Cost				() /*const*/;
-	virtual float			GetControlInertionFactor()/* const*/;
+	virtual float			Weight				() const;		
+	virtual u32				Cost				() const;
+	virtual float			GetControlInertionFactor() const;
 
 public:
 	IC		LPCSTR			strap_bone0			() const {return m_strap_bone0;}
@@ -522,7 +522,7 @@ public:
 	IC	bool				can_be_strapped				() const {return m_can_be_strapped;};
 
 	LPCSTR					GetCurrentAmmo_ShortName	();
-	float					GetAmmoInMagazineWeight		(const decltype(m_magazine)& mag);
+	float					GetAmmoInMagazineWeight		(const decltype(m_magazine)& mag) const;
 
 
 protected:

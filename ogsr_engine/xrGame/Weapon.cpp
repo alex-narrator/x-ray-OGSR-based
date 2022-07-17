@@ -2370,16 +2370,14 @@ LPCSTR	CWeapon::GetCurrentAmmo_ShortName	()
 	return *(l_cartridge.m_InvShortName);
 }
 
-float CWeapon::GetAmmoInMagazineWeight(const decltype(CWeapon::m_magazine)& mag)
+float CWeapon::GetAmmoInMagazineWeight(const decltype(CWeapon::m_magazine)& mag) const
 {
     float res = 0;
     const char* last_type = nullptr;
     float last_ammo_weight = 0;
-    for (auto c : mag)
-    {
+    for (auto& c : mag){
         // Usually ammos in mag have same type, use this fact to improve performance
-        if (last_type != c.m_ammoSect.c_str())
-        {
+        if (last_type != c.m_ammoSect.c_str()){
             last_type = c.m_ammoSect.c_str();
             last_ammo_weight = c.Weight();
         }
@@ -2388,7 +2386,7 @@ float CWeapon::GetAmmoInMagazineWeight(const decltype(CWeapon::m_magazine)& mag)
     return res;
 }
 
-float CWeapon::Weight() /*const*/
+float CWeapon::Weight() const
 {
 	float res = CInventoryItemObject::Weight();
 	if ( GrenadeLauncherAttachable() && IsGrenadeLauncherAttached() )
@@ -2402,7 +2400,7 @@ float CWeapon::Weight() /*const*/
 	return res;
 }
 
-u32 CWeapon::Cost() /*const*/
+u32 CWeapon::Cost() const
 {
 	u32 res = m_cost;
 	
@@ -2533,7 +2531,7 @@ bool CWeapon::SecondVPEnabled() const
 }
 
 // Чувствительность мышкии с оружием в руках во время прицеливания
-float CWeapon::GetControlInertionFactor()/* const*/
+float CWeapon::GetControlInertionFactor() const
 {
 	float fInertionFactor = inherited::GetControlInertionFactor();
 

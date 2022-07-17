@@ -88,7 +88,7 @@ void CCartridge::Load(LPCSTR section, u8 LocalAmmoType)
 	m_misfireProbability	= READ_IF_EXISTS(pSettings, r_float, m_ammoSect, "misfire_probability", 0.0f);
 }
 
-float CCartridge::Weight()/* const*/
+float CCartridge::Weight() const
 {
 	auto s = m_ammoSect.c_str();
 	float res = 0;
@@ -322,7 +322,7 @@ CInventoryItem *CWeaponAmmo::can_make_killing	(const CInventory *inventory) cons
 	return					(0);
 }
 
-float CWeaponAmmo::Weight() /*const*/
+float CWeaponAmmo::Weight() const
 {	
 	float res = inherited::Weight();
 
@@ -342,7 +342,7 @@ float CWeaponAmmo::Weight() /*const*/
 	return res;
 }
 
-u32 CWeaponAmmo::Cost() /*const*/
+u32 CWeaponAmmo::Cost() const
 {
 	if (!m_boxCurr)
 		return inherited::Cost();

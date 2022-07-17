@@ -876,7 +876,7 @@ bool CWeaponMagazinedWGrenade::IsNecessaryItem	    (const shared_str& item_sect)
 }
 
 
-float CWeaponMagazinedWGrenade::Weight() /*const*/ {
+float CWeaponMagazinedWGrenade::Weight() const {
   return inherited::Weight() + GetAmmoInMagazineWeight( m_magazine2 );
 }
 

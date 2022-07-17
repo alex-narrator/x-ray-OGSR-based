@@ -257,7 +257,7 @@ public:
 	//сохранение типа патрона в патроннике при смешанной зарядке
 	virtual void	HandleCartridgeInChamber();
 
-	virtual float	Weight();
+	virtual float	Weight() const;
 
 	virtual void	LoadZoomParams(LPCSTR section);
 	//

@@ -6,7 +6,7 @@ class CCartridge
 public:
 	CCartridge();
 	void Load(LPCSTR section, u8 LocalAmmoType);
-	virtual float Weight() /*const*/;
+	virtual float Weight() const;
 
 	shared_str	m_ammoSect;
 	enum{
@@ -50,9 +50,9 @@ public:
 	virtual void					renderable_Render	();
 
 	virtual bool					Useful				() const;
-	virtual float					Weight				() /*const*/;
+	virtual float					Weight				() const;
 
-	virtual u32						Cost				() /*const*/;
+	virtual u32						Cost				() const;
 	bool							Get					(CCartridge &cartridge);
 
 	float		m_kDist, m_kDisp, m_kHit, m_kImpulse, m_kPierce, m_kAP, m_kAirRes, m_kSpeed;

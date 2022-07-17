@@ -93,7 +93,7 @@ public:
 	shared_str grenade_bone_name;
 
 	IC int GetAmmoElapsed2() const { return int(m_magazine2.size()); }
-	virtual float Weight () /*const*/;		
+	virtual float Weight () const;		
 
 	virtual bool IsGrenadeMode() const { return m_bGrenadeMode; };
 	//получаем износ при выстреле из подствольника
