@@ -301,6 +301,17 @@ bool CUIInventoryWnd::OnMouse(float x, float y, EUIMessages mouse_action)
 		}
 	}
 
+	if (UIPropertiesBox.IsShown())
+	{
+		switch (mouse_action)
+		{
+		case WINDOW_MOUSE_WHEEL_DOWN:
+		case WINDOW_MOUSE_WHEEL_UP:
+			return true;
+			break;
+		}
+	}
+
 	CUIWindow::OnMouse					(x, y, mouse_action);
 
 	return true; // always returns true, because ::StopAnyMove() == true;

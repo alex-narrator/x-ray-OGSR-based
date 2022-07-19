@@ -505,7 +505,7 @@ void CActor::ActorUse() {
 
   if (m_pUsableObject) {
 	  if (looking_at_alive_person || inventory().IsFreeHands()) { //чтобы можно было слышать просьбы убрать оружие при попытке поговорить со сталкерами с оружием в руках
-		  inventory().TryToHideWeapon(true, false);
+		 if(!looking_at_alive_person) inventory().TryToHideWeapon(true, false);
 		  m_pUsableObject->use(this);
 		  if (g_bDisableAllInput || HUD().GetUI()->MainInputReceiver()) return;
 	  }
