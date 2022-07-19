@@ -82,7 +82,7 @@ void CInventoryOwner::Load					(LPCSTR section)
 		m_need_osoznanie_mode=FALSE;
 	}
 	//
-	u_BarterMoney = READ_IF_EXISTS(pSettings, r_u32, section, "barter_money", 0); //отдельный денежный фонд NPC в режиме бартера
+	u_BarterMoney = READ_IF_EXISTS(pSettings, r_u32, section, "barter_money", 100000); //отдельный денежный фонд NPC в режиме бартера
 	//
 }
 

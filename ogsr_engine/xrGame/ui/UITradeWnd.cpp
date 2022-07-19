@@ -13,6 +13,9 @@
 #include "UIInventoryUtilities.h"
 #include "../inventoryowner.h"
 #include "../eatable_item.h"
+#include "Weapon.h"
+#include "WeaponMagazined.h"
+#include "WeaponMagazinedWGrenade.h"
 #include "../inventory.h"
 #include "../level.h"
 #include "../string_table.h"
@@ -27,6 +30,8 @@
 #include "UICellItemFactory.h"
 #include "UIPropertiesBox.h"
 #include "UIListBoxItem.h"
+
+#include "string_table.h"
 
 #include "../game_object_space.h"
 #include "../script_callback_ex.h"
@@ -190,6 +195,24 @@ void CUITradeWnd::Init()
 	BindDragDropListEvents				(&m_uidata->UIOthersBagList);
 	BindDragDropListEvents				(&m_uidata->UIOurTradeList);
 	BindDragDropListEvents				(&m_uidata->UIOthersTradeList);
+
+	//Load sounds
+	if (uiXml.NavigateToNode("action_sounds", 0))
+	{
+		XML_NODE* stored_root = uiXml.GetLocalRoot();
+		uiXml.SetLocalRoot(uiXml.NavigateToNode("action_sounds", 0));
+
+		::Sound->create(sounds[eInvSndOpen],		uiXml.Read("snd_open",			0, NULL), st_Effect, sg_SourceType);
+		::Sound->create(sounds[eInvProperties],		uiXml.Read("snd_properties",	0, NULL), st_Effect, sg_SourceType);
+		::Sound->create(sounds[eInvDropItem],		uiXml.Read("snd_drop_item",		0, NULL), st_Effect, sg_SourceType);
+		::Sound->create(sounds[eInvMoveItem],		uiXml.Read("snd_move_item",		0, NULL), st_Effect, sg_SourceType);
+		::Sound->create(sounds[eInvDetachAddon],	uiXml.Read("snd_detach_addon",	0, NULL), st_Effect, sg_SourceType);
+		::Sound->create(sounds[eInvItemUse],		uiXml.Read("snd_item_use",		0, NULL), st_Effect, sg_SourceType);
+		::Sound->create(sounds[eInvMagLoad],		uiXml.Read("snd_mag_load",		0, NULL), st_Effect, sg_SourceType);
+		::Sound->create(sounds[eInvMagUnload],		uiXml.Read("snd_mag_unload",	0, NULL), st_Effect, sg_SourceType);
+
+		uiXml.SetLocalRoot(stored_root);
+	}
 }
 
 void CUITradeWnd::InitTrade(CInventoryOwner* pOur, CInventoryOwner* pOthers)
@@ -228,6 +251,144 @@ void CUITradeWnd::InitTrade(CInventoryOwner* pOur, CInventoryOwner* pOthers)
 //
 }  
 
+void CUITradeWnd::ActivatePropertiesBox()
+{
+	m_pUIPropertiesBox->RemoveAll();
+
+	auto pWeapon		= smart_cast<CWeapon*>		(CurrentIItem());
+	auto pAmmo			= smart_cast<CWeaponAmmo*>	(CurrentIItem());
+	auto pEatableItem	= smart_cast<CEatableItem*> (CurrentIItem());
+
+	bool b_actor_inv = CurrentItem()->OwnerList() == &m_uidata->UIOurBagList;
+	auto inv = m_pInv;
+
+	bool hasMany = CurrentItem()->ChildsCount() > 0;
+
+	string1024			temp;
+
+	bool b_show		= false;
+	LPCSTR _action	= nullptr;
+
+	if (b_actor_inv) {
+		if (pAmmo) {
+			LPCSTR _ammo_sect;
+
+			if (pAmmo->IsBoxReloadable()) {
+				//unload AmmoBox
+				m_pUIPropertiesBox->AddItem("st_unload_magazine", NULL, INVENTORY_UNLOAD_AMMO_BOX);
+				b_show = true;
+				//reload AmmoBox
+				if (pAmmo->m_boxCurr < pAmmo->m_boxSize && b_actor_inv) {
+					if (inv->GetAmmo(*pAmmo->m_ammoSect, true)) {
+						strconcat(sizeof(temp), temp, *CStringTable().translate("st_load_ammo_type"), " ",
+							*CStringTable().translate(pSettings->r_string(pAmmo->m_ammoSect, "inv_name_short")));
+						_ammo_sect = *pAmmo->m_ammoSect;
+						m_pUIPropertiesBox->AddItem(temp, (void*)_ammo_sect, INVENTORY_RELOAD_AMMO_BOX);
+						b_show = true;
+					}
+				}
+			}
+			else if (pAmmo->IsBoxReloadableEmpty() && b_actor_inv) {
+				for (u8 i = 0; i < pAmmo->m_ammoTypes.size(); ++i) {
+					if (inv->GetAmmo(*pAmmo->m_ammoTypes[i], true)) {
+						strconcat(sizeof(temp), temp, *CStringTable().translate("st_load_ammo_type"), " ",
+							*CStringTable().translate(pSettings->r_string(pAmmo->m_ammoTypes[i], "inv_name_short")));
+						_ammo_sect = *pAmmo->m_ammoTypes[i];
+						m_pUIPropertiesBox->AddItem(temp, (void*)_ammo_sect, INVENTORY_RELOAD_AMMO_BOX);
+						b_show = true;
+					}
+				}
+			}
+		}
+
+		if (pWeapon) {
+			if (inv->InSlot(pWeapon)) {
+				for (u32 i = 0; i < pWeapon->m_ammoTypes.size(); ++i) {
+					if (pWeapon->TryToGetAmmo(i)) {
+						strconcat(sizeof(temp), temp, *CStringTable().translate("st_load_ammo_type"), " ",
+							*CStringTable().translate(pSettings->r_string(pWeapon->m_ammoTypes[i].c_str(), "inv_name_short")));
+						m_pUIPropertiesBox->AddItem(temp, (void*)(__int64)i, INVENTORY_RELOAD_MAGAZINE);
+						b_show = true;
+					}
+				}
+			}
+			//
+			if (pWeapon->GrenadeLauncherAttachable() && pWeapon->IsGrenadeLauncherAttached()) {
+				m_pUIPropertiesBox->AddItem("st_detach_gl", NULL, INVENTORY_DETACH_GRENADE_LAUNCHER_ADDON);
+				b_show = true;
+			}
+			if (pWeapon->ScopeAttachable() && pWeapon->IsScopeAttached()) {
+				m_pUIPropertiesBox->AddItem("st_detach_scope", NULL, INVENTORY_DETACH_SCOPE_ADDON);
+				b_show = true;
+			}
+			if (pWeapon->SilencerAttachable() && pWeapon->IsSilencerAttached()) {
+				m_pUIPropertiesBox->AddItem("st_detach_silencer", NULL, INVENTORY_DETACH_SILENCER_ADDON);
+				b_show = true;
+			}
+			if (smart_cast<CWeaponMagazined*>(pWeapon)) {
+				auto WpnMagazWgl = smart_cast<CWeaponMagazinedWGrenade*>(pWeapon);
+				bool b = pWeapon->GetAmmoElapsed() > 0
+					|| WpnMagazWgl && !WpnMagazWgl->m_magazine2.empty()
+					|| smart_cast<CWeaponMagazined*>(pWeapon)->IsMagazineAttached();
+
+				if (!b) {
+					CUICellItem* itm = CurrentItem();
+					for (u32 i = 0; i < itm->ChildsCount(); ++i) {
+						auto pWeaponChild = static_cast<CWeaponMagazined*>(itm->Child(i)->m_pData);
+						auto WpnMagazWglChild = smart_cast<CWeaponMagazinedWGrenade*>(pWeaponChild);
+						if (pWeaponChild->GetAmmoElapsed() > 0
+							|| WpnMagazWglChild && !WpnMagazWglChild->m_magazine2.empty()
+							|| pWeaponChild->IsMagazineAttached())
+						{
+							b = true;
+							break;
+						}
+					}
+				}
+
+				if (b) {
+					m_pUIPropertiesBox->AddItem("st_unload_magazine", NULL, INVENTORY_UNLOAD_MAGAZINE);
+					b_show = true;
+				}
+			}
+		}
+
+		if (pEatableItem)
+			_action = pEatableItem->GetUseMenuTip();
+		if (_action) {
+			m_pUIPropertiesBox->AddItem(_action, NULL, INVENTORY_EAT_ACTION);
+			b_show = true;
+		}
+
+		m_pUIPropertiesBox->AddItem("st_drop", NULL, INVENTORY_DROP_ACTION);
+		if (hasMany)
+			m_pUIPropertiesBox->AddItem("st_drop_all", (void*)33, INVENTORY_DROP_ACTION);
+	}
+
+	if (CanMoveToOther(CurrentIItem(), b_actor_inv)) {
+		m_pUIPropertiesBox->AddItem("st_move", NULL, INVENTORY_MOVE_ACTION);
+		if (hasMany)
+			m_pUIPropertiesBox->AddItem("st_move_all", (void*)33, INVENTORY_MOVE_ACTION);
+	}
+
+	b_show = true;
+
+	if (b_show) {
+		m_pUIPropertiesBox->AutoUpdateSize();
+		m_pUIPropertiesBox->BringAllToTop();
+
+		Fvector2						cursor_pos;
+		Frect							vis_rect;
+
+		GetAbsoluteRect(vis_rect);
+		cursor_pos = GetUICursor()->GetCursorPosition();
+		cursor_pos.sub(vis_rect.lt);
+		m_pUIPropertiesBox->Show(vis_rect, cursor_pos);
+
+		PlaySnd(eInvProperties);
+	}
+}
+
 void CUITradeWnd::SendMessage(CUIWindow *pWnd, s16 msg, void *pData)
 {
 	if(pWnd == &m_uidata->UIToTalkButton && msg == BUTTON_CLICKED)
@@ -249,10 +410,92 @@ void CUITradeWnd::SendMessage(CUIWindow *pWnd, s16 msg, void *pData)
 					void* d = m_pUIPropertiesBox->GetClickedItem()->GetData();
 					bool b_all = (d == (void*)33);
 
-					if (b_all)
-						MoveItems(CurrentItem());
-					else
-						MoveItem(CurrentItem());
+					MoveItems(CurrentItem(), b_all);
+				}break;
+				case INVENTORY_EAT_ACTION:	//съесть объект
+					EatItem();
+					break;
+				case INVENTORY_RELOAD_MAGAZINE:
+				{
+					void* d = m_pUIPropertiesBox->GetClickedItem()->GetData();
+					auto Wpn = smart_cast<CWeapon*>(CurrentIItem());
+					Wpn->m_set_next_ammoType_on_reload = (u32)(__int64)d;
+					Wpn->ReloadWeapon();
+				}break;
+				case INVENTORY_UNLOAD_MAGAZINE:
+				{
+					auto ProcessUnload = [](void* pWpn) {
+						auto WpnMagaz = static_cast<CWeaponMagazined*>(pWpn);
+						WpnMagaz->UnloadMagazine();
+						WpnMagaz->PullShutter();
+						if (auto WpnMagazWgl = smart_cast<CWeaponMagazinedWGrenade*>(WpnMagaz))
+						{
+							if (WpnMagazWgl->IsGrenadeLauncherAttached())
+							{
+								WpnMagazWgl->PerformSwitchGL();
+								WpnMagazWgl->UnloadMagazine();
+								WpnMagazWgl->PerformSwitchGL();
+							}
+						}
+					};
+
+					auto itm = CurrentItem();
+					ProcessUnload(itm->m_pData);
+
+					for (u32 i = 0; i < itm->ChildsCount(); ++i)
+					{
+						auto child_itm = itm->Child(i);
+						ProcessUnload(child_itm->m_pData);
+					}
+				}break;
+				case INVENTORY_RELOAD_AMMO_BOX:
+				{
+					//Msg("load %s to %s", (LPCSTR)UIPropertiesBox.GetClickedItem()->GetData(), pAmmo->cNameSect().c_str());
+					(smart_cast<CWeaponAmmo*>(CurrentIItem()))->ReloadBox((LPCSTR)m_pUIPropertiesBox->GetClickedItem()->GetData());
+					//SetCurrentItem(NULL);
+					PlaySnd(eInvMagLoad);
+				}break;
+				case INVENTORY_UNLOAD_AMMO_BOX:
+				{
+					auto ProcessUnload = [](void* pAmmo) {
+						auto AmmoBox = static_cast<CWeaponAmmo*>(pAmmo);
+						AmmoBox->UnloadBox();
+					};
+
+					auto itm = CurrentItem();
+					ProcessUnload(itm->m_pData);
+					for (u32 i = 0; i < itm->ChildsCount(); ++i)
+					{
+						auto child_itm = itm->Child(i);
+						ProcessUnload(child_itm->m_pData);
+					}
+					//SetCurrentItem(NULL);
+					PlaySnd(eInvMagUnload);
+				}break;
+				case INVENTORY_DETACH_SCOPE_ADDON:
+				{
+					auto wpn = smart_cast<CWeapon*>(CurrentIItem());
+					wpn->Detach(wpn->GetScopeName().c_str(), true);
+					PlaySnd(eInvDetachAddon);
+				}break;
+				case INVENTORY_DETACH_SILENCER_ADDON:
+				{
+					auto wpn = smart_cast<CWeapon*>(CurrentIItem());
+					wpn->Detach(wpn->GetSilencerName().c_str(), true);
+					PlaySnd(eInvDetachAddon);
+				}break;
+				case INVENTORY_DETACH_GRENADE_LAUNCHER_ADDON:
+				{
+					auto wpn = smart_cast<CWeapon*>(CurrentIItem());
+					wpn->Detach(wpn->GetGrenadeLauncherName().c_str(), true);
+					PlaySnd(eInvDetachAddon);
+				}break;
+				case INVENTORY_DROP_ACTION:
+				{
+					void* d = m_pUIPropertiesBox->GetClickedItem()->GetData();
+					bool b_all = (d == (void*)33);
+
+					DropItems(b_all);
 				}break;
 			}
 		}
@@ -308,12 +551,8 @@ void CUITradeWnd::Show()
 	m_uidata->UIDealMsg				= NULL;
 
 	if (auto pActor = Actor())
-	{
-		//if (Core.Features.test(xrCore::Feature::engine_ammo_repacker) && !Core.Features.test(xrCore::Feature::hard_ammo_reload))
-		//	pActor->RepackAmmo();
-
 		if (psActorFlags.test(AF_AMMO_FROM_BELT)) Actor()->SetAmmoPlacement(true); //установим флаг перезарядки из рюкзака
-	}
+	PlaySnd(eInvSndOpen);
 }
 
 void CUITradeWnd::Hide()
@@ -528,30 +767,6 @@ bool CUITradeWnd::OnMouse(float x, float y, EUIMessages mouse_action)
 	return true; // always returns true, because ::StopAnyMove() == true;
 }
 
-void CUITradeWnd::ActivatePropertiesBox()
-{
-	m_pUIPropertiesBox->RemoveAll();
-
-	bool hasMany = CurrentItem()->ChildsCount() > 0;
-
-	m_pUIPropertiesBox->AddItem("st_move", NULL, INVENTORY_MOVE_ACTION);
-
-	if (hasMany)
-		m_pUIPropertiesBox->AddItem("st_move_all", (void*)33, INVENTORY_MOVE_ACTION);
-	
-	m_pUIPropertiesBox->AutoUpdateSize();
-	m_pUIPropertiesBox->BringAllToTop();
-
-	Fvector2						cursor_pos;
-	Frect							vis_rect;
-
-	GetAbsoluteRect(vis_rect);
-	cursor_pos = GetUICursor()->GetCursorPosition();
-	cursor_pos.sub(vis_rect.lt);
-	m_pUIPropertiesBox->Show(vis_rect, cursor_pos);
-}
-
-
 void CUITradeWnd::DisableAll()
 {
 	m_uidata->UIOurBagWnd.Enable			(false);
@@ -694,12 +909,8 @@ bool CUITradeWnd::OnItemDrop(CUICellItem* itm)
 	if(old_owner==new_owner || !old_owner || !new_owner)
 		return false;
 
-	if (Level().IR_GetKeyState(DIK_LSHIFT) || Level().IR_GetKeyState(DIK_RSHIFT)) {
-		MoveItems(itm);
-	}
-	else {
-		MoveItem(itm);
-	}
+	bool b_all = Level().IR_GetKeyState(DIK_LSHIFT) || Level().IR_GetKeyState(DIK_RSHIFT);
+	MoveItems(itm, b_all);
 
 	return true;
 }
@@ -708,79 +919,43 @@ bool CUITradeWnd::OnItemDbClick(CUICellItem* itm)
 {
 	SetCurrentItem						(itm);
 
-	if (Level().IR_GetKeyState(DIK_LSHIFT) || Level().IR_GetKeyState(DIK_RSHIFT)) {
-		MoveItems(itm);
-	}
-	else {
-		MoveItem(itm);
-	}
+	bool b_all = Level().IR_GetKeyState(DIK_LSHIFT) || Level().IR_GetKeyState(DIK_RSHIFT);
+	MoveItems(itm, b_all);
 
 	return true;
 }
 
-void CUITradeWnd::MoveItems(CUICellItem* itm)
+void CUITradeWnd::MoveItems(CUICellItem* itm, bool b_all)
 {
-	if (!itm)
-	{
-		return;
-	}
+	if (!itm) return;
 
-	//Msg("Move all items %d", cnt);
+	auto old_owner = itm->OwnerList();
 
-	CUIDragDropListEx* old_owner = itm->OwnerList();
-	CUIDragDropListEx* to = nullptr;
+	auto MoveItemFromCell = [&](void* cellitm) {
 
-	if (old_owner == &m_uidata->UIOurBagList)
-	{
-		if (!CanMoveToOther((PIItem)itm->m_pData, true)) return;
+		auto itm = static_cast<CUICellItem*>(cellitm);
 
-		to = &m_uidata->UIOurTradeList;
-	}
-	else if (old_owner == &m_uidata->UIOurTradeList)
-		to = &m_uidata->UIOurBagList;
-	else if (old_owner == &m_uidata->UIOthersBagList)
-	{
-		if (!CanMoveToOther((PIItem)itm->m_pData, false)) return;
-
-		to = &m_uidata->UIOthersTradeList;
-	}
-	else if (old_owner == &m_uidata->UIOthersTradeList)
-		to = &m_uidata->UIOthersBagList;
-
-	R_ASSERT(to != nullptr);
+		if (old_owner == &m_uidata->UIOurBagList)
+			ToOurTrade(itm);
+		else if (old_owner == &m_uidata->UIOurTradeList)
+			ToOurBag(itm);
+		else if (old_owner == &m_uidata->UIOthersBagList)
+			ToOthersTrade(itm);
+		else if (old_owner == &m_uidata->UIOthersTradeList)
+			ToOthersBag(itm);
+	};
 
 	u32 cnt = itm->ChildsCount();
-	for (u32 i = 0; i < cnt; ++i)
-	{
-		CUICellItem* child_itm = itm->PopChild();
+	for (u32 i = 0; i < cnt && b_all; ++i)
+		MoveItemFromCell(itm);
 
-		//Msg("MoveAllItems child ... %d", i);
+	MoveItemFromCell(itm);
 
-		to->SetItem(child_itm);
-	}
-
-	CUICellItem* _itm = old_owner->RemoveItem(itm, true);
-	to->SetItem(_itm);
+	PlaySnd(eInvMoveItem);
 
 	UpdatePrices();
 
 	SetCurrentItem(NULL);
-}
-
-bool CUITradeWnd::MoveItem(CUICellItem* itm) 
-{
-	CUIDragDropListEx*	old_owner = itm->OwnerList();
-
-	if (old_owner == &m_uidata->UIOurBagList)
-		ToOurTrade(itm);
-	else if (old_owner == &m_uidata->UIOurTradeList)
-		ToOurBag(itm);
-	else if (old_owner == &m_uidata->UIOthersBagList)
-		ToOthersTrade(itm);
-	else if (old_owner == &m_uidata->UIOthersTradeList)
-		ToOthersBag(itm);
-
-	return true;
 }
 
 CUICellItem* CUITradeWnd::CurrentItem()
@@ -847,4 +1022,75 @@ void CUITradeWnd::ColorizeItem(CUICellItem* itm, bool canTrade, bool highlighted
 		if ( highlighted )
 			itm->SetColor(reinterpret_cast<CInventoryItem*>(itm->m_pData)->ClrEquipped);
 	}
+}
+
+void CUITradeWnd::PlaySnd(eInventorySndAction a)
+{
+	if (sounds[a]._handle())
+		sounds[a].play(NULL, sm_2D);
+}
+
+void CUITradeWnd::EatItem()
+{
+	CActor* pActor = smart_cast<CActor*>(Level().CurrentEntity());
+	if (!pActor)					return;
+
+	NET_Packet					P;
+	CGameObject::u_EventGen(P, GEG_PLAYER_ITEM_EAT, Actor()->ID());
+	P.w_u16(CurrentIItem()->object().ID());
+	CGameObject::u_EventSend(P);
+
+	PlaySnd(eInvItemUse);
+
+	SetCurrentItem(NULL);
+}
+
+void CUITradeWnd::SendEvent_Item_Drop(PIItem	pItem)
+{
+	pItem->OnMoveOut(pItem->m_eItemPlace);
+	pItem->SetDropManual(TRUE);
+
+	if (OnClient())
+	{
+		NET_Packet P;
+		pItem->object().u_EventGen(P, GE_OWNERSHIP_REJECT, pItem->object().H_Parent()->ID());
+		P.w_u16(pItem->object().ID());
+		pItem->object().u_EventSend(P);
+	}
+}
+
+void CUITradeWnd::DropItems(bool b_all)
+{
+	CActor* pActor = smart_cast<CActor*>(Level().CurrentEntity());
+	if (!pActor)
+	{
+		return;
+	}
+
+	CUICellItem* ci = CurrentItem();
+	if (!ci)
+	{
+		return;
+	}
+
+	CUIDragDropListEx* owner_list = ci->OwnerList();
+
+	if (b_all)
+	{
+		u32 cnt = ci->ChildsCount();
+
+		for (u32 i = 0; i < cnt; ++i)
+		{
+			CUICellItem* itm = ci->PopChild();
+			PIItem			iitm = (PIItem)itm->m_pData;
+			SendEvent_Item_Drop(iitm);
+		}
+	}
+
+	SendEvent_Item_Drop(CurrentIItem());
+
+	owner_list->RemoveItem(ci, b_all);
+
+	SetCurrentItem(NULL);
+	PlaySnd(eInvDropItem);
 }

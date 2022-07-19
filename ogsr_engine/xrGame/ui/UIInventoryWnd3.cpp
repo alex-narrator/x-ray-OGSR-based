@@ -38,10 +38,10 @@ void CUIInventoryWnd::ActivatePropertiesBox()
 
 	UIPropertiesBox.RemoveAll();
 
-	CEatableItem*		pEatableItem		= smart_cast<CEatableItem*>		(CurrentIItem());
-	CCustomOutfit*		pOutfit				= smart_cast<CCustomOutfit*>	(CurrentIItem());
-	CWeapon*			pWeapon				= smart_cast<CWeapon*>			(CurrentIItem());
-	CWeaponAmmo*		pAmmo				= smart_cast<CWeaponAmmo*>		(CurrentIItem());
+	auto pEatableItem	= smart_cast<CEatableItem*>		(CurrentIItem());
+	auto pOutfit		= smart_cast<CCustomOutfit*>	(CurrentIItem());
+	auto pWeapon		= smart_cast<CWeapon*>			(CurrentIItem());
+	auto pAmmo			= smart_cast<CWeaponAmmo*>		(CurrentIItem());
 
 	string1024			temp;
     
@@ -331,9 +331,7 @@ void CUIInventoryWnd::ProcessPropertiesBoxClicked	()
 		{
 			//Msg("load %s to %s", (LPCSTR)UIPropertiesBox.GetClickedItem()->GetData(), pAmmo->cNameSect().c_str());
 			(smart_cast<CWeaponAmmo*>(CurrentIItem()))->ReloadBox((LPCSTR)UIPropertiesBox.GetClickedItem()->GetData());
-			//SetCurrentItem(NULL);
 			PlaySnd(eInvMagLoad);
-			m_b_need_reinit = true;
 		}break;
 		case INVENTORY_UNLOAD_AMMO_BOX:
 		{
@@ -349,7 +347,6 @@ void CUIInventoryWnd::ProcessPropertiesBoxClicked	()
 				auto child_itm = itm->Child(i);
 				ProcessUnload(child_itm->m_pData);
 			}
-			//SetCurrentItem(NULL);
 			PlaySnd(eInvMagUnload);
 		}break;
 		}

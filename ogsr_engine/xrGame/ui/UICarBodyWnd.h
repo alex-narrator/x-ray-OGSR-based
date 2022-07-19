@@ -86,6 +86,7 @@ protected:
 	void					TakeAll						();
 	void					MoveItems					(CUICellItem* itm, bool b_all);
 	void					DropItems					(bool b_all);
+	void					SendEvent_Item_Drop			(PIItem	pItem);
 	void					MoveItemWithContent			(CUICellItem* itm, u32 slot);
 
 
@@ -105,6 +106,9 @@ protected:
 		eInvDropItem,
 		eInvDetachAddon,
 		eInvItemUse,
+		eInvMagLoad,
+		eInvMagUnload,
+		eInvMoveItem,
 		eInvSndMax
 	};
 

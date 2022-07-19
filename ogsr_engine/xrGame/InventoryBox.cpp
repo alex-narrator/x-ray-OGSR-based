@@ -131,3 +131,36 @@ bool IInventoryBox::IsEmpty() const
 {   
 	return m_items.empty(); 
 }
+
+void CInventoryBox::UpdateCL()
+{
+	//Msg("UpdateCL() for InventoryBox [%s]", object().Name_script());
+	UpdateDropTasks();
+}
+
+void CInventoryBox::UpdateDropTasks()
+{
+	for (auto it = m_items.begin(); it != m_items.end(); ++it)
+	{
+		PIItem itm = smart_cast<PIItem>(Level().Objects.net_Find(*it)); VERIFY(itm);
+
+		UpdateDropItem(itm);
+	}
+}
+
+void CInventoryBox::UpdateDropItem(PIItem pIItem)
+{
+	if (pIItem->GetDropManual())
+	{
+		pIItem->SetDropManual(FALSE);
+		if (OnServer())
+		{
+			NET_Packet					P;
+			pIItem->object().u_EventGen(P, GE_OWNERSHIP_REJECT, pIItem->object().H_Parent()->ID());
+			P.w_u16(u16(pIItem->object().ID()));
+			pIItem->object().u_EventSend(P);
+
+			//Msg("UpdateDropItem for [%s]", pIItem->object().Name_script());
+		}
+	}// dropManual
+}

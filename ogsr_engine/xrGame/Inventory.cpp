@@ -735,22 +735,11 @@ void CInventory::Update()
 
 void CInventory::UpdateDropTasks()
 {
-	for(u32 i=0; i<m_slots.size(); ++i)	
+	for (auto it = m_all.begin(); it != m_all.end(); ++it)
 	{
-		if(m_slots[i].m_pIItem)
-			UpdateDropItem		(m_slots[i].m_pIItem);
-	}
+		PIItem itm = smart_cast<PIItem>(*it); VERIFY(itm);
 
-	for(u32 i = 0; i < 2; ++i)	
-	{
-		TIItemContainer &list			= i?m_ruck:m_belt;
-		TIItemContainer::iterator it	= list.begin();
-		TIItemContainer::iterator it_e	= list.end();
-	
-		for( ;it!=it_e; ++it)
-		{
-			UpdateDropItem		(*it);
-		}
+		UpdateDropItem(itm);
 	}
 
 	if (m_drop_last_frame)

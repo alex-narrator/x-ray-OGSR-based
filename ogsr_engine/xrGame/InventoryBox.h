@@ -54,7 +54,13 @@ public:
 class  CInventoryBox : public CCustomInventoryBox<CGameObject> // CBasicInventoryBox
 {
 public:
-										CInventoryBox		 () {}	
+					CInventoryBox			() {}	
+
+virtual		void	UpdateCL				();
+
+protected:
+			void	UpdateDropTasks			();
+			void	UpdateDropItem			(PIItem pIItem);
 };
 
 
