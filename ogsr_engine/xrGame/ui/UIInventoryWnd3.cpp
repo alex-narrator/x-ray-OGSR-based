@@ -355,15 +355,10 @@ void CUIInventoryWnd::ProcessPropertiesBoxClicked	()
 
 bool CUIInventoryWnd::TryUseItem(PIItem itm)
 {
-	if (itm->IsPlaceable(QUICK_SLOT_0, QUICK_SLOT_3) || itm->Belt())
+	if (itm->GetSlotsCount() || itm->Belt())
 		return false;
 
-	CBottleItem*		pBottleItem			= smart_cast<CBottleItem*>		(itm);
-	CMedkit*			pMedkit				= smart_cast<CMedkit*>			(itm);
-	CAntirad*			pAntirad			= smart_cast<CAntirad*>			(itm);
-	CEatableItem*		pEatableItem		= smart_cast<CEatableItem*>		(itm);
-
-	if(pMedkit || pAntirad || pEatableItem || pBottleItem)
+	if(smart_cast<CEatableItem*>(itm))
 	{
 		EatItem(itm);
 		return true;

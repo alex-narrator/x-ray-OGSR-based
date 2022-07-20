@@ -893,28 +893,29 @@ float CWeaponMagazinedWGrenade::GetWeaponDeterioration()
 //
 void CWeaponMagazinedWGrenade::switch2_Shutter()
 {
-	if (m_bGrenadeMode)
-	{
+	if (m_bGrenadeMode){
 		PlaySound(sndShutterG, get_LastFP());
 		PlayAnimShutter();
 		SetPending(TRUE);
-	}
-	else
+	}else
 		inherited::switch2_Shutter();
 }
 //
 void CWeaponMagazinedWGrenade::PlayAnimShutter()
 {
 	VERIFY(GetState() == eShutter);
-	if (m_bGrenadeMode)
-	{
-		PlayHUDMotion("anim_shutter_g", true, eSwitch);
-	}
-	else
-	{
-		if (IsGrenadeLauncherAttached())
-			PlayHUDMotion("anim_shutter_gl", true, eSwitch);
+	if (m_bGrenadeMode){
+		if (AnimationExist("anim_shutter_g"))
+			PlayHUDMotion("anim_shutter_g", true, GetState());
 		else
+			PlayHUDMotion({ "anim_draw", "anm_show" }, true, GetState());
+	}else{
+		if (IsGrenadeLauncherAttached()){
+			if (AnimationExist("anim_shutter_gl"))
+				PlayHUDMotion("anim_shutter_gl", true, GetState());
+			else
+				PlayHUDMotion({ "anim_draw", "anm_show" }, true, GetState());
+		}else
 			inherited::PlayAnimShutter();
 	}
 }

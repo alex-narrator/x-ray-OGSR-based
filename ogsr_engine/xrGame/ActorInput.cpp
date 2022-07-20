@@ -209,8 +209,6 @@ void CActor::IR_OnKeyboardPress(int cmd)
 	{
 		if (!GetTrade()->IsInTradeState())
 		{	
-			inventory().TryToHideWeapon(true, false);
-			//
 			PIItem itm = nullptr;
 			switch (cmd) {
 			case kUSE_QUICK_SLOT_0:
@@ -232,6 +230,8 @@ void CActor::IR_OnKeyboardPress(int cmd)
 
 				if (itm->cast_eatable_item())
 				{
+					inventory().TryToHideWeapon(true, false);
+					//
 					bool SearchRuck = !psActorFlags.test(AF_QUICK_FROM_BELT);
 					PIItem iitm = inventory().GetSame(itm, SearchRuck);
 					if (iitm)
