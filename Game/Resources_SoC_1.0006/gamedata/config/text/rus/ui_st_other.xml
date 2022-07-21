@@ -237,10 +237,10 @@
 	</string>
 
 	<string id="inventory_item_use_or_drag">
-		<text>Поднять [$$ACTION_USE$$] \n Тащить [SHIFT+$$ACTION_USE$$]</text>
+		<text>Поднять [$$ACTION_USE$$] \n Тащить [$$ACTION_ADDITIONAL_ACTION$$]+[$$ACTION_USE$$]</text>
 	</string>
 	<string id="game_object_drag">
-		<text>Перетащить [SHIFT+$$ACTION_USE$$]</text>
+		<text>Тащить [$$ACTION_ADDITIONAL_ACTION$$]+[$$ACTION_USE$$]</text>
 	</string>
 
 	<string id="st_press_any_key">

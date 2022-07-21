@@ -504,8 +504,10 @@ void CWeaponMagazined::OnStateSwitch(u32 S, u32 oldState)
 		switch2_Fire2	();
 		break;
 	case eMisfire:
-		if(smart_cast<CActor*>(H_Parent()) && (Level().CurrentViewEntity()==H_Parent()) )
+		if (smart_cast<CActor*>(H_Parent()) && (Level().CurrentViewEntity() == H_Parent())) {
+			HUD().GetUI()->UIGame()->RemoveCustomStatic("gun_not_jammed");
 			HUD().GetUI()->AddInfoMessage("gun_jammed");
+		}
 		// Callbacks added by Cribbledirge.
 		StateSwitchCallback(GameObject::eOnActorWeaponJammed, GameObject::eOnNPCWeaponJammed);
 		break;
@@ -917,7 +919,7 @@ bool CWeaponMagazined::Action(s32 cmd, u32 flags)
 	{
 		if (flags & CMD_START)
 		{
-			if (Level().IR_GetKeyState(get_action_dik(kSPRINT_TOGGLE)))
+			if (Level().IR_GetKeyState(get_action_dik(kADDITIONAL_ACTION)))
 			{
 				OnShutter();
 				return true;

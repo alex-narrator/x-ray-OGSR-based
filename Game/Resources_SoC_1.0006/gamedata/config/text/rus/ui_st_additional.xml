@@ -51,6 +51,9 @@
 	<string id="kb_kick">
 		<text>Пинок</text>
 	</string>
+	<string id="kb_additional_action">
+		<text>Дополнительное действие</text>
+	</string>
 	<string id="kb_artefact">
 		<text>Артефакт</text>
 	</string>	
@@ -395,7 +398,7 @@
 	</string>
 	
 	<string id="game_object_throw_drop">
-	    <text>Отбросить предмет [$$ACTION_USE$$]\n Отпустить предмет [SHIFT+$$ACTION_USE$$]</text>
+	    <text>Отбросить [$$ACTION_USE$$]\n Отпустить [$$ACTION_ADDITIONAL_ACTION$$]+[$$ACTION_USE$$]</text>
     </string>
 	<string id="hands_not_free">
 	    <text>Руки заняты</text>
@@ -403,4 +406,8 @@
 	<string id="no_place_available">
 	    <text>Нет места</text>
     </string>
+	
+	<string id="gun_not_jammed">
+		<text>Осечка устранена</text>
+	</string>
 </string_table>

@@ -104,6 +104,7 @@ std::vector<_action> actions = {
 	DEF_ACTION("check_gear",			kCHECKGEAR)
 	DEF_ACTION("check_active_item",		kCHECKACTIVEITEM)
 	DEF_ACTION("kick",					kKICK)
+	DEF_ACTION("additional_action",		kADDITIONAL_ACTION)
 
 	DEF_ACTION("quick_save",			kQUICK_SAVE)
 	DEF_ACTION("quick_load",			kQUICK_LOAD)

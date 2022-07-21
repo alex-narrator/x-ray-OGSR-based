@@ -25,11 +25,10 @@
 #include "../game_object_space.h"
 #include "../script_callback_ex.h"
 #include "../script_game_object.h"
-#include "../BottleItem.h"
-#include "Warbelt.h"
 #include "../xr_3da/xr_input.h"
 
 #include "../CustomOutfit.h"
+#include "Warbelt.h"
 #include "WeaponKnife.h"
 #include "string_table.h"
 
@@ -907,7 +906,7 @@ bool CUICarBodyWnd::OnItemDrop(CUICellItem* itm)
 	if(old_owner==new_owner || !old_owner || !new_owner)
 		return false;
 
-	bool b_all = Level().IR_GetKeyState(DIK_LSHIFT) || Level().IR_GetKeyState(DIK_RSHIFT);
+	bool b_all = Level().IR_GetKeyState(get_action_dik(kADDITIONAL_ACTION));
 	MoveItems(itm, b_all);
 
 	return true;
@@ -915,7 +914,7 @@ bool CUICarBodyWnd::OnItemDrop(CUICellItem* itm)
 
 bool CUICarBodyWnd::OnItemDbClick(CUICellItem* itm)
 {
-	bool b_all = Level().IR_GetKeyState(DIK_LSHIFT) || Level().IR_GetKeyState(DIK_RSHIFT);
+	bool b_all = Level().IR_GetKeyState(get_action_dik(kADDITIONAL_ACTION));
 	MoveItems(itm, b_all);
 	return true;
 }

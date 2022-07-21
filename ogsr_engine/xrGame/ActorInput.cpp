@@ -525,7 +525,7 @@ void CActor::ActorUse() {
         return;
       }
       //обыск трупа
-      else if (!Level().IR_GetKeyState(DIK_LSHIFT)) {
+      else if (!Level().IR_GetKeyState(get_action_dik(kADDITIONAL_ACTION))) {
         //только если находимся в режиме single
         CUIGameSP* pGameSP = smart_cast<CUIGameSP*>(HUD().GetUI()->UIGame());
 		if (pGameSP && inventory().IsFreeHands()) pGameSP->StartCarBody(this, m_pPersonWeLookingAt);
@@ -536,7 +536,7 @@ void CActor::ActorUse() {
     collide::rq_result& RQ      = HUD().GetCurrentRayQuery();
     CPhysicsShellHolder* object = smart_cast<CPhysicsShellHolder*>(RQ.O);
     if (object) {
-      if (Level().IR_GetKeyState(DIK_LSHIFT)) {
+      if (Level().IR_GetKeyState(get_action_dik(kADDITIONAL_ACTION))) {
         if (object->ActorCanCapture() && inventory().IsFreeHands()) {
 			if (!conditions().IsCantWalk())
 				//Msg("--[%s] Actor Captured object: [%s]", __FUNCTION__, object->cName().c_str());
@@ -676,7 +676,7 @@ void CActor::ActorThrow()
 
 	float mass_f = GetTotalMass(capture->taget_object());
 
-	bool drop_not_throw = Level().IR_GetKeyState(DIK_LSHIFT); //отпустить или отбросить предмет
+	bool drop_not_throw = Level().IR_GetKeyState(get_action_dik(kADDITIONAL_ACTION)); //отпустить или отбросить предмет
 
 	float throw_impulse = drop_not_throw ?
 		0.5f :											//отпустить

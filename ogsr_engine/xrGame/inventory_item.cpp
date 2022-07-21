@@ -43,7 +43,7 @@ CInventoryItem::CInventoryItem()
 
 	m_flags.set			(FCanTake,TRUE);
 	m_flags.set			(FCanTrade,TRUE);
-	m_flags.set			(FUsingCondition,FALSE);
+	m_flags.set			(FUsingCondition,TRUE);
 	m_fCondition		= 1.0f;
 
 	m_name = m_nameShort = NULL;
@@ -126,12 +126,13 @@ void CInventoryItem::Load(LPCSTR section)
 	if ( pSettings->line_exist(section, "description") )
 		m_Description = CStringTable().translate( pSettings->r_string(section, "description") );
 
-	m_flags.set(Fbelt,			READ_IF_EXISTS(pSettings, r_bool, section, "belt",				FALSE));
-	m_flags.set(FRuckDefault,	READ_IF_EXISTS(pSettings, r_bool, section, "default_to_ruck",	TRUE));
-	m_flags.set(FCanTake,		READ_IF_EXISTS(pSettings, r_bool, section, "can_take",			TRUE));
-	m_flags.set(FCanTrade,		READ_IF_EXISTS(pSettings, r_bool, section, "can_trade",			TRUE));
-	m_flags.set(FIsQuestItem,	READ_IF_EXISTS(pSettings, r_bool, section, "quest_item",		FALSE));
-	m_flags.set(FAllowSprint,	READ_IF_EXISTS(pSettings, r_bool, section,"sprint_allowed",		TRUE));
+	m_flags.set(Fbelt,				READ_IF_EXISTS(pSettings, r_bool, section, "belt",				FALSE));
+	m_flags.set(FRuckDefault,		READ_IF_EXISTS(pSettings, r_bool, section, "default_to_ruck",	TRUE));
+	m_flags.set(FCanTake,			READ_IF_EXISTS(pSettings, r_bool, section, "can_take",			TRUE));
+	m_flags.set(FCanTrade,			READ_IF_EXISTS(pSettings, r_bool, section, "can_trade",			TRUE));
+	m_flags.set(FIsQuestItem,		READ_IF_EXISTS(pSettings, r_bool, section, "quest_item",		FALSE));
+	m_flags.set(FAllowSprint,		READ_IF_EXISTS(pSettings, r_bool, section, "sprint_allowed",	TRUE));
+	m_flags.set(FUsingCondition,	READ_IF_EXISTS(pSettings, r_bool, section, "use_condition",		TRUE));
 
 	m_fControlInertionFactor	= READ_IF_EXISTS(pSettings, r_float,section,"control_inertion_factor",	1.0f);
 	m_icon_name					= READ_IF_EXISTS(pSettings, r_string,section,"icon_name",				NULL);
@@ -140,10 +141,7 @@ void CInventoryItem::Load(LPCSTR section)
 
 	m_need_brief_info			= READ_IF_EXISTS( pSettings, r_bool, section, "show_brief_info", true );
 
-	m_bBreakOnZeroCondition		= !!READ_IF_EXISTS(pSettings, r_bool, section, "break_on_zero_condition", FALSE);
-
-	//щоб не вказувати зайвий раз use_condition = true. предмет має використовувати кондицію якщо при нульовій ми хочемо його ламати
-	m_flags.set(FUsingCondition, READ_IF_EXISTS(pSettings, r_bool, section, "use_condition", m_bBreakOnZeroCondition));
+	m_bBreakOnZeroCondition		= READ_IF_EXISTS(pSettings, r_bool, section, "break_on_zero_condition", false);
 
 	if (pSettings->line_exist(section, "break_particles"))
 		m_sBreakParticles = pSettings->r_string(section, "break_particles");

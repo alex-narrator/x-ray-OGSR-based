@@ -920,7 +920,7 @@ bool CUITradeWnd::OnItemDrop(CUICellItem* itm)
 	if(old_owner==new_owner || !old_owner || !new_owner)
 		return false;
 
-	bool b_all = Level().IR_GetKeyState(DIK_LSHIFT) || Level().IR_GetKeyState(DIK_RSHIFT);
+	bool b_all = Level().IR_GetKeyState(get_action_dik(kADDITIONAL_ACTION));
 	MoveItems(itm, b_all);
 
 	return true;
@@ -930,7 +930,7 @@ bool CUITradeWnd::OnItemDbClick(CUICellItem* itm)
 {
 	SetCurrentItem						(itm);
 
-	bool b_all = Level().IR_GetKeyState(DIK_LSHIFT) || Level().IR_GetKeyState(DIK_RSHIFT);
+	bool b_all = Level().IR_GetKeyState(get_action_dik(kADDITIONAL_ACTION));
 	MoveItems(itm, b_all);
 
 	return true;

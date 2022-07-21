@@ -20,8 +20,6 @@ CCustomOutfit::CCustomOutfit()
 {
 	SetSlot( OUTFIT_SLOT );
 
-	m_flags.set(FUsingCondition, TRUE);
-
 	m_HitTypeProtection.clear	();
 	m_HitTypeProtection.resize	(ALife::eHitTypeMax);
 
@@ -44,12 +42,6 @@ CCustomOutfit::~CCustomOutfit()
 {
 	xr_delete(m_boneProtection);
 }
-
-//void CCustomOutfit::net_Export( CSE_Abstract* E ) {
-//  inherited::net_Export( E );
-//  CSE_ALifeInventoryItem *itm = smart_cast<CSE_ALifeInventoryItem*>( E );
-//  itm->m_fCondition = m_fCondition;
-//}
 
 void CCustomOutfit::Load(LPCSTR section) 
 {
@@ -82,39 +74,14 @@ void CCustomOutfit::Load(LPCSTR section)
 	m_HitTypeProtection[ALife::eHitTypeWound_2]			= READ_IF_EXISTS(pSettings, r_float, section, "wound_2_protection",			0.f);
 	m_HitTypeProtection[ALife::eHitTypePhysicStrike]	= READ_IF_EXISTS(pSettings, r_float, section, "physic_strike_protection",	0.f);
 
-	//if (pSettings->line_exist(section, "actor_visual"))
-	//	m_ActorVisual = pSettings->r_string(section, "actor_visual");
-	//else
-	//	m_ActorVisual = NULL;
-
-	m_ActorVisual = READ_IF_EXISTS(pSettings, r_string, section, "actor_visual", nullptr);
+	m_ActorVisual			= READ_IF_EXISTS(pSettings, r_string, section, "actor_visual", nullptr);
 
 	m_ef_equipment_type		= pSettings->r_u32(section,"ef_equipment_type");
 
-	m_fPowerLoss = READ_IF_EXISTS(pSettings, r_float, section, "power_loss", 1.f);
-	//if (pSettings->line_exist(section, "power_loss"))
-	//	m_fPowerLoss = pSettings->r_float(section, "power_loss");
-	//else
-	//	m_fPowerLoss = 1.0f;	
+	m_fPowerLoss			= READ_IF_EXISTS(pSettings, r_float, section, "power_loss", 1.f);
 
-	//if (pSettings->line_exist(section, "nightvision_sect"))
-	//	m_NightVisionSect = pSettings->r_string(section, "nightvision_sect");
-	//else
-	//	m_NightVisionSect = NULL;
-
-	m_full_icon_name								= pSettings->r_string(section,"full_icon_name");
-
-//	m_artefact_count = READ_IF_EXISTS(pSettings, r_u32, section, "artefact_count", pSettings->r_u32("inventory", "max_belt"));
+	m_full_icon_name		= pSettings->r_string(section,"full_icon_name");
 }
-
-//void CCustomOutfit::Hit(float hit_power, ALife::EHitType hit_type)
-//{
-//	hit_power *= m_HitTypeK[hit_type];
-//	if (hit_power > 0)
-//	{
-//		ChangeCondition(-hit_power);
-//	}
-//}
 
 float CCustomOutfit::GetHitTypeProtection(ALife::EHitType hit_type)
 {

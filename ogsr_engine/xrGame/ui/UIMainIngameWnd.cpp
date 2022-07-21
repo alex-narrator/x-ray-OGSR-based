@@ -582,7 +582,7 @@ bool CUIMainIngameWnd::OnKeyboardPress(int dik)
 		}
 #endif		
 	
-	if(Level().IR_GetKeyState(DIK_LSHIFT) || Level().IR_GetKeyState(DIK_RSHIFT))
+	if(Level().IR_GetKeyState(get_action_dik(kADDITIONAL_ACTION)))
 	{
 		switch(dik)
 		{
