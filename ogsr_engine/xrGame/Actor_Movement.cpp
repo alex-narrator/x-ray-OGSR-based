@@ -685,7 +685,7 @@ bool	CActor::CanMove				()
 	{
 		if(mstate_wishful&mcAnyMove)
 		{
-			HUD().GetUI()->AddInfoMessage("cant_walk");
+			HUD().GetUI()->AddInfoMessage("actor_state", "cant_walk");
 		}
 		return false;
 	}else
@@ -693,7 +693,7 @@ bool	CActor::CanMove				()
 	{
 		if(mstate_wishful&mcAnyMove)
 		{
-			HUD().GetUI()->AddInfoMessage("cant_walk_weight");
+			HUD().GetUI()->AddInfoMessage("actor_state", "cant_walk_weight");
 		}
 		return false;
 	

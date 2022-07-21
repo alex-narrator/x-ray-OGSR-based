@@ -46,45 +46,17 @@
 		<text font="graffiti22"  r="240" g="217" b="182" a="255" align="c">st_autosave</text>
 	</autosave>
 	
-	<item_used  x="100" y="730" width="800" height="30">
+	<actor_state x="200" y="650" width="600" height="30" ttl="3">
 		<text font="graffiti22"  r="240" g="217" b="182" a="255" align="c"/>
-	</item_used>
-
-	<quick_slot_empty  x="100" y="730" width="800" height="30">
-		<text font="graffiti22"  r="240" g="217" b="182" a="255" align="c">st_quick_slot_empty</text>
-	</quick_slot_empty>
-
-	<no_free_hands  x="100" y="730" width="800" height="30">
-		<text font="graffiti22"  r="240" g="217" b="182" a="255" align="c">st_no_free_hands</text>
-	</no_free_hands>
-
-	<gun_jammed x="200" y="70" width="600" height="50" ttl="3">
-		<text font="graffiti32"  r="240" g="217" b="182" a="255" align="c">gun_jammed</text>
-	</gun_jammed>
+	</actor_state>
 	
-	<gun_not_jammed x="200" y="70" width="600" height="50" ttl="3">
-		<text font="graffiti32"  r="240" g="217" b="182" a="255" align="c">gun_not_jammed</text>
-	</gun_not_jammed>
-	
-	<next_ammo_type  x="100" y="730" width="800" height="30">
+	<item_usage  x="100" y="730" width="800" height="30" ttl="1">
 		<text font="graffiti22"  r="240" g="217" b="182" a="255" align="c"/>
-	</next_ammo_type>
+	</item_usage>
 	
-	<failed_to_activate_artefact x="200" y="70" width="600" height="50" ttl="3">
-		<text font="graffiti32"  r="240" g="217" b="182" a="255" align="c">failed_to_activate_artefact</text>
-	</failed_to_activate_artefact>
-	
-	<cant_walk x="200" y="650" width="600" height="30" ttl="3">
-		<text font="graffiti22"  r="240" g="217" b="182" a="255" align="c">cant_walk</text>
-	</cant_walk>
-	
-	<cant_walk_weight x="20" y="650" width="600" height="30" ttl="3">
-		<text font="graffiti22"  r="240" g="217" b="182" a="255" align="c">cant_walk_weight</text>
-	</cant_walk_weight>
-	
-	<cant_aim x="200" y="650" width="600" height="30" ttl="3">
-		<text font="graffiti22"  r="240" g="217" b="182" a="255" align="c">cant_aim</text>
-	</cant_aim>
+	<item_state x="200" y="70" width="600" height="50" ttl="3">
+		<text font="graffiti32"  r="240" g="217" b="182" a="255" align="c"/>
+	</item_state>
 	
 	<not_enough_money_mine  x="100" y="100" width="800" height="60">
 		<text font="graffiti32"  r="240" g="217" b="182" a="255" align="c">st_not_enough_money</text>

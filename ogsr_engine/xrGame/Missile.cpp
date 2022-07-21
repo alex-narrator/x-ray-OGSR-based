@@ -586,7 +586,7 @@ bool CMissile::Action(s32 cmd, u32 flags)
 	bool b_have_no_power = pActor && pActor->conditions().IsCantWalk();
 	if (b_have_no_power && GetState() != eReady)
 	{
-		HUD().GetUI()->AddInfoMessage("cant_walk");
+		HUD().GetUI()->AddInfoMessage("actor_state", "cant_walk");
 		return false;
 	}
 

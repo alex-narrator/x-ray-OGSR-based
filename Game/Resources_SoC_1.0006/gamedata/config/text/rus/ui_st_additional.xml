@@ -410,4 +410,11 @@
 	<string id="gun_not_jammed">
 		<text>Осечка устранена</text>
 	</string>
+	
+	<string id="st_next_ammo_type">
+		<text>Зарядить</text>
+	</string>
+	<string id="st_load_ammo_type">
+		<text>зарядить</text>
+	</string>
 </string_table>

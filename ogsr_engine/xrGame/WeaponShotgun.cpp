@@ -84,8 +84,7 @@ void CWeaponShotgun::Fire2Start ()
 	{
 		if (smart_cast<CActor*>(this->H_Parent()) && (Level().CurrentViewEntity() == H_Parent()))
 		{
-			HUD().GetUI()->UIGame()->RemoveCustomStatic("gun_not_jammed");
-			HUD().GetUI()->AddInfoMessage("gun_jammed");
+			HUD().GetUI()->AddInfoMessage("item_state", "gun_jammed");
 		}
 		// Callbacks added by Cribbledirge.
 		StateSwitchCallback(GameObject::eOnActorWeaponJammed, GameObject::eOnNPCWeaponJammed);
@@ -406,8 +405,7 @@ u8 CWeaponShotgun::AddCartridge		(u8 cnt)
 		bMisfire = false;
 		if (smart_cast<CActor*>(this->H_Parent()) && (Level().CurrentViewEntity() == H_Parent()))
 		{
-			HUD().GetUI()->UIGame()->RemoveCustomStatic("gun_jammed");
-			HUD().GetUI()->AddInfoMessage("gun_not_jammed");
+			HUD().GetUI()->AddInfoMessage("item_state", "gun_not_jammed");
 		}
 	}
 

@@ -13,7 +13,7 @@
 #include "Level_Bullet_Manager.h"
 #include "HUDManager.h"
 
-#define KNIFE_MATERIAL_NAME "objects\\knife"
+constexpr auto KNIFE_MATERIAL_NAME = "objects\\knife";
 
 CWeaponKnife::CWeaponKnife() : CWeapon("KNIFE") 
 {
@@ -281,7 +281,7 @@ void CWeaponKnife::FireStart()
 		if (!Actor()->conditions().IsCantWalk())
 			Actor()->conditions().ConditionJump(Weight() * 0.1f);
 		else
-			HUD().GetUI()->AddInfoMessage("cant_walk");
+			HUD().GetUI()->AddInfoMessage("actor_state", "cant_walk");
 	}
 	//
 }
@@ -299,7 +299,7 @@ void CWeaponKnife::Fire2Start ()
 		if (!Actor()->conditions().IsCantWalk())
 			Actor()->conditions().ConditionJump(Weight() * 0.1f);
 		else
-			HUD().GetUI()->AddInfoMessage("cant_walk");
+			HUD().GetUI()->AddInfoMessage("actor_state", "cant_walk");
 	}
 	//
 }

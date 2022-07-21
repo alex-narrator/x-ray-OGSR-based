@@ -244,17 +244,19 @@ void CActor::IR_OnKeyboardPress(int cmd)
 						inventory().Eat(itm, cast_inventory_owner());
 						strconcat(sizeof(str), str, CStringTable().translate("st_item_used").c_str(), ": ", itm->Name());
 					}
-					SDrawStaticStruct* _s = HUD().GetUI()->UIGame()->AddCustomStatic("item_used", true);
-					_s->m_endTime = Device.fTimeGlobal + 1.0f;// 3sec
-					_s->wnd()->SetText(str);
+					//SDrawStaticStruct* _s = HUD().GetUI()->UIGame()->AddCustomStatic("item_used", true);
+					//_s->m_endTime = Device.fTimeGlobal + 1.0f;// 3sec
+					//_s->wnd()->SetText(str);
+					HUD().GetUI()->AddInfoMessage("item_usage", str, false);
 				}
 
 			}
 			else
 			{
-				SDrawStaticStruct* _s = HUD().GetUI()->UIGame()->AddCustomStatic("item_used", true);
-				_s->wnd()->SetText(CStringTable().translate("st_quick_slot_empty").c_str());
-				_s->m_endTime = Device.fTimeGlobal + 1.0f;// 3sec
+				//SDrawStaticStruct* _s = HUD().GetUI()->UIGame()->AddCustomStatic("item_used", true);
+				//_s->wnd()->SetText(CStringTable().translate("st_quick_slot_empty").c_str());
+				//_s->m_endTime = Device.fTimeGlobal + 1.0f;// 3sec
+				HUD().GetUI()->AddInfoMessage("item_usage", "st_quick_slot_empty");
 			}
 		}
 	}break;
@@ -542,7 +544,7 @@ void CActor::ActorUse() {
 				//Msg("--[%s] Actor Captured object: [%s]", __FUNCTION__, object->cName().c_str());
 				character_physics_support()->movement()->PHCaptureObject(object, (u16)RQ.element);
 			else 
-				HUD().GetUI()->AddInfoMessage("cant_walk");
+				HUD().GetUI()->AddInfoMessage("actor_state", "cant_walk");
         }
         return;
       }
@@ -670,7 +672,7 @@ void CActor::ActorThrow()
 
 	if (conditions().IsCantWalk())
 	{
-		HUD().GetUI()->AddInfoMessage("cant_walk");
+		HUD().GetUI()->AddInfoMessage("actor_state", "cant_walk");
 		return;
 	}
 
@@ -706,7 +708,7 @@ void CActor::ActorKick()
 
 	if (conditions().IsCantWalk())
 	{
-		HUD().GetUI()->AddInfoMessage("cant_walk");
+		HUD().GetUI()->AddInfoMessage("actor_state", "cant_walk");
 		return;
 	}
 

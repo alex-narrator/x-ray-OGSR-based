@@ -453,7 +453,7 @@ void CArtefact::OnAnimationEnd(u32 state)
 			}
 			else if (fis_zero(GetCondition()))
 			{
-				HUD().GetUI()->AddInfoMessage("failed_to_activate_artefact");
+				HUD().GetUI()->AddInfoMessage("item_state", "failed_to_activate_artefact");
 				SwitchState(eIdle);
 			}
 		}break;

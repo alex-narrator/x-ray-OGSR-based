@@ -49,7 +49,7 @@ public:
 	void					HideCrosshair			();
 	bool					CrosshairShown			();
 
-	SDrawStaticStruct*		AddInfoMessage			(LPCSTR message);
+	SDrawStaticStruct*		AddInfoMessage			(LPCSTR message_static, LPCSTR message_text, bool translate = true);
 	void					OnConnected				();
 };
 

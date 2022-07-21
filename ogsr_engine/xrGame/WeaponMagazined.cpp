@@ -14,7 +14,6 @@
 #include "xr_level_controller.h"
 #include "level.h"
 #include "object_broker.h"
-#include "string_table.h"
 #include "WeaponBinoculars.h"
 #include "WeaponBinocularsVision.h"
 #include "ai_object_location.h"
@@ -25,6 +24,7 @@
 #include <regex>
 
 #include "uigamecustom.h"
+#include "string_table.h"
 
 CWeaponMagazined::CWeaponMagazined(LPCSTR name, ESoundTypes eSoundType) : CWeapon(name)
 {
@@ -286,8 +286,7 @@ void CWeaponMagazined::FireStart		()
 	{
 		if (smart_cast<CActor*>(H_Parent()) && Level().CurrentViewEntity() == H_Parent())
 		{
-			HUD().GetUI()->UIGame()->RemoveCustomStatic("gun_not_jammed");
-			HUD().GetUI()->AddInfoMessage("gun_jammed");
+			HUD().GetUI()->AddInfoMessage("item_state", "gun_jammed");
 		}
 	  OnEmptyClick();
 	  // Callbacks added by Cribbledirge.
@@ -388,8 +387,7 @@ void CWeaponMagazined::ReloadMagazine()
 		bMisfire = false;
 		if (smart_cast<CActor*>(this->H_Parent()) && (Level().CurrentViewEntity() == H_Parent()))
 		{
-			HUD().GetUI()->UIGame()->RemoveCustomStatic("gun_jammed");
-			HUD().GetUI()->AddInfoMessage("gun_not_jammed");
+			HUD().GetUI()->AddInfoMessage("item_state", "gun_not_jammed");
 		}
 	}
 
@@ -505,8 +503,7 @@ void CWeaponMagazined::OnStateSwitch(u32 S, u32 oldState)
 		break;
 	case eMisfire:
 		if (smart_cast<CActor*>(H_Parent()) && (Level().CurrentViewEntity() == H_Parent())) {
-			HUD().GetUI()->UIGame()->RemoveCustomStatic("gun_not_jammed");
-			HUD().GetUI()->AddInfoMessage("gun_jammed");
+			HUD().GetUI()->AddInfoMessage("item_state", "gun_jammed");
 		}
 		// Callbacks added by Cribbledirge.
 		StateSwitchCallback(GameObject::eOnActorWeaponJammed, GameObject::eOnNPCWeaponJammed);
@@ -1940,8 +1937,7 @@ void CWeaponMagazined::ShutterAction() //передёргивание затво
 	if (IsMisfire()){
 		bMisfire = false;
 		if (smart_cast<CActor*>(this->H_Parent()) && (Level().CurrentViewEntity() == H_Parent())){
-			HUD().GetUI()->UIGame()->RemoveCustomStatic("gun_jammed");
-			HUD().GetUI()->AddInfoMessage("gun_not_jammed");
+			HUD().GetUI()->AddInfoMessage("item_state", "gun_not_jammed");
 		}
 	}
 	

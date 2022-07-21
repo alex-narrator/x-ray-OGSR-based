@@ -32,11 +32,12 @@
 #include "script_callback_ex.h"
 #include "script_game_object.h"
 
+#include "string_table.h"
+
 #include "WeaponMagazinedWGrenade.h"
 #include "GamePersistent.h"
 
 #include "UIGameCustom.h"
-#include "string_table.h"
 #include "Torch.h"
 
 constexpr auto ROTATION_TIME = 0.25f;
@@ -1220,7 +1221,6 @@ bool CWeapon::Action(s32 cmd, u32 flags)
 {
 	if(inherited::Action(cmd, flags)) return true;
 
-	
 	switch(cmd) 
 	{
 		case kWPN_FIRE: 
@@ -1246,7 +1246,7 @@ bool CWeapon::Action(s32 cmd, u32 flags)
 									
 				if (flags & CMD_START)
 				{
-					bool manually = !!psActorFlags.test(AF_NO_AUTO_RELOAD);
+					bool manually = psActorFlags.test(AF_NO_AUTO_RELOAD);
 
 					if (GetNextAmmoType(manually) != u32(-1) && TryToGetAmmo(GetNextAmmoType(manually)))
 					{
@@ -1261,15 +1261,12 @@ bool CWeapon::Action(s32 cmd, u32 flags)
 							LPCSTR ammo_sect = pSettings->r_string(m_ammoTypes[m_set_next_ammoType_on_reload].c_str(), "inv_name_short");
 							string1024	str;
 							strconcat(sizeof(str), str, *CStringTable().translate("st_next_ammo_type"), ": ", *CStringTable().translate(ammo_sect));
-							SDrawStaticStruct* _s = HUD().GetUI()->UIGame()->AddCustomStatic("item_used", true);
-							_s->m_endTime = Device.fTimeGlobal + 1.0f;// 1 sec
-							_s->wnd()->SetText(str);
+							HUD().GetUI()->AddInfoMessage("item_usage", str, false);
 						}
 					}
 				}
 			} 
             return true;
-
 		case kWPN_ZOOM:
 		{
 			if (IsZoomEnabled())
@@ -1280,7 +1277,7 @@ bool CWeapon::Action(s32 cmd, u32 flags)
 				{
 					if (IsScopeAttached() && !IsGrenadeMode())
 					{
-						HUD().GetUI()->AddInfoMessage("cant_aim");
+						HUD().GetUI()->AddInfoMessage("actor_state", "cant_aim");
 						return false;
 					}
 				}
@@ -1303,12 +1300,11 @@ bool CWeapon::Action(s32 cmd, u32 flags)
 					return true;
 				}
 				else
-					HUD().GetUI()->AddInfoMessage("cant_walk");
+					HUD().GetUI()->AddInfoMessage("actor_state", "cant_walk");
 			}
 			else
 				return false;
 		}
-
 		case kWPN_ZOOM_INC:
 		case kWPN_ZOOM_DEC:
 		{
@@ -1329,15 +1325,6 @@ bool CWeapon::Action(s32 cmd, u32 flags)
 	return false;
 }
 
-//void CWeapon::GetZoomData(const float scope_factor, float& delta, float& min_zoom_factor)
-//{
-//	float def_fov = Core.Features.test(xrCore::Feature::ogse_wpn_zoom_system) ? 1.f : g_fov;
-//	float delta_factor_total = def_fov-scope_factor;
-//	VERIFY(delta_factor_total>0);
-//	min_zoom_factor = def_fov-delta_factor_total*m_fMinZoomK;
-//	delta = (delta_factor_total*(1-m_fMinZoomK) )/m_fZoomStepCount;
-//}
-
 float  CWeapon::GetZoomStepDelta(float scope_factor, float min_scope_factor, u32 step_count)
 {
 	float total_zoom_delta = scope_factor - min_scope_factor;
@@ -1348,42 +1335,15 @@ void CWeapon::ZoomChange(bool inc)
 {
 	bool wasChanged = false;
 
-	if (SecondVPEnabled())
-	{
-//		float delta, min_zoom_factor;
-//		GetZoomData(m_fSecondVPZoomFactor, delta, min_zoom_factor);
-
+	if (SecondVPEnabled()){
 		const float currentZoomFactor = m_fRTZoomFactor;
-
-		//if (Core.Features.test(xrCore::Feature::ogse_wpn_zoom_system)) {
-		//	m_fRTZoomFactor += delta * (inc ? 1 : -1);
-		//	clamp(m_fRTZoomFactor, min_zoom_factor, m_fSecondVPZoomFactor);
-		//}
-		//else {
-		//	m_fRTZoomFactor += delta * (inc ? 1 : -1);
-		//	clamp(m_fRTZoomFactor, m_fSecondVPZoomFactor, min_zoom_factor);
-		//}
 
 		m_fZoomFactor += GetZoomStepDelta(m_fSecondVPZoomFactor, m_fMinScopeZoomFactor, m_uZoomStepCount) * (inc ? 1 : -1);//delta;
 		clamp(m_fSecondVPZoomFactor, m_fMinScopeZoomFactor, m_fScopeZoomFactor);
 
 		wasChanged = !fsimilar(currentZoomFactor, m_fRTZoomFactor);
-	}
-	else
-	{
-//		float delta, min_zoom_factor;
-//		GetZoomData(m_fScopeZoomFactor, delta, min_zoom_factor);
-
+	}else{
 		const float currentZoomFactor = m_fZoomFactor;
-
-		//if (Core.Features.test(xrCore::Feature::ogse_wpn_zoom_system)) {
-		//	m_fZoomFactor += delta * (inc ? 1 : -1);
-		//	clamp(m_fZoomFactor, min_zoom_factor, m_fScopeZoomFactor);
-		//}
-		//else {
-		//	m_fZoomFactor -= delta * (inc ? 1 : -1);
-		//	clamp(m_fZoomFactor, m_fScopeZoomFactor, min_zoom_factor);
-		//}
 
 		m_fZoomFactor += GetZoomStepDelta(m_fScopeZoomFactor, m_fMinScopeZoomFactor, m_uZoomStepCount) * (inc ? 1 : -1);//delta;
 		clamp(m_fZoomFactor, m_fMinScopeZoomFactor, m_fScopeZoomFactor);

@@ -10,6 +10,7 @@
 #include "ui/UIMainIngameWnd.h"
 #include "ui/UIMessagesWindow.h"
 #include "ui/UIPdaWnd.h"
+#include "string_table.h"
 
 CUI::CUI(CHUDManager* p)
 {
@@ -204,13 +205,16 @@ bool CUI::IR_OnMouseMove(int dx,int dy)
 	return false;
 }
 
-SDrawStaticStruct* CUI::AddInfoMessage			(LPCSTR message)
+SDrawStaticStruct* CUI::AddInfoMessage(LPCSTR message_static, LPCSTR message_text, bool translate)
 {
-	SDrawStaticStruct* ss	=	pUIGame->GetCustomStatic(message);
+	SDrawStaticStruct* ss	=	pUIGame->GetCustomStatic(message_static);
 	if(!ss)
 	{
-		ss					= pUIGame->AddCustomStatic(message, true);
+		ss					= pUIGame->AddCustomStatic(message_static, true);
 	}
+
+	ss->wnd()->SetText(translate ? CStringTable().translate(message_text).c_str() : message_text);
+
 	return ss;
 }
 
