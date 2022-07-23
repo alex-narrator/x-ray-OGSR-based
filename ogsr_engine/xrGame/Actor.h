@@ -791,11 +791,11 @@ public:
 
 	bool	HasDetector();
 
-	bool GetAmmoPlacement() { return m_bRuckAmmoPlacement; };
-	void SetAmmoPlacement(bool set_ruck) { m_bRuckAmmoPlacement = set_ruck; };
+	bool	IsRuckAmmoPlacement		() { return m_bRuckAmmoPlacement; };
+	void	SetRuckAmmoPlacement	(bool set_ruck) { m_bRuckAmmoPlacement = set_ruck; };
 
-	bool IsAllItemsLoaded() { return m_bRuckAmmoPlacement; };
-	void SetAllItemsLoaded(bool val) { bAllItemsLoaded = val; };
+	bool	IsAllItemsLoaded		() { return m_bRuckAmmoPlacement; };
+	void	SetAllItemsLoaded		(bool val) { bAllItemsLoaded = val; };
 
 protected:
 	bool	m_bIsHardHold;

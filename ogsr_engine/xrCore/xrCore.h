@@ -200,7 +200,7 @@ public:
 //	  lock_reload_in_sprint      = 1ull << 27,
 //	  hard_ammo_reload           = 1ull << 28,
 //	  engine_ammo_repacker       = 1ull << 29,
-	  ruck_flag_preferred        = 1ull << 30,
+//	  ruck_flag_preferred        = 1ull << 30,
 	  colorize_ammo              = 1ull << 31,
 	  // !Место свободно!        = 1ull << 32,
 	  colorize_untradable        = 1ull << 33,

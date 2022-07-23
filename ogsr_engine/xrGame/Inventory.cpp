@@ -191,7 +191,7 @@ void CInventory::Take(CGameObject *pObj, bool bNotActivate, bool strict_placemen
 		result							= Slot(pIItem, bNotActivate); 
 #ifdef DEBUG
 		if(!result) 
-			Msg("cant slot in ruck item %s", *pIItem->object().cName());
+			Msg("cant put in slot item %s", *pIItem->object().cName());
 #endif
 
 		break;
@@ -210,7 +210,7 @@ void CInventory::Take(CGameObject *pObj, bool bNotActivate, bool strict_placemen
 		}
 
 		auto pActor = smart_cast<CActor*>(m_pOwner);
-		const bool def_to_slot = (pActor && Core.Features.test(xrCore::Feature::ruck_flag_preferred)) ? !pIItem->RuckDefault() : true;
+		const bool def_to_slot = pActor ? !pIItem->RuckDefault() : true;
 
 		if((!force_ruck_default && def_to_slot && CanPutInSlot(pIItem)) || force_move_to_slot)
 		{
@@ -851,7 +851,7 @@ PIItem CInventory::GetAny(const char *name) const
 
 PIItem CInventory::GetAmmo(const char *name, bool forActor) const
 {
-	bool include_ruck = !forActor || !psActorFlags.test(AF_AMMO_FROM_BELT) || Actor()->GetAmmoPlacement();
+	bool include_ruck = !forActor || !psActorFlags.test(AF_AMMO_FROM_BELT) || Actor()->IsRuckAmmoPlacement();
 
 	PIItem itm = Get(name, include_ruck);
 	if (!include_ruck && !itm)
@@ -1233,48 +1233,53 @@ void CInventory::Iterate( bool bSearchRuck, std::function<bool( const PIItem )> 
 
 
 void CInventory::IterateAmmo( bool bSearchRuck, std::function<bool( const PIItem )> callback ) const {
-  //const auto& list = bSearchRuck ? m_ruck : m_belt;
-  const auto& list = m_all;
-  auto excluded_place = bSearchRuck ? eItemPlaceBelt : eItemPlaceRuck; //якщо треба шукати у рюкзаці, тоді не шукаємо на поясі, та навпаки (а у слотах шукаємо завжди)
-  for ( const auto& it : list ) {
-    const auto *ammo = smart_cast<CWeaponAmmo*>( it );
-    if ( ammo && it->Useful() && it->m_eItemPlace != excluded_place && callback( it ) )
-      break;
-  }
+	
+	if (!bSearchRuck) {
+		for (u32 i = 0; i < m_slots.size(); ++i){
+			const auto itm = m_slots[i].m_pIItem;
+			const auto* ammo = smart_cast<CWeaponAmmo*>(itm);
+			if (ammo && itm->Useful() && callback(itm))
+				break;
+		}
+	}
+
+	const auto& list = bSearchRuck ? m_ruck : m_belt;
+	for ( const auto& it : list ) {
+		const auto *ammo = smart_cast<CWeaponAmmo*>( it );
+		if ( ammo && it->Useful() && callback( it ) )
+			break;
+	}
 }
 
 
-PIItem CInventory::GetAmmoMaxCurr( const char *name, bool forActor ) const {
-  PIItem box = nullptr;
-  u32    max = 0;
-  auto callback = [&]( const auto pIItem ) -> bool {
-    if ( !xr_strcmp( pIItem->object().cNameSect(), name ) ) {
-      const auto *ammo = smart_cast<CWeaponAmmo*>( pIItem );
-      if ( ammo->m_boxCurr == ammo->m_boxSize ) {
-        box = pIItem;
-        return true;
-      }
-      if ( ammo->m_boxCurr > max ) {
-        box = pIItem;
-        max = ammo->m_boxCurr;
-      }
-    }
-    return false;
-  };
+PIItem CInventory::GetAmmoByLimit(const char* name, bool forActor, bool limit_max) const {
+	PIItem box		= nullptr;
+	u32    limit	= 0;
 
-  bool include_ruck = !forActor || !psActorFlags.test(AF_AMMO_FROM_BELT) || Actor()->GetAmmoPlacement();
+	auto callback = [&](const auto pIItem) -> bool {
+		if (!xr_strcmp(pIItem->object().cNameSect(), name)) {
 
-  IterateAmmo( false, callback );
-  if ( include_ruck ) {
-    if ( box ) {
-      const auto *ammo = smart_cast<CWeaponAmmo*>( box );
-      if ( ammo->m_boxCurr == ammo->m_boxSize )
-        return box;
-    }
-    IterateAmmo( true, callback );
-  }
+			const auto* ammo			= smart_cast<CWeaponAmmo*>(pIItem);
+			const bool size_fits_limit	= (ammo->m_boxCurr == (limit_max ? ammo->m_boxSize : 1));
+			const bool update_limit		= limit_max ? ammo->m_boxCurr > limit : (limit == 0 || ammo->m_boxCurr < limit);
 
-  return box;
+			if (size_fits_limit) {
+				box = pIItem;
+				return true;
+			}
+			if (update_limit) {
+				box = pIItem;
+				limit = ammo->m_boxCurr;
+			}
+		}
+		return false;
+	};
+
+	bool include_ruck = !forActor || !psActorFlags.test(AF_AMMO_FROM_BELT) || Actor()->IsRuckAmmoPlacement();
+
+	IterateAmmo(include_ruck, callback);
+
+	return box;
 }
 
 
@@ -1293,40 +1298,6 @@ void CInventory::RestoreBeltOrder() {
 
   if ( auto pActor = smart_cast<CActor*>( m_pOwner ) )
     pActor->UpdateArtefactPanel();
-}
-
-
-PIItem CInventory::GetAmmoMinCurr( const char *name, bool forActor ) const {
-  PIItem box = nullptr;
-  u32    min = 0;
-  auto callback = [&]( const auto pIItem ) -> bool {
-    if ( !xr_strcmp( pIItem->object().cNameSect(), name ) ) {
-      const auto *ammo = smart_cast<CWeaponAmmo*>( pIItem );
-      if ( ammo->m_boxCurr == 1 ) {
-        box = pIItem;
-        return true;
-      }
-      if ( min == 0 || ammo->m_boxCurr < min ) {
-        box = pIItem;
-        min = ammo->m_boxCurr;
-      }
-    }
-    return false;
-  };
-
-  bool include_ruck = !forActor || !psActorFlags.test(AF_AMMO_FROM_BELT) || Actor()->GetAmmoPlacement();
-
-  IterateAmmo( false, callback );
-  if ( include_ruck ) {
-    if ( box ) {
-      const auto *ammo = smart_cast<CWeaponAmmo*>( box );
-      if ( ammo->m_boxCurr == 1 )
-        return box;
-    }
-    IterateAmmo( true, callback );
-  }
-
-  return box;
 }
 
 
@@ -1426,9 +1397,6 @@ void CInventory::TryAmmoCustomPlacement(CInventoryItem* pIItem)
 	auto pAmmo = smart_cast<CWeaponAmmo*>(pIItem);
 	if (!pAmmo) return;
 
-	//if (pAmmo->IsPlaceable(QUICK_SLOT_0, QUICK_SLOT_3))
-	//	pAmmo->m_eItemPlace = eItemPlaceRuck;
-
 	auto pActor = smart_cast<CActor*>(m_pOwner);
 	if (!pActor) return;
 
@@ -1437,7 +1405,7 @@ void CInventory::TryAmmoCustomPlacement(CInventoryItem* pIItem)
 
 	//Msg("ammo [%s] with ID [%d] has taken", pIItem->object().cNameSect().c_str(), pIItem->object().ID());
 
-	if (psActorFlags.test(AF_AMMO_FROM_BELT) && pWeapon->IsAmmoWasSpawned() && !pActor->GetAmmoPlacement()) { //если включены патроны с пояса, то для боеприпасов актора, которые спавнятся при разрядке
+	if (psActorFlags.test(AF_AMMO_FROM_BELT) && pWeapon->IsAmmoWasSpawned() && !pActor->IsRuckAmmoPlacement()) { //если включены патроны с пояса, то для боеприпасов актора, которые спавнятся при разрядке
 		auto pWarbelt = pActor->GetWarbelt();
 		bool b_has_drop_pouch = pWarbelt && pWarbelt->HasDropPouch();
 

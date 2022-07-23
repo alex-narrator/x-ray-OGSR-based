@@ -397,7 +397,7 @@ void CUIInventoryWnd::Show()
 			Actor()->SetWeaponHideState(INV_STATE_INV_WND, true); //спрячем оружие в руках
 		else
 			Actor()->inventory().TryToHideWeapon(true);
-		if (psActorFlags.test(AF_AMMO_FROM_BELT)) Actor()->SetAmmoPlacement(true); //установим флаг перезарядки из рюкзака
+		if (psActorFlags.test(AF_AMMO_FROM_BELT)) Actor()->SetRuckAmmoPlacement(true); //установим флаг перезарядки из рюкзака
 	}
 }
 
@@ -424,7 +424,7 @@ void CUIInventoryWnd::Hide()
 			pActor->SetWeaponHideState(INV_STATE_INV_WND, false); //восстановим показ оружия в руках
 		else
 			pActor->inventory().TryToHideWeapon(false);
-		if (psActorFlags.test(AF_AMMO_FROM_BELT)) pActor->SetAmmoPlacement(false); //сбросим флаг перезарядки из рюкзака
+		if (psActorFlags.test(AF_AMMO_FROM_BELT)) pActor->SetRuckAmmoPlacement(false); //сбросим флаг перезарядки из рюкзака
 	}
 
 	HideSlotsHighlight();

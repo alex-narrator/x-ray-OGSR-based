@@ -108,7 +108,7 @@ void InitConsole	()
 //	CORE_FEATURE_SET( lock_reload_in_sprint,      "features" );
 //	CORE_FEATURE_SET( hard_ammo_reload,           "features" );
 //	CORE_FEATURE_SET( engine_ammo_repacker,       "features" );
-	CORE_FEATURE_SET( ruck_flag_preferred,        "features" );
+//	CORE_FEATURE_SET( ruck_flag_preferred,        "features" );
 	CORE_FEATURE_SET( old_outfit_slot_style,      "features" );
 	CORE_FEATURE_SET( npc_simplified_shooting,    "features" );
 //	CORE_FEATURE_SET( use_trade_deficit_factor,   "features" );

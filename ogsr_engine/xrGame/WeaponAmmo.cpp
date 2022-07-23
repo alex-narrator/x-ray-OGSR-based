@@ -399,7 +399,7 @@ void CWeaponAmmo::ReloadBox(LPCSTR ammo_sect)
 	while (m_boxCurr < m_boxSize)
 	{
 		CCartridge l_cartridge;
-		auto m_pAmmo = smart_cast<CWeaponAmmo*>(m_pCurrentInventory->GetAmmoMinCurr(ammo_sect, forActor));
+		auto m_pAmmo = smart_cast<CWeaponAmmo*>(m_pCurrentInventory->GetAmmoByLimit(ammo_sect, forActor, false));
 
 		if (!m_pAmmo || !m_pAmmo->Get(l_cartridge)) break;
 

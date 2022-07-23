@@ -2594,16 +2594,12 @@ u32 CWeapon::GetNextAmmoType(bool looped)
 		if (++l_newType >= m_ammoTypes.size())
 		{
 			for (l_newType = 0; l_newType < m_ammoTypes.size(); ++l_newType)
-				if (unlimited_ammo() || HasDetachableMagazine() && !IsSingleReloading() ? 
-					m_pCurrentInventory->GetAmmoMaxCurr(m_ammoTypes[l_newType].c_str(), ParentIsActor()) : 
-					m_pCurrentInventory->GetAmmoMinCurr(m_ammoTypes[l_newType].c_str(), ParentIsActor()))
+				if (unlimited_ammo() || m_pCurrentInventory->GetAmmoByLimit(m_ammoTypes[l_newType].c_str(), ParentIsActor(), HasDetachableMagazine() && !IsSingleReloading()))
 					break;
 			break;
 		}
 
-		if (unlimited_ammo() || HasDetachableMagazine() && !IsSingleReloading() ?
-			m_pCurrentInventory->GetAmmoMaxCurr(m_ammoTypes[l_newType].c_str(), ParentIsActor()) : 
-			m_pCurrentInventory->GetAmmoMinCurr(m_ammoTypes[l_newType].c_str(), ParentIsActor()))
+		if (unlimited_ammo() || m_pCurrentInventory->GetAmmoByLimit(m_ammoTypes[l_newType].c_str(), ParentIsActor(), HasDetachableMagazine() && !IsSingleReloading()))
 			break;
 	}
 

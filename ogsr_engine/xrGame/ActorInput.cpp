@@ -244,18 +244,12 @@ void CActor::IR_OnKeyboardPress(int cmd)
 						inventory().Eat(itm, cast_inventory_owner());
 						strconcat(sizeof(str), str, CStringTable().translate("st_item_used").c_str(), ": ", itm->Name());
 					}
-					//SDrawStaticStruct* _s = HUD().GetUI()->UIGame()->AddCustomStatic("item_used", true);
-					//_s->m_endTime = Device.fTimeGlobal + 1.0f;// 3sec
-					//_s->wnd()->SetText(str);
 					HUD().GetUI()->AddInfoMessage("item_usage", str, false);
 				}
 
 			}
 			else
 			{
-				//SDrawStaticStruct* _s = HUD().GetUI()->UIGame()->AddCustomStatic("item_used", true);
-				//_s->wnd()->SetText(CStringTable().translate("st_quick_slot_empty").c_str());
-				//_s->m_endTime = Device.fTimeGlobal + 1.0f;// 3sec
 				HUD().GetUI()->AddInfoMessage("item_usage", "st_quick_slot_empty");
 			}
 		}

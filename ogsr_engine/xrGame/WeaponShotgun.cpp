@@ -377,14 +377,14 @@ bool CWeaponShotgun::HaveCartridgeInInventory( u8 cnt ) {
   if ( unlimited_ammo() ) return true;
   if ( !m_pCurrentInventory ) return false;
 
-  m_pAmmo = smart_cast<CWeaponAmmo*>(m_pCurrentInventory->GetAmmoMinCurr(*m_ammoTypes[m_ammoType], ParentIsActor()));
+  m_pAmmo = smart_cast<CWeaponAmmo*>(m_pCurrentInventory->GetAmmoByLimit(*m_ammoTypes[m_ammoType], ParentIsActor(), false));
 
   if (!m_pAmmo)
   {
 	  for (u32 i = 0; i < m_ammoTypes.size(); ++i)
 	  {
 		  //проверить патроны всех подходящих типов
-		  m_pAmmo = smart_cast<CWeaponAmmo*>(m_pCurrentInventory->GetAmmoMinCurr(*m_ammoTypes[i], ParentIsActor()));
+		  m_pAmmo = smart_cast<CWeaponAmmo*>(m_pCurrentInventory->GetAmmoByLimit(*m_ammoTypes[i], ParentIsActor(), false));
 
 		  if (m_pAmmo)
 		  {

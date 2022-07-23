@@ -253,7 +253,7 @@ void CUICarBodyWnd::Hide()
 			Actor()->SetWeaponHideState(INV_STATE_INV_WND, false);  //восстановим показ оружия в руках, если обыскиваем не монстра
 		else
 			Actor()->inventory().TryToHideWeapon(false);
-		if (psActorFlags.test(AF_AMMO_FROM_BELT)) Actor()->SetAmmoPlacement(false); //сбросим флаг перезарядки из рюкзака
+		if (psActorFlags.test(AF_AMMO_FROM_BELT)) Actor()->SetRuckAmmoPlacement(false); //сбросим флаг перезарядки из рюкзака
 	}
 
 	PlaySnd(eInvSndClose);
@@ -456,7 +456,7 @@ void CUICarBodyWnd::SendMessage(CUIWindow *pWnd, s16 msg, void *pData)
 			TakeAll();
 		}
 	}
-	else if(pWnd == m_pUIPropertiesBox &&	msg == PROPERTY_CLICKED)
+	else if(pWnd == m_pUIPropertiesBox && msg == PROPERTY_CLICKED)
 	{
 		if(m_pUIPropertiesBox->GetClickedItem())
 		{
@@ -633,7 +633,7 @@ void CUICarBodyWnd::Show()
 			Actor()->SetWeaponHideState(INV_STATE_INV_WND, true);  //спрячем оружие в руках, если обыскиваем не монстра 
 		else
 			Actor()->inventory().TryToHideWeapon(true);
-		if (psActorFlags.test(AF_AMMO_FROM_BELT)) Actor()->SetAmmoPlacement(true); //установим флаг перезарядки из рюкзака
+		if (psActorFlags.test(AF_AMMO_FROM_BELT)) Actor()->SetRuckAmmoPlacement(true); //установим флаг перезарядки из рюкзака
 	}
 
 	PlaySnd(eInvSndOpen);

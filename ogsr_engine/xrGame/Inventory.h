@@ -84,8 +84,7 @@ public:
 
 	void   Iterate        ( bool, std::function<bool( const PIItem )> ) const;
 	void   IterateAmmo    ( bool, std::function<bool( const PIItem )> ) const;
-	PIItem GetAmmoMaxCurr ( const char*, bool ) const;
-	PIItem GetAmmoMinCurr ( const char*, bool ) const;
+	PIItem GetAmmoByLimit ( const char*, bool, bool) const;
 	int    GetIndexOnBelt ( PIItem ) const;
 	void   RestoreBeltOrder();
 
