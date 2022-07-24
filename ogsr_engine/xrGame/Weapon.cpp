@@ -2521,12 +2521,6 @@ float CWeapon::GetSecondVPFov() const
 	return atanf(tanf(g_fov * (0.5f * PI / 180)) / fov_factor) / (0.5f * PI / 180);
 }
 
-//bool CWeapon::IsGrenadeMode() const
-//{
-//	const auto wpn_w_gl = smart_cast<const CWeaponMagazinedWGrenade*>(this);
-//	return wpn_w_gl && wpn_w_gl->m_bGrenadeMode;
-//}
-
 // Получить HUD FOV от текущего оружия игрока
 float CWeapon::GetHudFov()
 {

@@ -408,14 +408,13 @@ void CSE_ALifeItemWeapon::UPDATE_Read(NET_Packet	&tNetPacket)
 	//
 	if (m_wVersion > 118)
 	{
-		u8 _data = tNetPacket.r_u8();
-		bMisfire = !!(_data & 0x1);
+		u8 _data		= tNetPacket.r_u8();
+		bMisfire		= !!(_data & 0x1);
 
-		m_cur_scope = tNetPacket.r_u8();
-		m_cur_silencer = tNetPacket.r_u8();
-		m_cur_glauncher = tNetPacket.r_u8();
-
-		m_MagazineSize = tNetPacket.r_u32();
+		tNetPacket.r_u8		(m_cur_scope);
+		tNetPacket.r_u8		(m_cur_silencer);
+		tNetPacket.r_u8		(m_cur_glauncher);
+		tNetPacket.r_u32	(m_MagazineSize);
 	}
 }
 
@@ -519,7 +518,6 @@ BOOL CSE_ALifeItemWeapon::Net_Relevant()
 ////////////////////////////////////////////////////////////////////////////
 CSE_ALifeItemWeaponShotGun::CSE_ALifeItemWeaponShotGun	(LPCSTR caSection) : CSE_ALifeItemWeaponMagazined(caSection)
 {
-	//m_AmmoIDs.clear();
 }
 
 CSE_ALifeItemWeaponShotGun::~CSE_ALifeItemWeaponShotGun	()
@@ -529,23 +527,10 @@ CSE_ALifeItemWeaponShotGun::~CSE_ALifeItemWeaponShotGun	()
 void CSE_ALifeItemWeaponShotGun::UPDATE_Read		(NET_Packet& P)
 {
 	inherited::UPDATE_Read(P);
-
-	//m_AmmoIDs.clear();
-	//u8 AmmoCount = P.r_u8();
-	//for (u8 i=0; i<AmmoCount; i++)
-	//{
-	//	m_AmmoIDs.push_back(P.r_u8());
-	//}
 }
 void CSE_ALifeItemWeaponShotGun::UPDATE_Write	(NET_Packet& P)
 {
 	inherited::UPDATE_Write(P);
-
-	//P.w_u8(u8(m_AmmoIDs.size()));
-	//for (u32 i=0; i<m_AmmoIDs.size(); i++)
-	//{
-	//	P.w_u8(u8(m_AmmoIDs[i]));
-	//}
 }
 void CSE_ALifeItemWeaponShotGun::STATE_Read		(NET_Packet& P, u16 size)
 {
@@ -565,22 +550,21 @@ CSE_ALifeItemWeaponMagazined::CSE_ALifeItemWeaponMagazined(const char* caSection
 	if (FireModesList) {
 		int ModesCount = _GetItemCount(FireModesList);
 		m_u8CurFireMode = u8(ModesCount - 1);
-	}
-	else {
+	}else{
 		m_u8CurFireMode = 0;
 	}
 	//
 	m_AmmoIDs.clear();
 	//
-	m_bIsMagazineAttached = true;
+	m_bIsMagazineAttached				= true;
 	//
-	m_fAttachedSilencerCondition = 1.f;
-	m_fAttachedScopeCondition = 1.f;
+	m_fAttachedSilencerCondition		= 1.f;
+	m_fAttachedScopeCondition			= 1.f;
 	m_fAttachedGrenadeLauncherCondition = 1.f;
 	//
-	m_fRTZoomFactor = 1.f;
+	m_fRTZoomFactor						= 1.f;
 	//
-	m_bNightVisionSwitchedOn = true;
+	m_bNightVisionSwitchedOn			= true;
 }
 
 CSE_ALifeItemWeaponMagazined::~CSE_ALifeItemWeaponMagazined	()
@@ -591,24 +575,23 @@ void CSE_ALifeItemWeaponMagazined::UPDATE_Read		(NET_Packet& P)
 {
 	inherited::UPDATE_Read(P);
 
-	m_u8CurFireMode = P.r_u8();
-
 	if (m_wVersion > 118)
 	{
+		m_u8CurFireMode = P.r_u8();
+
 		m_AmmoIDs.clear();
 		u8 AmmoCount = P.r_u8();
-		for (u8 i = 0; i < AmmoCount; i++)
-		{
+		for (u8 i = 0; i < AmmoCount; i++){
 			m_AmmoIDs.push_back(P.r_u8());
 		}
 		//
 		m_bIsMagazineAttached = !!(P.r_u8() & 0x1);
 		//
-		m_fAttachedSilencerCondition = P.r_float();
-		m_fAttachedScopeCondition = P.r_float();
-		m_fAttachedGrenadeLauncherCondition = P.r_float();
+		P.r_float(m_fAttachedSilencerCondition);
+		P.r_float(m_fAttachedScopeCondition);
+		P.r_float(m_fAttachedGrenadeLauncherCondition);
 
-		m_fRTZoomFactor = P.r_float();
+		P.r_float(m_fRTZoomFactor);
 
 		m_bNightVisionSwitchedOn = !!(P.r_u8() & 0x1);
 	}
@@ -620,8 +603,7 @@ void CSE_ALifeItemWeaponMagazined::UPDATE_Write	(NET_Packet& P)
 	P.w_u8(m_u8CurFireMode);	
 	//
 	P.w_u8(u8(m_AmmoIDs.size()));
-	for (u32 i = 0; i < m_AmmoIDs.size(); i++)
-	{
+	for (u32 i = 0; i < m_AmmoIDs.size(); i++){
 		P.w_u8(u8(m_AmmoIDs[i]));
 	}
 	//
@@ -639,8 +621,8 @@ void CSE_ALifeItemWeaponMagazined::STATE_Read		(NET_Packet& P, u16 size)
 {
 	inherited::STATE_Read(P, size);
 
-	if (!P.r_eof()) {
-		m_u8CurFireMode = P.r_u8();
+	if (m_wVersion > 118) {
+		P.r_u8(m_u8CurFireMode);
 	}
 }
 void CSE_ALifeItemWeaponMagazined::STATE_Write		(NET_Packet& P)
@@ -671,9 +653,9 @@ void CSE_ALifeItemWeaponMagazinedWGL::UPDATE_Read(NET_Packet& P)
 
 	inherited::UPDATE_Read(P);
 
-	if ( !P.r_eof() ) {
-	  ammo_type2 = P.r_u8();
-	  a_elapsed2 = P.r_u16();
+	if (m_wVersion > 118) {
+	  P.r_u8(ammo_type2);
+	  P.r_u16(a_elapsed2);
 	  //Msg( "~~[%s][%s] update_read: m_bGrenadeMode: [%u], iAmmoElapsed2: [%u], m_ammoType2: [%u]", __FUNCTION__, this->name(), m_bGrenadeMode, a_elapsed2, ammo_type2 );
 	}
 }
@@ -693,15 +675,13 @@ void CSE_ALifeItemWeaponMagazinedWGL::STATE_Read		(NET_Packet& P, u16 size)
 {
 	inherited::STATE_Read(P, size);
 
-	if (!P.r_eof()) {
-		ammo_type2 = P.r_u8();
-		a_elapsed2 = P.r_u16();
+	if (m_wVersion > 118) {
+		P.r_u8(ammo_type2);
+		P.r_u16(a_elapsed2);
+		u8 _data = P.r_u8();
+		m_bGrenadeMode = !!(_data & 0x1);
 		//Msg( "~~[%s][%s] update_read: m_bGrenadeMode: [%u], iAmmoElapsed2: [%u], m_ammoType2: [%u]", __FUNCTION__, this->name(), m_bGrenadeMode, a_elapsed2, ammo_type2 );
 	}
-	if ( !P.r_eof() ) {
-          u8 _data = P.r_u8();
-          m_bGrenadeMode = !!( _data & 0x1 );
-        }
 }
 
 void CSE_ALifeItemWeaponMagazinedWGL::STATE_Write		(NET_Packet& P)

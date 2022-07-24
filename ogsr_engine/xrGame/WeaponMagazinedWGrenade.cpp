@@ -118,16 +118,15 @@ BOOL CWeaponMagazinedWGrenade::net_Spawn(CSE_Abstract* DC)
 	SetPending(FALSE);
 
 	const auto wgl = smart_cast<CSE_ALifeItemWeaponMagazinedWGL*>( DC );
+	m_bGrenadeMode = wgl->m_bGrenadeMode;
 	m_ammoType2   = m_ammoType2   > 0 ? m_ammoType2   : wgl->ammo_type2;
 	iAmmoElapsed2 = iAmmoElapsed2 > 0 ? iAmmoElapsed2 : wgl->a_elapsed2;
 
 	//Msg("~~[%s][%s] net_Spawn", __FUNCTION__, this->Name());
 
-	if (wgl->m_bGrenadeMode) // m_bGrenadeMode enabled
+	if (m_bGrenadeMode) // m_bGrenadeMode enabled
 	{
-		m_bGrenadeMode = true;
-
-		m_fZoomFactor = this->CurrentZoomFactor();
+		m_fZoomFactor = CurrentZoomFactor();
 
 		iMagazineSize = 1;
 
