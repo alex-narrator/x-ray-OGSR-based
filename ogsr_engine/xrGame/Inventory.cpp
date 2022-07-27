@@ -1008,6 +1008,8 @@ bool CInventory::CanPutInSlot(PIItem pIItem) const
 
 	if( !GetOwner()->CanPutInSlot(pIItem, pIItem->GetSlot() ) ) return false;
 
+	if (IsSlotDisabled(pIItem->GetSlot())) return false;
+
 	if(pIItem->GetSlot() < m_slots.size() && 
 		m_slots[pIItem->GetSlot()].m_pIItem == NULL )
 		return true;
@@ -1024,6 +1026,8 @@ bool CInventory::CanPutInSlot(PIItem pIItem, u8 slot) const
 	if (!GetOwner()->CanPutInSlot(pIItem, slot))
 		return false;
 
+	if (IsSlotDisabled(slot)) return false;
+
 	if (slot < m_slots.size() && !m_slots[slot].m_pIItem)
 		return true;
 
@@ -1037,9 +1041,9 @@ bool CInventory::CanPutInBelt(PIItem pIItem)
 	if(InBelt(pIItem))					return false;
 	if(!m_bBeltUseful)					return false;
 	if(!pIItem || !pIItem->Belt())		return false;
-	if(m_belt.size() >= BeltWidth() * BeltHeight())	return false;
+	if(m_belt.size() >= BeltWidth())	return false;
 
-	return FreeRoom_inBelt(m_belt, pIItem, BeltWidth(), BeltHeight());
+	return FreeRoom_inBelt(m_belt, pIItem, BeltWidth(), 1);
 }
 //проверяет можем ли поместить вещь в рюкзак,
 //при этом реально ничего не меняется
@@ -1444,21 +1448,40 @@ u32  CInventory::BeltWidth() const
 	return 0; //m_iMaxBeltWidth;
 }
 
-u32  CInventory::BeltHeight() const
-{
-	CActor* pActor = smart_cast<CActor*>(m_pOwner);
-	if (pActor){
-		auto warbelt = pActor->GetWarbelt();
-		if (warbelt) return warbelt->GetBeltHeight();
-	}
-	return 0; //m_iMaxBeltHeight;
-}
-
 void CInventory::DropBeltToRuck(){
 	if (!smart_cast<CActor*>(m_pOwner)) return;
 
 	while (!m_belt.empty())
 		Ruck(m_belt.back());
+}
+
+void CInventory::DropSlotsToRuck(u32 min_slot, u32 max_slot) {
+	if (!smart_cast<CActor*>(m_pOwner)) return;
+	
+	if (max_slot == NO_ACTIVE_SLOT)
+		max_slot = min_slot;
+
+	for (const auto& slot : m_slots) {
+		if (!slot.m_pIItem) continue;
+		auto s = slot.m_pIItem->GetSlot();
+		if (min_slot <= s && s <= max_slot)
+			Ruck(ItemFromSlot(s));
+	}
+}
+
+bool CInventory::IsSlotDisabled(u32 slot) const
+{
+	if (!smart_cast<CActor*>(m_pOwner)) return false;
+
+	switch (slot)
+	{
+	case  HELMET_SLOT:
+		auto outfit = m_pOwner->GetOutfit();
+		if(outfit && !outfit->m_bIsHelmetAllowed)
+			return true;
+	}
+
+	return false;
 }
 
 bool CInventory::activate_slot(u32 slot)

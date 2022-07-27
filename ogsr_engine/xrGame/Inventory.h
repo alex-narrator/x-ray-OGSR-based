@@ -201,9 +201,10 @@ public:
 	void					TryAmmoCustomPlacement(CInventoryItem* pIItem);
 
 	u32						BeltWidth	() const;
-	u32						BeltHeight	() const;
 
-	void					DropBeltToRuck();
+	void					DropBeltToRuck	();
+	void					DropSlotsToRuck	(u32 min_slot, u32 max_slot = NO_ACTIVE_SLOT);
+	bool					IsSlotDisabled	(u32) const;
 
 	bool					activate_slot(u32 slot);
 };

@@ -609,14 +609,22 @@ bool CUIInventoryWnd::OnKeyboard(int dik, EUIMessages keyboard_action)
 
 void CUIInventoryWnd::UpdateCustomDraw()
 {
-	if (!smart_cast<CActor*>(Level().CurrentEntity())) return;
+	if (!smart_cast<CActor*>(Level().CurrentEntity())) 
+		return;
 
 	auto& inv = Actor()->inventory();
-
 	u32 belt_width = inv.BeltWidth();
-	u32 belt_height = inv.BeltHeight();
 
-	m_pUIBeltList->SetCellsAvailable(belt_width * belt_height);
+	/*m_pUIBeltList->SetCellsAvailable(belt_width);*/
+	m_pUIBeltList->SetCellsCapacity({ (int)belt_width, 1 });
+
+	if (inv.IsSlotDisabled(HELMET_SLOT)) {
+		/*m_pUIHelmetList->SetCellsAvailable(0);*/
+		m_pUIHelmetList->SetCellsCapacity({ 0, 0 });
+	}else{
+		/*m_pUIHelmetList->SetCellsAvailable(m_pUIHelmetList->CellsCapacity().x * m_pUIHelmetList->CellsCapacity().y);*/
+		m_pUIHelmetList->ResetCellsCapacity();
+	}
 
 	InitInventory_delayed();
 }

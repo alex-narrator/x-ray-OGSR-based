@@ -14,17 +14,12 @@ public:
 
 	virtual void					Load				(LPCSTR section);
 	
-	//уменьшенная версия хита, для вызова, когда костюм надет на персонажа
-//	virtual void					Hit					(float P, ALife::EHitType hit_type);
-
 	//коэффициенты на которые домножается хит
 	//при соответствующем типе воздействия
 	//если на персонаже надет костюм
-//	float							GetHitTypeProtection(ALife::EHitType hit_type, s16 element);
 	float							GetHitTypeProtection(ALife::EHitType hit_type);
-//	float							GetDefHitTypeProtection(ALife::EHitType hit_type);
 
-	float							HitThruArmour		(SHit* pHDS/*float hit_power, s16 element, float AP*/);
+	float							HitThruArmour		(SHit* pHDS);
 	//коэффициент на который домножается потеря силы
 	//если на персонаже надет костюм
 	float							GetPowerLoss		();
@@ -32,12 +27,8 @@ public:
 
 	virtual void					OnMoveToSlot		(EItemPlace prevPlace);
 	virtual void					OnMoveToRuck		(EItemPlace prevPlace) override;
-	/*virtual void					OnMoveOut			(EItemPlace prevPlace);*/
-//	void OnDrop() override;
 
 private:
-//	void OnDropOrMoveToRuck();
-
 	HitImmunity::HitTypeSVec		m_HitTypeProtection;
 	float							m_fPowerLoss{};
 
@@ -47,17 +38,10 @@ private:
 
 	u32								m_ef_equipment_type{};
 
-//	u32 m_artefact_count{};
-
 public:
-	//float							m_additional_weight{};
-	//float							m_additional_weight2{};
-	//shared_str						m_NightVisionSect;
 	virtual u32						ef_equipment_type		() const;
 	virtual	BOOL					BonePassBullet			(int boneID);
 	const shared_str&				GetFullIconName			() const	{return m_full_icon_name;};
-
-//	virtual void net_Export( CSE_Abstract* E );
 
 	float m_fBleedingRestoreSpeed;
 	float m_fHealthRestoreSpeed;
@@ -77,5 +61,5 @@ public:
 	float GetAdditionalWalkAccel();
 	float GetAdditionalJumpSpeed();
 
-//	u32 get_artefact_count() const { return m_artefact_count; }
+	bool m_bIsHelmetAllowed;
 };

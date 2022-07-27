@@ -49,7 +49,7 @@ void CUIInventoryWnd::ActivatePropertiesBox()
 		auto slots = CurrentIItem()->GetSlots();
 		for (u8 i = 0; i < (u8)slots.size(); ++i) {
 			auto slot = slots[i];
-			if (slot != NO_ACTIVE_SLOT) {
+			if (slot != NO_ACTIVE_SLOT && !m_pInv->IsSlotDisabled(slot)) {
 				if (!m_pInv->m_slots[slot].m_pIItem || m_pInv->m_slots[slot].m_pIItem != CurrentIItem()) {
 					string128 full_action_text;
 					strconcat(sizeof(full_action_text), full_action_text, "st_move_to_slot_", std::to_string(slot).c_str());

@@ -1476,48 +1476,6 @@ void CActor::UpdateQuickSlotPanel()
 		HUD().GetUI()->UIMainIngameWnd->m_quickSlotPanel->Update();
 }
 
-//void CActor::ApplyArtefactEffects(ActorRestoreParams& r, CArtefact*	artefact)
-//{
-//	float k = (Core.Features.test(xrCore::Feature::af_zero_condition) && fis_zero(artefact->GetCondition())) ? 0.f : 1.f;
-//
-//	r.BleedingRestoreSpeed += artefact->m_fBleedingRestoreSpeed * k;
-//	r.HealthRestoreSpeed += artefact->m_fHealthRestoreSpeed * k;
-//	r.PowerRestoreSpeed += artefact->m_fPowerRestoreSpeed * k;
-//
-//	if (Core.Features.test(xrCore::Feature::af_satiety))
-//		r.SatietyRestoreSpeed += artefact->m_fSatietyRestoreSpeed * k;
-//
-//	if (Core.Features.test(xrCore::Feature::actor_thirst))
-//		r.ThirstRestoreSpeed += artefact->m_fThirstRestoreSpeed * k;
-//
-//	if (Core.Features.test(xrCore::Feature::af_psy_health)) {
-//		if (Core.Features.test(xrCore::Feature::objects_radioactive)) {
-//			if (artefact->PsyHealthRestoreSpeed() > 0)
-//				r.PsyHealthRestoreSpeed += artefact->PsyHealthRestoreSpeed() * k;
-//		}
-//		else {
-//			r.PsyHealthRestoreSpeed += artefact->PsyHealthRestoreSpeed() * k;
-//		}
-//	}
-//	if (Core.Features.test(xrCore::Feature::objects_radioactive)) {
-//		if (artefact->RadiationRestoreSpeed() < 0)
-//			r.RadiationRestoreSpeed += artefact->RadiationRestoreSpeed() * k;
-//	}
-//	else {
-//
-//		if (artefact->RadiationRestoreSpeed() > 0 && Core.Features.test(xrCore::Feature::af_radiation_immunity_mod)) {
-//			float new_rs = HitArtefactsOnBelt(artefact->RadiationRestoreSpeed(), ALife::eHitTypeRadiation, true);
-//			if (new_rs > artefact->RadiationRestoreSpeed())
-//				r.RadiationRestoreSpeed += new_rs * k;
-//			else
-//				r.RadiationRestoreSpeed += artefact->RadiationRestoreSpeed() * k;
-//		}
-//		else
-//			r.RadiationRestoreSpeed += artefact->RadiationRestoreSpeed() * k;
-//
-//	}
-//}
-
 constexpr auto ARTEFACTS_UPDATE_TIME = 0.100f;
 
 void CActor::UpdateArtefactsOnBelt()

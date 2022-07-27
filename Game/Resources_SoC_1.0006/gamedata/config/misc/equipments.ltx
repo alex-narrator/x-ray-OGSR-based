@@ -11,7 +11,6 @@ description			= warbelt_descr
 slot				= 16
 
 max_belt_width 		= 4
-;max_belt_height 	= 2
 drop_pouch 			= true
 
 inv_name			= Warbelt
@@ -26,5 +25,28 @@ cost				= 500	;30
 default_to_ruck		= false
 
 [warbelt_adv]:warbelt
-max_belt_width 		= 4
-max_belt_height 	= 2
+max_belt_width 		= 8
+
+[psy_helmet]:identity_immunities
+GroupControlSection	= spawn_group
+discovery_dependency = 
+$spawn 				= "devices\quest_items\good_psy_helmet"
+;$prefetch 			= 32
+class				= II_ATTCH
+cform				= skeleton
+visual				= equipments\item_psi_helmet.ogf
+radius				= 1
+;script_binding		= stalker.object_init
+
+description         = yan_good_psy_helmet_desc
+
+slot = 11
+
+inv_name			= yan_good_psy_helmet_name
+inv_name_short		= yan_good_psy_helmet_name
+inv_weight			= 0
+inv_grid_width		= 1
+inv_grid_height		= 1
+inv_grid_x			= 2
+inv_grid_y			= 18
+cost				= 1000

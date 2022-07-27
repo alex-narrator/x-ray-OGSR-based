@@ -81,6 +81,8 @@ void CCustomOutfit::Load(LPCSTR section)
 	m_fPowerLoss			= READ_IF_EXISTS(pSettings, r_float, section, "power_loss", 1.f);
 
 	m_full_icon_name		= pSettings->r_string(section,"full_icon_name");
+
+	m_bIsHelmetAllowed		= !!READ_IF_EXISTS(pSettings, r_bool, section, "helmet_allowed", true);
 }
 
 float CCustomOutfit::GetHitTypeProtection(ALife::EHitType hit_type)
@@ -88,19 +90,15 @@ float CCustomOutfit::GetHitTypeProtection(ALife::EHitType hit_type)
 	return m_HitTypeProtection[hit_type] * GetCondition();
 }
 
-//float CCustomOutfit::GetHitTypeProtection(ALife::EHitType hit_type, s16 element)
-//{
-//	float fBase = m_HitTypeProtection[hit_type]*GetCondition();
-//	float bone = m_boneProtection->getBoneProtection(element);
-//	return 1.0f - fBase*bone;
-//}
-
-float	CCustomOutfit::HitThruArmour(SHit* pHDS/*float hit_power, s16 element, float AP*/)
+float	CCustomOutfit::HitThruArmour(SHit* pHDS)
 {
-	float hit_power = pHDS->damage();
-	float BoneArmour = m_boneProtection->getBoneArmour(pHDS->bone()/*element*/) * GetCondition() * (1 - pHDS->ap/*AP*/);
+	float hit_power = pHDS->power;
+	float BoneArmour = m_boneProtection->getBoneArmour(pHDS->boneID) * GetCondition() * (1 - pHDS->ap);
 	float NewHitPower = hit_power - BoneArmour;
-	if (NewHitPower < hit_power * m_boneProtection->m_fHitFrac) return hit_power * m_boneProtection->m_fHitFrac;
+
+	if (NewHitPower < hit_power * m_boneProtection->m_fHitFrac) 
+		return hit_power * m_boneProtection->m_fHitFrac;
+
 	return NewHitPower;
 };
 
@@ -132,37 +130,11 @@ void	CCustomOutfit::OnMoveToSlot		(EItemPlace prevPlace)
 			else
 				g_player_hud->load_default();
 
-//			smart_cast<CUIGameSP*>(HUD().GetUI()->UIGame())->InventoryMenu->UpdateOutfit();
+			if(!m_bIsHelmetAllowed)
+				m_pCurrentInventory->DropSlotsToRuck(HELMET_SLOT);
 		}
 	}
 }
-
-//void CCustomOutfit::OnDropOrMoveToRuck() {
-//	if (m_pCurrentInventory && !Level().is_removing_objects())
-//	{
-//		CActor* pActor = smart_cast<CActor*> (m_pCurrentInventory->GetOwner());
-//		if (pActor)
-//		{
-//			CTorch* pTorch = smart_cast<CTorch*>(pActor->inventory().ItemFromSlot(TORCH_SLOT));
-//			if (pTorch)
-//			{
-//				pTorch->SwitchNightVision(false);
-//			}
-//			if (m_ActorVisual.size())
-//			{
-//				shared_str DefVisual = pActor->GetDefaultVisualOutfit();
-//				if (DefVisual.size())
-//				{
-//					pActor->ChangeVisual(DefVisual);
-//				}
-//			}
-//
-//			g_player_hud->load_default();
-//
-////			smart_cast<CUIGameSP*>(HUD().GetUI()->UIGame())->InventoryMenu->UpdateOutfit();
-//		}
-//	}
-//}
 
 void CCustomOutfit::OnMoveToRuck(EItemPlace prevPlace) 
 {
@@ -173,11 +145,6 @@ void CCustomOutfit::OnMoveToRuck(EItemPlace prevPlace)
 		CActor* pActor = smart_cast<CActor*> (m_pCurrentInventory->GetOwner());
 		if (pActor && prevPlace == eItemPlaceSlot)
 		{
-			//CTorch* pTorch = smart_cast<CTorch*>(pActor->inventory().ItemFromSlot(TORCH_SLOT));
-			//if (pTorch)
-			//{
-			//	pTorch->SwitchNightVision(false);
-			//}
 			if (m_ActorVisual.size())
 			{
 				shared_str DefVisual = pActor->GetDefaultVisualOutfit();
@@ -188,24 +155,9 @@ void CCustomOutfit::OnMoveToRuck(EItemPlace prevPlace)
 			}
 
 			g_player_hud->load_default();
-
-//			smart_cast<CUIGameSP*>(HUD().GetUI()->UIGame())->InventoryMenu->UpdateOutfit();
 		}
 	}
 }
-
-//void CCustomOutfit::OnMoveOut(EItemPlace prevPlace)
-//{
-//	inherited::OnMoveOut(prevPlace);
-//
-//	OnMoveToRuck(prevPlace);
-//}
-
-//void CCustomOutfit::OnDrop() {
-//	inherited::OnDrop();
-//
-//	OnDropOrMoveToRuck();
-//}
 
 u32	CCustomOutfit::ef_equipment_type	() const
 {

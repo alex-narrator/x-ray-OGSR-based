@@ -186,7 +186,7 @@ protected:
 
 public:
 	PIItem						CurrentIItem();
-	void UpdateWeight();
+	void						UpdateWeight();
 	//обновление отрисовки сетки пояса
-	void					UpdateCustomDraw();
+	void						UpdateCustomDraw();
 };

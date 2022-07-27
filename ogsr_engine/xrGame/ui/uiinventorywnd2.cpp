@@ -291,7 +291,7 @@ bool CUIInventoryWnd::ToSlot(CUICellItem* itm, bool force_place)
 		/*************************************************** added by Ray Twitty (aka Shadows) END ***************************************************/
 	}else
 	{ // in case slot is busy
-		if(!force_place ||  _slot==NO_ACTIVE_SLOT || GetInventory()->m_slots[_slot].m_bPersistent) return false;
+		if(!force_place ||  _slot==NO_ACTIVE_SLOT || GetInventory()->m_slots[_slot].m_bPersistent || GetInventory()->IsSlotDisabled(_slot)) return false;
 
 		CUIDragDropListEx* slot_list		= GetSlotList(_slot);
 		VERIFY								(slot_list->ItemsCount()==1);
@@ -315,7 +315,8 @@ bool CUIInventoryWnd::ToSlot(CUICellItem* itm, bool force_place)
 			if (auto det = smart_cast<CCustomDetector*>(iitem))
 				det->ToggleDetector(g_player_hud->attached_item(0) != nullptr);
 		}break;
-		case WARBELT_SLOT:{
+		case WARBELT_SLOT:
+		case OUTFIT_SLOT: {
 			UpdateCustomDraw();
 		}break;
 		}
@@ -355,8 +356,13 @@ bool CUIInventoryWnd::ToBag(CUICellItem* itm, bool b_use_cursor_pos)
 		else
 			new_owner->SetItem				(i);
 
-		if (iitem->GetSlot() == WARBELT_SLOT)
+		switch (iitem->GetSlot())
+		{
+		case WARBELT_SLOT:
+		case OUTFIT_SLOT: {
 			UpdateCustomDraw();
+		}break;
+		}
 
 		SendEvent_Item2Ruck					(iitem);
 
