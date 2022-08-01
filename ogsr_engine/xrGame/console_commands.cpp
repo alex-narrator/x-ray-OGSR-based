@@ -1173,8 +1173,6 @@ void CCC_RegisterCommands()
 	CMD4(CCC_Integer,			"g_dof_zoom_far",		&g_dof_zoom_far,		10, 100 );
 	CMD4(CCC_Integer,			"g_dof_zoom_near",		&g_dof_zoom_near,		10, 100 );
 
-	CMD3(CCC_Mask,				"g_hold_to_aim",		&psActorFlags,			AF_HOLD_TO_AIM);
-
 	// alife
 #ifdef DEBUG
 	CMD1(CCC_ALifePath,			"al_path"				);		// build path
@@ -1192,23 +1190,23 @@ void CCC_RegisterCommands()
 	CMD1(CCC_ALifeSwitchFactor,		"al_switch_factor"		);		// set switch factor
 #endif // MASTER_GOLD
 
-	CMD3(CCC_Token,				"hud_laconic",			(u32*)&g_eHudLaconic,		hud_laconic_token);	//элементы HUD выводятся по нажатию клавиш
+	CMD3(CCC_Token,				"hud_laconic",				(u32*)&g_eHudLaconic,		hud_laconic_token		);	//элементы HUD выводятся по нажатию клавиш
 
-	CMD3(CCC_Mask,				"hud_weapon",			&psHUD_Flags,			HUD_WEAPON);
-	CMD3(CCC_Mask,				"hud_info",				&psHUD_Flags,			HUD_INFO);
-	CMD3(CCC_Mask,				"hud_draw",				&psHUD_Flags,			HUD_DRAW);
-	CMD3(CCC_Mask,				"hud_crosshair_build",	&psHUD_Flags,			HUD_CROSSHAIR_BUILD); // билдокурсор
-	CMD3(CCC_Mask,				"hud_crosshair_hard",	&psHUD_Flags,			HUD_CROSSHAIR_HARD);
+	CMD3(CCC_Mask,				"hud_weapon",				&psHUD_Flags,				HUD_WEAPON				);
+	CMD3(CCC_Mask,				"hud_info",					&psHUD_Flags,				HUD_INFO				);
+	CMD3(CCC_Mask,				"hud_draw",					&psHUD_Flags,				HUD_DRAW				);
+	CMD3(CCC_Mask,				"hud_crosshair_build",		&psHUD_Flags,				HUD_CROSSHAIR_BUILD		); // билдокурсор
+	CMD3(CCC_Mask,				"hud_crosshair_hard",		&psHUD_Flags,				HUD_CROSSHAIR_HARD		);
 
-	CMD3(CCC_Mask,				"hud_stop_missile_playing", &psHUD_Flags,		HUD_STOP_MISSILE_PLAYING);	//отключение анимаций подбрасывания для гранат и болта
-	CMD3(CCC_Mask,				"hud_use_luminosity",	&psHUD_Flags,			HUD_USE_LUMINOSITY);	//использование освещённости вместо заметности на худовой шкале
+	CMD3(CCC_Mask,				"hud_stop_missile_playing", &psHUD_Flags,				HUD_STOP_MISSILE_PLAYING);	//отключение анимаций подбрасывания для гранат и болта
+	CMD3(CCC_Mask,				"hud_use_luminosity",		&psHUD_Flags,				HUD_USE_LUMINOSITY		);	//использование освещённости вместо заметности на худовой шкале
 
-	CMD3(CCC_Mask,				"hud_crosshair",		&psHUD_Flags,			HUD_CROSSHAIR);
-	CMD3(CCC_Mask,				"hud_crosshair_dist",	&psHUD_Flags,			HUD_CROSSHAIR_DIST);
+	CMD3(CCC_Mask,				"hud_crosshair",			&psHUD_Flags,				HUD_CROSSHAIR			);
+	CMD3(CCC_Mask,				"hud_crosshair_dist",		&psHUD_Flags,				HUD_CROSSHAIR_DIST		);
 
 //#ifdef DEBUG
-	CMD4(CCC_Float,				"hud_fov",				&psHUD_FOV_def,			0.1f,	1.0f);
-	CMD4(CCC_Float,				"fov",					&g_fov,					5.0f,	140.0f);
+	CMD4(CCC_Float,				"hud_fov",					&psHUD_FOV_def,						0.1f,	1.0f	);
+	CMD4(CCC_Float,				"fov",						&g_fov,								5.0f,	140.0f	);
 //#endif // DEBUG
 
 	// Demo
@@ -1305,29 +1303,25 @@ void CCC_RegisterCommands()
 	CMD1(CCC_Spawn,			"g_spawn");
 	CMD3(CCC_Mask,			"g_god",					&psActorFlags,			AF_GODMODE	);
 	CMD3(CCC_Mask,			"g_unlimitedammo",			&psActorFlags,			AF_UNLIMITEDAMMO);
-	CMD3(CCC_Mask,			"g_ammo_from_belt",			&psActorFlags,			AF_AMMO_FROM_BELT);
 	CMD3(CCC_Mask,			"g_3d_scopes",				&psActorFlags,			AF_3D_SCOPES);
 	CMD4(CCC_Integer,		"g_3d_scopes_fps_factor",	&g_3dscopes_fps_factor, 2, 5);
 	CMD3(CCC_Mask,			"g_crosshair_dbg",			&psActorFlags,			AF_CROSSHAIR_DBG);
 	CMD3(CCC_Mask,			"g_camera_collision",		&psActorFlags,			AF_CAM_COLLISION);
-
-	CMD3(CCC_Mask,			"g_mouse_wheel_switch_slot", &psActorFlags,			AF_MOUSE_WHEEL_SWITCH_SLOTS);
-
 
 
 	CMD1(CCC_TimeFactor,	"time_factor")	
 	CMD1(CCC_SetWeather,	"set_weather");
 //#endif // MASTER_GOLD
 
-	CMD3(CCC_Mask,		"g_music_tracks",			&psActorFlags,			AF_MUSIC_TRACKS);
+	CMD3(CCC_Mask,			"g_music_tracks",			&psActorFlags,			AF_MUSIC_TRACKS);
 
-	CMD1(CCC_LuaHelp,	"lua_help");
+	CMD1(CCC_LuaHelp,		"lua_help");
 
-	CMD3(CCC_Mask,		"g_zones_dbg",				&psActorFlags,			AF_ZONES_DBG);
-	CMD3(CCC_Mask,		"g_vertex_dbg",				&psActorFlags,			AF_VERTEX_DBG);
-	CMD3(CCC_Mask,		"keypress_on_start",		&psActorFlags,			AF_KEYPRESS_ON_START);
+	CMD3(CCC_Mask,			"g_zones_dbg",				&psActorFlags,			AF_ZONES_DBG);
+	CMD3(CCC_Mask,			"g_vertex_dbg",				&psActorFlags,			AF_VERTEX_DBG);
+	CMD3(CCC_Mask,			"keypress_on_start",		&psActorFlags,			AF_KEYPRESS_ON_START);
 
-	CMD4(CCC_Integer,	"g_cop_death_anim",			&g_bCopDeathAnim,		0, 1);
+	CMD4(CCC_Integer,		"g_cop_death_anim",			&g_bCopDeathAnim,		0, 1);
 
 #ifdef DEBUG
 	CMD3(CCC_Mask,		"dbg_draw_actor_alive",		&dbg_net_Draw_Flags,	(1<<0));
@@ -1426,24 +1420,25 @@ void CCC_RegisterCommands()
 
 	*g_last_saved_game	= 0;
 
-	CMD4( CCC_Float,			"cam_height_speed",				&cam_HeightInterpolationSpeed,		4.0f, 16.0f );
-	CMD4( CCC_Float,			"cam_lookout_speed",			&cam_LookoutSpeed,					1.0f,  4.0f );
-
 	//взаимодействие с предметами
 	CMD3(CCC_Token,             "g_free_hands",					(u32*)&g_eFreeHands,  free_hands_token			);	//режимы "свободных рук"
 	CMD3(CCC_Mask,				"g_pickup_target_only",			&psActorFlags,	AF_PICKUP_TARGET_ONLY			);	//можно подобрать только те предметы на которые непосредственно смотрит прицел
+	CMD3(CCC_Mask,				"g_knife_to_cut_part",			&psActorFlags,	AF_KNIFE_TO_CUT_PART			);	//ніж потрібен для зрізання частин монстрів
 	//инвентарь
 	CMD3(CCC_Mask,				"g_quick_slot_from_belt",		&psActorFlags,	AF_QUICK_FROM_BELT				);	//наполнение быстрых слотов с пояса
 	CMD3(CCC_Mask,				"g_artefacts_from_all",			&psActorFlags,	AF_ARTEFACTS_FROM_ALL			);	//артефакты работают из всего инвентаря
 	CMD3(CCC_Mask,				"g_artefact_detector_check",	&psActorFlags,	AF_ARTEFACT_DETECTOR_CHECK		);	//свойства артефактов отображаются после проверки детектором
 	//оружие
+	CMD3(CCC_Mask,				"g_ammo_from_belt",				&psActorFlags,	AF_AMMO_FROM_BELT				);	//патрони та гранати з поясу
 	CMD3(CCC_Mask,				"g_no_auto_reload",				&psActorFlags,	AF_NO_AUTO_RELOAD				);	//запрет автоперезарядки оружия
 	CMD3(CCC_Mask,				"g_wpn_actions_reset_sprint",	&psActorFlags,	AF_WPN_ACTIONS_RESET_SPRINT		);	//перезарядка/смена типа патрона/бросок гранаты/болта/удар ножом сбрасывают спринт
-	//
-	CMD4(CCC_Float,				"missile_force_grow_speed",		&g_fForceGrowSpeed,					 1.0f, 50.0f); //скорость замаха гранатой/болтом
 	//параметры персонажа
 	CMD3(CCC_Mask,				"g_smooth_overweight",			&psActorFlags,	AF_SMOOTH_OVERWEIGHT			);	//плавный перегруз без обездвиживания
 	CMD3(CCC_Mask,				"g_survival_mode",				&psActorFlags,	AF_SURVIVAL						);	//взаимозависимость параметров здоровья ГГ
-	CMD3(CCC_Mask,				"g_pickup_target_only",			&psActorFlags,	AF_PICKUP_TARGET_ONLY			);	//можно подобрать только те предметы на которые непосредственно смотрит прицел
-	CMD3(CCC_Mask,				"g_knife_to_cut_part",			&psActorFlags,	AF_KNIFE_TO_CUT_PART			);	//ніж потрібен для зрізання частин монстрів
+	//керування
+	CMD3(CCC_Mask,				"g_hold_to_aim",				&psActorFlags,	AF_HOLD_TO_AIM					);	//утримувати клавішу для прицілювання
+	CMD3(CCC_Mask,				"g_mouse_wheel_switch_slot",	&psActorFlags,	AF_MOUSE_WHEEL_SWITCH_SLOTS		);	//перемикання слотів коліщатком миші
+	CMD4(CCC_Float,				"missile_force_grow_speed",		&g_fForceGrowSpeed,					1.0f, 50.0f	);	//скорость замаха гранатой/болтом
+	CMD4( CCC_Float,			"cam_height_speed",				&cam_HeightInterpolationSpeed,		4.0f, 16.0f	);	//швідкість підняття/опускання камери підчас присідання
+	CMD4( CCC_Float,			"cam_lookout_speed",			&cam_LookoutSpeed,					1.0f,  4.0f	);	//швідкість переміщення камери підчас визирання
 }

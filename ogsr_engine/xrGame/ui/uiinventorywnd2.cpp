@@ -596,10 +596,10 @@ void CUIInventoryWnd::ClearAllLists()
 	m_pUITorchList->ClearAll				(true);
 	m_pUIPdaList->ClearAll					(true);
 	//
-	m_pUIQuickList_0->ClearAll	(true);
-	m_pUIQuickList_1->ClearAll	(true);
-	m_pUIQuickList_2->ClearAll	(true);
-	m_pUIQuickList_3->ClearAll	(true);
+	m_pUIQuickList_0->ClearAll				(true);
+	m_pUIQuickList_1->ClearAll				(true);
+	m_pUIQuickList_2->ClearAll				(true);
+	m_pUIQuickList_3->ClearAll				(true);
 }
 
 

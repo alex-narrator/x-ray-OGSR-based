@@ -1764,58 +1764,6 @@ void CWeaponMagazined::net_Relcase(CObject *object)
 	m_binoc_vision->remove_links(object);
 }
 
-
-//bool CWeaponMagazined::ScopeRespawn( PIItem pIItem ) {
-//  std::string scope_respawn = "scope_respawn";
-//  if ( ScopeAttachable() && IsScopeAttached() ) {
-//    scope_respawn += "_";
-//    if ( smart_cast<CScope*>( pIItem ) )
-//      scope_respawn += pIItem->object().cNameSect().c_str();
-//    else
-//      scope_respawn += m_sScopeName.c_str();
-//  }
-//
-//  if ( pSettings->line_exist( cNameSect(), scope_respawn.c_str() ) ) {
-//    LPCSTR S = pSettings->r_string( cNameSect(), scope_respawn.c_str() );
-//    if ( xr_strcmp( cName().c_str(), S ) != 0 ) {
-//      CSE_Abstract* _abstract = Level().spawn_item( S, Position(), ai_location().level_vertex_id(), H_Parent()->ID(), true );
-//      CSE_ALifeDynamicObject* sobj1 = alife_object();
-//      CSE_ALifeDynamicObject* sobj2 = smart_cast<CSE_ALifeDynamicObject*>( _abstract );
-//
-//      NET_Packet P;
-//      P.w_begin( M_UPDATE );
-//      u32 position = P.w_tell();
-//      P.w_u16( 0 );
-//      sobj1->STATE_Write( P );
-//      u16 size = u16( P.w_tell() - position );
-//      P.w_seek( position, &size, sizeof( u16 ) );
-//      u16 id;
-//      P.r_begin( id );
-//      P.r_u16( size );
-//      sobj2->STATE_Read( P, size );
-//
-//      net_Export( _abstract );
-//
-//      auto io = smart_cast<CInventoryOwner*>( H_Parent() );
-//      auto ii = smart_cast<CInventoryItem*>( this );
-//	  if (io) {
-//		  if (io->inventory().InSlot(ii))
-//			  io->SetNextItemSlot(ii->GetSlot());
-//		  else
-//			  io->SetNextItemSlot(0);
-//	  }
-//
-//      DestroyObject();
-//      sobj2->Spawn_Write( P, TRUE );
-//      Level().Send( P, net_flags( TRUE ) );
-//      F_entity_Destroy( _abstract );
-//
-//      return true;
-//    }
-//  }
-//  return false;
-//}
-
 void CWeaponMagazined::UnloadAmmo(int unload_count, bool spawn_ammo, bool detach_magazine)
 {
 	if (detach_magazine && !unlimited_ammo())
@@ -2180,4 +2128,14 @@ bool CWeaponMagazined::IsScopeBroken()
 bool CWeaponMagazined::IsGrenadeLauncherBroken()
 {
 	return fis_zero(m_fAttachedGrenadeLauncherCondition) || IsGrenadeLauncherAttached() && !GrenadeLauncherAttachable() && fis_zero(GetCondition());
+}
+
+LPCSTR	CWeaponMagazined::GetCurrentMagazine_ShortName()
+{
+	if (!IsMagazineAttached()) return ("");
+	LPCSTR mag_short_name = pSettings->r_string(m_ammoTypes[m_LastLoadedMagType], "inv_name_short");
+	int chamber_ammo = HasChamber() ? 1 : 0;	//учтём дополнительный патрон в патроннике
+	if (iAmmoElapsed <= chamber_ammo)
+		mag_short_name = pSettings->r_string(GetMagazineEmptySect(), "inv_name_short");
+	return CStringTable().translate(mag_short_name).c_str();
 }

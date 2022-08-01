@@ -16,7 +16,8 @@ public:
 								CUIWpnParams			();
 	virtual						~CUIWpnParams			();
 
-	void 						InitFromXml				(CUIXml& xml_doc);
+	void 						Init					();
+	void 						Reinit					();
 	void 						SetInfo					(CInventoryItem* obj);
 	bool 						Check					(CInventoryItem* obj);
 
@@ -31,6 +32,5 @@ protected:
 	CUIStatic					m_textDamage;
 	CUIStatic					m_textRPM;
 	//
-	CUIStatic					m_textCurrentAmmo;
-	CUIStatic					m_textMagSizeFiremode;
+	CUIStatic					m_CapInfo; //метеринський статик листа інформації про зброю
 };

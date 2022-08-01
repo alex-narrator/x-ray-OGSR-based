@@ -1,0 +1,89 @@
+<?xml version='1.0' encoding="UTF-8"?>
+<w>
+    <wpn_params x="0" y="0" width="157" height="70">
+		<cap_accuracy x="0" y="8" width="91" height="8">
+			<text font="letterica16" r="124" g="119" b="115">ui_inv_accuracy</text>
+		</cap_accuracy>		
+		<cap_handling x="107" y="8" width="91" height="8">
+			<text font="letterica16" r="124" g="119" b="115">ui_inv_handling</text>
+		</cap_handling>
+		<cap_damage x="0" y="39" width="91" height="8">
+			<text font="letterica16" r="124" g="119" b="115">ui_inv_damage</text>
+		</cap_damage>
+		<cap_rpm x="107" y="39" width="91" height="8">
+			<text font="letterica16" r="124" g="119" b="115">ui_inv_rate_of_fire</text>
+		</cap_rpm>
+		
+		<progress_accuracy x="0" y="24" width="91" height="8" horz="1">
+			<progress>
+				<texture a="255" r="255" g="255" b="255">ui_buymenu_progBar</texture>
+			</progress>
+			<background>
+				<texture a="100" r="255" g="255" b="255">ui_buymenu_progBar</texture>
+			</background>
+		</progress_accuracy>		
+		<progress_handling x="107" y="24" width="91" height="8" horz="1">
+			<progress>
+				<texture a="255" r="255" g="255" b="255">ui_buymenu_progBar</texture>
+			</progress>
+			<background>
+				<texture a="100" r="255" g="255" b="255">ui_buymenu_progBar</texture>
+			</background>
+		</progress_handling>
+		<progress_damage x="0" y="55" width="91" height="8" horz="1">
+			<progress>
+				<texture a="255" r="255" g="255" b="255">ui_buymenu_progBar</texture>
+			</progress>
+			<background>
+				<texture a="100" r="255" g="255" b="255">ui_buymenu_progBar</texture>
+			</background>
+		</progress_damage>		
+		<progress_rpm x="107" y="55" width="91" height="8" horz="1">
+			<progress>
+				<texture a="255" r="255" g="255" b="255">ui_buymenu_progBar</texture>
+			</progress>
+			<background>
+				<texture a="100" r="255" g="255" b="255">ui_buymenu_progBar</texture>
+			</background>
+		</progress_rpm>
+		
+		<!-- головний статик динамічного переліку параметрів -->
+		<cap_info x="0" y="55" width="91" height="0">
+			<text font="letterica16" r="124" g="119" b="115"></text>
+		</cap_info>	
+		<!-- дочірні статики -->
+		<current_ammo_count x="0" y="5" width="91" height="8">
+			<text font="letterica16" r="124" g="119" b="115"></text>
+		</current_ammo_count>
+		<current_fire_mode x="0" y="5" width="91" height="8">
+			<text font="letterica16" r="124" g="119" b="115"></text>
+		</current_fire_mode>
+		<current_ammo_type x="0" y="5" width="91" height="8">
+			<text font="letterica16" r="124" g="119" b="115"></text>
+		</current_ammo_type>	
+		<current_mag_type x="0" y="5" width="91" height="8">
+			<text font="letterica16" r="124" g="119" b="115"></text>
+		</current_mag_type>		
+		
+		<cap_ammo x="0" y="5" width="91" height="8">
+			<text font="letterica16" r="124" g="119" b="115">st_compatible_ammo</text>
+		</cap_ammo>
+		<cap_magazine x="0" y="5" width="91" height="8">
+			<text font="letterica16" r="124" g="119" b="115">st_compatible_magazine</text>
+		</cap_magazine>		
+		<cap_scope x="0" y="5" width="91" height="8">
+			<text font="letterica16" r="124" g="119" b="115">st_compatible_scope</text>
+		</cap_scope>		
+		<cap_silencer x="0" y="5" width="91" height="8">
+			<text font="letterica16" r="124" g="119" b="115">st_compatible_silencer</text>
+		</cap_silencer>		
+		<cap_glauncher x="0" y="5" width="91" height="8">
+			<text font="letterica16" r="124" g="119" b="115">st_compatible_glauncher</text>
+		</cap_glauncher>
+		
+		<list_item x="0" y="0" width="91" height="16">
+			<text font="letterica16" r="124" g="119" b="115"></text>
+		</list_item>
+		
+	</wpn_params>
+</w>

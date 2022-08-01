@@ -251,6 +251,7 @@ public:
 	virtual bool	IsSingleReloading();
 	virtual bool	AmmoTypeIsMagazine(u32 type) const;
 	LPCSTR			GetMagazineEmptySect() const;
+	virtual LPCSTR	GetCurrentMagazine_ShortName();
 
 	//действие передёргивания затвора
 	virtual void	ShutterAction();

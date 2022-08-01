@@ -104,7 +104,7 @@ void CUIItemInfo::Init(LPCSTR xml_name){
 	if(uiXml.NavigateToNode("descr_list",0))
 	{
 		UIWpnParams						= xr_new<CUIWpnParams>();
-		UIWpnParams->InitFromXml(uiXml);
+		UIWpnParams->Init				();
 
 		UIArtefactParams				= xr_new<CUIArtefactParams>();
 		UIArtefactParams->InitFromXml	(uiXml);

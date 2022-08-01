@@ -179,7 +179,7 @@ void CActor::on_weapon_shot_start		(CWeapon *weapon)
 
 	if (pWM)
 	{
-		if (!use_recoil_compensation/*pWM->GetCurrentFireMode() != 1*/)
+		if (!use_recoil_compensation)
 		{
 			effector->SetActive(FALSE);
 			update_camera(effector);

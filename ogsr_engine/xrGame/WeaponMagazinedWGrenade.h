@@ -95,7 +95,7 @@ public:
 	IC int GetAmmoElapsed2() const { return int(m_magazine2.size()); }
 	virtual float Weight () const;		
 
-	virtual bool IsGrenadeMode() const { return m_bGrenadeMode; };
+	virtual bool	IsGrenadeMode() const { return m_bGrenadeMode; };
 	//получаем износ при выстреле из подствольника
 	virtual float	GetWeaponDeterioration();
 	//считаем что в режиме подствольника стрельба только одиночными

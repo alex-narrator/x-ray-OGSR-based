@@ -92,19 +92,6 @@
 		<text>Бартер [T]</text>
 	</string>
 	
-	<string id="st_current_ammo">
-		<text>Снаряженный боеприпас:</text>
-	</string>
-	<string id="st_not_loaded">
-		<text>[не заряжен]</text>
-	</string>
-	<string id="st_mag_size_fire_mode">
-		<text>Размер магазина, текущий режим огня:</text>
-	</string>
-	<string id="st_gl_mode">
-		<text>[гранатомёт]</text>
-	</string>
-	
 <!-- BEGIN Новые опции геймплея -->>
 	<string id="ui_mm_pickup_target_only">
 		<text>Подбор предметов непосредственно в прицеле</text>
@@ -416,5 +403,48 @@
 	</string>
 	<string id="st_load_ammo_type">
 		<text>зарядить</text>
+	</string>
+	
+	<string id="st_info">
+		<text>Состояние оружия:</text>
+	</string>
+	<string id="st_current_fire_mode">
+		<text>Режим огня:</text>
+	</string>
+	<string id="st_compatible">
+		<text>Боепитание и обвесы:</text>
+	</string>
+	<string id="st_compatible_ammo">
+		<text>патроны:</text>
+	</string>
+	<string id="st_compatible_magazine">
+		<text>боепитание:</text>
+	</string>
+	<string id="st_compatible_scope">
+		<text>прицелы:</text>
+	</string>
+	<string id="st_compatible_silencer">
+		<text>глушители:</text>
+	</string>
+	<string id="st_compatible_glauncher">
+		<text>подствольники:</text>
+	</string>
+	<string id="st_current_ammo_count">
+		<text>Заряжено:</text>
+	</string>
+	<string id="st_current_fire_mode">
+		<text>Режим огня:</text>
+	</string>
+	<string id="st_current_ammo_type">
+		<text>Боеприпас:</text>
+	</string>
+	<string id="st_current_mag_type">
+		<text>Магазин:</text>
+	</string>
+	<string id="st_not_loaded">
+		<text>[не заряжен]</text>
+	</string>
+	<string id="st_gl_mode">
+		<text>[гранатомёт]</text>
 	</string>
 </string_table>

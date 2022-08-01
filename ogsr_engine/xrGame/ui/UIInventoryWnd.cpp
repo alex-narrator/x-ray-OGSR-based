@@ -618,12 +618,17 @@ void CUIInventoryWnd::UpdateCustomDraw()
 	/*m_pUIBeltList->SetCellsAvailable(belt_width);*/
 	m_pUIBeltList->SetCellsCapacity({ (int)belt_width, 1 });
 
-	if (inv.IsSlotDisabled(HELMET_SLOT)) {
-		/*m_pUIHelmetList->SetCellsAvailable(0);*/
-		m_pUIHelmetList->SetCellsCapacity({ 0, 0 });
-	}else{
-		/*m_pUIHelmetList->SetCellsAvailable(m_pUIHelmetList->CellsCapacity().x * m_pUIHelmetList->CellsCapacity().y);*/
-		m_pUIHelmetList->ResetCellsCapacity();
+	for (u8 i = 0; i < SLOTS_TOTAL; ++i) {
+		auto list = GetSlotList(i);
+		if (!list) 
+			continue;
+		if (inv.IsSlotDisabled(i)) {
+			/*list->SetCellsAvailable(0);*/
+			list->SetCellsCapacity({ 0, 0 });
+		}else{
+			/*list->SetCellsAvailable(list->CellsCapacity().x * list->CellsCapacity().y);*/
+			list->ResetCellsCapacity();
+		}
 	}
 
 	InitInventory_delayed();

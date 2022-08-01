@@ -17,11 +17,11 @@ void CUIArtefactPanel::InitIcons(const TIItemContainer& items)
 	m_si.SetShader(InventoryUtilities::GetEquipmentIconsShader());
 	m_vRects.clear_and_free();
 	
-	for(const auto& art : items)
+	for(const auto& _itm : items)
 	{
-		const auto item = smart_cast<CInventoryItem*>(art);
-		if (item) {
-			m_vRects.push_back( &(item->m_icon_params ) );
+		const auto iitem = smart_cast<CInventoryItem*>(_itm);
+		if (iitem) {
+			m_vRects.push_back( &(iitem->m_icon_params ) );
 		}
 	}
 }
