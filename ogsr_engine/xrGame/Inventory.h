@@ -174,7 +174,7 @@ protected:
 
 	// Максимальное кол-во объектов
 	//на поясе
-//	u32					m_iMaxBelt;	
+	u32					m_iMaxBelt;	
 	// Максимальное расстояние на котором можно подобрать объект
 	float				 m_fTakeDist;
 
@@ -200,7 +200,7 @@ public:
 	//размещение патронов на поясе при разрядке оружия в руках
 	void					TryAmmoCustomPlacement(CInventoryItem* pIItem);
 
-	u32						BeltWidth	() const;
+	u32						BeltSize	() const;
 
 	void					DropBeltToRuck	();
 	void					DropSlotsToRuck	(u32 min_slot, u32 max_slot = NO_ACTIVE_SLOT);

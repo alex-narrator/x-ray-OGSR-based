@@ -127,28 +127,16 @@ void CUIWpnParams::SetInfo(CInventoryItem* obj)
 
 	float _h = list_item_h;
 
-	//кількість споряджених боєприпасів/обсяг магазину
-	auto current_ammo_count_static = xr_new<CUIStatic>(); current_ammo_count_static->SetAutoDelete(true);
-	CUIXmlInit::InitStatic(uiXml, "wpn_params:current_ammo_count", 0, current_ammo_count_static);
-	pos_top = current_ammo_count_static->GetPosTop();
-	current_ammo_count_static->SetWndPos(current_ammo_count_static->GetPosLeft(), _h + pos_top);
-	sprintf_s(temp_text, " %d/%d", pWeapon->GetAmmoElapsed(), pWeapon->GetAmmoMagSize());
+	//кількість споряджених боєприпасів/обсяг магазину/режим вогню
+	auto current_ammo_count_firemode_static = xr_new<CUIStatic>(); current_ammo_count_firemode_static->SetAutoDelete(true);
+	CUIXmlInit::InitStatic(uiXml, "wpn_params:current_ammo_count_firemode", 0, current_ammo_count_firemode_static);
+	pos_top = current_ammo_count_firemode_static->GetPosTop();
+	current_ammo_count_firemode_static->SetWndPos(current_ammo_count_firemode_static->GetPosLeft(), _h + pos_top);
+	sprintf_s(temp_text, " %d/%d%s", pWeapon->GetAmmoElapsed(), pWeapon->GetAmmoMagSize(), pWeaponMag->HasFireModes() ? pWeaponMag->GetCurrentFireModeStr() : "");
 	strconcat(sizeof(text_to_show), text_to_show, CStringTable().translate("st_current_ammo_count").c_str(), temp_text);
-	current_ammo_count_static->SetText(text_to_show);
-	m_CapInfo.AttachChild(current_ammo_count_static);
+	current_ammo_count_firemode_static->SetText(text_to_show);
+	m_CapInfo.AttachChild(current_ammo_count_firemode_static);
 	_h += list_item_h + pos_top;
-	//режими вогню
-	if (pWeaponMag->HasFireModes()) {
-		auto current_fire_mode_static = xr_new<CUIStatic>(); current_fire_mode_static->SetAutoDelete(true);
-		CUIXmlInit::InitStatic(uiXml, "wpn_params:current_fire_mode", 0, current_fire_mode_static);
-		pos_top = current_fire_mode_static->GetPosTop();
-		current_fire_mode_static->SetWndPos(current_fire_mode_static->GetPosLeft(), _h + pos_top);
-		sprintf_s(temp_text, "%s", pWeaponMag->GetCurrentFireModeStr());
-		strconcat(sizeof(text_to_show), text_to_show, CStringTable().translate("st_current_fire_mode").c_str(), temp_text);
-		current_fire_mode_static->SetText(text_to_show);
-		m_CapInfo.AttachChild(current_fire_mode_static);
-		_h += list_item_h + pos_top;
-	}
 	//тип спорядженого боєприпасу
 	if (pWeapon->GetAmmoElapsed()) {
 		auto current_ammo_type_static = xr_new<CUIStatic>(); current_ammo_type_static->SetAutoDelete(true);

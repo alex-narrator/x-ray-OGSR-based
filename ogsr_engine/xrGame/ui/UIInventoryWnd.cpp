@@ -613,10 +613,10 @@ void CUIInventoryWnd::UpdateCustomDraw()
 		return;
 
 	auto& inv = Actor()->inventory();
-	u32 belt_width = inv.BeltWidth();
+	u32 belt_size = inv.BeltSize();
 
-	/*m_pUIBeltList->SetCellsAvailable(belt_width);*/
-	m_pUIBeltList->SetCellsCapacity({ (int)belt_width, 1 });
+	m_pUIBeltList->SetCellsAvailable(belt_size);
+	/*m_pUIBeltList->SetCellsCapacity({ (int)belt_size, 1 });*/
 
 	for (u8 i = 0; i < SLOTS_TOTAL; ++i) {
 		auto list = GetSlotList(i);
@@ -624,7 +624,7 @@ void CUIInventoryWnd::UpdateCustomDraw()
 			continue;
 		if (inv.IsSlotDisabled(i)) {
 			/*list->SetCellsAvailable(0);*/
-			list->SetCellsCapacity({ 0, 0 });
+			list->SetCellsCapacity({});
 		}else{
 			/*list->SetCellsAvailable(list->CellsCapacity().x * list->CellsCapacity().y);*/
 			list->ResetCellsCapacity();

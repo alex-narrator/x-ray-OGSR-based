@@ -39,7 +39,7 @@ CInventorySlot::CInventorySlot()
 	m_bVisible				= true;
 	m_bPersistent			= false;
 	m_blockCounter			= 0;
-	m_maySwitchFast	= false;
+	m_maySwitchFast			= false;
 }
 
 CInventorySlot::~CInventorySlot() 
@@ -68,7 +68,7 @@ CInventory::CInventory()
 {
 	m_fTakeDist									= pSettings->r_float	("inventory","take_dist");
 	m_fMaxWeight								= pSettings->r_float	("inventory","max_weight");
-//	m_iMaxBelt									= pSettings->r_u32		("inventory","max_belt");
+	m_iMaxBelt									= pSettings->r_u32		("inventory","max_belt");
 	
 	m_slots.resize								(SLOTS_TOTAL);
 	
@@ -1041,9 +1041,9 @@ bool CInventory::CanPutInBelt(PIItem pIItem)
 	if(InBelt(pIItem))					return false;
 	if(!m_bBeltUseful)					return false;
 	if(!pIItem || !pIItem->Belt())		return false;
-	if(m_belt.size() >= BeltWidth())	return false;
+	if(m_belt.size() >= BeltSize())		return false;
 
-	return FreeRoom_inBelt(m_belt, pIItem, BeltWidth(), 1);
+	return FreeRoom_inBelt(m_belt, pIItem, BeltSize(), 1);
 }
 //проверяет можем ли поместить вещь в рюкзак,
 //при этом реально ничего не меняется
@@ -1438,12 +1438,17 @@ void CInventory::TryAmmoCustomPlacement(CInventoryItem* pIItem)
 	pWeapon->SetAmmoWasSpawned(false);	//сбрасываем флажок спавна патронов
 }
 
-u32  CInventory::BeltWidth() const
+u32  CInventory::BeltSize() const
 {
-	CActor* pActor = smart_cast<CActor*>(m_pOwner);
+	auto pActor = smart_cast<CActor*>(m_pOwner);
 	if (pActor){
 		auto warbelt = pActor->GetWarbelt();
-		if (warbelt) return warbelt->GetBeltWidth();
+		if(warbelt){
+			return warbelt->GetMaxBelt();
+		}
+		else if(!pActor->IsAllItemsLoaded()){
+			return m_iMaxBelt;
+		}
 	}
 	return 0; //m_iMaxBeltWidth;
 }
@@ -1471,12 +1476,14 @@ void CInventory::DropSlotsToRuck(u32 min_slot, u32 max_slot) {
 
 bool CInventory::IsSlotDisabled(u32 slot) const
 {
-	if (!smart_cast<CActor*>(m_pOwner)) return false;
+	auto pActor = smart_cast<CActor*>(m_pOwner);
+	if (!pActor/* || !pActor->IsAllItemsLoaded()*/) 
+		return false;
 
 	switch (slot)
 	{
 	case  HELMET_SLOT:
-		auto outfit = m_pOwner->GetOutfit();
+		auto outfit = pActor->GetOutfit();
 		if(outfit && !outfit->m_bIsHelmetAllowed)
 			return true;
 	}

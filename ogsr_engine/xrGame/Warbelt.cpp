@@ -7,7 +7,7 @@
 
 CWarbelt::CWarbelt()
 {
-	m_iMaxBeltWidth		= 0;
+	m_iMaxBelt			= 0;
 	m_bDropPouch		= false;
 }
 
@@ -20,8 +20,8 @@ void CWarbelt::Load(LPCSTR section)
 {
 	inherited::Load(section);
 
-	m_iMaxBeltWidth		= READ_IF_EXISTS(pSettings, r_u32, section, "max_belt_width", 0);
-	m_bDropPouch		= READ_IF_EXISTS(pSettings, r_bool, section, "drop_pouch", false);
+	m_iMaxBelt			= READ_IF_EXISTS(pSettings, r_u32,	section, "max_belt",	0);
+	m_bDropPouch		= READ_IF_EXISTS(pSettings, r_bool, section, "drop_pouch",	false);
 }
 
 void CWarbelt::OnMoveToSlot(EItemPlace previous_place){
