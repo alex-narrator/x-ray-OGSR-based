@@ -405,20 +405,11 @@
 		<text>зарядить</text>
 	</string>
 	
-	<string id="st_info">
-		<text>Состояние оружия:</text>
-	</string>
-	<string id="st_current_fire_mode">
-		<text>Режим огня:</text>
-	</string>
-	<string id="st_compatible">
-		<text>Боепитание и обвесы:</text>
-	</string>
 	<string id="st_compatible_ammo">
 		<text>патроны:</text>
 	</string>
 	<string id="st_compatible_magazine">
-		<text>боепитание:</text>
+		<text>магазины:</text>
 	</string>
 	<string id="st_compatible_scope">
 		<text>прицелы:</text>
@@ -432,9 +423,6 @@
 	<string id="st_current_ammo_count">
 		<text>Заряжено:</text>
 	</string>
-	<string id="st_current_fire_mode">
-		<text>Режим огня:</text>
-	</string>
 	<string id="st_current_ammo_type">
 		<text>Боеприпас:</text>
 	</string>
@@ -444,7 +432,31 @@
 	<string id="st_not_loaded">
 		<text>[не заряжен]</text>
 	</string>
-	<string id="st_gl_mode">
-		<text>[гранатомёт]</text>
+	<string id="st_current_scope">
+		<text>Прицел:</text>
+	</string>
+	<string id="st_inbuild_helmet">
+		<text>Встроеный шлем:</text>
+	</string>
+	<string id="st_belt_cells_available">
+		<text>Вместимость пояса:</text>
+	</string>
+	<string id="st_has_drop_pouch">
+		<text>Сбросник:</text>
+	</string>
+	<string id="st_scope_zoom">
+		<text>Кратность:</text>
+	</string>
+	<string id="st_scope_night_vision">
+		<text>Ночное видение:</text>
+	</string>
+	<string id="st_scope_vision_present">
+		<text>Захват цели:</text>
+	</string>
+		<string id="st_yes">
+		<text>да</text>
+	</string>
+		<string id="st_no">
+		<text>нет</text>
 	</string>
 </string_table>

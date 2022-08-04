@@ -274,6 +274,9 @@ public:
 
 	virtual	void	Hit(SHit* pHDS);
 	virtual bool	IsHitToAddon(SHit* pHDS);
+
+	virtual bool	IsNightVisionEnabled	()const { return m_bNightVisionEnabled; };
+	virtual bool	IsVisionPresent			() const { return m_bVision; };
 protected:
 	bool			m_bNightVisionEnabled;
 	bool			m_bNightVisionSwitchedOn;

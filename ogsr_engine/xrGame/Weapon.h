@@ -318,6 +318,10 @@ public:
 	virtual u32				Cost				() const;
 	virtual float			GetControlInertionFactor() const;
 
+	virtual bool			IsScopeDynamicZoom		() const { return m_bScopeDynamicZoom; };
+	virtual float			GetScopeZoomFactor		() const { return m_fScopeZoomFactor; };
+	virtual float			GetMinScopeZoomFactor	() const { return m_fMinScopeZoomFactor; };
+
 public:
 	IC		LPCSTR			strap_bone0			() const {return m_strap_bone0;}
 	IC		LPCSTR			strap_bone1			() const {return m_strap_bone1;}

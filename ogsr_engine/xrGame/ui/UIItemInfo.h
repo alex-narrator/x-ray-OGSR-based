@@ -8,6 +8,7 @@ class CUIScrollView;
 class CUIProgressBar;
 class CUIWpnParams;
 class CUIArtefactParams;
+class CUIEquipParams;
 
 //extern const char * const 		fieldsCaptionColor;
 
@@ -32,6 +33,7 @@ public:
 
 	void				TryAddWpnInfo		(CInventoryItem* obj);
 	void				TryAddArtefactInfo	(CInventoryItem* obj);
+	void				TryAddEquipInfo		(CInventoryItem* obj);
 	void				TryAddCustomInfo	(CInventoryItem* obj);
 
 	virtual void		Draw				();
@@ -46,6 +48,7 @@ public:
 	CUIProgressBar*		UICondProgresBar;
 	CUIWpnParams*		UIWpnParams;
 	CUIArtefactParams*	UIArtefactParams;
+	CUIEquipParams*		UIEquipParams;
 
 	Fvector2			UIItemImageSize; 
 	CUIStatic*			UIItemImage;

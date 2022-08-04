@@ -1,0 +1,39 @@
+<?xml version='1.0' encoding="UTF-8"?>
+<w>
+    <equip_params x="0" y="0" width="157" height="0">
+		<!-- головний статик динамічного переліку параметрів -->
+		<cap_info x="0" y="0" width="91" height="0">
+			<text font="letterica16" r="124" g="119" b="115"></text>
+		</cap_info>	
+		<!-- дочірні статики -->
+		<outfit_helmet_inbuild x="0" y="0" width="91" height="8">
+			<text font="letterica16" r="124" g="119" b="115"></text>
+		</outfit_helmet_inbuild>
+		
+		<warbelt_cells x="0" y="0" width="91" height="8">
+			<text font="letterica16" r="124" g="119" b="115"></text>
+		</warbelt_cells>
+		<warbelt_drop_pouch x="0" y="0" width="91" height="8">
+			<text font="letterica16" r="124" g="119" b="115"></text>
+		</warbelt_drop_pouch>
+		
+		<scope_zoom x="0" y="0" width="91" height="8">
+			<text font="letterica16" r="124" g="119" b="115"></text>
+		</scope_zoom>
+		<scope_night_vision x="0" y="0" width="91" height="8">
+			<text font="letterica16" r="124" g="119" b="115"></text>
+		</scope_night_vision>
+		<scope_vision_present x="0" y="0" width="91" height="8">
+			<text font="letterica16" r="124" g="119" b="115"></text>
+		</scope_vision_present>
+		
+		<cap_ammo x="0" y="0" width="91" height="8">
+			<text font="letterica16" r="124" g="119" b="115">st_compatible_ammo</text>
+		</cap_ammo>
+		
+		<list_item x="0" y="0" width="91" height="16">
+			<text font="letterica16" r="124" g="119" b="115"></text>
+		</list_item>
+		
+	</equip_params>
+</w>

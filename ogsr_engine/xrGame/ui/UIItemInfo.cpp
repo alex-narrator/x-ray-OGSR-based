@@ -14,6 +14,7 @@
 #include "../PhysicsShellHolder.h"
 #include "UIWpnParams.h"
 #include "ui_af_params.h"
+#include "UIEquipParams.h"
 
 CUIItemInfo::CUIItemInfo()
 {
@@ -27,6 +28,7 @@ CUIItemInfo::CUIItemInfo()
 	UIDesc						= nullptr;
 	UIWpnParams					= nullptr;
 	UIArtefactParams			= nullptr;
+	UIEquipParams				= nullptr;
 	UIName						= nullptr;
 	m_pInvItem					= nullptr;
 	m_b_force_drawing			= false;
@@ -36,6 +38,7 @@ CUIItemInfo::~CUIItemInfo()
 {
 	xr_delete					(UIWpnParams);
 	xr_delete					(UIArtefactParams);
+	xr_delete					(UIEquipParams);
 }
 
 void CUIItemInfo::Init(LPCSTR xml_name){
@@ -108,6 +111,9 @@ void CUIItemInfo::Init(LPCSTR xml_name){
 
 		UIArtefactParams				= xr_new<CUIArtefactParams>();
 		UIArtefactParams->InitFromXml	(uiXml);
+
+		UIEquipParams					= xr_new<CUIEquipParams>();
+		UIEquipParams->Init				();
 		
 		UIDesc							= xr_new<CUIScrollView>(); 
 		AttachChild						(UIDesc);		
@@ -179,6 +185,7 @@ void CUIItemInfo::InitItem(CInventoryItem* pInvItem)
 		VERIFY(0 == UIDesc->GetSize());
 		TryAddWpnInfo		(pInvItem);
 		TryAddArtefactInfo	(pInvItem);
+		TryAddEquipInfo		(pInvItem);
 		TryAddCustomInfo	(pInvItem);
 		if(m_desc_info.bShowDescrText)
 		{
@@ -213,8 +220,7 @@ void CUIItemInfo::InitItem(CInventoryItem* pInvItem)
 
 void CUIItemInfo::TryAddWpnInfo (CInventoryItem* obj)
 {
-	if (UIWpnParams->Check(obj))
-	{
+	if (UIWpnParams->Check(obj)){
 		UIWpnParams->SetInfo(obj);
 		UIDesc->AddWindow(UIWpnParams,false);
 	}
@@ -224,6 +230,14 @@ void CUIItemInfo::TryAddArtefactInfo(CInventoryItem* obj)
 {
 	UIArtefactParams->SetInfo(obj);
 	UIDesc->AddWindow(UIArtefactParams, false);
+}
+
+void CUIItemInfo::TryAddEquipInfo(CInventoryItem* obj)
+{
+	if (UIEquipParams->Check(obj)) {
+		UIEquipParams->SetInfo(obj);
+		UIDesc->AddWindow(UIEquipParams, false);
+	}
 }
 
 #include "script_game_object.h"
@@ -250,16 +264,14 @@ void CUIItemInfo::Update()
 {
 	if (!m_pInvItem || m_pInvItem->GetDropManual()) return;
 
-	if (UICondProgresBar)
-	{
+	if (UICondProgresBar){
 		float cond = m_pInvItem->GetConditionToShow();
 		if (!UICondProgresBar->IsShown())
 			UICondProgresBar->Show(true);
 		UICondProgresBar->SetProgressPos(cond * 100.0f + 1.0f - EPS);
 	}
 
-	if (UIArtefactParams)
-	{
+	if (UIArtefactParams){
 		UIArtefactParams->SetInfo(m_pInvItem);
 	}
 

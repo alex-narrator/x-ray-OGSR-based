@@ -1323,9 +1323,9 @@ void CWeaponMagazined::LoadZoomParams(LPCSTR section)
 
 	if (!IsScopeAttached() || IsScopeBroken())
 	{
-		m_bScopeDynamicZoom = false;
-		m_bVision = false;
-		m_bNightVisionEnabled = false;
+		m_bScopeDynamicZoom		= false;
+		m_bVision				= false;
+		m_bNightVisionEnabled	= false;
 
 		if (IsScopeBroken())
 		{
@@ -1385,8 +1385,8 @@ void CWeaponMagazined::LoadZoomParams(LPCSTR section)
 	m_bScopeDynamicZoom = !!READ_IF_EXISTS(pSettings, r_bool, section, "scope_dynamic_zoom", false);
 	if (m_bScopeDynamicZoom)
 	{
-		m_fMinScopeZoomFactor = READ_IF_EXISTS(pSettings, r_float, section, "min_scope_zoom_factor", m_fScopeZoomFactor / 3);
-		m_uZoomStepCount = READ_IF_EXISTS(pSettings, r_u32, section, "zoom_step_count", 3);
+		m_uZoomStepCount		= READ_IF_EXISTS(pSettings, r_u32, section, "zoom_step_count", 3);
+		m_fMinScopeZoomFactor	= READ_IF_EXISTS(pSettings, r_float, section, "min_scope_zoom_factor", m_fScopeZoomFactor / m_uZoomStepCount);
 
 		HUD_SOUND::StopSound(sndZoomChange);
 		HUD_SOUND::DestroySound(sndZoomChange);

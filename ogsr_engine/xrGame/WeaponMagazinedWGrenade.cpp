@@ -223,7 +223,7 @@ bool CWeaponMagazinedWGrenade::SwitchMode()
 	SetPending(TRUE);
 
 	PerformSwitchGL			();
-	StateSwitchCallback( GameObject::eOnActorWeaponSwitchGL, GameObject::eOnNPCWeaponSwitchGL );
+	StateSwitchCallback		( GameObject::eOnActorWeaponSwitchGL, GameObject::eOnNPCWeaponSwitchGL );
 	
 	PlaySound				(sndSwitch,get_LastFP());
 
@@ -236,9 +236,11 @@ bool CWeaponMagazinedWGrenade::SwitchMode()
 
 void  CWeaponMagazinedWGrenade::PerformSwitchGL()
 {
+	if (IsZoomed())		OnZoomOut();
+
 	m_bGrenadeMode		= !m_bGrenadeMode;
 
-	m_fZoomFactor = this->CurrentZoomFactor();
+	m_fZoomFactor		= CurrentZoomFactor();
 
 	iMagazineSize		= m_bGrenadeMode?1:iMagazineSize2;
 
@@ -248,7 +250,7 @@ void  CWeaponMagazinedWGrenade::PerformSwitchGL()
 	
 	swap				(m_DefaultCartridge, m_DefaultCartridge2);
 
-	m_magazine.swap(m_magazine2); // https://github.com/revolucas/CoC-Xray/pull/5/commits/4a396eb30137c5625c5b0dd934e63eaa5b62cbc5
+	m_magazine.swap		(m_magazine2); // https://github.com/revolucas/CoC-Xray/pull/5/commits/4a396eb30137c5625c5b0dd934e63eaa5b62cbc5
 
 	iAmmoElapsed  = (int)m_magazine.size();
 	iAmmoElapsed2 = (int)m_magazine2.size();

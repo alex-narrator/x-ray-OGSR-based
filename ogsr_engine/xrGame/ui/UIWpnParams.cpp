@@ -161,6 +161,51 @@ void CUIWpnParams::SetInfo(CInventoryItem* obj)
 		m_CapInfo.AttachChild(current_mag_type_static);
 		_h += list_item_h + pos_top;
 	}
+	//поточний приціл
+	if (pWeapon->IsScopeAttached()) {
+		//поточний приціл - заголовок
+		auto cap_current_scope_static = xr_new<CUIStatic>(); cap_current_scope_static->SetAutoDelete(true);
+		CUIXmlInit::InitStatic(uiXml, "wpn_params:cap_current_scope", 0, cap_current_scope_static);
+		pos_top = cap_current_scope_static->GetPosTop();
+		cap_current_scope_static->SetWndPos(cap_current_scope_static->GetPosLeft(), _h + pos_top);
+		m_CapInfo.AttachChild(cap_current_scope_static);
+		_h += list_item_h + pos_top;
+		//поточний приціл - параметри
+		//зум
+		auto scope_zoom_static = xr_new<CUIStatic>();
+		CUIXmlInit::InitStatic(uiXml, "wpn_params:list_item", 0, scope_zoom_static);
+		scope_zoom_static->SetAutoDelete(true);
+		scope_zoom_static->SetWndPos(scope_zoom_static->GetPosLeft(), _h);
+		if (pWeapon->IsScopeDynamicZoom()) {
+			sprintf_s(temp_text, " %.1f-%.1fx", pWeapon->GetMinScopeZoomFactor(), pWeapon->GetScopeZoomFactor());
+		}
+		else
+			sprintf_s(temp_text, " %.1fx", pWeapon->GetScopeZoomFactor());
+		strconcat(sizeof(text_to_show), text_to_show, marker_, CStringTable().translate("st_scope_zoom").c_str(), temp_text);
+		scope_zoom_static->SetText(text_to_show);
+		m_CapInfo.AttachChild(scope_zoom_static);
+		_h += list_item_h;
+		//нічне бачення
+		auto scope_night_vision_static = xr_new<CUIStatic>();
+		CUIXmlInit::InitStatic(uiXml, "wpn_params:list_item", 0, scope_night_vision_static);
+		scope_night_vision_static->SetAutoDelete(true);
+		scope_night_vision_static->SetWndPos(scope_night_vision_static->GetPosLeft(), _h);
+		sprintf_s(temp_text, " %s", pWeaponMag->IsNightVisionEnabled() ? CStringTable().translate("st_yes").c_str() : CStringTable().translate("st_no").c_str());
+		strconcat(sizeof(text_to_show), text_to_show, marker_, CStringTable().translate("st_scope_night_vision").c_str(), temp_text);
+		scope_night_vision_static->SetText(text_to_show);
+		m_CapInfo.AttachChild(scope_night_vision_static);
+		_h += list_item_h;
+		//автозахоплення цілей
+		auto scope_vision_present_static = xr_new<CUIStatic>();
+		CUIXmlInit::InitStatic(uiXml, "wpn_params:list_item", 0, scope_vision_present_static);
+		scope_vision_present_static->SetAutoDelete(true);
+		scope_vision_present_static->SetWndPos(scope_vision_present_static->GetPosLeft(), _h);
+		sprintf_s(temp_text, " %s", pWeaponMag->IsVisionPresent() ? CStringTable().translate("st_yes").c_str() : CStringTable().translate("st_no").c_str());
+		strconcat(sizeof(text_to_show), text_to_show, marker_, CStringTable().translate("st_scope_vision_present").c_str(), temp_text);
+		scope_vision_present_static->SetText(text_to_show);
+		m_CapInfo.AttachChild(scope_vision_present_static);
+		_h += list_item_h;
+	}
 	//сумісні набої - заголовок
 	auto cap_ammo_static = xr_new<CUIStatic>(); cap_ammo_static->SetAutoDelete(true);
 	CUIXmlInit::InitStatic(uiXml, "wpn_params:cap_ammo", 0, cap_ammo_static);
