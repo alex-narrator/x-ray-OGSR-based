@@ -1,0 +1,54 @@
+<?xml version='1.0' encoding="UTF-8"?>
+<w>
+    <eatable_params x="0" y="0" width="194" height="1">
+		<static_portions_count width="194" height="20" complex_mode="1">
+			<texture>ui_inv_icon_health_restore_speed</texture>
+			<text font="letterica16" x="20" y="0"/>
+		</static_portions_count>		
+		
+		<static_eat_health width="194" height="20" complex_mode="1">
+			<texture>ui_inv_icon_health_restore_speed</texture>
+			<text font="letterica16" x="20" y="0"/>
+		</static_eat_health>
+		
+		<static_eat_power width="194" height="20" complex_mode="1">
+			<texture>ui_inv_icon_health_restore_speed</texture>
+			<text font="letterica16" x="20" y="0"/>
+		</static_eat_power>
+		
+		<static_eat_max_power width="194" height="20" complex_mode="1">
+			<texture>ui_inv_icon_health_restore_speed</texture>
+			<text font="letterica16" x="20" y="0"/>
+		</static_eat_max_power>
+		
+		<static_eat_satiety width="194" height="20" complex_mode="1">
+			<texture>ui_inv_icon_health_restore_speed</texture>
+			<text font="letterica16" x="20" y="0"/>
+		</static_eat_satiety>
+		
+		<static_eat_radiation width="194" height="20" complex_mode="1">
+			<texture>ui_inv_icon_health_restore_speed</texture>
+			<text font="letterica16" x="20" y="0"/>
+		</static_eat_radiation>
+		
+		<static_eat_psyhealth width="194" height="20" complex_mode="1">
+			<texture>ui_inv_icon_health_restore_speed</texture>
+			<text font="letterica16" x="20" y="0"/>
+		</static_eat_psyhealth>
+		
+		<static_eat_alcohol width="194" height="20" complex_mode="1">
+			<texture>ui_inv_icon_health_restore_speed</texture>
+			<text font="letterica16" x="20" y="0"/>
+		</static_eat_alcohol>
+		
+		<static_eat_thirst width="194" height="20" complex_mode="1">
+			<texture>ui_inv_icon_health_restore_speed</texture>
+			<text font="letterica16" x="20" y="0"/>
+		</static_eat_thirst>
+		
+		<static_wounds_heal_perc width="194" height="20" complex_mode="1">
+			<texture>ui_inv_icon_health_restore_speed</texture>
+			<text font="letterica16" x="20" y="0"/>
+		</static_wounds_heal_perc>
+	</eatable_params>
+</w>

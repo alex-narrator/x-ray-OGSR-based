@@ -11,6 +11,8 @@
 #include "../Actor.h"
 #include "../ActorCondition.h"
 
+constexpr auto AF_PARAMS = "af_params.xml";
+
 CUIArtefactParams::CUIArtefactParams()
 {
 	Memory.mem_fill			(m_info_items, 0, sizeof(m_info_items));
@@ -79,24 +81,27 @@ LPCSTR af_item_param_names[] = {
 	"ui_inv_outfit_fire_wound_protection",		// "(fire_wound_imm)",
 };
 
-void CUIArtefactParams::InitFromXml(CUIXml& xml_doc)
+void CUIArtefactParams::Init()
 {
+	CUIXml uiXml;
+	uiXml.Init(CONFIG_PATH, UI_PATH, AF_PARAMS);
+
 	LPCSTR _base				= "af_params";
-	if (!xml_doc.NavigateToNode(_base, 0))	return;
+	if (!uiXml.NavigateToNode(_base, 0))	return;
 
 	string256					_buff;
-	CUIXmlInit::InitWindow		(xml_doc, _base, 0, this);
+	CUIXmlInit::InitWindow		(uiXml, _base, 0, this);
 
 	for(u32 i=_item_start; i<_max_item_index; ++i)
 	{
 		strconcat				(sizeof(_buff),_buff, _base, ":static_", af_item_sect_names[i]);
 
-		if (xml_doc.NavigateToNode(_buff, 0)) 
+		if (uiXml.NavigateToNode(_buff, 0))
 		{
 			m_info_items[i] = xr_new<CUIStatic>();
 			CUIStatic* _s = m_info_items[i];
 			_s->SetAutoDelete(false);
-			CUIXmlInit::InitStatic(xml_doc, _buff, 0, _s);
+			CUIXmlInit::InitStatic(uiXml, _buff, 0, _s);
 		}
 	}
 }

@@ -27,6 +27,7 @@ void CUIInventoryWnd::EatItem(PIItem itm)
 	SendEvent_Item_Eat						(itm);
 
 	PlaySnd									(eInvItemUse);
+	InitInventory_delayed					();
 }
 
 void CUIInventoryWnd::ActivatePropertiesBox()

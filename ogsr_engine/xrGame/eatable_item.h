@@ -36,9 +36,9 @@ protected:
 	//влияние при поедании вещи на параметры игрока
 	float					m_fHealthInfluence{};
 	float					m_fPowerInfluence{};
+	float					m_fMaxPowerUpInfluence{};
 	float					m_fSatietyInfluence{};
 	float					m_fRadiationInfluence{};
-	float					m_fMaxPowerUpInfluence{};
 	float					m_fPsyHealthInfluence;
 	float					m_fThirstInfluence{};
 	float					m_fAlcoholInfluence{};
@@ -54,11 +54,24 @@ protected:
 	//яка доля власної радіоактивності предмета буде передана гравцеві при вживанні
 	float					m_fSelfRadiationInfluence{};
 
-	int						GetStartPortionsNum	() const { return m_iStartPortionsNum; };  // <--- // Не используется, но может пригодится. //
 	float					GetOnePortionWeight	();
 	float					GetOnePortionVolume	();
 	u32						GetOnePortionCost	();
 
 	LPCSTR					m_sUseMenuTip;
+
+public:
+	int						GetStartPortionsNum	() const { return m_iStartPortionsNum; };
+	int						GetPortionsNum		() const { return m_iPortionsNum; };
+
+	float					GetHealthInfluence		();
+	float					GetPowerInfluence		();
+	float					GetMaxPowerUpInfluence	();
+	float					GetSatietyInfluence		();
+	float					GetRadiationInfluence	();
+	float					GetPsyHealthInfluence	();
+	float					GetThirstInfluence		();
+	float					GetAlcoholInfluence		();
+	float					GetWoundsHealPerc		();
 };
 

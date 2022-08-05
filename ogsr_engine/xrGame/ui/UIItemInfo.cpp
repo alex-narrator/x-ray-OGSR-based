@@ -15,6 +15,7 @@
 #include "UIWpnParams.h"
 #include "ui_af_params.h"
 #include "UIEquipParams.h"
+#include "UIEatableParams.h"
 
 CUIItemInfo::CUIItemInfo()
 {
@@ -29,6 +30,7 @@ CUIItemInfo::CUIItemInfo()
 	UIWpnParams					= nullptr;
 	UIArtefactParams			= nullptr;
 	UIEquipParams				= nullptr;
+	UIEatableParams				= nullptr;
 	UIName						= nullptr;
 	m_pInvItem					= nullptr;
 	m_b_force_drawing			= false;
@@ -36,9 +38,10 @@ CUIItemInfo::CUIItemInfo()
 
 CUIItemInfo::~CUIItemInfo()
 {
-	xr_delete					(UIWpnParams);
-	xr_delete					(UIArtefactParams);
-	xr_delete					(UIEquipParams);
+	xr_delete(UIWpnParams);
+	xr_delete(UIArtefactParams);
+	xr_delete(UIEquipParams);
+	xr_delete(UIEatableParams);
 }
 
 void CUIItemInfo::Init(LPCSTR xml_name){
@@ -110,10 +113,13 @@ void CUIItemInfo::Init(LPCSTR xml_name){
 		UIWpnParams->Init				();
 
 		UIArtefactParams				= xr_new<CUIArtefactParams>();
-		UIArtefactParams->InitFromXml	(uiXml);
+		UIArtefactParams->Init			();
 
 		UIEquipParams					= xr_new<CUIEquipParams>();
 		UIEquipParams->Init				();
+
+		UIEatableParams					= xr_new<CUIEatableParams>();
+		UIEatableParams->Init			();
 		
 		UIDesc							= xr_new<CUIScrollView>(); 
 		AttachChild						(UIDesc);		
@@ -186,6 +192,7 @@ void CUIItemInfo::InitItem(CInventoryItem* pInvItem)
 		TryAddWpnInfo		(pInvItem);
 		TryAddArtefactInfo	(pInvItem);
 		TryAddEquipInfo		(pInvItem);
+		TryAddEatableInfo	(pInvItem);
 		TryAddCustomInfo	(pInvItem);
 		if(m_desc_info.bShowDescrText)
 		{
@@ -237,6 +244,14 @@ void CUIItemInfo::TryAddEquipInfo(CInventoryItem* obj)
 	if (UIEquipParams->Check(obj)) {
 		UIEquipParams->SetInfo(obj);
 		UIDesc->AddWindow(UIEquipParams, false);
+	}
+}
+
+void CUIItemInfo::TryAddEatableInfo(CInventoryItem* obj)
+{
+	if (UIEatableParams->Check(obj)) {
+		UIEatableParams->SetInfo(obj);
+		UIDesc->AddWindow(UIEatableParams, false);
 	}
 }
 

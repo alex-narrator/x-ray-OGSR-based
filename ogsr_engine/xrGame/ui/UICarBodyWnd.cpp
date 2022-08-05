@@ -891,6 +891,7 @@ void CUICarBodyWnd::EatItem()
 	CGameObject::u_EventSend	(P);
 
 	PlaySnd(eInvItemUse);
+	UpdateLists_delayed();
 }
 
 bool CUICarBodyWnd::OnItemStartDrag(CUICellItem* itm)

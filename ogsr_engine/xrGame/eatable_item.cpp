@@ -51,17 +51,17 @@ void CEatableItem::Load(LPCSTR section)
 
 	m_fHealthInfluence			= READ_IF_EXISTS	(pSettings,r_float,section,"eat_health",		0.0f);//pSettings->r_float(section, "eat_health");
 	m_fPowerInfluence			= READ_IF_EXISTS	(pSettings,r_float,section,"eat_power",			0.0f);//pSettings->r_float(section, "eat_power");
+	m_fMaxPowerUpInfluence		= READ_IF_EXISTS	(pSettings,r_float,section,"eat_max_power",		0.0f);
 	m_fSatietyInfluence			= READ_IF_EXISTS	(pSettings,r_float,section,"eat_satiety",		0.0f);//pSettings->r_float(section, "eat_satiety");
 	m_fRadiationInfluence		= READ_IF_EXISTS	(pSettings,r_float,section,"eat_radiation",		0.0f);//pSettings->r_float(section, "eat_radiation");
 	m_fPsyHealthInfluence		= READ_IF_EXISTS	(pSettings,r_float,section,"eat_psyhealth",		0.0f);
+	m_fAlcoholInfluence			= READ_IF_EXISTS	(pSettings,r_float,section,"eat_alcohol",		0.0f);
+	m_fThirstInfluence			= READ_IF_EXISTS	(pSettings,r_float,section,"eat_thirst",		0.0f);
 	m_fWoundsHealPerc			= READ_IF_EXISTS	(pSettings,r_float,section,"wounds_heal_perc",	0.0f);//pSettings->r_float(section, "wounds_heal_perc");
 	clamp						(m_fWoundsHealPerc, 0.f, 1.f);
-	m_fAlcoholInfluence			= READ_IF_EXISTS	(pSettings, r_float,section,"eat_alcohol",		0.0f);
-	m_fThirstInfluence			= READ_IF_EXISTS	(pSettings, r_float,section,"eat_thirst",		0.0f);
 	
 	m_iStartPortionsNum			= READ_IF_EXISTS	(pSettings, r_s32, section, "eat_portions_num", 1);
-	m_fMaxPowerUpInfluence		= READ_IF_EXISTS	(pSettings,r_float,section,"eat_max_power",		0.0f);
-	VERIFY						(m_iPortionsNum<10000);
+	VERIFY						(m_iPortionsNum < 10000);
 
 	m_bUsePortionVolume			= !!READ_IF_EXISTS(pSettings, r_bool, section, "use_portion_volume", false);
 
@@ -231,4 +231,32 @@ u32 CEatableItem::GetOnePortionCost()
 	}
 
 	return rest;
+}
+
+float CEatableItem::GetHealthInfluence() {
+	return m_fHealthInfluence * GetCondition();
+}
+float CEatableItem::GetPowerInfluence() {
+	return m_fPowerInfluence * GetCondition();
+}
+float CEatableItem::GetMaxPowerUpInfluence() {
+	return m_fMaxPowerUpInfluence * GetCondition();
+}
+float CEatableItem::GetSatietyInfluence() {
+	return m_fSatietyInfluence * GetCondition();
+}
+float CEatableItem::GetRadiationInfluence() {
+	return (m_fRadiationInfluence + m_fRadiationRestoreSpeed * m_fSelfRadiationInfluence) * GetCondition();
+}
+float CEatableItem::GetPsyHealthInfluence() {
+	return m_fPsyHealthInfluence * GetCondition();
+}
+float CEatableItem::GetThirstInfluence() {
+	return m_fThirstInfluence * GetCondition();
+}
+float CEatableItem::GetAlcoholInfluence() {
+	return m_fAlcoholInfluence * GetCondition();
+}
+float CEatableItem::GetWoundsHealPerc() {
+	return m_fWoundsHealPerc * GetCondition();
 }

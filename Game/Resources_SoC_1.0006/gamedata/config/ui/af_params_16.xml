@@ -1,4 +1,5 @@
-
+<?xml version='1.0' encoding="UTF-8"?>
+<w>
 	<af_params x="0" y="0" width="194" height="1">
 		<static_health_restore_speed width="194" height="20" complex_mode="1">
 			<texture>ui_inv_icon_health_restore_speed</texture>
@@ -94,3 +95,4 @@
 			<text font="letterica16" x="20" y="0"/>
 		</static_fire_wound_immunity>
 	</af_params>
+</w>

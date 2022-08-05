@@ -10,7 +10,7 @@ class CUIArtefactParams :public CUIWindow
 public:
 								CUIArtefactParams		();
 	virtual						~CUIArtefactParams		();
-	void 						InitFromXml				(CUIXml& xml_doc);
+	void 						Init					();
 	void 						SetInfo					(CInventoryItem* obj);
 
 protected:

@@ -453,10 +453,19 @@
 	<string id="st_scope_vision_present">
 		<text>Захват цели:</text>
 	</string>
-		<string id="st_yes">
+	<string id="st_yes">
 		<text>да</text>
 	</string>
-		<string id="st_no">
+	<string id="st_no">
 		<text>нет</text>
+	</string>
+	<string id="ui_inv_portions_count">
+		<text>Порций</text>
+	</string>
+	<string id="ui_inv_max_power">
+		<text>Макс. выносливость</text>
+	</string>
+	<string id="ui_inv_wounds_heal_perc">
+		<text>Заживление ран</text>
 	</string>
 </string_table>

@@ -9,6 +9,7 @@ class CUIProgressBar;
 class CUIWpnParams;
 class CUIArtefactParams;
 class CUIEquipParams;
+class CUIEatableParams;
 
 //extern const char * const 		fieldsCaptionColor;
 
@@ -34,6 +35,7 @@ public:
 	void				TryAddWpnInfo		(CInventoryItem* obj);
 	void				TryAddArtefactInfo	(CInventoryItem* obj);
 	void				TryAddEquipInfo		(CInventoryItem* obj);
+	void				TryAddEatableInfo	(CInventoryItem* obj);
 	void				TryAddCustomInfo	(CInventoryItem* obj);
 
 	virtual void		Draw				();
@@ -49,6 +51,7 @@ public:
 	CUIWpnParams*		UIWpnParams;
 	CUIArtefactParams*	UIArtefactParams;
 	CUIEquipParams*		UIEquipParams;
+	CUIEatableParams*	UIEatableParams;
 
 	Fvector2			UIItemImageSize; 
 	CUIStatic*			UIItemImage;
