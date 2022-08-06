@@ -14,6 +14,7 @@
 #include "Warbelt.h"
 #include "WeaponAmmo.h"
 #include "Scope.h"
+#include "InventoryContainer.h"
 
 constexpr auto equip_params = "equip_params.xml";
 
@@ -33,10 +34,11 @@ void CUIEquipParams::Init() {
 }
 
 bool CUIEquipParams::Check(CInventoryItem* obj){
-	if (smart_cast<CWeaponAmmo*>	(obj) || 
-		smart_cast<CWarbelt*>		(obj) ||
-		smart_cast<CCustomOutfit*>	(obj) ||
-		smart_cast<CScope*>			(obj)) {
+	if (smart_cast<CWeaponAmmo*>		(obj) || 
+		smart_cast<CWarbelt*>			(obj) ||
+		smart_cast<CCustomOutfit*>		(obj) ||
+		smart_cast<CScope*>				(obj) ||
+		smart_cast<CInventoryContainer*>(obj)) {
 		return true;
 	}else
 		return false;
@@ -195,5 +197,33 @@ void CUIEquipParams::SetInfo(CInventoryItem* obj){
 			}
 		}
 	}
+
+	auto pContainer = smart_cast<CInventoryContainer*>(obj);
+	if (pContainer && !pContainer->IsEmpty()) {
+		Msg("container!");
+		auto cap_containment_static = xr_new<CUIStatic>(); cap_containment_static->SetAutoDelete(true);
+		CUIXmlInit::InitStatic(uiXml, "equip_params:cap_containment", 0, cap_containment_static);
+		pos_top = cap_containment_static->GetPosTop();
+		cap_containment_static->SetWndPos(cap_containment_static->GetPosLeft(), _h + pos_top);
+		m_CapInfo.AttachChild(cap_containment_static);
+		_h += list_item_h + pos_top;
+
+		TIItemContainer	container_list;
+		pContainer->AddAvailableItems(container_list);
+
+		for (const auto& item : container_list) {
+			TIItemContainer	container_list;
+			pContainer->AddAvailableItems(container_list);
+			auto ammo_static = xr_new<CUIStatic>();
+			CUIXmlInit::InitStatic(uiXml, "equip_params:list_item", 0, ammo_static);
+			ammo_static->SetAutoDelete(true);
+			ammo_static->SetWndPos(ammo_static->GetPosLeft(), _h);
+			strconcat(sizeof(text_to_show), text_to_show, marker_, CStringTable().translate(item->Name()).c_str());
+			ammo_static->SetText(text_to_show);
+			m_CapInfo.AttachChild(ammo_static);
+			_h += list_item_h;
+		}
+	}
+
 	SetHeight(_h);
 }

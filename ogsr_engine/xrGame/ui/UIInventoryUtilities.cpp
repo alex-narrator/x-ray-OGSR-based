@@ -79,6 +79,9 @@ bool InventoryUtilities::GreaterRoomInRuck(PIItem item1, PIItem item2)
 
 bool InventoryUtilities::FreeRoom_inBelt	(TIItemContainer& item_list, PIItem _item, int width, int height)
 {
+	auto pActor = smart_cast<CActor*>(Level().CurrentEntity());
+	if (pActor && !pActor->IsAllItemsLoaded()) return true;
+
 	bool*				ruck_room	= (bool*)alloca(width*height);
 
 	int		i,j,k,m;

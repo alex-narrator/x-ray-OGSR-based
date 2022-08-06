@@ -78,11 +78,11 @@ DLL_Pure* CInventoryContainer::_construct()
 BOOL CInventoryContainer::net_Spawn(CSE_Abstract* DC)
 {
 	BOOL res = inherited::net_Spawn(DC);
-	if (cNameSect() == "shadow_inventory")
-	{
-		close();
-		inherited::set_tip_text("st_pick_rucksack");
-	}
+	//if (cNameSect() == "shadow_inventory")
+	//{
+	//	close();
+	//	inherited::set_tip_text("st_pick_rucksack");
+	//}
 	return res;
 }
 void CInventoryContainer::OnEvent(NET_Packet& P, u16 type)
