@@ -12,8 +12,8 @@ public:
 	virtual void				Load(LPCSTR section);
 
 protected:
-	u32							m_iMaxBelt;
-	bool						m_bDropPouch;
+	u32							m_iMaxBelt{};
+	bool						m_bDropPouch{};
 
 public:
 	u32							GetMaxBelt				() const	{ return m_iMaxBelt; }

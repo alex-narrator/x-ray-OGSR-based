@@ -701,10 +701,11 @@ void CInventory::Update()
 	// А проблема вся в том, что арты и костюм выходят в онлайн в хаотичном порядке. И получается, что арты на пояс уже пытаются залезть, а костюма вроде как ещё нет,
 	// соотв. и слотов под арты как бы нет. Вот поэтому до первого апдейта CInventory актора считаем, что все слоты для артов доступны ( см. CInventory::BeltSlotsCount() )
 	// По моим наблюдениям на момент первого апдейта CInventory, все предметы в инвентаре актора уже вышли в онлайн.
-	if (smart_cast<CActor*>(m_pOwner) && (++UpdatesCount == 1)) {
-		//smart_cast<CUIGameSP*>(HUD().GetUI()->UIGame())->InventoryMenu->UpdateOutfit();
-		Actor()->SetAllItemsLoaded(true);
-	}
+	//if (smart_cast<CActor*>(m_pOwner) && (++UpdatesCount == 1)) {
+	//	//smart_cast<CUIGameSP*>(HUD().GetUI()->UIGame())->InventoryMenu->UpdateOutfit();
+	//	Actor()->SetAllItemsLoaded(true);
+	//}
+	++UpdatesCount;
 
 	bool bActiveSlotVisible;
 	
@@ -1036,12 +1037,11 @@ bool CInventory::CanPutInSlot(PIItem pIItem, u8 slot) const
 //при этом реально ничего не меняется
 bool CInventory::CanPutInBelt(PIItem pIItem)
 {
-	if (InBelt(pIItem))								return false;
-	if (!m_bBeltUseful)								return false;
-	if (!pIItem || !pIItem->Belt())					return false;
-	auto pActor = smart_cast<CActor*>(m_pOwner);
-	if (m_belt.size() >= BeltSize() && 
-		(!pActor || pActor->IsAllItemsLoaded()))	return false;
+	if (InBelt(pIItem))							return false;
+	if (!m_bBeltUseful)							return false;
+	if (!pIItem || !pIItem->Belt())				return false;
+	if (OwnerIsActor() && !IsAllItemsLoaded())	return true;
+	if (m_belt.size() >= BeltSize())			return false;
 
 	return FreeRoom_inBelt(m_belt, pIItem, BeltSize(), 1);
 }
@@ -1450,15 +1450,23 @@ u32  CInventory::BeltSize() const
 	return 0; //m_iMaxBeltWidth;
 }
 
+bool CInventory::IsAllItemsLoaded() const {
+	return UpdatesCount;
+}
+
+bool CInventory::OwnerIsActor() const {
+	return smart_cast<CActor*>(m_pOwner);
+}
+
 void CInventory::DropBeltToRuck(){
-	if (!smart_cast<CActor*>(m_pOwner)) return;
+	if (!OwnerIsActor()) return;
 
 	while (!m_belt.empty())
 		Ruck(m_belt.back());
 }
 
 void CInventory::DropSlotsToRuck(u32 min_slot, u32 max_slot) {
-	if (!smart_cast<CActor*>(m_pOwner)) return;
+	if (!OwnerIsActor()) return;
 	
 	if (max_slot == NO_ACTIVE_SLOT)
 		max_slot = min_slot;

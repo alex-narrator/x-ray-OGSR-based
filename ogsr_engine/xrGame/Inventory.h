@@ -174,7 +174,7 @@ protected:
 
 	// Максимальное кол-во объектов
 	//на поясе
-	//u32					m_iMaxBelt;	
+	/*u32					m_iMaxBelt;	*/
 	// Максимальное расстояние на котором можно подобрать объект
 	float				 m_fTakeDist;
 
@@ -186,7 +186,7 @@ protected:
 	void				SendActionEvent		(s32 cmd, u32 flags);
 
 private:
-	u32 UpdatesCount{};
+	u32					UpdatesCount{};
 
 public:
 	// AF_FREE_HANDS - свободна ли хотябы одна рука актора
@@ -206,5 +206,7 @@ public:
 	void					DropSlotsToRuck	(u32 min_slot, u32 max_slot = NO_ACTIVE_SLOT);
 	bool					IsSlotDisabled	(u32) const;
 
-	bool					activate_slot(u32 slot);
+	bool					activate_slot		(u32 slot);
+	bool					IsAllItemsLoaded	() const;
+	bool					OwnerIsActor		() const;
 };

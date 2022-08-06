@@ -794,13 +794,9 @@ public:
 	bool	IsRuckAmmoPlacement		() { return m_bRuckAmmoPlacement; };
 	void	SetRuckAmmoPlacement	(bool set_ruck) { m_bRuckAmmoPlacement = set_ruck; };
 
-	bool	IsAllItemsLoaded		() { return m_bRuckAmmoPlacement; };
-	void	SetAllItemsLoaded		(bool val) { bAllItemsLoaded = val; };
-
 protected:
-	bool	m_bIsHardHold;
-	bool	m_bRuckAmmoPlacement;
-	bool	bAllItemsLoaded;
+	bool	m_bIsHardHold{};
+	bool	m_bRuckAmmoPlacement{};
 };
 
 extern bool		isActorAccelerated			(u32 mstate, bool ZoomMode);

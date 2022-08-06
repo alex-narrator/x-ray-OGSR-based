@@ -214,7 +214,6 @@ CActor::CActor() : CEntityAlive(),current_ik_cam_shift(0)
 
 	m_bIsHardHold			= false;
 	m_bRuckAmmoPlacement	= false;
-	bAllItemsLoaded			= false;
 }
 
 
@@ -260,8 +259,6 @@ void CActor::reinit	()
 	
 	set_input_external_handler					(0);
 	m_time_lock_accel							= 0;
-
-	bAllItemsLoaded								= false;
 }
 
 void CActor::reload	(LPCSTR section)
