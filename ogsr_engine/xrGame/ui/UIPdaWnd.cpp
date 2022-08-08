@@ -152,10 +152,9 @@ void CUIPdaWnd::SendMessage(CUIWindow* pWnd, s16 msg, void* pData)
 
 void CUIPdaWnd::Show()
 {
-	if (g_eFreeHands == eFreeHandsManual) 
-		Actor()->SetWeaponHideState(INV_STATE_BLOCK_ALL, true);  //спрячем оружие в руках
-	else
-		Actor()->inventory().TryToHideWeapon(true);
+	if (g_eFreeHands != eFreeHandsOff) {
+		Actor()->SetWeaponHideState(INV_STATE_PDA, true);
+	}
 
 	InventoryUtilities::SendInfoToActor("ui_pda");
 
@@ -169,10 +168,9 @@ void CUIPdaWnd::Hide()
 	InventoryUtilities::SendInfoToActor("ui_pda_hide");
 	HUD().GetUI()->UIMainIngameWnd->SetFlashIconState_(CUIMainIngameWnd::efiPdaTask, false);
 
-	if (g_eFreeHands == eFreeHandsManual) 
-		Actor()->SetWeaponHideState(INV_STATE_BLOCK_ALL, false);  //спрячем оружие в руках
-	else
-		Actor()->inventory().TryToHideWeapon(false);
+	if (g_eFreeHands != eFreeHandsOff){
+		Actor()->SetWeaponHideState(INV_STATE_PDA, false);
+	}
 }
 
 void CUIPdaWnd::UpdateDateTime()

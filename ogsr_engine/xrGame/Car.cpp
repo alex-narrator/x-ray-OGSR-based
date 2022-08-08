@@ -151,6 +151,8 @@ void	CCar::Load					( LPCSTR section )
 	//CPHSkeleton::Load(section);
 	ISpatial*		self				=	smart_cast<ISpatial*> (this);
 	if (self)		self->spatial.type	|=	STYPE_VISIBLEFORAI;	
+	//
+	m_b_weapon_allowed = READ_IF_EXISTS(pSettings, r_bool, section, "weapon_allowed", true);
 }
 
 BOOL	CCar::net_Spawn				(CSE_Abstract* DC)

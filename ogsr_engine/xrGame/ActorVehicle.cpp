@@ -53,7 +53,12 @@ void CActor::attach_Vehicle(CHolderCustom* vehicle)
 	mstate_wishful					= 0;
 	m_holderID=car->ID				();
 
-	SetWeaponHideState				(INV_STATE_CAR, true);
+	if (!car->allowWeapon()) {
+		SetWeaponHideState(INV_STATE_BLOCK_ALL, true);
+	}else if (g_eFreeHands != eFreeHandsOff) {
+		SetWeaponHideState(INV_STATE_CAR, true);
+	}
+		
 
 	CStepManager::on_animation_start(MotionID(), 0);
 
@@ -88,8 +93,12 @@ void CActor::detach_Vehicle()
 	V->PlayCycle		(m_anims->m_normal.m_torso_idle);
 	m_holderID=u16(-1);
 
-//.	SetWeaponHideState(whs_CAR, FALSE);
-	SetWeaponHideState(INV_STATE_CAR, false);
+	if (!car->allowWeapon()) {
+		SetWeaponHideState(INV_STATE_BLOCK_ALL, false);
+	}
+	else if (g_eFreeHands != eFreeHandsOff) {
+		SetWeaponHideState(INV_STATE_CAR, false);
+	}
 
 	this->callback(GameObject::eDetachVehicle)(car->lua_game_object());
 }

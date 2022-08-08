@@ -391,13 +391,13 @@ void CUIInventoryWnd::Show()
 
 	m_b_need_update_stats = true;
 
-	if (Actor())
-	{
-		if (g_eFreeHands == eFreeHandsManual) 
-			Actor()->SetWeaponHideState(INV_STATE_INV_WND, true); //спрячем оружие в руках
-		else
-			Actor()->inventory().TryToHideWeapon(true);
-		if (psActorFlags.test(AF_AMMO_FROM_BELT)) Actor()->SetRuckAmmoPlacement(true); //установим флаг перезарядки из рюкзака
+	if (Actor()){
+		if (g_eFreeHands != eFreeHandsOff) {
+			Actor()->SetWeaponHideState(INV_STATE_INV_WND, true);
+		}
+		if (psActorFlags.test(AF_AMMO_FROM_BELT)) {
+			Actor()->SetRuckAmmoPlacement(true); //установим флаг перезарядки из рюкзака
+		}
 	}
 }
 
@@ -418,13 +418,13 @@ void CUIInventoryWnd::Hide()
 		m_iCurrentActiveSlot = NO_ACTIVE_SLOT;
 	}
 
-	if (pActor)
-	{
-		if (g_eFreeHands == eFreeHandsManual) 
-			pActor->SetWeaponHideState(INV_STATE_INV_WND, false); //восстановим показ оружия в руках
-		else
-			pActor->inventory().TryToHideWeapon(false);
-		if (psActorFlags.test(AF_AMMO_FROM_BELT)) pActor->SetRuckAmmoPlacement(false); //сбросим флаг перезарядки из рюкзака
+	if (pActor){
+		if (g_eFreeHands != eFreeHandsOff) {
+			pActor->SetWeaponHideState(INV_STATE_INV_WND, false);
+		}
+		if (psActorFlags.test(AF_AMMO_FROM_BELT)) {
+			pActor->SetRuckAmmoPlacement(false); //сбросим флаг перезарядки из рюкзака
+		}
 	}
 
 	HideSlotsHighlight();

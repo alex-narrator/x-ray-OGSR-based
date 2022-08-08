@@ -246,14 +246,13 @@ void CUICarBodyWnd::Hide()
 	if(m_pInventoryBox)
 		m_pInventoryBox->m_in_use				= false;
 
-	if (Actor())
-	{
-		bool using_knife_to_cut = psActorFlags.test(AF_KNIFE_TO_CUT_PART) && smart_cast<CBaseMonster*>(m_pOthersObject) && smart_cast<CWeaponKnife*>(Actor()->inventory().ActiveItem());
-		if (g_eFreeHands == eFreeHandsManual && !using_knife_to_cut) 
-			Actor()->SetWeaponHideState(INV_STATE_INV_WND, false);  //восстановим показ оружия в руках, если обыскиваем не монстра
-		else
-			Actor()->inventory().TryToHideWeapon(false);
-		if (psActorFlags.test(AF_AMMO_FROM_BELT)) Actor()->SetRuckAmmoPlacement(false); //сбросим флаг перезарядки из рюкзака
+	if (Actor()){
+		if (g_eFreeHands != eFreeHandsOff){
+			Actor()->SetWeaponHideState(INV_STATE_INV_WND, false);
+		}
+		if (psActorFlags.test(AF_AMMO_FROM_BELT)) {
+			Actor()->SetRuckAmmoPlacement(false); //сбросим флаг перезарядки из рюкзака
+		}
 	}
 
 	PlaySnd(eInvSndClose);
@@ -622,18 +621,13 @@ void CUICarBodyWnd::Show()
 	SetCurrentItem							(NULL);
 	InventoryUtilities::UpdateWeight		(*m_pUIOurBagWnd);
 
-	if (Actor())
-	{
-		bool using_knife_to_cut = 
-			psActorFlags.test(AF_KNIFE_TO_CUT_PART) 
-			&& smart_cast<CBaseMonster*>(m_pOthersObject) 
-			&& smart_cast<CWeaponKnife*>(Actor()->inventory().ActiveItem());
-
-		if (g_eFreeHands == eFreeHandsManual && !using_knife_to_cut) 
-			Actor()->SetWeaponHideState(INV_STATE_INV_WND, true);  //спрячем оружие в руках, если обыскиваем не монстра 
-		else
-			Actor()->inventory().TryToHideWeapon(true);
-		if (psActorFlags.test(AF_AMMO_FROM_BELT)) Actor()->SetRuckAmmoPlacement(true); //установим флаг перезарядки из рюкзака
+	if (Actor()){
+		if (g_eFreeHands != eFreeHandsOff) {
+			Actor()->SetWeaponHideState(INV_STATE_INV_WND, true);
+		}
+		if (psActorFlags.test(AF_AMMO_FROM_BELT)) {
+			Actor()->SetRuckAmmoPlacement(true); //установим флаг перезарядки из рюкзака
+		}
 	}
 
 	PlaySnd(eInvSndOpen);

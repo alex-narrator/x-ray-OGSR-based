@@ -143,17 +143,12 @@ void CActor::g_cl_ValidateMState(float dt, u32 mstate_wf)
 	{
 		bool bOnClimbNow			= !!(mstate_real&mcClimb);
 		bool bOnClimbOld			= !!(mstate_old&mcClimb);
-		//
-		bool bIsMoving				= !!(mstate_old & mcAnyMove);
 
 		if (bOnClimbNow != bOnClimbOld) {							//если начали карабкаться по лестнице
-			if (g_eFreeHands == eFreeHandsManual) 
-				SetWeaponHideState(INV_STATE_LADDER, bOnClimbNow);
-			else
-				inventory().TryToHideWeapon(bOnClimbNow);			//скрываем двуручное оружие
+			if (g_eFreeHands != eFreeHandsOff){
+				SetWeaponHideState(INV_STATE_LADDER, bOnClimbNow, true);
+			}
 		}
-		else if (bOnClimbNow)										//если карабкаемся
-			inventory().TryToHideWeapon(bIsMoving);					//скрываем двуручное оружие в движении (если остановились на лестнице то достаём)
 	};
 };
 

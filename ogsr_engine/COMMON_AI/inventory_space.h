@@ -49,3 +49,4 @@ extern u32	INV_STATE_CAR;
 extern u32	INV_STATE_BLOCK_ALL;
 extern u32	INV_STATE_INV_WND;
 extern u32	INV_STATE_BUY_MENU;
+extern u32	INV_STATE_PDA;

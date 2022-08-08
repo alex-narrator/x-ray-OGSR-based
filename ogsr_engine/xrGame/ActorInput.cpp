@@ -501,7 +501,6 @@ void CActor::ActorUse() {
 
   if (m_pUsableObject) {
 	  if (looking_at_alive_person || inventory().IsFreeHands()) { //чтобы можно было слышать просьбы убрать оружие при попытке поговорить со сталкерами с оружием в руках
-		 if(!looking_at_alive_person) inventory().TryToHideWeapon(true, false);
 		  m_pUsableObject->use(this);
 		  if (g_bDisableAllInput || HUD().GetUI()->MainInputReceiver()) return;
 	  }
@@ -531,9 +530,9 @@ void CActor::ActorUse() {
 
     collide::rq_result& RQ      = HUD().GetCurrentRayQuery();
     CPhysicsShellHolder* object = smart_cast<CPhysicsShellHolder*>(RQ.O);
-    if (object) {
+    if (object && inventory().IsFreeHands()) {
       if (Level().IR_GetKeyState(get_action_dik(kADDITIONAL_ACTION))) {
-        if (object->ActorCanCapture() && inventory().IsFreeHands()) {
+        if (object->ActorCanCapture()) {
 			if (!conditions().IsCantWalk())
 				//Msg("--[%s] Actor Captured object: [%s]", __FUNCTION__, object->cName().c_str());
 				character_physics_support()->movement()->PHCaptureObject(object, (u16)RQ.element);
