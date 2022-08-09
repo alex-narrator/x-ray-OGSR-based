@@ -21,19 +21,23 @@ void CWarbelt::Load(LPCSTR section)
 }
 
 void CWarbelt::OnMoveToSlot(EItemPlace previous_place){
+	inherited::OnMoveToSlot(previous_place);
 	auto &inv = m_pCurrentInventory;
 	if (inv){
 		auto pActor = smart_cast<CActor*> (inv->GetOwner());
-		if (pActor && inv->IsAllItemsLoaded())
+		if (pActor && inv->IsAllItemsLoaded()) {
 			inv->DropBeltToRuck();
+		}
 	}
 }
 
 void CWarbelt::OnMoveToRuck(EItemPlace previous_place){
+	inherited::OnMoveToRuck(previous_place);
 	auto& inv = m_pCurrentInventory;
 	if (inv && previous_place == eItemPlaceSlot){
 		auto pActor = smart_cast<CActor*> (inv->GetOwner());
-		if (pActor && inv->IsAllItemsLoaded())
+		if (pActor && inv->IsAllItemsLoaded()) {
 			inv->DropBeltToRuck();
+		}
 	}
 }

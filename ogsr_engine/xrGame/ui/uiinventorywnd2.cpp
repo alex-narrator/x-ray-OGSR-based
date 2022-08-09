@@ -81,6 +81,8 @@ void CUIInventoryWnd::InitInventory()
 	CUIWindow::Reset();
 	SetCurrentItem				(NULL);
 
+	UpdateCustomDraw			();
+
 	//Slots
 	PIItem	_itm						= m_pInv->m_slots[KNIFE_SLOT].m_pIItem;
 	if (_itm)
@@ -214,8 +216,6 @@ void CUIInventoryWnd::InitInventory()
 	m_pUIBagList->SetScrollPos(bag_scroll);
 
 	UpdateWeight();
-
-	UpdateCustomDraw();
 
 	m_b_need_reinit					= false;
 }  

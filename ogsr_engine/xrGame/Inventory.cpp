@@ -1484,7 +1484,7 @@ void CInventory::DropSlotsToRuck(u32 min_slot, u32 max_slot) {
 bool CInventory::IsSlotDisabled(u32 slot) const
 {
 	auto pActor = smart_cast<CActor*>(m_pOwner);
-	if (!pActor/* || !pActor->IsAllItemsLoaded()*/) 
+	if (!pActor || !IsAllItemsLoaded()) 
 		return false;
 
 	switch (slot)
