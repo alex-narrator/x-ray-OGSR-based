@@ -16,7 +16,6 @@ public:
 
 protected:
 	enum {
-		_portions_count,
 		_health_influence,
 		_power_influence,
 		_max_power_influence,

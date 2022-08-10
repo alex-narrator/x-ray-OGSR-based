@@ -1,6 +1,8 @@
 #pragma once
 #include "UICellItem.h"
-#include "../Weapon.h"
+#include "Weapon.h"
+#include "eatable_item.h"
+#include "Artifact.h"
 
 
 class CUIInventoryCellItem :public CUICellItem
@@ -8,6 +10,9 @@ class CUIInventoryCellItem :public CUICellItem
 	typedef  CUICellItem	inherited;
 protected:
 	bool						b_auto_drag_childs;
+
+	CUIStatic*					m_text_add{};
+	void						init_add();
 public:
 								CUIInventoryCellItem		(CInventoryItem* itm);
 	virtual		void			Update						();
@@ -23,18 +28,38 @@ public:
 	virtual					~CUIInventoryCellItem		();
 };
 
-class CUIAmmoCellItem :public CUIInventoryCellItem
+class CUIEatableCellItem :public CUIInventoryCellItem
 {
 	typedef  CUIInventoryCellItem	inherited;
 protected:
 	virtual		void			UpdateItemText			();
 public:
+								CUIEatableCellItem			(CEatableItem* itm);
+	virtual		void			Update						();
+	virtual		bool			EqualTo						(CUICellItem* itm);
+				CEatableItem*	object						() {return (CEatableItem*)m_pData;}
+};
+
+class CUIArtefactCellItem :public CUIInventoryCellItem
+{
+	typedef  CUIInventoryCellItem	inherited;
+public:
+								CUIArtefactCellItem			(CArtefact* itm);
+	virtual		bool			EqualTo						(CUICellItem* itm);
+				CArtefact*		object						() { return (CArtefact*)m_pData; }
+};
+
+class CUIAmmoCellItem :public CUIInventoryCellItem
+{
+	typedef  CUIInventoryCellItem	inherited;
+protected:
+	virtual		void			UpdateItemText				();
+public:
 								CUIAmmoCellItem				(CWeaponAmmo* itm);
 	virtual		void			Update						();
 	virtual		bool			EqualTo						(CUICellItem* itm);
-				CWeaponAmmo*	object						() {return (CWeaponAmmo*)m_pData;}
+	CWeaponAmmo*				object						() { return (CWeaponAmmo*)m_pData; }
 };
-
 
 class CUIWeaponCellItem :public CUIInventoryCellItem
 {
@@ -43,6 +68,7 @@ public:
 	enum eAddonType{	eSilencer=0, eScope, eLauncher, eMaxAddon};
 	CUIStatic*					m_addons					[eMaxAddon];
 protected:
+	virtual		void			UpdateItemText();
 	Fvector2					m_addon_offset				[eMaxAddon];
 	void						CreateIcon					(eAddonType, CIconParams &params);
 	void						DestroyIcon					(eAddonType);

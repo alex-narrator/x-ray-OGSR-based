@@ -10,7 +10,6 @@
 constexpr auto EATABLE_PARAMS = "eatable_params.xml";
 
 LPCSTR effect_names[] = {
-	"ui_inv_portions_count",
 	"ui_inv_health",
 	"ui_inv_power",
 	"ui_inv_max_power",
@@ -23,7 +22,6 @@ LPCSTR effect_names[] = {
 };
 
 LPCSTR effect_static_names[] = {
-	"portions_count",
 	"eat_health",
 	"eat_power",
 	"eat_max_power",
@@ -85,9 +83,6 @@ float CUIEatableParams::GetEffectValue(u32 i, CInventoryItem* obj){
 
 	switch (i)
 	{
-	case _portions_count: {
-		r = (pEatable->GetStartPortionsNum() <= 1) ? 0.f : 1.f;
-	}break;
 	case _health_influence:{
 		r = pEatable->GetHealthInfluence();
 	}break;
@@ -125,7 +120,6 @@ void CUIEatableParams::SetInfo(CInventoryItem* obj) {
 	float						_h = 0.0f;
 	DetachAll();
 
-	auto pEatable = smart_cast<CEatableItem*>(obj);
 	for (u32 i = 0; i < _max_item_index; ++i){
 		
 		CUIStatic* _s = m_info_items[i];
@@ -135,21 +129,14 @@ void CUIEatableParams::SetInfo(CInventoryItem* obj) {
 
 		auto effect_name = CStringTable().translate(effect_names[i]).c_str();
 
-		if (i == _portions_count) {
-			sprintf_s(text_to_show, "%s  %d/%d",
-				effect_name,
-				pEatable->GetPortionsNum(),
-				pEatable->GetStartPortionsNum());
-		}else{
-			_val *= 100.0f;
-			LPCSTR _sn = "%";
-			LPCSTR _color = (_val > 0) ? "%c[green]" : "%c[red]";
-			sprintf_s(text_to_show, "%s %s %+.1f %s",
-				effect_name,
-				_color,
-				_val,
-				_sn);
-		}
+		_val *= 100.0f;
+		LPCSTR _sn = "%";
+		LPCSTR _color = (_val > 0) ? "%c[green]" : "%c[red]";
+		sprintf_s(text_to_show, "%s %s %+.1f %s",
+			effect_name,
+			_color,
+			_val,
+			_sn);
 
 		_s->SetText(text_to_show);
 		_s->SetWndPos(_s->GetWndPos().x, _h);

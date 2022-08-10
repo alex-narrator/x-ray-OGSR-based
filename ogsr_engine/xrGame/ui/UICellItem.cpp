@@ -19,19 +19,19 @@ CUICellItem* CUICellItem::m_mouse_selected_item = nullptr;
 
 CUICellItem::CUICellItem()
 {
-	m_pParentList		= NULL;
-	m_pData				= NULL;
-	m_custom_draw		= NULL;
+	m_pParentList		= nullptr;
+	m_pData				= nullptr;
+	m_custom_draw		= nullptr;
 	m_b_already_drawn	= false;
 	SetAccelerator		(0);
 	m_b_destroy_childs	= true;
 	if (Core.Features.test(xrCore::Feature::show_inv_item_condition)) {
-		m_text = NULL;
-		m_pConditionState = NULL;
+		m_text = nullptr;
+		m_pConditionState = nullptr;
 		m_condition_auto_width = false;
 		init();
 	}
-	m_selected		= false;
+	m_selected			= false;
 	m_select_armament	= false;
 	m_select_equipped	= false;
 	m_select_untradable	= false;

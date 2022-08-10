@@ -52,9 +52,6 @@
 			<text font="letterica16" r="124" g="119" b="115"></text>
 		</cap_info>	
 		<!-- дочірні статики -->
-		<current_ammo_count_firemode x="0" y="5" width="91" height="8">
-			<text font="letterica16" r="124" g="119" b="115"></text>
-		</current_ammo_count_firemode>
 		<current_ammo_type x="0" y="5" width="91" height="8">
 			<text font="letterica16" r="124" g="119" b="115"></text>
 		</current_ammo_type>	

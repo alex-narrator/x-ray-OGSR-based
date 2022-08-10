@@ -1,7 +1,8 @@
 #include "stdafx.h"
 #include "UICellCustomItems.h"
 #include "UIInventoryUtilities.h"
-#include "../Weapon.h"
+#include "Weapon.h"
+#include "WeaponMagazined.h"
 #include "UIDragDropListEx.h"
 
 #include "../game_object_space.h"
@@ -10,9 +11,10 @@
 #include "../Actor.h"
 #include "UIInventoryWnd.h"
 #include "UICursor.h"
+#include "UIXmlInit.h"
 
-#define INV_GRID_WIDTHF			50.0f
-#define INV_GRID_HEIGHTF		50.0f
+constexpr auto INV_GRID_WIDTHF = 50.0f;
+constexpr auto INV_GRID_HEIGHTF = 50.0f;
 
 CUIInventoryCellItem::CUIInventoryCellItem(CInventoryItem* itm)
 {
@@ -23,6 +25,23 @@ CUIInventoryCellItem::CUIInventoryCellItem(CInventoryItem* itm)
 
 	m_grid_size.set									(itm->GetGridWidth(),itm->GetGridHeight());
 	b_auto_drag_childs = true;
+}
+
+void CUIInventoryCellItem::init_add()
+{
+	static CUIXml uiXml;
+	static bool is_xml_ready = false;
+	if (!is_xml_ready) {
+		bool xml_result = uiXml.Init(CONFIG_PATH, UI_PATH, "inventory_new.xml");
+		R_ASSERT3(xml_result, "file parsing error ", uiXml.m_xml_file_name);
+		is_xml_ready = true;
+	}
+
+	m_text_add = xr_new<CUIStatic>();
+	m_text_add->SetAutoDelete(true);
+	AttachChild(m_text_add);
+	CUIXmlInit::InitStatic(uiXml, "cell_item_text_add", 0, m_text_add);
+	m_text_add->Show(false);
 }
 
 bool CUIInventoryCellItem::EqualTo(CUICellItem* itm)
@@ -128,6 +147,8 @@ CUIDragItem* CUIInventoryCellItem::CreateDragItem()
 			if (Core.Features.test(xrCore::Feature::show_inv_item_condition))
 				if ( s_child == m_text ) continue;
 
+			if (s_child == m_text_add) continue;
+
 			s = xr_new<CUIStatic>();
 			s->SetAutoDelete(true);
 			if ( s_child->GetShader() )
@@ -160,8 +181,12 @@ void CUIInventoryCellItem::Update() {
 
 
 CUIAmmoCellItem::CUIAmmoCellItem(CWeaponAmmo* itm)
-:inherited(itm)
-{}
+:inherited(itm){
+	if (itm->IsBoxReloadable() || itm->IsBoxReloadableEmpty()) {
+		m_text_add = nullptr;
+		init_add();
+	}
+}
 
 bool CUIAmmoCellItem::EqualTo(CUICellItem* itm)
 {
@@ -181,8 +206,23 @@ void CUIAmmoCellItem::Update()
 
 void CUIAmmoCellItem::UpdateItemText()
 {
-	if(NULL==m_custom_draw)
-	{
+	if (object()->IsBoxReloadable() || object()->IsBoxReloadableEmpty()) {
+		inherited::UpdateItemText();
+
+		if (!m_text_add) return;
+
+		string32				str;
+		sprintf_s(str, "%d/%d", object()->m_boxCurr, object()->m_boxSize);
+
+		float pos_x{ GetWidth() - m_text_add->GetWidth() };
+		float pos_y{ GetHeight() - m_text_add->GetHeight() };
+		Fvector2 pos {pos_x, pos_y};
+
+		m_text_add->SetWndPos(pos);
+		m_text_add->SetText(str);
+		m_text_add->Show(true);
+	}
+	else if(NULL==m_custom_draw){
 		xr_vector<CUICellItem*>::iterator it = m_childs.begin();
 		xr_vector<CUICellItem*>::iterator it_e = m_childs.end();
 		
@@ -191,15 +231,15 @@ void CUIAmmoCellItem::UpdateItemText()
 			total				= total + ((CUIAmmoCellItem*)(*it))->object()->m_boxCurr;
 
 		string32				str;
-		sprintf_s					(str,"%d",total);
+		sprintf_s				(str,"%d",total);
 
 		if (Core.Features.test(xrCore::Feature::show_inv_item_condition)) {
 			m_text->SetText(str);
 			m_text->Show(true);
 		} else
 			SetText(str);
-	}else
-	{
+	}
+	else{
 		if (Core.Features.test(xrCore::Feature::show_inv_item_condition)) {
 			m_text->SetText("");
 			m_text->Show(false);
@@ -208,6 +248,57 @@ void CUIAmmoCellItem::UpdateItemText()
 	}
 }
 
+CUIEatableCellItem::CUIEatableCellItem(CEatableItem* itm)
+	:inherited(itm) {
+	if (itm->GetStartPortionsNum()>1) {
+		m_text_add = nullptr;
+		init_add();
+	}
+}
+
+bool CUIEatableCellItem::EqualTo(CUICellItem* itm){
+	if (!inherited::EqualTo(itm))	return false;
+
+	CUIEatableCellItem* ci = smart_cast<CUIEatableCellItem*>(itm);
+	if (!ci)							return false;
+
+	return					object()->GetPortionsNum() == ci->object()->GetPortionsNum();
+}
+
+void CUIEatableCellItem::Update(){
+	inherited::Update();
+	UpdateItemText();
+}
+
+void CUIEatableCellItem::UpdateItemText(){
+	inherited::UpdateItemText();
+	if (object()->GetStartPortionsNum() > 1) {
+		string32				str;
+		sprintf_s(str, "%d/%d", object()->GetPortionsNum(), object()->GetStartPortionsNum());
+
+		float pos_x{ GetWidth() - m_text_add->GetWidth() };
+		float pos_y{ GetHeight() - m_text_add->GetHeight() };
+		Fvector2 pos{ pos_x, pos_y };
+
+		m_text_add->SetWndPos(pos);
+		m_text_add->SetText(str);
+		m_text_add->Show(true);
+	}
+}
+
+CUIArtefactCellItem::CUIArtefactCellItem(CArtefact* itm)
+	:inherited(itm) {
+}
+
+bool CUIArtefactCellItem::EqualTo(CUICellItem* itm)
+{
+	if (!inherited::EqualTo(itm))	return false;
+
+	CUIArtefactCellItem* ci = smart_cast<CUIArtefactCellItem*>(itm);
+	if (!ci)							return false;
+
+	return					fsimilar(object()->GetRandomKoef(), ci->object()->GetRandomKoef(), 0.01f);
+}
 
 CUIWeaponCellItem::CUIWeaponCellItem(CWeapon* itm)
 :inherited(itm)
@@ -219,6 +310,11 @@ CUIWeaponCellItem::CUIWeaponCellItem(CWeapon* itm)
 
 	m_cell_size.set(INV_GRID_WIDTHF, INV_GRID_HEIGHTF);
 
+	if (itm->GetAmmoMagSize()) {
+		m_text_add = nullptr;
+		init_add();
+	}
+
 	if(itm->SilencerAttachable())
 		m_addon_offset[eSilencer].set(object()->GetSilencerX(), object()->GetSilencerY());
 
@@ -229,9 +325,27 @@ CUIWeaponCellItem::CUIWeaponCellItem(CWeapon* itm)
 		m_addon_offset[eLauncher].set(object()->GetGrenadeLauncherX(), object()->GetGrenadeLauncherY());
 }
 
-#include "../object_broker.h"
-CUIWeaponCellItem::~CUIWeaponCellItem()
+void CUIWeaponCellItem::UpdateItemText()
 {
+	if (object()->GetAmmoMagSize()) {
+		inherited::UpdateItemText();
+
+		string32				str;
+		auto pWeaponMag = smart_cast<CWeaponMagazined*>(object());
+		sprintf_s(str, "%d/%d%s", object()->GetAmmoElapsed(), object()->GetAmmoMagSize(), pWeaponMag->HasFireModes() ? pWeaponMag->GetCurrentFireModeStr() : "");
+
+		float pos_x{ GetWidth() - m_text_add->GetWidth() };
+		float pos_y{ GetHeight() - m_text_add->GetHeight() };
+		Fvector2 pos{ pos_x, pos_y };
+
+		m_text_add->SetWndPos(pos);
+		m_text_add->SetText(str);
+		m_text_add->Show(true);
+	}
+}
+
+#include "../object_broker.h"
+CUIWeaponCellItem::~CUIWeaponCellItem(){
 }
 
 bool CUIWeaponCellItem::is_scope()
@@ -273,6 +387,7 @@ void CUIWeaponCellItem::Update()
 {
 	bool b = Heading();
 	inherited::Update			();
+	UpdateItemText();
 	bool bForceReInitAddons = (b != Heading());
 
 	if (object()->SilencerAttachable()){
