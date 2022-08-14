@@ -1096,6 +1096,8 @@ bool CInventory::CanPutInRuck(PIItem pIItem) const
 	//для НПЦ може бути анлімітед обсяг
 	bool owner_vol_unlimited = !OwnerIsActor() && fis_zero(m_pOwner->MaxCarryVolume());
 
+	if (OwnerIsActor() && !IsAllItemsLoaded())	return true;
+
 	if (!owner_vol_unlimited && !pIItem->IsQuestItem() &&
 		TotalVolume() + pIItem->Volume() > m_pOwner->MaxCarryVolume())
 		return false;
@@ -1530,6 +1532,7 @@ void CInventory::UpdateVolumeDropOut()
 			if (fis_zero(item->Volume()) || item->IsQuestItem())
 				continue;
 			item->SetDropManual(true);
+			/*Msg("%s: dropped item [%s]",__FUNCTION__, item->Name());*/
 			total_volume -= item->Volume();
 			if (total_volume <= m_pOwner->MaxCarryVolume())
 				break;
