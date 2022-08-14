@@ -28,6 +28,7 @@ class CTradeParameters;
 class CPurchaseList;
 class CWeapon;
 class CCustomOutfit;
+class CBackpack;
 
 class CInventoryOwner : public CAttachmentOwner {							
 	friend class CInventoryScript;
@@ -140,7 +141,11 @@ public:
 	virtual float GetCarryWeight			() const;
 	virtual float MaxCarryWeight			() const;
 
+	virtual float GetCarryVolume			() const;
+	virtual float MaxCarryVolume			() const;
+
 	virtual CCustomOutfit*			GetOutfit()	const {return NULL;};
+	virtual CBackpack*				GetBackpack() const {return NULL;};
 
 	//////////////////////////////////////////////////////////////////////////
 	//игровые характеристики персонажа

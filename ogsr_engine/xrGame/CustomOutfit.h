@@ -43,23 +43,23 @@ public:
 	virtual	BOOL					BonePassBullet			(int boneID);
 	const shared_str&				GetFullIconName			() const	{return m_full_icon_name;};
 
-	float m_fBleedingRestoreSpeed;
-	float m_fHealthRestoreSpeed;
-	float m_fPowerRestoreSpeed;
-	float m_fSatietyRestoreSpeed;
-	float m_fThirstRestoreSpeed;
-	float m_fPsyHealthRestoreSpeed;
-	float m_fAlcoholRestoreSpeed;
+	float m_fBleedingRestoreSpeed{};
+	float m_fHealthRestoreSpeed{};
+	float m_fPowerRestoreSpeed{};
+	float m_fSatietyRestoreSpeed{};
+	float m_fThirstRestoreSpeed{};
+	float m_fPsyHealthRestoreSpeed{};
+	float m_fAlcoholRestoreSpeed{};
 
-	float m_fAdditionalMaxWeight;
-	float m_fAdditionalMaxVolume;
-	float m_fAdditionalWalkAccel;
-	float m_fAdditionalJumpSpeed;
+	float m_fAdditionalMaxWeight{};
+	float m_fAdditionalMaxVolume{};
+	float m_fAdditionalWalkAccel{};
+	float m_fAdditionalJumpSpeed{};
 
 	float GetAdditionalMaxWeight();
 	float GetAdditionalMaxVolume();
 	float GetAdditionalWalkAccel();
 	float GetAdditionalJumpSpeed();
 
-	bool m_bIsHelmetAllowed;
+	bool m_bIsHelmetAllowed{};
 };

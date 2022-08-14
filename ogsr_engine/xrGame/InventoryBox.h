@@ -9,6 +9,7 @@ protected:
 				xr_vector<u16>										m_items;
 
 				void					ProcessEvent					(CGameObject *O, NET_Packet& P, u16 type);	
+				float					m_fMaxVolume{};
 public:
 				bool	m_in_use;
 										IInventoryBox					();
@@ -23,8 +24,9 @@ public:
 	virtual	    CGameObject& 			object							()  = 0;
 	virtual     bool					IsOpened						() const { return true; }
 
-	
-
+	virtual		float					GetCarryVolume					() const;
+	virtual		float					MaxCarryVolume					() const;
+	virtual		bool					CanTakeItem						(CInventoryItem* inventory_item) const;
 };
 
 template <class Based>
@@ -54,7 +56,7 @@ public:
 class  CInventoryBox : public CCustomInventoryBox<CGameObject> // CBasicInventoryBox
 {
 public:
-					CInventoryBox			() {}	
+					CInventoryBox			() {};
 
 virtual		void	UpdateCL				();
 

@@ -85,7 +85,8 @@ public:
 
 	const	Ivector2&		CellsCapacity		();
 			void			SetCellsCapacity	(const Ivector2 c);
-			void			SetCellsAvailable(const u32 count);
+			void			SetCellsAvailable	(const u32 count);
+			void			ResetCellsAvailable	();
 			void			SetStartCellsCapacity(const Ivector2 c){m_orig_cell_capacity=c;SetCellsCapacity(c);};
 			void			ResetCellsCapacity	(){VERIFY(ItemsCount()==0);SetCellsCapacity(m_orig_cell_capacity);};
 	 const	Ivector2&		CellSize			();

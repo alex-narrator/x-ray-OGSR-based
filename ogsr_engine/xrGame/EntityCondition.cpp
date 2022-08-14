@@ -2,6 +2,7 @@
 #include "entitycondition.h"
 #include "inventoryowner.h"
 #include "customoutfit.h"
+#include "Backpack.h"
 #include "inventory.h"
 #include "wound.h"
 #include "level.h"
@@ -296,8 +297,8 @@ float CEntityCondition::HitOutfitEffect(SHit* pHDS)
 		pOutfit->Hit(pHDS);
 	}
 
-	//auto pBackPack = pInvOwner->GetBackPack();
-	//if (pBackPack) pBackPack->Hit(pHDS);
+	auto pBackPack = pInvOwner->GetBackpack();
+	if (pBackPack) pBackPack->Hit(pHDS);
 
 	return							new_hit_power;
 }

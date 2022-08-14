@@ -8,6 +8,7 @@
 #include "weapon.h"
 #include "Artifact.h"
 #include "CustomOutfit.h"
+#include "Backpack.h"
 #include "../xr_3da/camerabase.h"
 #include "xrMessages.h"
 
@@ -239,9 +240,9 @@ void CActor::g_cl_CheckControls(u32 mstate_wf, Fvector &vControlAccel, float &Ju
 				if (outfit && !fis_zero(outfit->GetCondition()))
 					jump_speed += outfit->GetAdditionalJumpSpeed();
 
-				//auto backpack = GetBackPack();
-				//if (backpack && !fis_zero(backpack->GetCondition()))
-				//	jump_speed += backpack->GetAdditionalJumpSpeed();
+				auto backpack = GetBackpack();
+				if (backpack && !fis_zero(backpack->GetCondition()))
+					jump_speed += backpack->GetAdditionalJumpSpeed();
 
 				//Msg("additional jump_speed = %.2f", jump_speed);
 				jump_speed *= conditions().GetSmoothOwerweightKoef();
@@ -372,9 +373,9 @@ void CActor::g_cl_CheckControls(u32 mstate_wf, Fvector &vControlAccel, float &Ju
 				if (outfit && !fis_zero(outfit->GetCondition()))
 					walk_accel += outfit->GetAdditionalWalkAccel();
 
-				//auto backpack = GetBackPack();
-				//if (backpack && !fis_zero(backpack->GetCondition()))
-				//	walk_accel += backpack->GetAdditionalWalkAccel();
+				auto backpack = GetBackpack();
+				if (backpack && !fis_zero(backpack->GetCondition()))
+					walk_accel += backpack->GetAdditionalWalkAccel();
 
 				//Msg("additional walk_accel = %.2f", walk_accel);
 				walk_accel *= conditions().GetSmoothOwerweightKoef();

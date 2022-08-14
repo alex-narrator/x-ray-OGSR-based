@@ -24,18 +24,6 @@ CCustomOutfit::CCustomOutfit()
 	m_HitTypeProtection.resize	(ALife::eHitTypeMax);
 
 	m_boneProtection = xr_new<SBoneProtections>();
-
-	m_fHealthRestoreSpeed		= 0.f;
-	m_fSatietyRestoreSpeed		= 0.f;
-	m_fPowerRestoreSpeed		= 0.f;
-	m_fBleedingRestoreSpeed		= 0.f;
-	m_fPsyHealthRestoreSpeed	= 0.f;
-	m_fAlcoholRestoreSpeed		= 0.f;
-	m_fThirstRestoreSpeed		= 0.f;
-	m_fAdditionalMaxWeight		= 0.f;
-	m_fAdditionalMaxVolume		= 0.f;
-	m_fAdditionalWalkAccel		= 0.f;
-	m_fAdditionalJumpSpeed		= 0.f;
 }
 
 CCustomOutfit::~CCustomOutfit() 

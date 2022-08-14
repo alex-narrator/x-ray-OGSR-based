@@ -468,4 +468,14 @@
 	<string id="ui_inv_wounds_heal_perc">
 		<text>Заживление ран</text>
 	</string>
+	
+	<string id="st_move_with_content">
+		<text>перенести с содержимым</text>
+	</string>
+	<string id="ui_inv_move_all_from_ruck">
+		<text>Выложить всё из рюкзака</text>
+	</string>
+	<string id="st_volume">
+		<text>объём</text>
+	</string>
 </string_table>

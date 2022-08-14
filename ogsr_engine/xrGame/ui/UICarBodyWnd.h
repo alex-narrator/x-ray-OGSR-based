@@ -12,6 +12,7 @@ class CUI3tButton;
 class CUICellItem;
 class IInventoryBox;
 class CInventoryOwner;
+class CGameObject;
 
 class CUICarBodyWnd: public CUIDialogWnd
 {
@@ -43,7 +44,7 @@ public:
 	void					UpdateLists_delayed			();
 
 protected:
-	CInventoryOwner*		m_pOurObject;
+	CInventoryOwner*		m_pActorInventoryOwner{};
 	
 	CUIDragDropListEx*		m_pUIOurBagList;
 	CUIDragDropListEx*		m_pUIOthersBagList;
@@ -58,6 +59,11 @@ protected:
 	CUIStatic*				m_pUIOurBagWnd;
 	CUIStatic*				m_pUIOthersBagWnd;
 
+	CUIStatic*				m_pUIOurVolWnd;
+	CUIStatic*				m_pUIOthersVolWnd;
+
+	CUIStatic*				m_pUIOurWeightWnd;
+
 	//информация о персонажах 
 	CUIStatic*				m_pUIOurIcon;
 	CUIStatic*				m_pUIOthersIcon;
@@ -65,12 +71,18 @@ protected:
 	CUICharacterInfo*		m_pUICharacterInfoRight;
 	CUIPropertiesBox*		m_pUIPropertiesBox;
 	CUI3tButton*			m_pUITakeAll;
+	CUI3tButton*			m_pUIExitButton;
+	CUI3tButton*			m_pUIRepackAmmoButton;
+	CUI3tButton*			m_pUIMoveAllFromRuckButton;
 
 public:
 	CUICellItem*			m_pCurrentCellItem;
 
-	CInventoryOwner*		m_pOthersObject;
-	IInventoryBox*			m_pInventoryBox;
+	CInventoryOwner*		m_pOtherInventoryOwner{};
+	IInventoryBox*			m_pOtherInventoryBox{};
+
+	CGameObject*			m_pActorGO{};
+	CGameObject*			m_pOtherGO{};
 
 protected:
 	void					UpdateLists					();
@@ -90,13 +102,13 @@ protected:
 	void					MoveItemWithContent			(CUICellItem* itm, u32 slot);
 
 
-	bool			OnItemDrop					(CUICellItem* itm);
-	bool			OnItemStartDrag				(CUICellItem* itm);
-	bool			OnItemDbClick				(CUICellItem* itm);
-	bool			OnItemSelected				(CUICellItem* itm);
-	bool			OnItemRButtonClick			(CUICellItem* itm);
+	bool					OnItemDrop					(CUICellItem* itm);
+	bool					OnItemStartDrag				(CUICellItem* itm);
+	bool					OnItemDbClick				(CUICellItem* itm);
+	bool					OnItemSelected				(CUICellItem* itm);
+	bool					OnItemRButtonClick			(CUICellItem* itm);
 
-	bool					TransferItem				(PIItem itm, CInventoryOwner* owner_from, CInventoryOwner* owner_to, bool b_check);
+	bool					TransferItem				(PIItem itm, CGameObject* owner_from, CGameObject* owner_to);
 	void					BindDragDropListEnents		(CUIDragDropListEx* lst);
 
 	enum eInventorySndAction {
@@ -115,4 +127,8 @@ protected:
 	ref_sound					sounds[eInvSndMax];
 	void						PlaySnd(eInventorySndAction a);
 
+	bool						CanMoveToOther		(PIItem pItem, CGameObject* owner_to) const;
+	void						UpdateWeightVolume	();
+	float						GetStackVolume		(CUICellItem* ci) const;
+	bool						CanTakeStack		(CUICellItem* ci, CGameObject* owner_to) const;
 };

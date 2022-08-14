@@ -10,12 +10,14 @@
 #include "../string_table.h"
 #include "../Inventory.h"
 #include "../InventoryOwner.h"
+#include "InventoryBox.h"
 
 #include "../InfoPortion.h"
 #include "../game_base_space.h"
 #include "../actor.h"
+#include "string_table.h"
 
-#define EQUIPMENT_ICONS "ui\\ui_icon_equipment"
+constexpr auto EQUIPMENT_ICONS = "ui\\ui_icon_equipment";
 
 constexpr LPCSTR relationsLtxSection	= "game_relations";
 constexpr LPCSTR ratingField			= "rating_names";
@@ -296,7 +298,7 @@ void InventoryUtilities::UpdateWeight(CUIStatic &wnd, bool withPrefix)
 	R_ASSERT(pInvOwner);
 	string128 buf{};
 
-	float total = pInvOwner->GetCarryWeight();//pInvOwner->inventory().CalcTotalWeight();
+	float total = pInvOwner->GetCarryWeight();
 	float max	= pInvOwner->MaxCarryWeight();
 
 	string16 cl{};
@@ -321,7 +323,51 @@ void InventoryUtilities::UpdateWeight(CUIStatic &wnd, bool withPrefix)
 		strcpy_s(prefix, "");
 	}
 
-	sprintf_s(buf, "%s%s%3.1f %s/%5.1f", prefix, cl, total, "%c[UI_orange]", max);
+	sprintf_s(buf, "%s%s%.1f%s/%.1f %s", prefix, cl, total, "%c[UI_orange]", max, CStringTable().translate("st_kg").c_str());
+	wnd.SetText(buf);
+	//	UIStaticWeight.ClipperOff();
+}
+
+void InventoryUtilities::UpdateVolume(CGameObject* owner, CUIStatic& wnd, bool withPrefix)
+{
+	auto inv_owner	= smart_cast<CInventoryOwner*>(owner);
+	auto inv_box	= smart_cast<IInventoryBox*>(owner);
+
+	string128 buf{};
+
+	float total{}, max{};
+	if (inv_owner) {
+		total	= inv_owner->GetCarryVolume();
+		max		= inv_owner->MaxCarryVolume();
+	}
+	else if (inv_box) {
+		total	= inv_box->GetCarryVolume();
+		max		= inv_box->MaxCarryVolume();
+	}
+
+	string16 cl{};
+
+	if (total > max)
+	{
+		strcpy_s(cl, "%c[red]");
+	}
+	else
+	{
+		strcpy_s(cl, "%c[UI_orange]");
+	}
+
+	string32 prefix{};
+
+	if (withPrefix)
+	{
+		sprintf_s(prefix, "%%c[default]%s ", *CStringTable().translate("ui_inv_volume"));
+	}
+	else
+	{
+		strcpy_s(prefix, "");
+	}
+
+	sprintf_s(buf, "%s%s%.1f%s/%.1f %s", prefix, cl, total, "%c[UI_orange]", max, CStringTable().translate("st_l").c_str());
 	wnd.SetText(buf);
 	//	UIStaticWeight.ClipperOff();
 }

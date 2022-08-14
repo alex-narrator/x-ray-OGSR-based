@@ -236,12 +236,12 @@ void CActor::IR_OnKeyboardPress(int cmd)
 					PIItem iitm = inventory().GetSame(itm, SearchRuck);
 					if (iitm)
 					{
-						inventory().Eat(iitm, cast_inventory_owner());
+						inventory().Eat(iitm);
 						strconcat(sizeof(str), str, CStringTable().translate("st_item_used").c_str(), ": ", iitm->Name());
 					}
 					else
 					{
-						inventory().Eat(itm, cast_inventory_owner());
+						inventory().Eat(itm);
 						strconcat(sizeof(str), str, CStringTable().translate("st_item_used").c_str(), ": ", itm->Name());
 					}
 					HUD().GetUI()->AddInfoMessage("item_usage", str, false);

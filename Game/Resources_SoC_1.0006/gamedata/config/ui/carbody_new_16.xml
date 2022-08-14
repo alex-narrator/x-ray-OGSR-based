@@ -18,9 +18,13 @@
 		<text x="30" y="8" font="graffiti22" r="238" g="153" b="26" complex_mode="1"/>
 	</our_bag_static>
 	
-	<our_volume_static x="0" y="-20" width="333" height="450" stretch="1">
+	<our_weight_static x="0" y="-10" width="333" height="450" stretch="1">
 		<text x="30" y="8" font="graffiti22" r="238" g="153" b="26" complex_mode="1"/>
-	</our_volume_static>
+	</our_weight_static>
+	
+	<our_vol_static x="0" y="5" width="333" height="450" stretch="1">
+		<text x="30" y="8" font="graffiti22" r="238" g="153" b="26" complex_mode="1"/>
+	</our_vol_static>
 
 	<dragdrop_list_our x="29" y="35" width="279" height="410"
 			cell_width = "31" cell_height="41" rows_num="10" cols_num="9" 
@@ -28,8 +32,12 @@
 
 	<others_bag_static x="675" y="270" width="333" height="455" stretch="1">
 		<texture mirror="h" width="305" height="455">ui\ui_dg_inventory_exchange_trade</texture>
-		<text x="25" y="8" font="graffiti22" r="255" g="255" b="255" a="128">st_items</text>
+		<text x="25" y="8" font="graffiti22" r="255" g="255" b="255" a="128"></text>
 	</others_bag_static>
+	
+	<other_vol_static x="0" y="0" width="333" height="450" stretch="1">
+		<text x="30" y="8" font="graffiti22" r="238" g="153" b="26" complex_mode="1"/>
+	</other_vol_static>
 
 	<dragdrop_list_other x="29" y="35" width="279" height="410"
 			cell_width="31" cell_height="41" rows_num="10" cols_num="9" 
@@ -78,7 +86,7 @@
 		</text_color>
 	</take_all_btn>
 	
-	<repack_ammo_button x="196" y="725" width="157" height="48" stretch="1">
+	<repack_ammo_button x="196" y="725" width="157" height="48" stretch="1" accel = "kE">
         <texture>ui_button_main02</texture>
         <text font="graffiti19" r="238" g="153" b="26">ui_inv_repack_ammo</text>
         <text_color>

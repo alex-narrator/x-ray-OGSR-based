@@ -2,6 +2,8 @@
 #include "InventoryBox.h"
 #include "level.h"
 #include "actor.h"
+#include "HUDManager.h"
+#include "UIGameSP.h"
 #include "game_object_space.h"
 
 #include "script_callback_ex.h"
@@ -11,6 +13,8 @@ IInventoryBox::IInventoryBox() : m_items ()
 {
 	m_in_use = false;
 	m_items.clear();
+
+	m_fMaxVolume = READ_IF_EXISTS(pSettings, r_float, "inventory_box", "max_volume", .0f);
 }
 
 void IInventoryBox::ProcessEvent(CGameObject *O, NET_Packet& P, u16 type)
@@ -58,8 +62,11 @@ void IInventoryBox::ProcessEvent(CGameObject *O, NET_Packet& P, u16 type)
 
 			if (!itm)
 				return;
-
+			/*Msg("~ [%s: REJECT] object [%s] with id [%u] parent [%s]", __FUNCTION__, itm->cName().c_str(), id, itm->H_Parent()->cName().c_str());*/
 			itm->H_SetParent	(NULL, dont_create_shell);
+
+			if (Actor() && HUD().GetUI() && HUD().GetUI()->UIGame())
+				HUD().GetUI()->UIGame()->ReInitShownUI();
 
 			if (auto obj = smart_cast<CGameObject*>(itm))
 			{
@@ -77,14 +84,28 @@ void IInventoryBox::ProcessEvent(CGameObject *O, NET_Packet& P, u16 type)
 #include "inventory_item.h"
 void IInventoryBox::AddAvailableItems(TIItemContainer& items_container) const
 {
-	xr_vector<u16>::const_iterator it = m_items.begin();
-	xr_vector<u16>::const_iterator it_e = m_items.end();
-
-	for(;it!=it_e;++it)
-	{
-		PIItem itm = smart_cast<PIItem>(Level().Objects.net_Find(*it));VERIFY(itm);
-		items_container.push_back	(itm);
+	for(const auto& item_id : m_items){
+		PIItem itm = smart_cast<PIItem>(Level().Objects.net_Find(item_id));VERIFY(itm);
+		items_container.push_back(itm);
 	}
+}
+
+float IInventoryBox::GetCarryVolume() const{
+	float res{};
+	for (const auto& item_id : m_items) {
+		PIItem itm = smart_cast<PIItem>(Level().Objects.net_Find(item_id));
+		res += itm->Volume();
+	}
+	return res;
+}
+
+float IInventoryBox::MaxCarryVolume() const{
+	return m_fMaxVolume;
+}
+
+bool IInventoryBox::CanTakeItem(CInventoryItem* inventory_item) const {
+	if (fis_zero(MaxCarryVolume())) return true;
+	return (inventory_item->Volume() + GetCarryVolume() <= MaxCarryVolume());
 }
 
 CScriptGameObject* IInventoryBox::GetObjectByName(LPCSTR name)

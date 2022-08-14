@@ -12,6 +12,7 @@
 #include "UIInventoryWnd.h"
 #include "UICursor.h"
 #include "UIXmlInit.h"
+#include "string_table.h"
 
 constexpr auto INV_GRID_WIDTHF = 50.0f;
 constexpr auto INV_GRID_HEIGHTF = 50.0f;
@@ -248,6 +249,54 @@ void CUIAmmoCellItem::UpdateItemText()
 	}
 }
 
+CUIWarbeltCellItem::CUIWarbeltCellItem(CWarbelt* itm)
+	:inherited(itm) {
+	m_text_add = nullptr;
+	init_add();
+}
+void CUIWarbeltCellItem::Update() {
+	inherited::Update();
+	UpdateItemText();
+}
+void CUIWarbeltCellItem::UpdateItemText() {
+	inherited::UpdateItemText();
+
+	string32				str;
+	sprintf_s(str, "%s[%d]", object()->HasDropPouch() ? "•" : "", object()->GetMaxBelt());
+
+	float pos_x{ GetWidth() - m_text_add->GetWidth() };
+	float pos_y{ GetHeight() - m_text_add->GetHeight() };
+	Fvector2 pos{ pos_x, pos_y };
+
+	m_text_add->SetWndPos(pos);
+	m_text_add->SetText(str);
+	m_text_add->Show(true);
+}
+
+CUICBackpackCellItem::CUICBackpackCellItem(CBackpack* itm)
+	:inherited(itm) {
+	m_text_add = nullptr;
+	init_add();
+}
+void CUICBackpackCellItem::Update() {
+	inherited::Update();
+	UpdateItemText();
+}
+void CUICBackpackCellItem::UpdateItemText() {
+	inherited::UpdateItemText();
+
+	string32				str;
+	sprintf_s(str, "%.0f%s", object()->GetAdditionalMaxVolume(), CStringTable().translate("st_l").c_str());
+
+	float pos_x{ GetWidth() - m_text_add->GetWidth() };
+	float pos_y{ GetHeight() - m_text_add->GetHeight() };
+	Fvector2 pos{ pos_x, pos_y };
+
+	m_text_add->SetWndPos(pos);
+	m_text_add->SetText(str);
+	m_text_add->Show(true);
+}
+
 CUIEatableCellItem::CUIEatableCellItem(CEatableItem* itm)
 	:inherited(itm) {
 	if (itm->GetStartPortionsNum()>1) {
@@ -327,9 +376,8 @@ CUIWeaponCellItem::CUIWeaponCellItem(CWeapon* itm)
 
 void CUIWeaponCellItem::UpdateItemText()
 {
+	inherited::UpdateItemText();
 	if (object()->GetAmmoMagSize()) {
-		inherited::UpdateItemText();
-
 		string32				str;
 		auto pWeaponMag = smart_cast<CWeaponMagazined*>(object());
 		sprintf_s(str, "%d/%d%s", object()->GetAmmoElapsed(), object()->GetAmmoMagSize(), pWeaponMag->HasFireModes() ? pWeaponMag->GetCurrentFireModeStr() : "");

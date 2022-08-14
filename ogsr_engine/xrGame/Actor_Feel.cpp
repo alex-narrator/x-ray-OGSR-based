@@ -135,9 +135,8 @@ void	CActor::PickupModeUpdate_COD	()
 {
 	if (Level().CurrentViewEntity() != this) return;
 		
-	if (!g_Alive() || eacFirstEye != cam_active) 
-	{
-		HUD().GetUI()->UIMainIngameWnd->SetPickUpItem(NULL);
+	if (!g_Alive() || eacFirstEye != cam_active) {
+		HUD().GetUI()->UIMainIngameWnd->SetPickUpItem(nullptr);
 		return;
 	};
 
@@ -150,12 +149,12 @@ void	CActor::PickupModeUpdate_COD	()
 		&& !Level().m_feel_deny.is_object_denied( smart_cast<CGameObject*>( inventory().m_pTarget ) )
 		&& inventory().IsFreeHands()) {
 		CInventoryItem* pNearestItem = inventory().m_pTarget;
-        if ( m_bPickupMode ) {
+        if ( m_bPickupMode && inventory().CanTakeItem(pNearestItem)) {
 			Game().SendPickUpEvent(ID(), pNearestItem->object().ID());
 			PickupModeOff();
 			pNearestItem = nullptr;
         }
-        HUD().GetUI()->UIMainIngameWnd->SetPickUpItem(b_pickup_allowed ? pNearestItem : NULL);
+        HUD().GetUI()->UIMainIngameWnd->SetPickUpItem(b_pickup_allowed ? pNearestItem : nullptr);
         return;
 	}
 	
@@ -168,9 +167,8 @@ void	CActor::PickupModeUpdate_COD	()
 	//---------------------------------------------------------------------------
 
 	float maxlen = 1000.0f;
-	CInventoryItem* pNearestItem = NULL;
-	for (u32 o_it=0; o_it<ISpatialResult.size(); o_it++)
-	{
+	CInventoryItem* pNearestItem = nullptr;
+	for (u32 o_it=0; o_it<ISpatialResult.size(); o_it++){
 		ISpatial*		spatial	= ISpatialResult[o_it];
 		CInventoryItem*	pIItem	= smart_cast<CInventoryItem*> (spatial->dcast_CObject        ());
 		if (0 == pIItem) continue;
@@ -201,22 +199,19 @@ void	CActor::PickupModeUpdate_COD	()
 		};
 	}
 
-	if(pNearestItem)
-	{
+	if(pNearestItem){
 		CFrustum					frustum;
 		frustum.CreateFromMatrix	(Device.mFullTransform,FRUSTUM_P_LRTB|FRUSTUM_P_FAR);
 		if (!CanPickItem(frustum,Device.vCameraPosition,&pNearestItem->object()) || !b_pickup_allowed)
-			pNearestItem = NULL;
+			pNearestItem = nullptr;
 	}
 
-	if (pNearestItem && pNearestItem->cast_game_object())
-	{
+	if (pNearestItem && pNearestItem->cast_game_object()){
 		if (Level().m_feel_deny.is_object_denied(pNearestItem->cast_game_object()))
-				pNearestItem = NULL;
+				pNearestItem = nullptr;
 	}
 
-
-    if ( pNearestItem && m_bPickupMode) {
+    if ( pNearestItem && m_bPickupMode && inventory().CanTakeItem(pNearestItem)) {
          //подбирание объекта
 		u16 item_id = psActorFlags.test(AF_PICKUP_TARGET_ONLY) ? inventory().m_pTarget->object().ID() : pNearestItem->object().ID();
 		Game().SendPickUpEvent(ID(), item_id);
@@ -226,12 +221,12 @@ void	CActor::PickupModeUpdate_COD	()
            pNearestItem = nullptr;
     }
 
-	HUD().GetUI()->UIMainIngameWnd->SetPickUpItem(b_pickup_allowed ? pNearestItem : NULL);
+	HUD().GetUI()->UIMainIngameWnd->SetPickUpItem(b_pickup_allowed ? pNearestItem : nullptr);
 };
 
 void CActor::PickupInfoDraw(CObject* object)
 {
-	LPCSTR draw_str = NULL;
+	LPCSTR draw_str = nullptr;
 	
 	CInventoryItem* item = smart_cast<CInventoryItem*>(object);
 //.	CInventoryOwner* inventory_owner = smart_cast<CInventoryOwner*>(object);

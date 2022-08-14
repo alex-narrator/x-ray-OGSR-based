@@ -28,6 +28,7 @@ private:
 public:			
 
 									CInventoryContainer					();
+	virtual void					Load								(LPCSTR section);
 	virtual bool					CanTrade							() const;
 	virtual	u32						Cost								() const;
 	virtual	float					Weight								() const;

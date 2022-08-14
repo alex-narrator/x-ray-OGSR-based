@@ -71,6 +71,7 @@ CInventory::CInventory()
 	m_fTakeDist									= pSettings->r_float	("inventory","take_dist");
 	m_fMaxWeight								= pSettings->r_float	("inventory","max_weight");
 	//m_iMaxBelt									= pSettings->r_u32		("inventory","max_belt");
+	m_fMaxVolume								= READ_IF_EXISTS(pSettings, r_float, "inventory", "max_volume", .0f);
 	
 	m_slots.resize								(SLOTS_TOTAL);
 	
@@ -111,6 +112,7 @@ CInventory::CInventory()
 	m_bBeltUseful								= false;
 
 	m_fTotalWeight								= -1.f;
+	m_fTotalVolume								= -1.f;
 	m_dwModifyFrame								= 0;
 	m_drop_last_frame							= false;
 	m_iLoadActiveSlotFrame						= u32(-1);
@@ -136,6 +138,7 @@ void CInventory::Clear()
 	m_pOwner							= NULL;
 
 	CalcTotalWeight						();
+	CalcTotalVolume						();
 	InvalidateState						();
 }
 
@@ -213,7 +216,6 @@ void CInventory::Take(CGameObject *pObj, bool bNotActivate, bool strict_placemen
 
 		auto pActor = smart_cast<CActor*>(m_pOwner);
 		const bool def_to_slot = pActor ? !pIItem->RuckDefault() : true;
-
 		if((!force_ruck_default && def_to_slot && CanPutInSlot(pIItem)) || force_move_to_slot)
 		{
 			if ( pActor && Device.dwPrecacheFrame )
@@ -233,6 +235,7 @@ void CInventory::Take(CGameObject *pObj, bool bNotActivate, bool strict_placemen
 	m_pOwner->OnItemTake				(pIItem);
 
 	CalcTotalWeight						();
+	CalcTotalVolume						();
 	InvalidateState						();
 
 	pIItem->object().processing_deactivate();
@@ -244,6 +247,8 @@ bool CInventory::DropItem(CGameObject *pObj)
 	CInventoryItem *pIItem				= smart_cast<CInventoryItem*>(pObj);
 	VERIFY								(pIItem);
 	if( !pIItem )						return false;
+
+	if (!pIItem->m_pCurrentInventory)	return false;
 
 	ASSERT_FMT(
 	  pIItem->m_pCurrentInventory,
@@ -301,6 +306,7 @@ bool CInventory::DropItem(CGameObject *pObj)
 	m_pOwner->OnItemDrop			(smart_cast<CInventoryItem*>(pObj));
 
 	CalcTotalWeight					();
+	CalcTotalVolume					();
 	InvalidateState					();
 	m_drop_last_frame				= true;
 	return							true;
@@ -310,7 +316,7 @@ bool CInventory::DropItem(CGameObject *pObj)
 bool CInventory::Slot(PIItem pIItem, bool bNotActivate) 
 {
 	VERIFY(pIItem);
-//	Msg("To Slot %s[%d]", *pIItem->object().cName(), pIItem->object().ID());
+	//Msg("To Slot %s[%d]", *pIItem->object().cName(), pIItem->object().ID());
 	
 	if(!CanPutInSlot(pIItem)) 
 	{
@@ -363,6 +369,8 @@ bool CInventory::Slot(PIItem pIItem, bool bNotActivate)
 	
 	pIItem->object().processing_activate();
 
+	CalcTotalVolume();
+
 	return true;
 }
 
@@ -387,7 +395,8 @@ bool CInventory::Belt(PIItem pIItem)
 	}
 
 	CalcTotalWeight();
-	InvalidateState						();
+	CalcTotalVolume();
+	InvalidateState();
 
 	auto PrevPlace = pIItem->m_eItemPlace;
 	pIItem->m_eItemPlace = eItemPlaceBelt;
@@ -423,6 +432,7 @@ bool CInventory::Ruck(PIItem pIItem)
 	m_ruck.insert									(m_ruck.end(), pIItem); 
 	
 	CalcTotalWeight									();
+	CalcTotalVolume									();
 	InvalidateState									();
 
 	EItemPlace prevPlace = pIItem->m_eItemPlace;
@@ -731,7 +741,8 @@ void CInventory::Update()
 
 		m_iActiveSlot = m_iNextActiveSlot;
 	}
-	UpdateDropTasks	();
+	UpdateDropTasks		();
+	UpdateVolumeDropOut	();
 }
 
 void CInventory::UpdateDropTasks()
@@ -883,14 +894,31 @@ float CInventory::TotalWeight() const
 
 float CInventory::CalcTotalWeight()
 {
-	float weight = 0;
-	for(TIItemContainer::const_iterator it = m_all.begin(); m_all.end() != it; ++it) 
-		weight += (*it)->Weight();
+	float weight{};
+	for (const auto& item : m_all) {
+		weight += item->Weight();
+	}
 
 	m_fTotalWeight = weight;
 	return m_fTotalWeight;
 }
 
+float CInventory::TotalVolume() const
+{
+	VERIFY(m_fTotalVolume >= 0.f);
+	return m_fTotalVolume;
+}
+
+float CInventory::CalcTotalVolume()
+{
+	float volume{};
+	for (const auto& item : m_ruck) {
+		volume += item->Volume();
+	}
+
+	m_fTotalVolume = volume;
+	return m_fTotalVolume;
+}
 
 u32 CInventory::dwfGetSameItemCount(LPCSTR caSection, bool SearchAll)
 {
@@ -1003,7 +1031,7 @@ bool CInventory::InRuck(PIItem pIItem) const
 }
 
 
-bool CInventory::CanPutInSlot(PIItem pIItem) const
+bool CInventory::CanPutInSlot(PIItem pIItem, bool check_all) const
 {
 	if(!m_bSlotsUseful) return false;
 
@@ -1012,8 +1040,19 @@ bool CInventory::CanPutInSlot(PIItem pIItem) const
 	if (IsSlotDisabled(pIItem->GetSlot())) return false;
 
 	if(pIItem->GetSlot() < m_slots.size() && 
-		m_slots[pIItem->GetSlot()].m_pIItem == NULL )
+		!m_slots[pIItem->GetSlot()].m_pIItem)
 		return true;
+
+	//оглянемо усі доступні слоти
+	//якщо знайдемо вільний - його й встановимо цільовим
+	if (check_all) {
+		for (const auto& slot : pIItem->GetSlots()) {
+			if (CanPutInSlot(pIItem, slot)) {
+				pIItem->SetSlot(slot);
+				return true;
+			}
+		}
+	}
 	
 	return false;
 }
@@ -1037,21 +1076,30 @@ bool CInventory::CanPutInSlot(PIItem pIItem, u8 slot) const
 
 //проверяет можем ли поместить вещь на пояс,
 //при этом реально ничего не меняется
-bool CInventory::CanPutInBelt(PIItem pIItem)
+bool CInventory::CanPutInBelt(PIItem pIItem) const
 {
 	if (InBelt(pIItem))							return false;
 	if (!m_bBeltUseful)							return false;
 	if (!pIItem || !pIItem->Belt())				return false;
 	if (OwnerIsActor() && !IsAllItemsLoaded())	return true;
 	if (m_belt.size() >= BeltSize())			return false;
+	auto belt = static_cast<TIItemContainer>(m_belt);
 
-	return FreeRoom_inBelt(m_belt, pIItem, BeltSize(), 1);
+	return FreeRoom_inBelt(belt, pIItem, BeltSize(), 1);
 }
 //проверяет можем ли поместить вещь в рюкзак,
 //при этом реально ничего не меняется
 bool CInventory::CanPutInRuck(PIItem pIItem) const
 {
 	if(InRuck(pIItem)) return false;
+
+	//для НПЦ може бути анлімітед обсяг
+	bool owner_vol_unlimited = !OwnerIsActor() && fis_zero(m_pOwner->MaxCarryVolume());
+
+	if (!owner_vol_unlimited && !pIItem->IsQuestItem() &&
+		TotalVolume() + pIItem->Volume() > m_pOwner->MaxCarryVolume())
+		return false;
+
 	return true;
 }
 
@@ -1097,26 +1145,15 @@ bool CInventory::CanTakeItem(CInventoryItem *inventory_item) const
 		if((*it)->object().ID() == inventory_item->object().ID()) break;
 	VERIFY3(it == m_all.end(), "item already exists in inventory",*inventory_item->object().cName());
 
-	CActor* pActor = smart_cast<CActor*>(m_pOwner);
-	//актер всегда может взять вещь
-	if(!pActor && (TotalWeight() + inventory_item->Weight() > m_pOwner->MaxCarryWeight()))
+	//перевантаження не враховуєтсья для актора
+	if(!OwnerIsActor() && (TotalWeight() + inventory_item->Weight() > m_pOwner->MaxCarryWeight()))
 		return false;
+
+	if (!CanPutInSlot(inventory_item, true) && !CanPutInBelt(inventory_item) && !CanPutInRuck(inventory_item))
+		return	false;
 
 	return	true;
 }
-
-
-//u32 CInventory::BeltSlotsCount() const
-//{
-//	//if (auto pActor = smart_cast<CActor*>(m_pOwner))
-//	//	if (auto outfit = pActor->GetOutfit())
-//	//		return outfit->get_artefact_count();
-//
-//	static const u32 m_iMinBelt = READ_IF_EXISTS(pSettings, r_u32, "inventory", "min_belt", m_iMaxBelt); //Кол-во слотов под арты, когда костюма нет.
-//
-//	// см. комментарии в CInventory::Update()
-//	return UpdatesCount ? m_iMinBelt : m_iMaxBelt;
-//}
 
 void  CInventory::AddAvailableItems(TIItemContainer& items_container, bool for_trade) const
 {
@@ -1478,6 +1515,25 @@ void CInventory::DropSlotsToRuck(u32 min_slot, u32 max_slot) {
 		auto s = slot.m_pIItem->GetSlot();
 		if (min_slot <= s && s <= max_slot)
 			Ruck(ItemFromSlot(s));
+	}
+}
+
+void CInventory::UpdateVolumeDropOut()
+{
+	auto pActor = smart_cast<CActor*>(m_pOwner);
+	if (!pActor || !IsAllItemsLoaded()) return;
+
+	float total_volume = TotalVolume();
+
+	if (TotalVolume() > m_pOwner->MaxCarryVolume()){
+		for (const auto& item : m_ruck){
+			if (fis_zero(item->Volume()) || item->IsQuestItem())
+				continue;
+			item->SetDropManual(true);
+			total_volume -= item->Volume();
+			if (total_volume <= m_pOwner->MaxCarryVolume())
+				break;
+		}
 	}
 }
 

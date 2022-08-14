@@ -52,7 +52,7 @@ void CActor::OnEvent		(NET_Packet& P, u16 type)
 
 			CGameObject* _GO = smart_cast<CGameObject*>(O);
 			
-			if( inventory().CanTakeItem(smart_cast<CInventoryItem*>(_GO)) )
+			if(inventory().CanTakeItem(smart_cast<CInventoryItem*>(_GO)))
 			{
 				O->H_SetParent(smart_cast<CObject*>(this));
 
@@ -160,9 +160,11 @@ void CActor::OnEvent		(NET_Packet& P, u16 type)
 			case GEG_PLAYER_ITEM2RUCK:	 
 				inventory().Ruck(smart_cast<CInventoryItem*>(O)); 
 				break;
-			case GEG_PLAYER_ITEM_EAT:	 
+			case GEG_PLAYER_ITEM_EAT: {
 				inventory().Eat(smart_cast<CInventoryItem*>(O), cast_inventory_owner());
-				break;
+				if (Level().CurrentViewEntity() == this && HUD().GetUI() && HUD().GetUI()->UIGame())
+					HUD().GetUI()->UIGame()->ReInitShownUI();
+				}break;
 			case GEG_PLAYER_ACTIVATEARTEFACT:
 				{
 					CArtefact* pArtefact		= smart_cast<CArtefact*>(O);

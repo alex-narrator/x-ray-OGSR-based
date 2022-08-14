@@ -201,6 +201,7 @@ constexpr auto CLSID_EQUIPMENT_MILITARY       = MK_CLSID('E','Q','U','_','M','L'
 constexpr auto CLSID_EQUIPMENT_EXO            = MK_CLSID('E','Q','U','_','E','X','O',' ');
 
 constexpr auto CLSID_WARBELT				  = MK_CLSID('I','I','_','W','R','B','L','T');
+constexpr auto CLSID_BACKPACK				  = MK_CLSID('I','I','_','B','P','A','C','K');
 
 // Game types
 constexpr auto CLSID_SV_GAME_SINGLE           = MK_CLSID('S','V','_','S','I','N','G','L');

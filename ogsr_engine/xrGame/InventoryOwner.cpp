@@ -29,6 +29,7 @@
 #include "alife_object_registry.h"
 
 #include "CustomOutfit.h"
+#include "Backpack.h"
 
 CInventoryOwner::CInventoryOwner			()
 {
@@ -72,6 +73,9 @@ void CInventoryOwner::Load					(LPCSTR section)
 {
 	if(pSettings->line_exist(section, "inv_max_weight"))
 		m_inventory->SetMaxWeight( pSettings->r_float(section,"inv_max_weight") );
+
+	if (pSettings->line_exist(section, "inv_max_volume"))
+		m_inventory->SetMaxVolume(pSettings->r_float(section, "inv_max_volume"));
 
 	if(pSettings->line_exist(section, "need_osoznanie_mode"))
 	{
@@ -341,11 +345,11 @@ float  CInventoryOwner::MaxCarryWeight () const
 
 	auto outfit = GetOutfit();
 	if (outfit && !fis_zero(outfit->GetCondition()))
-		ret += outfit->GetAdditionalMaxWeight();//m_additional_weight2;
+		ret += outfit->GetAdditionalMaxWeight();
 
-	//auto backpack = GetBackPack();
-	//if (backpack && !fis_zero(backpack->GetCondition()))
-	//	ret += backpack->GetAdditionalMaxWeight();
+	auto backpack = GetBackpack();
+	if (backpack && !fis_zero(backpack->GetCondition()))
+		ret += backpack->GetAdditionalMaxWeight();
 
 	if (this == Actor())
 	{
@@ -355,6 +359,39 @@ float  CInventoryOwner::MaxCarryWeight () const
 
 			if (artefact && !fis_zero(artefact->GetCondition()))
 				ret += artefact->GetAdditionalMaxWeight();
+		}
+	}
+
+
+
+	return ret;
+}
+
+float CInventoryOwner::GetCarryVolume() const
+{
+	return inventory().TotalVolume();
+}
+
+float  CInventoryOwner::MaxCarryVolume() const
+{
+	float ret = inventory().GetMaxVolume();
+
+	auto outfit = GetOutfit();
+	if (outfit && !fis_zero(outfit->GetCondition()))
+		ret += outfit->GetAdditionalMaxVolume();
+
+	auto backpack = GetBackpack();
+	if (backpack && !fis_zero(backpack->GetCondition()))
+		ret += backpack->GetAdditionalMaxVolume();
+
+	if (this == Actor())
+	{
+		auto placement = psActorFlags.test(AF_ARTEFACTS_FROM_ALL) ? inventory().m_all : inventory().m_belt;
+		for (const auto& it : placement) {
+			auto artefact = smart_cast<CArtefact*>(it);
+
+			if (artefact && !fis_zero(artefact->GetCondition()))
+				ret += artefact->GetAdditionalMaxVolume();
 		}
 	}
 
@@ -605,19 +642,6 @@ bool CInventoryOwner::use_throw_randomness		()
 {
 	return						(true);
 }
-
-
-//float CInventoryOwner::ArtefactsAddWeight( bool first ) const {
-//  float add_weight = 0.f;
-//  auto placement = psActorFlags.test(AF_ARTEFACTS_FROM_ALL) ? inventory().m_all : inventory().m_belt;
-//  for ( const auto &it : placement) {
-//    CArtefact* artefact = smart_cast<CArtefact*>( it );
-//
-//	if ( artefact && ( !Core.Features.test(xrCore::Feature::af_zero_condition) || !fis_zero( artefact->GetCondition() ) ) )
-//      add_weight += first ? artefact->m_additional_weight : artefact->m_additional_weight2;
-//  }
-//  return add_weight;
-//}
 
 
 void CInventoryOwner::SetNextItemSlot( u32 slot ) {

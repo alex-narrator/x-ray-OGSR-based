@@ -347,8 +347,8 @@ CScriptGameObject* GetCarBodyTarget()
 	if (!pGameSP) return nullptr;
 	CUICarBodyWnd* wnd = pGameSP->UICarBodyMenu;
 	if (wnd == nullptr) return nullptr;
-	if (wnd->m_pOthersObject != nullptr) return smart_cast<CGameObject*>(wnd->m_pOthersObject)->lua_game_object();
-	if (wnd->m_pInventoryBox != nullptr) return (wnd->m_pInventoryBox->object().lua_game_object());
+	if (wnd->m_pOtherInventoryOwner != nullptr) return smart_cast<CGameObject*>(wnd->m_pOtherInventoryOwner)->lua_game_object();
+	if (wnd->m_pOtherInventoryBox != nullptr) return (wnd->m_pOtherInventoryBox->object().lua_game_object());
 	return nullptr;
 }
 
@@ -798,7 +798,7 @@ void update_inventory_window() {
 void update_inventory_weight() {
   CUIGameSP* pGameSP = smart_cast<CUIGameSP*>( HUD().GetUI()->UIGame() );
   if ( pGameSP)
-    pGameSP->InventoryMenu->UpdateWeight();
+    pGameSP->InventoryMenu->UpdateWeightVolume();
 }
 
 

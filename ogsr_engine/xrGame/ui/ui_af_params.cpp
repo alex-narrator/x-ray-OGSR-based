@@ -7,7 +7,7 @@
 #include "../inventory_item.h"
 #include "../Artifact.h"
 #include "../CustomOutfit.h"
-//#include "../BackPack.h"
+#include "../Backpack.h"
 #include "../Actor.h"
 #include "../ActorCondition.h"
 
@@ -114,6 +114,7 @@ float CUIArtefactParams::GetRestoreParam(u32 i, CInventoryItem* obj)
 
 	auto artefact = smart_cast<CArtefact*>		(obj);
 	auto outfit = smart_cast<CCustomOutfit*>	(obj);
+	auto backpack = smart_cast<CBackpack*>		(obj);
 
 	switch (i)
 	{
@@ -123,6 +124,8 @@ float CUIArtefactParams::GetRestoreParam(u32 i, CInventoryItem* obj)
 			r = artefact->m_fHealthRestoreSpeed * artefact->GetRandomKoef();
 		else if(outfit)
 			r = outfit->m_fHealthRestoreSpeed;
+		else if (backpack)
+			r = backpack->m_fHealthRestoreSpeed;
 	}break;
 	case _item_radiation_restore_speed:
 	{
@@ -136,6 +139,8 @@ float CUIArtefactParams::GetRestoreParam(u32 i, CInventoryItem* obj)
 			r = artefact->m_fSatietyRestoreSpeed * artefact->GetRandomKoef();
 		else if (outfit)
 			r = outfit->m_fSatietyRestoreSpeed;
+		else if (backpack)
+			r = backpack->m_fSatietyRestoreSpeed;
 	}break;
 	case _item_thirst_restore_speed:
 	{
@@ -143,6 +148,8 @@ float CUIArtefactParams::GetRestoreParam(u32 i, CInventoryItem* obj)
 			r = artefact->m_fThirstRestoreSpeed * artefact->GetRandomKoef();
 		else if (outfit)
 			r = outfit->m_fThirstRestoreSpeed;
+		else if (backpack)
+			r = backpack->m_fThirstRestoreSpeed;
 	}break;
 	case _item_power_restore_speed:
 	{
@@ -150,6 +157,8 @@ float CUIArtefactParams::GetRestoreParam(u32 i, CInventoryItem* obj)
 			r = artefact->m_fPowerRestoreSpeed * artefact->GetRandomKoef();
 		else if (outfit)
 			r = outfit->m_fPowerRestoreSpeed;
+		else if (backpack)
+			r = backpack->m_fPowerRestoreSpeed;
 	}break;
 	case _item_bleeding_restore_speed:
 	{
@@ -157,6 +166,8 @@ float CUIArtefactParams::GetRestoreParam(u32 i, CInventoryItem* obj)
 			r = artefact->m_fBleedingRestoreSpeed * artefact->GetRandomKoef();
 		else if (outfit)
 			r = outfit->m_fBleedingRestoreSpeed;
+		else if (backpack)
+			r = backpack->m_fBleedingRestoreSpeed;
 	}break;
 	case _item_psy_health_restore_speed:
 	{
@@ -164,6 +175,8 @@ float CUIArtefactParams::GetRestoreParam(u32 i, CInventoryItem* obj)
 			r = artefact->m_fPsyHealthRestoreSpeed * artefact->GetRandomKoef();
 		else if (outfit)
 			r = outfit->m_fPsyHealthRestoreSpeed;
+		else if (backpack)
+			r = backpack->m_fPsyHealthRestoreSpeed;
 	}break;
 	case _item_alcohol_restore_speed:
 	{
@@ -171,6 +184,8 @@ float CUIArtefactParams::GetRestoreParam(u32 i, CInventoryItem* obj)
 			r = artefact->m_fAlcoholRestoreSpeed * artefact->GetRandomKoef();
 		else if (outfit)
 			r = outfit->m_fAlcoholRestoreSpeed;
+		else if (backpack)
+			r = backpack->m_fAlcoholRestoreSpeed;
 	}break;
 	case _item_additional_walk_accel:
 	{
@@ -178,6 +193,8 @@ float CUIArtefactParams::GetRestoreParam(u32 i, CInventoryItem* obj)
 			r = artefact->GetAdditionalWalkAccel();
 		else if (outfit)
 			r = outfit->GetAdditionalWalkAccel();
+		else if (backpack)
+			r = backpack->GetAdditionalWalkAccel();
 	}break;
 	case _item_additional_jump_speed:
 	{
@@ -185,6 +202,8 @@ float CUIArtefactParams::GetRestoreParam(u32 i, CInventoryItem* obj)
 			r = artefact->GetAdditionalJumpSpeed();
 		else if (outfit)
 			r = outfit->GetAdditionalJumpSpeed();
+		else if (backpack)
+			r = backpack->GetAdditionalJumpSpeed();
 	}break;
 	case _item_additional_weight:
 	{
@@ -192,6 +211,8 @@ float CUIArtefactParams::GetRestoreParam(u32 i, CInventoryItem* obj)
 			r = artefact->GetAdditionalMaxWeight();
 		else if (outfit)
 			r = outfit->GetAdditionalMaxWeight();
+		else if (backpack)
+			r = backpack->GetAdditionalMaxWeight();
 	}break;
 	case _item_additional_volume:
 	{
@@ -199,6 +220,8 @@ float CUIArtefactParams::GetRestoreParam(u32 i, CInventoryItem* obj)
 			r = artefact->GetAdditionalMaxVolume();
 		else if (outfit)
 			r = outfit->GetAdditionalMaxVolume();
+		else if (backpack)
+			r = backpack->GetAdditionalMaxVolume();
 	}break;
 	}
 
@@ -218,7 +241,7 @@ void CUIArtefactParams::SetInfo(CInventoryItem* obj)
 
 	auto artefact	= smart_cast<CArtefact*>		(obj);
 	auto outfit		= smart_cast<CCustomOutfit*>	(obj);
-//	auto backpack	= smart_cast<CBackPack*>		(obj);
+	auto backpack	= smart_cast<CBackpack*>		(obj);
 
 //	R_ASSERT2(art, "object is not CArtefact");
 	CActor *pActor = Actor();
@@ -252,7 +275,7 @@ void CUIArtefactParams::SetInfo(CInventoryItem* obj)
 		{
 			if		(artefact)	_val = artefact->GetHitTypeProtection	(ALife::EHitType(i - _max_item_index1));
 			else if (outfit)	_val = outfit->GetHitTypeProtection		(ALife::EHitType(i - _max_item_index1));
-//			else if (backpack)	_val = backpack->GetHitTypeProtection	(ALife::EHitType(i - _max_item_index1));
+			else if (backpack)	_val = backpack->GetHitTypeProtection	(ALife::EHitType(i - _max_item_index1));
 			else continue;
 		}
 

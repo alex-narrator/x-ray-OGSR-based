@@ -113,6 +113,7 @@
 #	include "ExoOutfit.h"
 
 #	include "Warbelt.h"
+#	include "Backpack.h"
 
 #	include "f1.h"
 #	include "rgd5.h"
@@ -291,6 +292,7 @@ void CObjectFactory::register_classes	()
 
 	//equipment
 	ADD(CWarbelt				,CSE_ALifeItem					,CLSID_WARBELT					,"obj_warbelt");
+	ADD(CBackpack				,CSE_ALifeItem					,CLSID_BACKPACK					,"obj_backpack");
 
 	// Grenades
 	ADD(CF1						,CSE_ALifeItemGrenade			,CLSID_GRENADE_F1				,"wpn_grenade_f1");

@@ -23,6 +23,7 @@ struct GAME_NEWS_DATA;
 class CActorCondition;
 class CCustomOutfit;
 class CWarbelt;
+class CBackpack;
 class CCustomDetector;
 class CKnownContactsRegistryWrapper;
 class CEncyclopediaRegistryWrapper;
@@ -215,12 +216,12 @@ public:
 
 public:
 	//свойства артефактов
-	virtual void		UpdateArtefactsOnBelt();
+	virtual void		UpdateArtefactsOnBelt	();
 
-	virtual float		HitArtefactsOnBelt	( float, ALife::EHitType, bool = false );
+	virtual float		HitArtefactsOnBelt		(float, ALife::EHitType);
 
-	virtual void		UpdateArtefactPanel();
-	virtual void		UpdateQuickSlotPanel();
+	virtual void		UpdateArtefactPanel		();
+	virtual void		UpdateQuickSlotPanel	();
 protected:
 //	void ApplyArtefactEffects(ActorRestoreParams&, CArtefact*);
 	//звук тяжелого дыхания
@@ -648,6 +649,7 @@ public:
 		void SetWeaponHideState( u32 State, bool bSet, bool now = false );
 		virtual CCustomOutfit*			GetOutfit() const;
 		virtual CWarbelt*				GetWarbelt() const;
+		virtual CBackpack*				GetBackpack() const;
 private:
 	CActorCondition				*m_entity_condition;
 

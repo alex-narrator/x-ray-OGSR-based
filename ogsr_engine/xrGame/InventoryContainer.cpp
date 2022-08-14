@@ -16,6 +16,11 @@ CInventoryContainer::CInventoryContainer():
 	open();
 }
 
+void CInventoryContainer::Load(LPCSTR section){
+	inherited::Load(section);
+	m_fMaxVolume = READ_IF_EXISTS(pSettings, r_float, section, "max_volume", .0f);
+}
+
 u32 CInventoryContainer::Cost() const
 {
 	SItemsInfo info;

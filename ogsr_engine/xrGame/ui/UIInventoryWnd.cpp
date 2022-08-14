@@ -78,6 +78,12 @@ void CUIInventoryWnd::Init()
 
 	AttachChild							(&UIBagWnd);
 	xml_init.InitStatic					(uiXml, "bag_static", 0, &UIBagWnd);
+
+	UIBagWnd.AttachChild				(&UIWeightWnd);
+	xml_init.InitStatic					(uiXml, "weight_static", 0, &UIWeightWnd);
+
+	UIBagWnd.AttachChild				(&UIVolumeWnd);
+	xml_init.InitStatic					(uiXml, "volume_static", 0, &UIVolumeWnd);
 	
 	AttachChild							(&UIMoneyWnd);
 	xml_init.InitStatic					(uiXml, "money_static", 0, &UIMoneyWnd);
@@ -618,16 +624,27 @@ void CUIInventoryWnd::UpdateCustomDraw()
 	m_pUIBeltList->SetCellsAvailable(belt_size);
 	/*m_pUIBeltList->SetCellsCapacity({ (int)belt_size, 1 });*/
 
+	if (!Actor()->GetBackpack()) {
+		m_pUIBagList->SetCellsAvailable(0);
+	}
+	else {
+		m_pUIBagList->ResetCellsAvailable();
+	}
+
 	for (u8 i = 0; i < SLOTS_TOTAL; ++i) {
 		auto list = GetSlotList(i);
 		if (!list) 
 			continue;
 		if (inv.IsSlotDisabled(i)) {
-			/*list->SetCellsAvailable(0);*/
-			list->SetCellsCapacity({});
+			if(i==HELMET_SLOT)
+				list->SetCellsAvailable(0);
+			else
+				list->SetCellsCapacity({});
 		}else{
-			/*list->SetCellsAvailable(list->CellsCapacity().x * list->CellsCapacity().y);*/
-			list->ResetCellsCapacity();
+			if (i == HELMET_SLOT)
+				list->ResetCellsAvailable();
+			else
+				list->ResetCellsCapacity();
 		}
 	}
 

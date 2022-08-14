@@ -19,5 +19,11 @@ CUICellItem*	create_cell_item(CInventoryItem* itm)
 	CArtefact* pArtefact				= smart_cast<CArtefact*>(itm);
 	if (pArtefact)						return xr_new<CUIArtefactCellItem>(pArtefact);
 
+	CWarbelt* pWarbelt					= smart_cast<CWarbelt*>(itm);
+	if (pWarbelt)						return xr_new<CUIWarbeltCellItem>(pWarbelt);
+
+	CBackpack* pBackpack				= smart_cast<CBackpack*>(itm);
+	if (pBackpack)						return xr_new<CUICBackpackCellItem>(pBackpack);
+
 	return xr_new<CUIInventoryCellItem>(itm);
 }

@@ -401,7 +401,9 @@ void CUIDragDropListEx::SetCellsCapacity(const Ivector2 c)
 	m_container->SetCellsCapacity(c);
 }
 
-void CUIDragDropListEx::SetCellsAvailable(const u32 count) { m_container->SetCellsAvailable(count); }
+void CUIDragDropListEx::SetCellsAvailable(const u32 count)	{ m_container->SetCellsAvailable(count); }
+
+void CUIDragDropListEx::ResetCellsAvailable()				{ m_container->SetCellsAvailable(m_container->m_cellSize.x * m_container->m_cellSize.y); }
 
 void CUIDragDropListEx::enable_highlight(const bool enable) { m_container->enable_highlight(enable); }
 

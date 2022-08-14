@@ -3,7 +3,8 @@
 #include "Weapon.h"
 #include "eatable_item.h"
 #include "Artifact.h"
-
+#include "Warbelt.h"
+#include "Backpack.h"
 
 class CUIInventoryCellItem :public CUICellItem
 {
@@ -26,6 +27,28 @@ public:
 	virtual bool			OnMouse						(float, float, EUIMessages);
 	// Real Wolf: Для метода get_cell_item(). 25.07.2014.
 	virtual					~CUIInventoryCellItem		();
+};
+
+class CUIWarbeltCellItem :public CUIInventoryCellItem
+{
+	typedef  CUIInventoryCellItem	inherited;
+protected:
+	virtual		void			UpdateItemText				();
+public:
+								CUIWarbeltCellItem			(CWarbelt* itm);
+	virtual		void			Update						();
+				CWarbelt*		object						() {return (CWarbelt*)m_pData;}
+};
+
+class CUICBackpackCellItem :public CUIInventoryCellItem
+{
+	typedef  CUIInventoryCellItem	inherited;
+protected:
+	virtual		void			UpdateItemText				();
+public:
+								CUICBackpackCellItem		(CBackpack* itm);
+	virtual		void			Update						();
+				CBackpack*		object						() {return (CBackpack*)m_pData;}
 };
 
 class CUIEatableCellItem :public CUIInventoryCellItem

@@ -4,23 +4,24 @@
 #include "../character_info_defs.h"
 
 class CUIStatic;
+class CGameObject;
 
 //размеры сетки в текстуре инвентаря
-#define INV_GRID_WIDTH			50
-#define INV_GRID_HEIGHT			50
+constexpr auto INV_GRID_WIDTH{ 50 };
+constexpr auto INV_GRID_HEIGHT{ 50 };
 
 //размеры сетки в текстуре иконок персонажей
-#define ICON_GRID_WIDTH			64
-#define ICON_GRID_HEIGHT		64
+constexpr auto ICON_GRID_WIDTH{ 64 };
+constexpr auto ICON_GRID_HEIGHT{ 64 };
 //размер иконки персонажа для инвенторя и торговли
-#define CHAR_ICON_WIDTH			2
-#define CHAR_ICON_HEIGHT		2	
+constexpr auto CHAR_ICON_WIDTH{ 2 };
+constexpr auto CHAR_ICON_HEIGHT{ 2 };
 
 //размер иконки персонажа в полный рост
-#define CHAR_ICON_FULL_WIDTH	2
-#define CHAR_ICON_FULL_HEIGHT	5
+constexpr auto CHAR_ICON_FULL_WIDTH{ 2 };
+constexpr auto CHAR_ICON_FULL_HEIGHT{ 5 };
 
-#define TRADE_ICONS_SCALE		(4.f/5.f)
+constexpr auto TRADE_ICONS_SCALE{ 4.f / 5.f };
 
 namespace InventoryUtilities
 {
@@ -64,6 +65,7 @@ const shared_str GetTimeAsString(ALife::_TIME_ID time, ETimePrecision timePrec, 
 LPCSTR GetTimePeriodAsString	(LPSTR _buff, u32 buff_sz, ALife::_TIME_ID _from, ALife::_TIME_ID _to);
 // Отобразить вес, который несет актер
 void UpdateWeight(CUIStatic &wnd, bool withPrefix = false);
+void UpdateVolume(CGameObject* owner, CUIStatic &wnd, bool withPrefix = false);
 
 // Функции получения строки-идентификатора ранга и отношения по их числовому идентификатору
 LPCSTR	GetRankAsText				(CHARACTER_RANK_VALUE		rankID);

@@ -42,6 +42,9 @@ public:
 	float 					TotalWeight			() const;
 	float 					CalcTotalWeight		();
 
+	float 					TotalVolume			() const;
+	float 					CalcTotalVolume		();
+
 	void					Take				(CGameObject *pObj, bool bNotActivate, bool strict_placement);
 	bool					DropItem			(CGameObject *pObj);
 	void					Clear				();
@@ -55,9 +58,9 @@ public:
 	bool 					InBelt				(PIItem pIItem) const;
 	bool 					InRuck				(PIItem pIItem) const;
 
-	bool 					CanPutInSlot		(PIItem pIItem) const;
+	bool 					CanPutInSlot		(PIItem pIItem, bool check_all = false) const;
 	bool 					CanPutInSlot		(PIItem pIItem, u8 slot) const;
-	bool 					CanPutInBelt		(PIItem pIItem);
+	bool 					CanPutInBelt		(PIItem pIItem) const;
 	bool 					CanPutInRuck		(PIItem pIItem) const;
 
 	bool					CanTakeItem			(CInventoryItem *inventory_item) const;
@@ -117,7 +120,7 @@ public:
 	bool 					IsBeltUseful		() const			{return m_bBeltUseful;}
 	void 					SetBeltUseful		(bool belt_useful)	{m_bBeltUseful = belt_useful;}
 
-	void SetSlotsBlocked( u16 mask, bool bBlock, bool now = false );
+	void					SetSlotsBlocked		( u16 mask, bool bBlock, bool now = false );
 	TIItemContainer			m_all;
 	TIItemContainer			m_ruck, m_belt;
 	TISlotArr				m_slots;
@@ -129,6 +132,9 @@ public:
 	
 	float				GetMaxWeight				() const				{return m_fMaxWeight;}
 	void				SetMaxWeight				(float weight)			{m_fMaxWeight = weight;}
+
+	float				GetMaxVolume				() const				{return m_fMaxVolume;}
+	void				SetMaxVolume				(float volume)			{m_fMaxVolume = volume;}
 
 //	u32					BeltSlotsCount					() const;
 
@@ -149,6 +155,7 @@ public:
 
 	// максимальный вес инвентаря
 	float				m_fMaxWeight;
+	float				m_fMaxVolume;
 protected:
 	void					UpdateDropTasks		();
 	void					UpdateDropItem		(PIItem pIItem);
@@ -171,6 +178,8 @@ protected:
 
 	// текущий вес в инвентаре
 	float				m_fTotalWeight;
+
+	float				m_fTotalVolume;
 
 	// Максимальное кол-во объектов
 	//на поясе
@@ -204,6 +213,7 @@ public:
 
 	void					DropBeltToRuck	();
 	void					DropSlotsToRuck	(u32 min_slot, u32 max_slot = NO_ACTIVE_SLOT);
+	void					UpdateVolumeDropOut();
 	bool					IsSlotDisabled	(u32) const;
 
 	bool					activate_slot		(u32 slot);

@@ -78,6 +78,8 @@ protected:
 	CUIStatic*					UIRank;
 
 	CUIStatic					UIBagWnd;
+	CUIStatic					UIWeightWnd;
+	CUIStatic					UIVolumeWnd;
 	CUIStatic					UIMoneyWnd;
 	CUIStatic					UIDescrWnd;
 	CUIFrameWindow				UIPersonalWnd;
@@ -186,7 +188,7 @@ protected:
 
 public:
 	PIItem						CurrentIItem();
-	void						UpdateWeight();
+	void						UpdateWeightVolume();
 	//обновление отрисовки сетки пояса
 	void						UpdateCustomDraw();
 };
