@@ -14,6 +14,7 @@
 #include "Warbelt.h"
 #include "WeaponAmmo.h"
 #include "Scope.h"
+#include "WeaponBinoculars.h"
 #include "InventoryContainer.h"
 
 constexpr auto equip_params = "equip_params.xml";
@@ -38,6 +39,7 @@ bool CUIEquipParams::Check(CInventoryItem* obj){
 		smart_cast<CWarbelt*>			(obj) ||
 		smart_cast<CCustomOutfit*>		(obj) ||
 		smart_cast<CScope*>				(obj) ||
+		smart_cast<CWeaponBinoculars*>	(obj) ||
 		smart_cast<CInventoryContainer*>(obj)) {
 		return true;
 	}else
@@ -62,6 +64,48 @@ void CUIEquipParams::SetInfo(CInventoryItem* obj){
 	float list_item_h = uiXml.ReadAttribFlt("equip_params:list_item", 0, "height");
 
 	float _h = 0.f;
+
+	auto pBinocular = smart_cast<CWeaponBinoculars*>(obj);
+	if (pBinocular) {
+		auto binoc_zoom_static = xr_new<CUIStatic>();
+		CUIXmlInit::InitStatic(uiXml, "equip_params:scope_zoom", 0, binoc_zoom_static);
+		binoc_zoom_static->SetAutoDelete(true);
+		pos_top = binoc_zoom_static->GetPosTop();
+		binoc_zoom_static->SetWndPos(binoc_zoom_static->GetPosLeft(), _h + pos_top);
+		float zoom_factor = pBinocular->GetScopeZoomFactor();
+		if (pBinocular->IsScopeDynamicZoom()) {
+			float min_zoom_factor = pBinocular->GetMinScopeZoomFactor();
+			sprintf_s(temp_text, " %.1f-%.1fx", min_zoom_factor, zoom_factor);
+		}
+		else
+			sprintf_s(temp_text, " %.1fx", zoom_factor);
+		strconcat(sizeof(text_to_show), text_to_show, CStringTable().translate("st_scope_zoom").c_str(), temp_text);
+		binoc_zoom_static->SetText(text_to_show);
+		m_CapInfo.AttachChild(binoc_zoom_static);
+		_h += list_item_h;
+
+		auto binoc_night_vision_static = xr_new<CUIStatic>();
+		CUIXmlInit::InitStatic(uiXml, "equip_params:scope_night_vision", 0, binoc_night_vision_static);
+		binoc_night_vision_static->SetAutoDelete(true);
+		pos_top = binoc_night_vision_static->GetPosTop();
+		binoc_night_vision_static->SetWndPos(binoc_night_vision_static->GetPosLeft(), _h + pos_top);
+		sprintf_s(temp_text, " %s", pBinocular->IsNightVisionEnabled() ? CStringTable().translate("st_yes").c_str() : CStringTable().translate("st_no").c_str());
+		strconcat(sizeof(text_to_show), text_to_show, CStringTable().translate("st_scope_night_vision").c_str(), temp_text);
+		binoc_night_vision_static->SetText(text_to_show);
+		m_CapInfo.AttachChild(binoc_night_vision_static);
+		_h += list_item_h;
+
+		auto binoc_vision_present_static = xr_new<CUIStatic>();
+		CUIXmlInit::InitStatic(uiXml, "equip_params:scope_vision_present", 0, binoc_vision_present_static);
+		binoc_vision_present_static->SetAutoDelete(true);
+		pos_top = binoc_vision_present_static->GetPosTop();
+		binoc_vision_present_static->SetWndPos(binoc_vision_present_static->GetPosLeft(), _h + pos_top);
+		sprintf_s(temp_text, " %s", pBinocular->IsVisionPresent() ? CStringTable().translate("st_yes").c_str() : CStringTable().translate("st_no").c_str());
+		strconcat(sizeof(text_to_show), text_to_show, CStringTable().translate("st_scope_vision_present").c_str(), temp_text);
+		binoc_vision_present_static->SetText(text_to_show);
+		m_CapInfo.AttachChild(binoc_vision_present_static);
+		_h += list_item_h;
+	}
 
 	auto pScope = smart_cast<CScope*>(obj);
 	if (pScope) {
