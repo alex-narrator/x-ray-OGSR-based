@@ -202,28 +202,32 @@ bool CUIAmmoCellItem::EqualTo(CUICellItem* itm)
 void CUIAmmoCellItem::Update()
 {
 	inherited::Update	();
-	UpdateItemText		();
+	if (object()->IsBoxReloadable() || object()->IsBoxReloadableEmpty())
+		UpdateItemTextCustom();
+	else
+		UpdateItemText();
+}
+
+void CUIAmmoCellItem::UpdateItemTextCustom(){
+	inherited::UpdateItemText();
+
+	if (!m_text_add) return;
+
+	string32				str;
+	sprintf_s(str, "%d/%d", object()->m_boxCurr, object()->m_boxSize);
+
+	float pos_x{ GetWidth() - m_text_add->GetWidth() };
+	float pos_y{ GetHeight() - m_text_add->GetHeight() };
+	Fvector2 pos{ pos_x, pos_y };
+
+	m_text_add->SetWndPos(pos);
+	m_text_add->SetText(str);
+	m_text_add->Show(true);
 }
 
 void CUIAmmoCellItem::UpdateItemText()
 {
-	if (object()->IsBoxReloadable() || object()->IsBoxReloadableEmpty()) {
-		inherited::UpdateItemText();
-
-		if (!m_text_add) return;
-
-		string32				str;
-		sprintf_s(str, "%d/%d", object()->m_boxCurr, object()->m_boxSize);
-
-		float pos_x{ GetWidth() - m_text_add->GetWidth() };
-		float pos_y{ GetHeight() - m_text_add->GetHeight() };
-		Fvector2 pos {pos_x, pos_y};
-
-		m_text_add->SetWndPos(pos);
-		m_text_add->SetText(str);
-		m_text_add->Show(true);
-	}
-	else if(NULL==m_custom_draw){
+	if(NULL==m_custom_draw){
 		xr_vector<CUICellItem*>::iterator it = m_childs.begin();
 		xr_vector<CUICellItem*>::iterator it_e = m_childs.end();
 		
