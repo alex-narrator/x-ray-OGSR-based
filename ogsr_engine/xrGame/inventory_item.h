@@ -208,7 +208,7 @@ protected:
 
 	////////// network //////////////////////////////////////////////////
 public:
-	virtual void net_Export( CSE_Abstract* E );
+	virtual void				net_Export					( CSE_Abstract* E );
 
 public:
 	virtual void				activate_physic_shell		();
@@ -284,6 +284,7 @@ public:
 			float				m_fTTLOnDecrease;
 			float				m_fLastTimeCalled;
 	virtual void				UpdateConditionDecrease(float);
+	virtual bool				NeedForcedDescriptionUpdate() const;
 
 protected:
 	//партікли знищення

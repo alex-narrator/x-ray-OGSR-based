@@ -42,6 +42,7 @@ public:
 	virtual bool			OnMouse						(float x, float y, EUIMessages mouse_action);
 
 	void					UpdateLists_delayed			();
+	void					CheckForcedWeightVolumeUpdate();
 
 protected:
 	CInventoryOwner*		m_pActorInventoryOwner{};
@@ -128,7 +129,7 @@ protected:
 	void						PlaySnd(eInventorySndAction a);
 
 	bool						CanMoveToOther		(PIItem pItem, CGameObject* owner_to) const;
-	void						UpdateWeightVolume	();
+	void						UpdateWeightVolume	(bool only_for_actor = false);
 	float						GetStackVolume		(CUICellItem* ci) const;
 	bool						CanTakeStack		(CUICellItem* ci, CGameObject* owner_to) const;
 };

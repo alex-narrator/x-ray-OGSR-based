@@ -27,6 +27,7 @@
 #include "../script_game_object.h"
 #include "../xr_3da/xr_input.h"
 
+#include "Artifact.h"
 #include "CustomOutfit.h"
 #include "Warbelt.h"
 #include "Backpack.h"
@@ -646,6 +647,7 @@ void CUICarBodyWnd::Update()
 	{
 		GetHolder()->StartStopMenu(this, true);
 	}
+	CheckForcedWeightVolumeUpdate();
 	inherited::Update();
 }
 
@@ -934,7 +936,7 @@ bool CUICarBodyWnd::TransferItem(PIItem itm, CGameObject* owner_from, CGameObjec
 {
 	if (!CanMoveToOther(itm, owner_to)) return false;
 
-	auto monster = smart_cast<CBaseMonster*>(owner_to);
+	auto monster = smart_cast<CBaseMonster*>(owner_from);
 	if (psActorFlags.test(AF_KNIFE_TO_CUT_PART) && monster){
 		auto knife = smart_cast<CWeaponKnife*>(m_pActorInventoryOwner->inventory().ActiveItem());
 		if (knife) {
@@ -1012,9 +1014,10 @@ bool CUICarBodyWnd::CanMoveToOther(PIItem pItem, CGameObject* owner_to) const {
 	return can_move && can_take_bodypart;
 }
 
-void CUICarBodyWnd::UpdateWeightVolume() {
+void CUICarBodyWnd::UpdateWeightVolume(bool only_for_actor) {
 	InventoryUtilities::UpdateWeight(*m_pUIOurWeightWnd, true);
 	InventoryUtilities::UpdateVolume(m_pActorGO, *m_pUIOurVolWnd, true);
+	if (only_for_actor) return;
 	InventoryUtilities::UpdateVolume(m_pOtherGO, *m_pUIOthersVolWnd, true);
 }
 
@@ -1045,4 +1048,19 @@ bool CUICarBodyWnd::CanTakeStack(CUICellItem* ci, CGameObject* owner_to) const {
 	}
 	/*Msg("%s: [%s]", __FUNCTION__, can_take ? "true" : "false");*/
 	return can_take;
+}
+
+void CUICarBodyWnd::CheckForcedWeightVolumeUpdate() {
+	bool need_update{};
+	auto place_to_search = psActorFlags.test(AF_ARTEFACTS_FROM_ALL) ? m_pActorInventoryOwner->inventory().m_all : m_pActorInventoryOwner->inventory().m_belt;
+	for (const auto& item : place_to_search) {
+		auto artefact = smart_cast<CArtefact*>(item);
+		if (artefact && !fis_zero(artefact->m_fTTLOnDecrease) && !fis_zero(artefact->GetCondition()) &&
+			(!fis_zero(artefact->GetAdditionalMaxWeight()) || !fis_zero(artefact->GetAdditionalMaxVolume()))) {
+			need_update = true;
+			break;
+		}
+	}
+	if (need_update)
+		UpdateWeightVolume(true);
 }

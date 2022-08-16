@@ -277,17 +277,18 @@ void CUIItemInfo::Draw()
 
 void CUIItemInfo::Update()
 {
-	if (!m_pInvItem || m_pInvItem->GetDropManual()) return;
+	if (m_pInvItem && m_pInvItem->NeedForcedDescriptionUpdate() && !m_pInvItem->GetDropManual()) {
 
-	if (UICondProgresBar){
-		float cond = m_pInvItem->GetConditionToShow();
-		if (!UICondProgresBar->IsShown())
-			UICondProgresBar->Show(true);
-		UICondProgresBar->SetProgressPos(cond * 100.0f + 1.0f - EPS);
-	}
+		if (UICondProgresBar) {
+			float cond = m_pInvItem->GetConditionToShow();
+			if (!UICondProgresBar->IsShown())
+				UICondProgresBar->Show(true);
+			UICondProgresBar->SetProgressPos(cond * 100.0f + 1.0f - EPS);
+		}
 
-	if (UIArtefactParams){
-		UIArtefactParams->SetInfo(m_pInvItem);
+		if (UIArtefactParams) {
+			UIArtefactParams->SetInfo(m_pInvItem);
+		}
 	}
 
 	inherited::Update();

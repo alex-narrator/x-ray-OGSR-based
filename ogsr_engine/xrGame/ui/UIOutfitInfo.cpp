@@ -201,11 +201,11 @@ void CUIOutfitInfo::Update()
 		LPCSTR _imm_name = *CStringTable().translate(_imm_st_names[i]);
 
 		int _sz = sprintf_s(_buff, sizeof(_buff), "%s ", _imm_name);
-		_sz += sprintf_s(_buff + _sz, sizeof(_buff) - _sz, "%s %+3.0f%s", _color, _val_outfit, _sn);
+		_sz += sprintf_s(_buff + _sz, sizeof(_buff) - _sz, "%s %+.1f%s", _color, _val_outfit, _sn);
 
 		if (!fsimilar(_val_af, 0.0f))
 		{
-			_sz += sprintf_s(_buff + _sz, sizeof(_buff) - _sz, "%s %+3.0f%%", (_val_af > 0.0f) ? "%c[green]" : "%c[red]", _val_af);
+			_sz += sprintf_s(_buff + _sz, sizeof(_buff) - _sz, "%s %+.1f%%", (_val_af > 0.0f) ? "%c[green]" : "%c[red]", _val_af);
 		}
 
 		_s->SetText(_buff);

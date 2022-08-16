@@ -835,3 +835,7 @@ void CInventoryItem::GetBriefInfo(xr_string& str_name, xr_string& icon_sect_name
 	str_count = "";
 	icon_sect_name = *m_object->cNameSect();
 }
+
+bool CInventoryItem::NeedForcedDescriptionUpdate() const {
+	return !fis_zero(GetCondition()) && !fis_zero(m_fTTLOnDecrease);
+}

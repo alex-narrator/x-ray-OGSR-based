@@ -191,4 +191,5 @@ public:
 	void						UpdateWeightVolume();
 	//обновление отрисовки сетки пояса
 	void						UpdateCustomDraw();
+	void						CheckForcedWeightVolumeUpdate();
 };

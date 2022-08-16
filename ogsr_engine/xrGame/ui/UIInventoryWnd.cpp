@@ -15,6 +15,7 @@
 
 #include "../eatable_item.h"
 #include "../inventory.h"
+#include "Artifact.h"
 
 #include "UIInventoryUtilities.h"
 using namespace InventoryUtilities;
@@ -373,11 +374,12 @@ void CUIInventoryWnd::Update()
 		if (m_b_need_update_stats)
 		{
 			// update outfit parameters
-//			CCustomOutfit* outfit = smart_cast<CCustomOutfit*>(pOurInvOwner->inventory().m_slots[OUTFIT_SLOT].m_pIItem);
-			UIOutfitInfo.Update(/*outfit*/);
+			UIOutfitInfo.Update();
 
 			m_b_need_update_stats = false;
 		}
+
+		CheckForcedWeightVolumeUpdate();
 	}
 
 	UIStaticTimeString.SetText(*InventoryUtilities::GetGameTimeAsString(InventoryUtilities::etpTimeToMinutes));
@@ -649,4 +651,19 @@ void CUIInventoryWnd::UpdateCustomDraw()
 	}
 
 	InitInventory_delayed();
+}
+
+void CUIInventoryWnd::CheckForcedWeightVolumeUpdate() {
+	bool need_update{};
+	auto place_to_search = psActorFlags.test(AF_ARTEFACTS_FROM_ALL) ? GetInventory()->m_all : GetInventory()->m_belt;
+	for (const auto& item : place_to_search) {
+		auto artefact = smart_cast<CArtefact*>(item);
+		if (artefact && !fis_zero(artefact->m_fTTLOnDecrease) && !fis_zero(artefact->GetCondition()) &&
+			(!fis_zero(artefact->GetAdditionalMaxWeight()) || !fis_zero(artefact->GetAdditionalMaxVolume()))) {
+			need_update = true;
+			break;
+		}
+	}
+	if (need_update)
+		UpdateWeightVolume();
 }
