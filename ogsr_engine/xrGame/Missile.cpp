@@ -272,6 +272,7 @@ void CMissile::State(u32 state, u32 oldState)
 		{
 			setVisible(FALSE);
 			setEnabled(FALSE);
+			m_bIsQuickThrow = false;
 		}
 		SetPending(FALSE);
 	}
@@ -342,6 +343,9 @@ void CMissile::OnAnimationEnd(u32 state)
 	{
 		setVisible(TRUE);
 		SwitchState(eIdle);
+		if (m_bIsQuickThrow) {
+			QuickThrow();
+		}
 	}
 	break;
 	case eIdle:
@@ -756,4 +760,10 @@ void CMissile::GetBriefInfo(xr_string& str_name, xr_string& icon_sect_name, xr_s
 	str_name		= NameShort();
 	str_count		= "";
 	icon_sect_name	= "";
+}
+
+void CMissile::QuickThrow() {
+	m_constpower	= true;
+	m_throw			= true;
+	SwitchState		(eThrowStart);
 }

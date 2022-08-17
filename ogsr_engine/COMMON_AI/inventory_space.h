@@ -17,10 +17,12 @@ constexpr auto DETECTOR_SLOT		= 8;
 constexpr auto TORCH_SLOT			= 9;
 constexpr auto ARTEFACT_SLOT		= 10;
 constexpr auto HELMET_SLOT			= 11;
+//quick slots
 constexpr auto QUICK_SLOT_0			= 12;
 constexpr auto QUICK_SLOT_1			= 13;
 constexpr auto QUICK_SLOT_2			= 14;
 constexpr auto QUICK_SLOT_3			= 15;
+//equipment
 constexpr auto WARBELT_SLOT			= 16;
 constexpr auto BACKPACK_SLOT		= 17;
 constexpr auto SLOTS_TOTAL			= 18;

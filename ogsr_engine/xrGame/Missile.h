@@ -53,6 +53,8 @@ public:
 	virtual void			PlayAnimIdle				();
 	virtual void			GetBriefInfo				(xr_string& str_name, xr_string& icon_sect_name, xr_string& str_count);
 
+			bool			m_bIsQuickThrow{};
+	virtual void			QuickThrow					();
 protected:
 	virtual void			UpdateXForm						();
 	void					UpdatePosition					(const Fmatrix& trans);

@@ -235,20 +235,29 @@ void CGrenade::PutNextToSlot()
 
 		VERIFY							(pNext != this);
 
-		if(pNext && m_pCurrentInventory->Slot(pNext) )
-		{
-			pNext->u_EventGen			(P, GEG_PLAYER_ITEM2SLOT, pNext->H_Parent()->ID());
-			P.w_u16						(pNext->ID());
-			pNext->u_EventSend			(P);
-			m_pCurrentInventory->SetActiveSlot(pNext->GetSlot());
+		CActor* pActor = smart_cast<CActor*>(m_pCurrentInventory->GetOwner());
+		if (!pNext || !m_pCurrentInventory->Slot(pNext, m_bIsQuickThrow)) {
+			if (pActor && !m_bIsQuickThrow) pActor->OnPrevWeaponSlot();
 		}
-		else
-		{
-			CActor* pActor = smart_cast<CActor*>(m_pCurrentInventory->GetOwner());
+		if (m_bIsQuickThrow) {
+			m_pCurrentInventory->Activate(m_pCurrentInventory->GetPrevActiveSlot(), eGeneral, true, true);
+			m_bIsQuickThrow = false;
+		}
 
-			if (pActor)
-				pActor->OnPrevWeaponSlot();
-		}
+		//if(pNext && m_pCurrentInventory->Slot(pNext) )
+		//{
+		//	pNext->u_EventGen			(P, GEG_PLAYER_ITEM2SLOT, pNext->H_Parent()->ID());
+		//	P.w_u16						(pNext->ID());
+		//	pNext->u_EventSend			(P);
+		//	m_pCurrentInventory->SetActiveSlot(pNext->GetSlot());
+		//}
+		//else
+		//{
+		//	CActor* pActor = smart_cast<CActor*>(m_pCurrentInventory->GetOwner());
+
+		//	if (pActor)
+		//		pActor->OnPrevWeaponSlot();
+		//}
 /////	m_thrown				= false;
 	}
 }

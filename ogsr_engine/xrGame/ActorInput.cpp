@@ -38,10 +38,8 @@
 //bool g_bAutoClearCrouch = true;
 extern int g_bHudAdjustMode;
 
-void CActor::IR_OnKeyboardPress(int cmd)
-{
-	if (g_bHudAdjustMode && pInput->iGetAsyncKeyState(DIK_LSHIFT))
-	{
+void CActor::IR_OnKeyboardPress(int cmd){
+	if (g_bHudAdjustMode && pInput->iGetAsyncKeyState(DIK_LSHIFT)){
 		if (pInput->iGetAsyncKeyState(DIK_RETURN) || pInput->iGetAsyncKeyState(DIK_BACKSPACE) || pInput->iGetAsyncKeyState(DIK_DELETE))
 			g_player_hud->tune(Ivector{});
 
@@ -268,10 +266,13 @@ void CActor::IR_OnKeyboardPress(int cmd)
 	{
 		ActorKick();
 	}break;
+	case kQUICK_THROW_GRENADE:
+	{
+		ActorQuickThrowGrenade();
+	}break;
 	}
 }
-void CActor::IR_OnMouseWheel(int direction)
-{
+void CActor::IR_OnMouseWheel(int direction){
 	if (g_bHudAdjustMode)
 	{
 		g_player_hud->tune(Ivector().set(0, 0, direction));
@@ -291,8 +292,7 @@ void CActor::IR_OnMouseWheel(int direction)
 			OnPrevWeaponSlot();
 	}
 }
-void CActor::IR_OnKeyboardRelease(int cmd)
-{
+void CActor::IR_OnKeyboardRelease(int cmd){
 	if (g_bHudAdjustMode && pInput->iGetAsyncKeyState(DIK_LSHIFT))
 		return;
 
@@ -331,8 +331,7 @@ void CActor::IR_OnKeyboardRelease(int cmd)
 	}
 }
 
-void CActor::IR_OnKeyboardHold(int cmd)
-{
+void CActor::IR_OnKeyboardHold(int cmd){
 	if (g_bHudAdjustMode && pInput->iGetAsyncKeyState(DIK_LSHIFT))
 	{
 		if (pInput->iGetAsyncKeyState(DIK_UP))
@@ -391,8 +390,7 @@ void CActor::IR_OnKeyboardHold(int cmd)
 	}
 }
 
-void CActor::IR_OnMouseMove(int dx, int dy)
-{
+void CActor::IR_OnMouseMove(int dx, int dy){
 	if (g_bHudAdjustMode)
 	{
 		g_player_hud->tune(Ivector().set(dx, dy, 0));
@@ -429,8 +427,7 @@ void CActor::IR_OnMouseMove(int dx, int dy)
 	}
 }
 #include "HudItem.h"
-bool CActor::use_Holder				(CHolderCustom* holder)
-{
+bool CActor::use_Holder				(CHolderCustom* holder){
 
 	if(m_holder){
 		bool b = false;
@@ -554,8 +551,7 @@ void CActor::ActorUse() {
   PickupModeOn();
   PickupModeUpdate_COD();
 }
-BOOL CActor::HUDview				( )const 
-{ 
+BOOL CActor::HUDview				( )const { 
 	return IsFocused()
 		&&(cam_active==eacFirstEye)		
 		&&((!m_holder) || (m_holder && m_holder->allowWeapon() && m_holder->HUDView() ) ); 
@@ -571,8 +567,7 @@ constexpr u32 SlotsToCheck[] = {
 		BOLT_SLOT		,		// 5
 };
 
-void	CActor::OnNextWeaponSlot()
-{
+void	CActor::OnNextWeaponSlot(){
 	u32 ActiveSlot = inventory().GetActiveSlot();
 	if (ActiveSlot == NO_ACTIVE_SLOT) 
 		ActiveSlot = inventory().GetPrevActiveSlot();
@@ -597,8 +592,7 @@ void	CActor::OnNextWeaponSlot()
 	}
 }
 
-void	CActor::OnPrevWeaponSlot()
-{
+void	CActor::OnPrevWeaponSlot(){
 	u32 ActiveSlot = inventory().GetActiveSlot();
 	if (ActiveSlot == NO_ACTIVE_SLOT) 
 		ActiveSlot = inventory().GetPrevActiveSlot();
@@ -623,8 +617,7 @@ void	CActor::OnPrevWeaponSlot()
 	}
 }
 
-float	CActor::GetLookFactor()
-{
+float	CActor::GetLookFactor(){
 	if (m_input_external_handler) 
 		return m_input_external_handler->mouse_scale_factor();
 
@@ -643,8 +636,7 @@ float	CActor::GetLookFactor()
 	return factor;
 }
 
-void CActor::set_input_external_handler(CActorInputHandler *handler) 
-{
+void CActor::set_input_external_handler(CActorInputHandler *handler) {
 	// clear state
 	if (handler) 
 		mstate_wishful			= 0;
@@ -657,8 +649,7 @@ void CActor::set_input_external_handler(CActorInputHandler *handler)
 	m_input_external_handler	= handler;
 }
 
-void CActor::ActorThrow()
-{
+void CActor::ActorThrow(){
 	CPHCapture* capture = character_physics_support()->movement()->PHCapture();
 	if (!capture->taget_object())
 		return;
@@ -693,8 +684,7 @@ void CActor::ActorThrow()
 	//Msg("power decreased on [%f]", mass_f / 50);
 }
 //
-void CActor::ActorKick()
-{
+void CActor::ActorKick(){
 	CGameObject* O = ObjectWeLookingAt();
 	if (!O)
 		return;
@@ -747,4 +737,17 @@ void CActor::ActorKick()
 	if (!GodMode())
 		conditions().ConditionJump(mass_f / 50);
 }
+#include "Grenade.h"
+void CActor::ActorQuickThrowGrenade(){
+	auto &inv = inventory();
+	auto pGrenade = smart_cast<CGrenade*>(inv.m_slots[GRENADE_SLOT].m_pIItem);
+	if (!pGrenade) return;
 
+	if (inv.GetActiveSlot() != GRENADE_SLOT) {
+		inv.SetPrevActiveSlot(inv.GetActiveSlot());
+		pGrenade->m_bIsQuickThrow = true;
+		inv.Activate(GRENADE_SLOT, eGeneral, true, true);
+	}
+	else
+		pGrenade->Action(kWPN_FIRE, CMD_START);
+}

@@ -782,6 +782,7 @@ public:
 	float	m_fHoldingDistance; //расстояние перед актором на котором находится удерживаемый предмет
 	void	ActorThrow();
 	void	ActorKick();
+	void	ActorQuickThrowGrenade();
 	//множитель для управления интенсивностью эффектора качания в прицеливании
 	float	GetZoomEffectorK();
 	void	SetHardHold(bool val) { m_bIsHardHold = val; };

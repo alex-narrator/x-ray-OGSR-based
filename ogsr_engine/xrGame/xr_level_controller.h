@@ -103,6 +103,8 @@ enum	EGameActions
 
 	kARTEFACT,
 
+	kQUICK_THROW_GRENADE,
+
 	kLASTACTION = u32(-3),
 	kNOTBINDED = u32(-2),
 	kFORCEDWORD	= u32(-1)
