@@ -222,43 +222,29 @@ void CGrenade::PutNextToSlot()
 	//выкинуть гранату из инвентаря
 	if (m_pCurrentInventory)
 	{
+		auto& inv = m_pCurrentInventory;
+
 		NET_Packet						P;
-		m_pCurrentInventory->Ruck		(this);
+		inv->Ruck		(this);
 
 		this->u_EventGen				(P, psActorFlags.test(AF_AMMO_FROM_BELT) ? GEG_PLAYER_ITEM2BELT : GEG_PLAYER_ITEM2RUCK, this->H_Parent()->ID());
 		P.w_u16							(this->ID());
 		this->u_EventSend				(P);
 
-		CGrenade *pNext					= smart_cast<CGrenade*>(	m_pCurrentInventory->Same(this, !psActorFlags.test(AF_AMMO_FROM_BELT))		);
+		CGrenade *pNext					= smart_cast<CGrenade*>(inv->Same(this, !psActorFlags.test(AF_AMMO_FROM_BELT)));
 		if(!pNext) 
-			pNext						= smart_cast<CGrenade*>(	m_pCurrentInventory->SameSlot(GRENADE_SLOT, this, !psActorFlags.test(AF_AMMO_FROM_BELT))	);
+			pNext						= smart_cast<CGrenade*>(inv->SameSlot(GRENADE_SLOT, this, !psActorFlags.test(AF_AMMO_FROM_BELT)));
 
 		VERIFY							(pNext != this);
 
-		CActor* pActor = smart_cast<CActor*>(m_pCurrentInventory->GetOwner());
-		if (!pNext || !m_pCurrentInventory->Slot(pNext, m_bIsQuickThrow)) {
-			if (pActor && !m_bIsQuickThrow) pActor->OnPrevWeaponSlot();
+		CActor* pActor = smart_cast<CActor*>(inv->GetOwner());
+		if (!pNext || !inv->Slot(pNext, m_bIsQuickThrow) || m_bIsQuickThrow) {
+			if (pActor) 
+				inv->Activate(inv->GetPrevActiveSlot(), eGeneral, m_bIsQuickThrow, m_bIsQuickThrow);
 		}
 		if (m_bIsQuickThrow) {
-			m_pCurrentInventory->Activate(m_pCurrentInventory->GetPrevActiveSlot(), eGeneral, true, true);
 			m_bIsQuickThrow = false;
 		}
-
-		//if(pNext && m_pCurrentInventory->Slot(pNext) )
-		//{
-		//	pNext->u_EventGen			(P, GEG_PLAYER_ITEM2SLOT, pNext->H_Parent()->ID());
-		//	P.w_u16						(pNext->ID());
-		//	pNext->u_EventSend			(P);
-		//	m_pCurrentInventory->SetActiveSlot(pNext->GetSlot());
-		//}
-		//else
-		//{
-		//	CActor* pActor = smart_cast<CActor*>(m_pCurrentInventory->GetOwner());
-
-		//	if (pActor)
-		//		pActor->OnPrevWeaponSlot();
-		//}
-/////	m_thrown				= false;
 	}
 }
 
@@ -426,7 +412,7 @@ void CGrenade::GetBriefInfo(xr_string& str_name, xr_string& icon_sect_name, xr_s
 	bool SearchRuck = !psActorFlags.test(AF_AMMO_FROM_BELT);
 	u32 ThisGrenadeCount = m_pCurrentInventory->GetSameItemCount(*cNameSect(), SearchRuck);
 	string16				stmp;
-	auto CurrentHUD = HUD().GetUI()->UIMainIngameWnd;
+	auto CurrentHUD		= HUD().GetUI()->UIMainIngameWnd;
 
 	if (CurrentHUD->IsHUDElementAllowed(eGear))
 		sprintf_s(stmp, "%d", ThisGrenadeCount);

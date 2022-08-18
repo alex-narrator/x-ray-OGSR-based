@@ -516,20 +516,20 @@ bool CInventory::Activate(u32 slot, EActivationReason reason, bool bForce, bool 
 		}
 		else 
 		{
-			if(slot==GRENADE_SLOT)//fake for grenade
-			{
-				PIItem gr = SameSlot(GRENADE_SLOT, NULL, true);
-				if(gr)
-				{
-					Slot(gr);
-					goto _finish;
-				}else
-				{
-					res = false;
-					goto _finish;
-				}
+			//if(slot==GRENADE_SLOT)//fake for grenade
+			//{
+			//	PIItem gr = SameSlot(GRENADE_SLOT, NULL, true);
+			//	if(gr)
+			//	{
+			//		Slot(gr);
+			//		goto _finish;
+			//	}else
+			//	{
+			//		res = false;
+			//		goto _finish;
+			//	}
 
-			}else
+			//}else
 			{
 				res = false;
 				goto _finish;
@@ -643,7 +643,8 @@ bool CInventory::Action(s32 cmd, u32 flags)
        {
 			if(flags&CMD_START)
 			{
-                if((int)m_iActiveSlot == cmd - kWPN_1 && m_slots[m_iActiveSlot].m_pIItem )
+				SetPrevActiveSlot(GetActiveSlot());
+				if((int)m_iActiveSlot == cmd - kWPN_1 && m_slots[m_iActiveSlot].m_pIItem )
 					b_send_event = Activate(NO_ACTIVE_SLOT);
 				else				
 					b_send_event = Activate(cmd - kWPN_1, eKeyAction);
@@ -653,6 +654,7 @@ bool CInventory::Action(s32 cmd, u32 flags)
 	{
 		if (flags & CMD_START)
 		{
+			SetPrevActiveSlot(GetActiveSlot());
 			if ((int)m_iActiveSlot == ARTEFACT_SLOT &&
 				m_slots[m_iActiveSlot].m_pIItem)
 			{
@@ -691,6 +693,8 @@ bool CInventory::Action(s32 cmd, u32 flags)
 			auto pHudItem = smart_cast<CHudItem*>(itm);
 			//если в слоте предмет без худа то и активировать его не нужно
 			if (!pHudItem) return false;
+
+			SetPrevActiveSlot(GetActiveSlot());
 
 			if (m_iActiveSlot == itm->GetSlot())
 				b_send_event = Activate(NO_ACTIVE_SLOT);
