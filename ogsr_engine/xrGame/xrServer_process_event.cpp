@@ -52,10 +52,6 @@ void xrServer::Process_event	(NET_Packet& P, ClientID sender)
 	case GE_ACTOR_JUMPING:
 	case GEG_PLAYER_ATTACH_HOLDER:
 	case GEG_PLAYER_DETACH_HOLDER:
-	case GEG_PLAYER_ACTIVATEARTEFACT:
-	case GEG_PLAYER_ITEM2SLOT:
-	case GEG_PLAYER_ITEM2BELT:
-	case GEG_PLAYER_ITEM2RUCK:
 	case GE_GRENADE_EXPLODE:
 		{
 		SendBroadcast			(BroadcastCID,P,MODE);
@@ -213,14 +209,6 @@ void xrServer::Process_event	(NET_Packet& P, ClientID sender)
 		{			
 			SendTo(SV_Client->ID, P, net_flags(TRUE, TRUE));
 		}break;
-	case GEG_PLAYER_ACTIVATE_SLOT:
-	case GEG_PLAYER_ITEM_EAT:
-		{
-			SendTo(SV_Client->ID, P, net_flags(TRUE, TRUE));
-#	ifdef SLOW_VERIFY_ENTITIES
-			VERIFY					(verify_entities());
-#	endif
-		}break;	
 	case GEG_PLAYER_ITEM_SELL:
 		{
 			game->OnPlayer_Sell_Item(sender, P);

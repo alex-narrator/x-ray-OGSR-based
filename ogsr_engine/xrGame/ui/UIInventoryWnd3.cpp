@@ -21,12 +21,10 @@
 
 void CUIInventoryWnd::EatItem(PIItem itm)
 {
-	SetCurrentItem							(NULL);
-	if(!itm->Useful())						return;
-
-	SendEvent_Item_Eat						(itm);
-
-	PlaySnd									(eInvItemUse);
+	SetCurrentItem		(nullptr);
+	if(!itm->Useful())	return;
+	GetInventory()->Eat	(itm);
+	PlaySnd				(eInvItemUse);
 }
 
 void CUIInventoryWnd::ActivatePropertiesBox()
@@ -329,6 +327,7 @@ void CUIInventoryWnd::ProcessPropertiesBoxClicked	()
 		{
 			//Msg("load %s to %s", (LPCSTR)UIPropertiesBox.GetClickedItem()->GetData(), pAmmo->cNameSect().c_str());
 			(smart_cast<CWeaponAmmo*>(CurrentIItem()))->ReloadBox((LPCSTR)UIPropertiesBox.GetClickedItem()->GetData());
+			InitInventory_delayed();
 			PlaySnd(eInvMagLoad);
 		}break;
 		case INVENTORY_UNLOAD_AMMO_BOX:

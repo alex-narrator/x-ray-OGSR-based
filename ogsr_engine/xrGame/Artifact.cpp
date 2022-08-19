@@ -444,14 +444,10 @@ void CArtefact::OnAnimationEnd(u32 state)
 		}break;
 	case eActivating:
 		{
-			if(Local() && !fis_zero(GetCondition())){
-				SwitchState		(eHiding);
-				NET_Packet		P;
-				u_EventGen		(P, GEG_PLAYER_ACTIVATEARTEFACT, H_Parent()->ID());
-				P.w_u16			(ID());
-				u_EventSend		(P);	
+			if(!fis_zero(GetCondition())){
+				ActivateArtefact();
 			}
-			else if (fis_zero(GetCondition()))
+			else
 			{
 				HUD().GetUI()->AddInfoMessage("item_state", "failed_to_activate_artefact");
 				SwitchState(eIdle);
@@ -459,14 +455,6 @@ void CArtefact::OnAnimationEnd(u32 state)
 		}break;
 	};
 }
-
-
-//void CArtefact::GetBriefInfo(xr_string& str_name, xr_string& icon_sect_name, xr_string& str_count)
-//{
-//	str_name = NameShort();
-//	str_count = "";
-//	icon_sect_name = *cNameSect();
-//}
 
 
 void CArtefact::FollowByPath(LPCSTR path_name, int start_idx, Fvector magic_force)

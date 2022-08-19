@@ -504,45 +504,6 @@ void CUIInventoryWnd::DetachAddon(const char* addon_name)
 	}
 }
 
-
-void	CUIInventoryWnd::SendEvent_ActivateSlot	(PIItem	pItem)
-{
-	NET_Packet						P;
-	pItem->object().u_EventGen		(P, GEG_PLAYER_ACTIVATE_SLOT, pItem->object().H_Parent()->ID());
-	P.w_u32							(pItem->GetSlot());
-	pItem->object().u_EventSend		(P);
-}
-
-void	CUIInventoryWnd::SendEvent_Item2Slot			(PIItem	pItem)
-{
-	NET_Packet						P;
-	pItem->object().u_EventGen		(P, GEG_PLAYER_ITEM2SLOT, pItem->object().H_Parent()->ID());
-	P.w_u16							(pItem->object().ID());
-	pItem->object().u_EventSend		(P);
-	g_pInvWnd->PlaySnd				(eInvItemToSlot);
-	m_b_need_update_stats = true;
-};
-
-void	CUIInventoryWnd::SendEvent_Item2Belt			(PIItem	pItem)
-{
-	NET_Packet						P;
-	pItem->object().u_EventGen		(P, GEG_PLAYER_ITEM2BELT, pItem->object().H_Parent()->ID());
-	P.w_u16							(pItem->object().ID());
-	pItem->object().u_EventSend		(P);
-	g_pInvWnd->PlaySnd				(eInvItemToBelt);
-	m_b_need_update_stats = true;
-};
-
-void	CUIInventoryWnd::SendEvent_Item2Ruck			(PIItem	pItem)
-{
-	NET_Packet						P;
-	pItem->object().u_EventGen		(P, GEG_PLAYER_ITEM2RUCK, pItem->object().H_Parent()->ID());
-	P.w_u16							(pItem->object().ID());
-	pItem->object().u_EventSend		(P);
-	g_pInvWnd->PlaySnd				(eInvItemToRuck);
-	m_b_need_update_stats = true;
-};
-
 void	CUIInventoryWnd::SendEvent_Item_Drop(PIItem	pItem)
 {
 	pItem->SetDropManual			(TRUE);
@@ -556,15 +517,6 @@ void	CUIInventoryWnd::SendEvent_Item_Drop(PIItem	pItem)
 	}
 	g_pInvWnd->PlaySnd				(eInvDropItem);
 	m_b_need_update_stats = true;
-};
-
-void	CUIInventoryWnd::SendEvent_Item_Eat			(PIItem	pItem)
-{
-	R_ASSERT						(pItem->m_pCurrentInventory==m_pInv);
-	NET_Packet						P;
-	pItem->object().u_EventGen		(P, GEG_PLAYER_ITEM_EAT, pItem->object().H_Parent()->ID());
-	P.w_u16							(pItem->object().ID());
-	pItem->object().u_EventSend		(P);
 };
 
 void CUIInventoryWnd::BindDragDropListEnents(CUIDragDropListEx* lst)

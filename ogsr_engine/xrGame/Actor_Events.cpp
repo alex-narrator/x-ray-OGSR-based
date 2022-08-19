@@ -135,54 +135,6 @@ void CActor::OnEvent		(NET_Packet& P, u16 type)
 				IR_OnKeyboardRelease(cmd);
 		}
 		break;
-	case GEG_PLAYER_ITEM2SLOT:
-	case GEG_PLAYER_ITEM2BELT:
-	case GEG_PLAYER_ITEM2RUCK:
-	case GEG_PLAYER_ITEM_EAT:
-	case GEG_PLAYER_ACTIVATEARTEFACT:
-		{
-			P.r_u16		(id);
-			CObject* O	= Level().Objects.net_Find	(id);
-			if(!O)		break;
-			if (O->getDestroy()) 
-			{
-#ifdef DEBUG
-				Msg("! something to destroyed object - %s[%d]0x%X", *O->cName(), id, smart_cast<CInventoryItem*>(O));
-#endif
-				break;
-			}
-			switch (type)
-			{
-			case GEG_PLAYER_ITEM2SLOT:	 
-				inventory().Slot(smart_cast<CInventoryItem*>(O)); 
-				break;
-			case GEG_PLAYER_ITEM2BELT:	 
-				inventory().Belt(smart_cast<CInventoryItem*>(O)); 
-				break;
-			case GEG_PLAYER_ITEM2RUCK:	 
-				inventory().Ruck(smart_cast<CInventoryItem*>(O)); 
-				break;
-			case GEG_PLAYER_ITEM_EAT: {
-				inventory().Eat(smart_cast<CInventoryItem*>(O), cast_inventory_owner());
-				if (Level().CurrentViewEntity() == this && HUD().GetUI() && HUD().GetUI()->UIGame())
-					HUD().GetUI()->UIGame()->ReInitShownUI();
-				}break;
-			case GEG_PLAYER_ACTIVATEARTEFACT:
-				{
-					CArtefact* pArtefact		= smart_cast<CArtefact*>(O);
-					pArtefact->ActivateArtefact	();
-				}break;
-			}
-		}break;
-	case GEG_PLAYER_ACTIVATE_SLOT:
-		{
-			u32							slot_id;
-			P.r_u32						(slot_id);
-
-			inventory().Activate		(slot_id);
-								  
-		}break;
-
 	case GE_MOVE_ACTOR:
 		{
 			Fvector NewPos, NewRot;

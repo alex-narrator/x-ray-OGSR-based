@@ -604,6 +604,7 @@ void CUICarBodyWnd::SendMessage(CUIWindow *pWnd, s16 msg, void *pData)
 			// refresh if nessesary
 			switch (m_pUIPropertiesBox->GetClickedItem()->GetTAG())
 			{
+				case INVENTORY_EAT_ACTION:
 				case INVENTORY_RELOAD_MAGAZINE:
 				case INVENTORY_UNLOAD_MAGAZINE:
 				case INVENTORY_RELOAD_AMMO_BOX:
@@ -861,10 +862,7 @@ void CUICarBodyWnd::EatItem()
 	CActor *pActor				= smart_cast<CActor*>(Level().CurrentEntity());
 	if(!pActor)					return;
 
-	NET_Packet					P;
-	CGameObject::u_EventGen		(P, GEG_PLAYER_ITEM_EAT, Actor()->ID());
-	P.w_u16						(CurrentIItem()->object().ID());
-	CGameObject::u_EventSend	(P);
+	m_pActorInventoryOwner->inventory().Eat(CurrentIItem(), m_pActorInventoryOwner);
 
 	PlaySnd(eInvItemUse);
 

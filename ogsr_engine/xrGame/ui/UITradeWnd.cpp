@@ -1046,10 +1046,7 @@ void CUITradeWnd::EatItem()
 	CActor* pActor = smart_cast<CActor*>(Level().CurrentEntity());
 	if (!pActor)					return;
 
-	NET_Packet					P;
-	CGameObject::u_EventGen(P, GEG_PLAYER_ITEM_EAT, Actor()->ID());
-	P.w_u16(CurrentIItem()->object().ID());
-	CGameObject::u_EventSend(P);
+	m_pInv->Eat(CurrentIItem(), m_pInvOwner);
 
 	PlaySnd(eInvItemUse);
 
@@ -1086,12 +1083,9 @@ void CUITradeWnd::DropItems(bool b_all)
 
 	CUIDragDropListEx* owner_list = ci->OwnerList();
 
-	if (b_all)
-	{
+	if (b_all){
 		u32 cnt = ci->ChildsCount();
-
-		for (u32 i = 0; i < cnt; ++i)
-		{
+		for (u32 i = 0; i < cnt; ++i){
 			CUICellItem* itm = ci->PopChild();
 			PIItem			iitm = (PIItem)itm->m_pData;
 			SendEvent_Item_Drop(iitm);

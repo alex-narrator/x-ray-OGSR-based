@@ -226,29 +226,20 @@ void CUIInventoryWnd::DropCurrentItem(bool b_all)
 	CActor *pActor			= smart_cast<CActor*>(Level().CurrentEntity());
 	if(!pActor)				return;
 
-	if(!b_all && CurrentIItem() && !CurrentIItem()->IsQuestItem())
-	{
-		SendEvent_Item_Drop		(CurrentIItem());
-		SetCurrentItem			(NULL);
-		UpdateWeightVolume();
-		return;
-	}
+	if (!CurrentIItem() || CurrentIItem()->IsQuestItem()) return;
 
-	if(b_all && CurrentIItem() && !CurrentIItem()->IsQuestItem())
-	{
+	if(b_all){
 		u32 cnt = CurrentItem()->ChildsCount();
-
 		for(u32 i=0; i<cnt; ++i){
 			CUICellItem*	itm				= CurrentItem()->PopChild();
 			PIItem			iitm			= (PIItem)itm->m_pData;
 			SendEvent_Item_Drop				(iitm);
 		}
-
-		SendEvent_Item_Drop					(CurrentIItem());
-		SetCurrentItem						(NULL);
-		UpdateWeightVolume();
-		return;
 	}
+
+	SendEvent_Item_Drop		(CurrentIItem());
+	SetCurrentItem			(NULL);
+	UpdateWeightVolume		();
 }
 
 //------------------------------------------
@@ -281,10 +272,10 @@ bool CUIInventoryWnd::ToSlot(CUICellItem* itm, bool force_place)
 		
 		new_owner->SetItem					(i);
 	
-		SendEvent_Item2Slot					(iitem);
-
-		if (GetInventory()->activate_slot(_slot) || iitem->cast_weapon())
-			SendEvent_ActivateSlot				(iitem);
+		bool b_not_activate = !GetInventory()->activate_slot(_slot) && !iitem->cast_weapon();
+		GetInventory()->Slot(iitem, b_not_activate);
+		PlaySnd(eInvItemToSlot);
+		m_b_need_update_stats = true;
 		
 		/************************************************** added by Ray Twitty (aka Shadows) START **************************************************/
 		// обновляем статик веса в инвентаре
@@ -345,6 +336,8 @@ bool CUIInventoryWnd::ToBag(CUICellItem* itm, bool b_use_cursor_pos)
 		bool result =
 #endif
 		GetInventory()->Ruck(iitem);
+		PlaySnd(eInvItemToRuck);
+		m_b_need_update_stats = true;
 		VERIFY								(result);
 		CUICellItem* i						= old_owner->RemoveItem(itm, (old_owner==new_owner) );
 
@@ -366,8 +359,6 @@ bool CUIInventoryWnd::ToBag(CUICellItem* itm, bool b_use_cursor_pos)
 			UpdateCustomDraw();
 		}break;
 		}
-
-		SendEvent_Item2Ruck					(iitem);
 
 		return true;
 	}
@@ -391,6 +382,8 @@ bool CUIInventoryWnd::ToBelt(CUICellItem* itm, bool b_use_cursor_pos)
 		bool result =
 #endif
 		GetInventory()->Belt(iitem);
+		PlaySnd(eInvItemToBelt);
+		m_b_need_update_stats = true;
 		VERIFY								(result);
 		CUICellItem* i						= old_owner->RemoveItem(itm, (old_owner==new_owner) );
 		
@@ -399,8 +392,6 @@ bool CUIInventoryWnd::ToBelt(CUICellItem* itm, bool b_use_cursor_pos)
 			new_owner->SetItem				(i,old_owner->GetDragItemPosition());
 		else
 			new_owner->SetItem				(i);
-
-		SendEvent_Item2Belt					(iitem);
 
 		/************************************************** added by Ray Twitty (aka Shadows) START **************************************************/
 		// обновляем статик веса в инвентаре
