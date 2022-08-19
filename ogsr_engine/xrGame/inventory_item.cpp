@@ -709,7 +709,7 @@ void CInventoryItem::SetLoadedBeltIndex( u8 pos ) {
 
 
 void CInventoryItem::OnMoveToSlot(EItemPlace prevPlace) {
-  if ( smart_cast<CActor*>( object().H_Parent() )/* && !smart_cast<CGrenade*>( this )*/) {
+  if ( smart_cast<CActor*>( object().H_Parent() )) {
     if ( Core.Features.test( xrCore::Feature::equipped_untradable ) ) {
       m_flags.set( FIAlwaysUntradable, TRUE );
       m_flags.set( FIUngroupable,      TRUE );

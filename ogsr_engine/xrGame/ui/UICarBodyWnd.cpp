@@ -731,24 +731,26 @@ void CUICarBodyWnd::MoveItems(CUICellItem* itm, bool b_all)
 
 	if (!CanMoveToOther(CurrentIItem(), actor_to_other ? m_pOtherGO : m_pActorGO)) return;
 
-	bool can_move_stak = b_all && CanTakeStack(itm, actor_to_other ? m_pOtherGO : m_pActorGO);
-
 	if (actor_to_other){ //actor -> other
-		CUICellItem* ci = CurrentItem();
-		for (u32 j = 0; j < ci->ChildsCount() && can_move_stak; ++j){
-			PIItem _itm = (PIItem)(ci->Child(j)->m_pData);
-			TransferItem(_itm, m_pActorGO, m_pOtherGO);
+		if (b_all) {
+			if (!CanTakeStack(itm, actor_to_other ? m_pOtherGO : m_pActorGO)) return;
+			for (u32 j = 0; j < CurrentItem()->ChildsCount(); ++j) {
+				PIItem _itm = (PIItem)(CurrentItem()->Child(j)->m_pData);
+				TransferItem(_itm, m_pActorGO, m_pOtherGO);
+			}
 		}
-		PIItem itm = (PIItem)(ci->m_pData);
+		PIItem itm = (PIItem)(CurrentItem()->m_pData);
 		TransferItem(itm, m_pActorGO, m_pOtherGO);
 	}
 	else{ // other -> actor
-		CUICellItem* ci = CurrentItem();
-		for (u32 j = 0; j < ci->ChildsCount() && can_move_stak; ++j){
-			PIItem _itm = (PIItem)(ci->Child(j)->m_pData);
-			TransferItem(_itm, m_pOtherGO, m_pActorGO);
+		if (b_all) {
+			if (!CanTakeStack(itm, actor_to_other ? m_pOtherGO : m_pActorGO)) return;
+			for (u32 j = 0; j < CurrentItem()->ChildsCount(); ++j) {
+				PIItem _itm = (PIItem)(CurrentItem()->Child(j)->m_pData);
+				TransferItem(_itm, m_pOtherGO, m_pActorGO);
+			}
 		}
-		PIItem itm = (PIItem)(ci->m_pData);
+		PIItem itm = (PIItem)(CurrentItem()->m_pData);
 		TransferItem(itm, m_pOtherGO, m_pActorGO);
 	}
 

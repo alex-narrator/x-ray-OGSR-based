@@ -269,16 +269,16 @@ bool CInventory::DropItem(CGameObject *pObj)
 	switch(pIItem->m_eItemPlace)
 	{
 	case eItemPlaceBelt:{
-			ASSERT_FMT(InBelt(pIItem), "CInventory::DropItem: InBelt(pIItem): %s", pObj->cName().c_str());
+			ASSERT_FMT(InBelt(pIItem), "CInventory::DropItem: InBelt(pIItem): %s, owner [%s]", pObj->cName().c_str(), m_pOwner->Name());
 			m_belt.erase(std::find(m_belt.begin(), m_belt.end(), pIItem));
 			pIItem->object().processing_deactivate();
 		}break;
 	case eItemPlaceRuck:{
-			ASSERT_FMT(InRuck(pIItem), "CInventory::DropItem: InRuck(pIItem): %s", pObj->cName().c_str());
+			ASSERT_FMT(InRuck(pIItem), "CInventory::DropItem: InRuck(pIItem): %s, owner [%s]", pObj->cName().c_str(), m_pOwner->Name());
 			m_ruck.erase(std::find(m_ruck.begin(), m_ruck.end(), pIItem));
 		}break;
 	case eItemPlaceSlot:{
-			ASSERT_FMT(InSlot(pIItem), "CInventory::DropItem: InSlot(pIItem): [%s], id: [%u]", pObj->cName().c_str(), pObj->ID());
+			ASSERT_FMT(InSlot(pIItem), "CInventory::DropItem: InSlot(pIItem): [%s], id: [%u], owner [%s]", pObj->cName().c_str(), pObj->ID(), m_pOwner->Name());
 			if(m_iActiveSlot == pIItem->GetSlot()) 
 				Activate	(NO_ACTIVE_SLOT);
 
