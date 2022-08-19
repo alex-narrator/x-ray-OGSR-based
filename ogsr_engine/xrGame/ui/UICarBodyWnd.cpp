@@ -1041,10 +1041,10 @@ bool CUICarBodyWnd::CanTakeStack(CUICellItem* ci, CGameObject* owner_to) const {
 	auto owner = smart_cast<CInventoryOwner*>(owner_to);
 	auto box = smart_cast<IInventoryBox*>(owner_to);
 	if (owner) {
-		can_take = owner->GetCarryVolume() + stack_volume <= owner->MaxCarryVolume();
+		can_take = owner->IsVolumeUnlimited() ? true : owner->GetCarryVolume() + stack_volume <= owner->MaxCarryVolume();
 	}
 	else if (box) {
-		can_take = box->GetCarryVolume() + stack_volume <= box->MaxCarryVolume();
+		can_take = box->IsVolumeUnlimited() ? true : box->GetCarryVolume() + stack_volume <= box->MaxCarryVolume();
 	}
 	/*Msg("%s: [%s]", __FUNCTION__, can_take ? "true" : "false");*/
 	return can_take;

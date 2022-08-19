@@ -103,8 +103,12 @@ float IInventoryBox::MaxCarryVolume() const{
 	return m_fMaxVolume;
 }
 
+bool IInventoryBox::IsVolumeUnlimited() const {
+	return fis_zero(MaxCarryVolume());
+}
+
 bool IInventoryBox::CanTakeItem(CInventoryItem* inventory_item) const {
-	if (fis_zero(MaxCarryVolume())) return true;
+	if (IsVolumeUnlimited()) return true;
 	return (inventory_item->Volume() + GetCarryVolume() <= MaxCarryVolume());
 }
 
@@ -161,21 +165,17 @@ void CInventoryBox::UpdateCL()
 
 void CInventoryBox::UpdateDropTasks()
 {
-	for (auto it = m_items.begin(); it != m_items.end(); ++it)
-	{
-		PIItem itm = smart_cast<PIItem>(Level().Objects.net_Find(*it)); VERIFY(itm);
-
+	for (const auto& item : m_items){
+		PIItem itm = smart_cast<PIItem>(Level().Objects.net_Find(item)); VERIFY(itm);
 		UpdateDropItem(itm);
 	}
 }
 
 void CInventoryBox::UpdateDropItem(PIItem pIItem)
 {
-	if (pIItem->GetDropManual())
-	{
+	if (pIItem->GetDropManual()){
 		pIItem->SetDropManual(FALSE);
-		if (OnServer())
-		{
+		if (OnServer()){
 			NET_Packet					P;
 			pIItem->object().u_EventGen(P, GE_OWNERSHIP_REJECT, pIItem->object().H_Parent()->ID());
 			P.w_u16(u16(pIItem->object().ID()));

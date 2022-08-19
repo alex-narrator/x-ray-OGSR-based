@@ -43,5 +43,9 @@ public:
 	void							open								();
 	void							close								();
 
+	virtual	void					UpdateCL							();
 
+protected:
+			void					UpdateDropTasks						();
+			void					UpdateDropItem						(PIItem pIItem);
 };

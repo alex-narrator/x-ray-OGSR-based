@@ -26,6 +26,7 @@ public:
 
 	virtual		float					GetCarryVolume					() const;
 	virtual		float					MaxCarryVolume					() const;
+	virtual		bool					IsVolumeUnlimited				() const;
 	virtual		bool					CanTakeItem						(CInventoryItem* inventory_item) const;
 };
 

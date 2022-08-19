@@ -224,12 +224,10 @@ void CGrenade::PutNextToSlot()
 	{
 		auto& inv = m_pCurrentInventory;
 
-		NET_Packet						P;
-		inv->Ruck		(this);
+		inv->Ruck(this);
 
-		this->u_EventGen				(P, psActorFlags.test(AF_AMMO_FROM_BELT) ? GEG_PLAYER_ITEM2BELT : GEG_PLAYER_ITEM2RUCK, this->H_Parent()->ID());
-		P.w_u16							(this->ID());
-		this->u_EventSend				(P);
+		if(psActorFlags.test(AF_AMMO_FROM_BELT)) 
+			inv->Belt(this);
 
 		CGrenade *pNext					= smart_cast<CGrenade*>(inv->Same(this, !psActorFlags.test(AF_AMMO_FROM_BELT)));
 		if(!pNext) 

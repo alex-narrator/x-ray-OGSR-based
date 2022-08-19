@@ -751,10 +751,8 @@ void CInventory::Update()
 
 void CInventory::UpdateDropTasks()
 {
-	for (auto it = m_all.begin(); it != m_all.end(); ++it)
-	{
-		PIItem itm = smart_cast<PIItem>(*it); VERIFY(itm);
-
+	for (const auto& item : m_all){
+		PIItem itm = smart_cast<PIItem>(item); VERIFY(itm);
 		UpdateDropItem(itm);
 	}
 
@@ -767,11 +765,9 @@ void CInventory::UpdateDropTasks()
 
 void CInventory::UpdateDropItem(PIItem pIItem)
 {
-	if( pIItem->GetDropManual() )
-	{
+	if( pIItem->GetDropManual() ){
 		pIItem->SetDropManual(FALSE);
-		if ( OnServer() ) 
-		{
+		if ( OnServer() ) {
 			NET_Packet					P;
 			pIItem->object().u_EventGen	(P, GE_OWNERSHIP_REJECT, pIItem->object().H_Parent()->ID());
 			P.w_u16						(u16(pIItem->object().ID()));
@@ -1098,11 +1094,11 @@ bool CInventory::CanPutInRuck(PIItem pIItem) const
 	if(InRuck(pIItem)) return false;
 
 	//для НПЦ може бути анлімітед обсяг
-	bool owner_vol_unlimited = !OwnerIsActor() && fis_zero(m_pOwner->MaxCarryVolume());
+	if (!OwnerIsActor() && m_pOwner->IsVolumeUnlimited()) return true;
 
 	if (OwnerIsActor() && !IsAllItemsLoaded())	return true;
 
-	if (!owner_vol_unlimited && !pIItem->IsQuestItem() &&
+	if (!pIItem->IsQuestItem() &&
 		TotalVolume() + pIItem->Volume() > m_pOwner->MaxCarryVolume())
 		return false;
 

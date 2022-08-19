@@ -97,7 +97,6 @@ void CInventoryContainer::OnEvent(NET_Packet& P, u16 type)
 	//	Msg("CInventoryContainer %s received object", Name());
 	//if (GE_OWNERSHIP_REJECT == type)
 	//	Msg("CInventoryContainer %s lost object", Name());
-
 }
 
 
@@ -112,4 +111,32 @@ void CInventoryContainer::open()
 {
 	m_opened = true;
 	inherited::set_tip_text	 ("container_use");
+}
+
+void CInventoryContainer::UpdateCL()
+{
+	UpdateDropTasks();
+}
+
+void CInventoryContainer::UpdateDropTasks()
+{
+	for (const auto& item : m_items){
+		PIItem itm = smart_cast<PIItem>(Level().Objects.net_Find(item)); VERIFY(itm);
+		UpdateDropItem(itm);
+	}
+}
+
+void CInventoryContainer::UpdateDropItem(PIItem pIItem)
+{
+	if (pIItem->GetDropManual()){
+		pIItem->SetDropManual(FALSE);
+		if (OnServer()){
+			NET_Packet					P;
+			pIItem->object().u_EventGen(P, GE_OWNERSHIP_REJECT, pIItem->object().H_Parent()->ID());
+			P.w_u16(u16(pIItem->object().ID()));
+			pIItem->object().u_EventSend(P);
+
+			/*Msg("UpdateDropItem for [%s]", pIItem->object().Name_script());*/
+		}
+	}// dropManual
 }

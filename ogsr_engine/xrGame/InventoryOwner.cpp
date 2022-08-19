@@ -74,8 +74,7 @@ void CInventoryOwner::Load					(LPCSTR section)
 	if(pSettings->line_exist(section, "inv_max_weight"))
 		m_inventory->SetMaxWeight( pSettings->r_float(section,"inv_max_weight") );
 
-	if (pSettings->line_exist(section, "inv_max_volume"))
-		m_inventory->SetMaxVolume(pSettings->r_float(section, "inv_max_volume"));
+	m_inventory->SetMaxVolume(READ_IF_EXISTS(pSettings, r_float, section, "inv_max_volume", 0.f));
 
 	if(pSettings->line_exist(section, "need_osoznanie_mode"))
 	{
@@ -660,4 +659,8 @@ float CInventoryOwner::deficit(const shared_str& section) const
 		return					((*I).second);
 
 	return						(1.f);
+}
+
+bool CInventoryOwner::IsVolumeUnlimited() const {
+	return fis_zero(MaxCarryVolume());
 }
