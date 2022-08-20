@@ -43,6 +43,8 @@ public:
 
 	void					UpdateLists_delayed			();
 	void					CheckForcedWeightVolumeUpdate();
+	bool					CheckMonsterAndKnife		() const;
+	void					TryPlayStabbing				(PIItem itm, CGameObject* owner_from);
 
 protected:
 	CInventoryOwner*		m_pActorInventoryOwner{};

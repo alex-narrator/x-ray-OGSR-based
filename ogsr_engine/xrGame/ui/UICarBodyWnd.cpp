@@ -464,10 +464,7 @@ void CUICarBodyWnd::ActivatePropertiesBox()
 		b_show = true;
 	}
 
-	bool drop_allowed = !psActorFlags.test(AF_KNIFE_TO_CUT_PART)
-		|| !smart_cast<CBaseMonster*>(m_pOtherInventoryOwner)
-		|| smart_cast<CWeaponKnife*>(m_pActorInventoryOwner->inventory().ActiveItem());
-	if (drop_allowed) {
+	if (CheckMonsterAndKnife() || b_actor_inv) {
 		m_pUIPropertiesBox->AddItem("st_drop", NULL, INVENTORY_DROP_ACTION);
 		if (hasMany)
 			m_pUIPropertiesBox->AddItem("st_drop_all", (void*)33, INVENTORY_DROP_ACTION);
@@ -805,7 +802,7 @@ void CUICarBodyWnd::DropItems(bool b_all)
 			SendEvent_Item_Drop(iitm);
 		}
 	}
-
+	TryPlayStabbing(CurrentIItem(), m_pOtherGO);
 	SendEvent_Item_Drop(CurrentIItem());
 	old_owner->RemoveItem(ci, b_all);
 
@@ -944,16 +941,7 @@ bool CUICarBodyWnd::TransferItem(PIItem itm, CGameObject* owner_from, CGameObjec
 {
 	if (!CanMoveToOther(itm, owner_to)) return false;
 
-	auto monster = smart_cast<CBaseMonster*>(owner_from);
-	if (psActorFlags.test(AF_KNIFE_TO_CUT_PART) && monster){
-		auto knife = smart_cast<CWeaponKnife*>(m_pActorInventoryOwner->inventory().ActiveItem());
-		if (knife) {
-			knife->Fire2Start();                                         //нанесём удар ножом
-			itm->ChangeCondition(-(1 - knife->GetCondition()));        //уменьшим Condition части монстра на величину износа ножа (1 - Knife->GetCondition())
-			knife->ChangeCondition(-knife->GetCondDecPerShotOnHit() * monster->m_fSkinDensityK); //уменьшим Condition ножа износ за удар * коэф плотности кожи монстра
-		}
-		else return false;
-	}
+	TryPlayStabbing(itm, owner_from);
 	//
 	if (smart_cast<CInventoryOwner*>(owner_from))
 		itm->OnMoveOut(itm->m_eItemPlace);
@@ -1007,19 +995,17 @@ void CUICarBodyWnd::MoveItemWithContent(CUICellItem* itm, u32 slot)
 
 bool CUICarBodyWnd::CanMoveToOther(PIItem pItem, CGameObject* owner_to) const {
 	if (smart_cast<CBaseMonster*>(owner_to)) return false;
+	if (!CheckMonsterAndKnife()) return false;
 	bool can_move{};
 	auto owner	= smart_cast<CInventoryOwner*>(owner_to);
 	auto box	= smart_cast<IInventoryBox*>(owner_to);
-	bool can_take_bodypart = !psActorFlags.test(AF_KNIFE_TO_CUT_PART)
-		|| !smart_cast<CBaseMonster*>(m_pOtherInventoryOwner)
-		|| smart_cast<CWeaponKnife*>(m_pActorInventoryOwner->inventory().ActiveItem());
 	if (owner) {
 		can_move = owner->inventory().CanTakeItem(pItem);
 	}
 	else if (box) {
 		can_move = box->CanTakeItem(pItem);
 	}
-	return can_move && can_take_bodypart;
+	return can_move;
 }
 
 void CUICarBodyWnd::UpdateWeightVolume(bool only_for_actor) {
@@ -1071,4 +1057,24 @@ void CUICarBodyWnd::CheckForcedWeightVolumeUpdate() {
 	}
 	if (need_update)
 		UpdateWeightVolume(true);
+}
+
+bool CUICarBodyWnd::CheckMonsterAndKnife() const {
+	return !psActorFlags.test(AF_KNIFE_TO_CUT_PART)
+		|| !smart_cast<CBaseMonster*>(m_pOtherInventoryOwner)
+		|| smart_cast<CWeaponKnife*>(m_pActorInventoryOwner->inventory().ActiveItem());
+}
+
+void CUICarBodyWnd::TryPlayStabbing(PIItem itm, CGameObject* owner_from) {
+	auto monster = smart_cast<CBaseMonster*>(owner_from);
+	if (!monster) return;
+	bool owner_is_monster = (itm->object().H_Parent() == owner_from);
+	if (psActorFlags.test(AF_KNIFE_TO_CUT_PART) && monster && owner_is_monster) {
+		auto knife = smart_cast<CWeaponKnife*>(m_pActorInventoryOwner->inventory().ActiveItem());
+		if (knife) {
+			knife->Fire2Start();                                         //нанесём удар ножом
+			itm->ChangeCondition(-(1 - knife->GetCondition()));        //уменьшим Condition части монстра на величину износа ножа (1 - Knife->GetCondition())
+			knife->ChangeCondition(-knife->GetCondDecPerShotOnHit() * monster->m_fSkinDensityK); //уменьшим Condition ножа износ за удар * коэф плотности кожи монстра
+		}
+	}
 }

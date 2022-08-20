@@ -469,7 +469,6 @@ bool CInventory::Activate(u32 slot, EActivationReason reason, bool bForce, bool 
 			 res = false;
 			 goto _finish;
 			}
-
 	}
 
 	if( (slot!=NO_ACTIVE_SLOT && m_slots[slot].IsBlocked()) && !bForce)
@@ -643,7 +642,6 @@ bool CInventory::Action(s32 cmd, u32 flags)
        {
 			if(flags&CMD_START)
 			{
-				SetPrevActiveSlot(GetActiveSlot());
 				if((int)m_iActiveSlot == cmd - kWPN_1 && m_slots[m_iActiveSlot].m_pIItem )
 					b_send_event = Activate(NO_ACTIVE_SLOT);
 				else				
@@ -654,7 +652,6 @@ bool CInventory::Action(s32 cmd, u32 flags)
 	{
 		if (flags & CMD_START)
 		{
-			SetPrevActiveSlot(GetActiveSlot());
 			if ((int)m_iActiveSlot == ARTEFACT_SLOT &&
 				m_slots[m_iActiveSlot].m_pIItem)
 			{
@@ -694,8 +691,6 @@ bool CInventory::Action(s32 cmd, u32 flags)
 			//если в слоте предмет без худа то и активировать его не нужно
 			if (!pHudItem) return false;
 
-			SetPrevActiveSlot(GetActiveSlot());
-
 			if (m_iActiveSlot == itm->GetSlot())
 				b_send_event = Activate(NO_ACTIVE_SLOT);
 			else
@@ -715,12 +710,8 @@ void CInventory::Update()
 {
 	// Да, KRodin писал это в здравом уме и понимает, что это полная хуйня. Но ни одного нормального решения придумать не удалось. Может потом какие-то мысли появятся.
 	// А проблема вся в том, что арты и костюм выходят в онлайн в хаотичном порядке. И получается, что арты на пояс уже пытаются залезть, а костюма вроде как ещё нет,
-	// соотв. и слотов под арты как бы нет. Вот поэтому до первого апдейта CInventory актора считаем, что все слоты для артов доступны ( см. CInventory::BeltSlotsCount() )
+	// соотв. и слотов под арты как бы нет. Вот поэтому до первого апдейта CInventory актора считаем, что все слоты та пояс доступны.
 	// По моим наблюдениям на момент первого апдейта CInventory, все предметы в инвентаре актора уже вышли в онлайн.
-	//if (smart_cast<CActor*>(m_pOwner) && (++UpdatesCount == 1)) {
-	//	//smart_cast<CUIGameSP*>(HUD().GetUI()->UIGame())->InventoryMenu->UpdateOutfit();
-	//	Actor()->SetAllItemsLoaded(true);
-	//}
 	++UpdatesCount;
 
 	bool bActiveSlotVisible;
@@ -1259,7 +1250,7 @@ void CInventory::SetSlotsBlocked( u16 mask, bool bBlock, bool now )
 
 		if(ActiveSlot==NO_ACTIVE_SLOT)
 		{//try to restore hidden weapon
-			if(PrevActiveSlot!=NO_ACTIVE_SLOT && m_slots[PrevActiveSlot].CanBeActivated()) 
+			if(PrevActiveSlot!=NO_ACTIVE_SLOT && m_slots[PrevActiveSlot].CanBeActivated())
 				if ( Activate( PrevActiveSlot, eGeneral, false, now ) )
 					SetPrevActiveSlot(NO_ACTIVE_SLOT);
 		}else
