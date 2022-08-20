@@ -224,7 +224,7 @@ void CGrenade::PutNextToSlot()
 	{
 		auto& inv = m_pCurrentInventory;
 
-		inv->Ruck(this);
+		inv->Ruck(this, true);
 
 		if(psActorFlags.test(AF_AMMO_FROM_BELT)) 
 			inv->Belt(this);
@@ -339,7 +339,7 @@ bool CGrenade::Action(s32 cmd, u32 flags)
 								CGrenade* pGrenade = smart_cast<CGrenade*>(*it);
 								if (pGrenade && !xr_strcmp(pGrenade->cNameSect(), sect_next_grn))
 								{
-									m_pCurrentInventory->Ruck(this);
+									m_pCurrentInventory->Ruck(this, true);
 									m_pCurrentInventory->SetActiveSlot(NO_ACTIVE_SLOT);
 									m_pCurrentInventory->Slot(pGrenade);
 									//GRENADE_FROM_BELT

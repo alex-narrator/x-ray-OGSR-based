@@ -411,9 +411,9 @@ bool CInventory::Belt(PIItem pIItem)
 	return true;
 }
 
-bool CInventory::Ruck(PIItem pIItem) 
+bool CInventory::Ruck(PIItem pIItem, bool skip_volume_check)
 {
-	if(!CanPutInRuck(pIItem)) return false;
+	if(!CanPutInRuck(pIItem, skip_volume_check)) return false;
 	
 	bool in_slot = InSlot(pIItem);
 	//вещь была в слоте
@@ -1089,9 +1089,11 @@ bool CInventory::CanPutInBelt(PIItem pIItem) const
 }
 //проверяет можем ли поместить вещь в рюкзак,
 //при этом реально ничего не меняется
-bool CInventory::CanPutInRuck(PIItem pIItem) const
+bool CInventory::CanPutInRuck(PIItem pIItem, bool skip_volume_check) const
 {
 	if(InRuck(pIItem)) return false;
+
+	if (skip_volume_check) return true;
 
 	//для НПЦ може бути анлімітед обсяг
 	if (!OwnerIsActor() && m_pOwner->IsVolumeUnlimited()) return true;

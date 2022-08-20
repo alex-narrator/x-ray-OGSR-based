@@ -452,20 +452,28 @@ void CUICarBodyWnd::ActivatePropertiesBox()
 					can_move_content = false;
 			}
 		}
-		if(can_move_content)
+		if (can_move_content) {
 			m_pUIPropertiesBox->AddItem("st_move_with_content", NULL, INVENTORY_MOVE_WITH_CONTENT);
+			b_show = true;
+		}
 	}
 	else if (CanMoveToOther(CurrentIItem(), b_actor_inv ? m_pOtherGO : m_pActorGO)) {
 		m_pUIPropertiesBox->AddItem("st_move", NULL, INVENTORY_MOVE_ACTION);
 		if (hasMany && can_move_stack)
 			m_pUIPropertiesBox->AddItem("st_move_all", (void*)33, INVENTORY_MOVE_ACTION);
+		b_show = true;
 	}
 
-	m_pUIPropertiesBox->AddItem("st_drop", NULL, INVENTORY_DROP_ACTION);
-	if (hasMany)
-		m_pUIPropertiesBox->AddItem("st_drop_all", (void*)33, INVENTORY_DROP_ACTION);
+	bool drop_allowed = !psActorFlags.test(AF_KNIFE_TO_CUT_PART)
+		|| !smart_cast<CBaseMonster*>(m_pOtherInventoryOwner)
+		|| smart_cast<CWeaponKnife*>(m_pActorInventoryOwner->inventory().ActiveItem());
+	if (drop_allowed) {
+		m_pUIPropertiesBox->AddItem("st_drop", NULL, INVENTORY_DROP_ACTION);
+		if (hasMany)
+			m_pUIPropertiesBox->AddItem("st_drop_all", (void*)33, INVENTORY_DROP_ACTION);
+		b_show = true;
+	}
 
-	b_show = true;
 
 	if (b_show) {
 		m_pUIPropertiesBox->AutoUpdateSize();

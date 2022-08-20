@@ -52,7 +52,7 @@ public:
 	
 	bool					Slot				(PIItem pIItem, bool bNotActivate = false);	
 	bool					Belt				(PIItem pIItem);
-	bool					Ruck				(PIItem pIItem);
+	bool					Ruck				(PIItem pIItem, bool skip_volume_check = false);
 
 	bool 					InSlot				(PIItem pIItem) const;
 	bool 					InBelt				(PIItem pIItem) const;
@@ -61,7 +61,7 @@ public:
 	bool 					CanPutInSlot		(PIItem pIItem, bool check_all = false) const;
 	bool 					CanPutInSlot		(PIItem pIItem, u8 slot) const;
 	bool 					CanPutInBelt		(PIItem pIItem) const;
-	bool 					CanPutInRuck		(PIItem pIItem) const;
+	bool 					CanPutInRuck		(PIItem pIItem, bool skip_volume_check = false) const;
 
 	bool					CanTakeItem			(CInventoryItem *inventory_item) const;
 
