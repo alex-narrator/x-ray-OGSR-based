@@ -146,13 +146,9 @@ void CUIOutfitInfo::Update()
 {
 	string128 _buff;
 
-//	auto artefactEffects = Actor()->ActiveArtefactsOnBelt();
-
 	auto outfit = Actor()->GetOutfit();
 
 	m_listWnd->Clear(false); // clear existing items and do not scroll to top
-
-	if (psActorFlags.is(AF_ARTEFACT_DETECTOR_CHECK) && !Actor()->HasDetector()) return;
 
 	for (u32 i = _item_start; i < _max_item_index; ++i)
 	{
@@ -160,8 +156,8 @@ void CUIOutfitInfo::Update()
 
 		if (!_s) continue;
 
-		float _val_outfit = 0.0f;
-		float _val_af = 0.0f;
+		float _val_outfit{};
+		float _val_af{};
 
 		if (i < _max_item_index1)
 		{
@@ -172,8 +168,10 @@ void CUIOutfitInfo::Update()
 			if (outfit)
 				_val_outfit = outfit->GetHitTypeProtection(ALife::EHitType(i - _max_item_index1));
 
-			_val_af = Actor()->HitArtefactsOnBelt(1.0f, ALife::EHitType(i - _max_item_index1));
-			_val_af = 1.0f - _val_af;
+			if (!psActorFlags.is(AF_ARTEFACT_DETECTOR_CHECK) || Actor()->HasDetector()) {
+				_val_af = Actor()->HitArtefactsOnBelt(1.0f, ALife::EHitType(i - _max_item_index1));
+				_val_af = 1.0f - _val_af;
+			}
 		}
 
 		if (fis_zero(_val_outfit) && fis_zero(_val_af))
@@ -201,11 +199,11 @@ void CUIOutfitInfo::Update()
 		LPCSTR _imm_name = *CStringTable().translate(_imm_st_names[i]);
 
 		int _sz = sprintf_s(_buff, sizeof(_buff), "%s ", _imm_name);
-		_sz += sprintf_s(_buff + _sz, sizeof(_buff) - _sz, "%s %+.1f%s", _color, _val_outfit, _sn);
+		_sz += sprintf_s(_buff + _sz, sizeof(_buff) - _sz, "%s %+.f%s", _color, _val_outfit, _sn);
 
 		if (!fsimilar(_val_af, 0.0f))
 		{
-			_sz += sprintf_s(_buff + _sz, sizeof(_buff) - _sz, "%s %+.1f%%", (_val_af > 0.0f) ? "%c[green]" : "%c[red]", _val_af);
+			_sz += sprintf_s(_buff + _sz, sizeof(_buff) - _sz, "%s %+.f%%", (_val_af > 0.0f) ? "%c[green]" : "%c[red]", _val_af);
 		}
 
 		_s->SetText(_buff);

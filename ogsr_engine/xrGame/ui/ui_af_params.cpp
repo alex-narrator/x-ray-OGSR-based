@@ -247,26 +247,23 @@ void CUIArtefactParams::SetInfo(CInventoryItem* obj)
 	CActor *pActor = Actor();
 	if (!pActor) return;
 
-	bool show_window = !psActorFlags.is(AF_ARTEFACT_DETECTOR_CHECK) || pActor->HasDetector() /*|| outfit || backpack*/;
+	bool show_window = true;
+	if (artefact) {
+		show_window = !psActorFlags.is(AF_ARTEFACT_DETECTOR_CHECK) || pActor->HasDetector();
+	}
 
 	Show(show_window);
 
 	string128					_buff;
-	float						_h = 0.0f;
+	float						_h{};
 	DetachAll					();
 
 	for(u32 i=_item_start; i<_max_item_index; ++i)
 	{
 		CUIStatic* _s			= m_info_items[i];
 
-		float					_val = 0.f;
+		float					_val{};
 
-		//if (artefact)
-		//{
-		//	if (pDetector && !pDetector->IsGeigerCounter() && (i == _item_radiation_restore_speed || i == _item_radiation_immunity)) continue;
-		//	if (pDetector && !pDetector->IsAnomDetector() && (i != _item_radiation_restore_speed && i != _item_radiation_immunity)) continue;
-		//}
-//
 		if(i<_max_item_index1)
 		{
 			_val = GetRestoreParam(i, obj);
