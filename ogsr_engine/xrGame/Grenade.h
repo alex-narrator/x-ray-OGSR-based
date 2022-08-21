@@ -52,8 +52,8 @@ protected:
 	HUD_SOUND				sndCheckout;
 	ESoundTypes				m_eSoundCheckout;
 private:
-	float					m_grenade_detonation_threshold_hit;
-	bool					m_thrown;
+	float					m_grenade_detonation_threshold_hit{};
+	bool					m_thrown{};
 protected:
 	virtual	void			UpdateXForm							()		{ CMissile::UpdateXForm(); };
 public:

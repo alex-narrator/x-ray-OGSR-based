@@ -12,6 +12,12 @@
 	<string id="ui_st_money_regional">
 		<text>грн</text>
 	</string>
+	<string id="st_m">
+		<text>м</text>
+	</string>	
+	<string id="st_rpm_units">
+		<text>выс./мин</text>
+	</string>
 	<string id="ui_st_pda_account_unavailable">
 		<text>[счёт недоступен]</text>
 	</string>
@@ -408,6 +414,22 @@
 		<text>зарядить</text>
 	</string>
 	
+	<string id="st_damage">
+		<text>Урон:</text>
+	</string>
+	<string id="st_fire_distance">
+		<text>Эффективная дистанция:</text>
+	</string>
+	<string id="st_rpm">
+		<text>Скорострельность:</text>
+	</string>
+	<string id="st_dispertion">
+		<text>Разброс:</text>
+	</string>	
+	<string id="st_bulkiness">
+		<text>Громоздкость:</text>
+	</string>	
+	
 	<string id="st_compatible_ammo">
 		<text>патроны:</text>
 	</string>
@@ -436,7 +458,7 @@
 		<text>[не заряжен]</text>
 	</string>
 	<string id="st_current_scope">
-		<text>Прицел:</text>
+		<text>Оптика:</text>
 	</string>
 	<string id="st_inbuild_helmet">
 		<text>Встроеный шлем:</text>

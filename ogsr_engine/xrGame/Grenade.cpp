@@ -15,7 +15,6 @@
 #include "script_game_object.h"
 #include "xrServer_Objects_ALife_Items.h"
 
-const float default_grenade_detonation_threshold_hit=100;
 CGrenade::CGrenade(void) 
 {
 
@@ -35,7 +34,7 @@ void CGrenade::Load(LPCSTR section)
 
 	HUD_SOUND::LoadSound(section,"snd_checkout",sndCheckout,m_eSoundCheckout);
 
-	m_grenade_detonation_threshold_hit=READ_IF_EXISTS(pSettings,r_float,section,"detonation_threshold_hit",default_grenade_detonation_threshold_hit);
+	m_grenade_detonation_threshold_hit = READ_IF_EXISTS(pSettings, r_float, section, "detonation_threshold_hit", 100.f);
 }
 
 void CGrenade::Hit					(SHit* pHDS)

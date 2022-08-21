@@ -1,57 +1,27 @@
 <?xml version='1.0' encoding="UTF-8"?>
 <w>
     <wpn_params x="0" y="0" width="157" height="65">
-		<cap_accuracy x="0" y="8" width="91" height="8">
-			<text font="letterica16" r="124" g="119" b="115">ui_inv_accuracy</text>
-		</cap_accuracy>		
-		<cap_handling x="107" y="8" width="91" height="8">
-			<text font="letterica16" r="124" g="119" b="115">ui_inv_handling</text>
-		</cap_handling>
-		<cap_damage x="0" y="39" width="91" height="8">
-			<text font="letterica16" r="124" g="119" b="115">ui_inv_damage</text>
-		</cap_damage>
-		<cap_rpm x="107" y="39" width="91" height="8">
-			<text font="letterica16" r="124" g="119" b="115">ui_inv_rate_of_fire</text>
-		</cap_rpm>
-		
-		<progress_accuracy x="0" y="24" width="91" height="8" horz="1">
-			<progress>
-				<texture a="255" r="255" g="255" b="255">ui_buymenu_progBar</texture>
-			</progress>
-			<background>
-				<texture a="100" r="255" g="255" b="255">ui_buymenu_progBar</texture>
-			</background>
-		</progress_accuracy>		
-		<progress_handling x="107" y="24" width="91" height="8" horz="1">
-			<progress>
-				<texture a="255" r="255" g="255" b="255">ui_buymenu_progBar</texture>
-			</progress>
-			<background>
-				<texture a="100" r="255" g="255" b="255">ui_buymenu_progBar</texture>
-			</background>
-		</progress_handling>
-		<progress_damage x="0" y="55" width="91" height="8" horz="1">
-			<progress>
-				<texture a="255" r="255" g="255" b="255">ui_buymenu_progBar</texture>
-			</progress>
-			<background>
-				<texture a="100" r="255" g="255" b="255">ui_buymenu_progBar</texture>
-			</background>
-		</progress_damage>		
-		<progress_rpm x="107" y="55" width="91" height="8" horz="1">
-			<progress>
-				<texture a="255" r="255" g="255" b="255">ui_buymenu_progBar</texture>
-			</progress>
-			<background>
-				<texture a="100" r="255" g="255" b="255">ui_buymenu_progBar</texture>
-			</background>
-		</progress_rpm>
-		
 		<!-- головний статик динамічного переліку параметрів -->
-		<cap_info x="0" y="50" width="91" height="0">
+		<cap_info x="0" y="0" width="91" height="0">
 			<text font="letterica16" r="124" g="119" b="115"></text>
 		</cap_info>	
 		<!-- дочірні статики -->
+		<damage x="0" y="5" width="91" height="8">
+			<text font="letterica16" r="124" g="119" b="115"></text>
+		</damage>
+		<fire_distance x="0" y="5" width="91" height="8">
+			<text font="letterica16" r="124" g="119" b="115"></text>
+		</fire_distance>
+		<rpm x="0" y="5" width="91" height="8">
+			<text font="letterica16" r="124" g="119" b="115"></text>
+		</rpm>
+		<dispertion x="0" y="5" width="91" height="8">
+			<text font="letterica16" r="124" g="119" b="115"></text>
+		</dispertion>
+		<bulkiness x="0" y="5" width="91" height="8">
+			<text font="letterica16" r="124" g="119" b="115"></text>
+		</bulkiness>
+		
 		<current_ammo_type x="0" y="5" width="91" height="8">
 			<text font="letterica16" r="124" g="119" b="115"></text>
 		</current_ammo_type>	

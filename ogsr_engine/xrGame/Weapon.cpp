@@ -2686,3 +2686,7 @@ int	CWeapon::GetGrenadeLauncherY()
 
 	return res;
 }
+
+float CWeapon::GetHitPowerForActor() const {
+	return fvHitPower[g_SingleGameDifficulty];
+}

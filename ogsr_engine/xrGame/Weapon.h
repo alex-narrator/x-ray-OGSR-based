@@ -658,4 +658,6 @@ public:
 	u8						m_cur_glauncher;
 
 	bool					camRecoilCompensation;
+
+	virtual float			GetHitPowerForActor		() const;
 };
