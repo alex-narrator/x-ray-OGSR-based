@@ -32,7 +32,6 @@ public:
 	virtual bool					CanTrade							() const;
 	virtual	u32						Cost								() const;
 	virtual	float					Weight								() const;
-	virtual float					RadiationRestoreSpeed 				() const;
 	virtual	DLL_Pure*				_construct							();
 	virtual	void					OnEvent								(NET_Packet& P, u16 type);
 	virtual	BOOL					net_Spawn							(CSE_Abstract* DC);

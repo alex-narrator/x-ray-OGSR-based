@@ -128,9 +128,8 @@ public:
 	virtual float				Volume				() const	{ return m_volume;	}
 	virtual void                SetVolume			(float v)	{ m_volume = v;		}
 
-	float 						m_fRadiationRestoreSpeed;
-	float 						m_fRadiationAccumFactor;          // alpet: скорость появления вторичной радиактивности
-	float 						m_fRadiationAccumLimit;			  // alpet: предел вторичной радиоактивности 
+	float 						m_fRadiationAccumFactor{};          // alpet: скорость появления вторичной радиактивности
+	float 						m_fRadiationAccumLimit{};			  // alpet: предел вторичной радиоактивности 
 
 public:
 	CInventory*					m_pCurrentInventory;
@@ -291,6 +290,31 @@ protected:
 	shared_str m_sBreakParticles;
 	//звук знищення
 	ref_sound sndBreaking;
+public:
+	enum ItemEffects {
+		//restore
+		eHealthRestoreSpeed,
+		eRadiationRestoreSpeed,
+		eSatietyRestoreSpeed,
+		eThirstRestoreSpeed,
+		ePowerRestoreSpeed,
+		eBleedingRestoreSpeed,
+		ePsyHealthRestoreSpeed,
+		eAlcoholRestoreSpeed,
+		//additional
+		eAdditionalWalkAccel,
+		eAdditionalJumpSpeed,
+		eAdditionalWeight,
+		eAdditionalVolume,
+		eEffectMax,
+	};
+
+	virtual float					GetItemEffect		(ItemEffects effect);
+	virtual float					GetHitTypeProtection(ALife::EHitType hit_type);
+protected:
+	HitImmunity::HitTypeSVec		m_HitTypeProtection;
+
+	svector<float, ItemEffects::eEffectMax> m_ItemEffect;
 };
 
 #include "inventory_item_inline.h"

@@ -674,11 +674,6 @@ float CActorCondition::GetStress()
 		object().GetCarryWeight() / object().MaxCarryWeight() :
 		1.0f;
 
-	/*if (object().get_state()&mcSprint) Msg("mcSprint!");
-	else
-		if (object().get_state()&mcJump) Msg("Jump!");
-	Msg("overweight_stress = %f | exercise_stress = %f | m_fStressK = %f", overweight_stress, exercise_stress, m_fStressK);*/
-
 	return overweight_stress * exercise_stress;
 }
 
@@ -874,4 +869,37 @@ float CActorCondition::GetAlcoholRestore()
 float CActorCondition::GetThirstRestore()
 {
 	return m_fV_Thirst * GetStress();
+}
+
+void CActorCondition::ApplyRestoreEffect(u32 effect_num, float value) {
+	switch (effect_num)
+	{
+	case CActor::eHealthRestoreSpeed:{
+		ChangeHealth(GetHealthRestore() * value);
+	}break;
+	case CActor::eRadiationRestoreSpeed:{
+		ChangeRadiation(GetRadiationRestore() * value);
+	}break;
+	case CActor::eSatietyRestoreSpeed:{
+		ChangeSatiety(GetSatietyRestore() * value);
+	}break;
+	case CActor::eThirstRestoreSpeed:{
+		ChangeThirst(GetThirstRestore() * value);
+	}break;
+	case CActor::ePowerRestoreSpeed:{
+		ChangePower(GetPowerRestore() * value);
+	}break;
+	case CActor::eBleedingRestoreSpeed:{
+		ChangeBleeding(GetWoundIncarnation() * value);
+	}break;
+	case CActor::ePsyHealthRestoreSpeed:{
+		ChangePsyHealth(GetPsyHealthRestore() * value);
+	}break;
+	case CActor::eAlcoholRestoreSpeed:{
+		ChangeAlcohol(GetAlcoholRestore() * value);
+	}break;
+	default:
+		Msg("%s unknown effect num [%d]", __FUNCTION__, effect_num);
+		break;
+	}
 }

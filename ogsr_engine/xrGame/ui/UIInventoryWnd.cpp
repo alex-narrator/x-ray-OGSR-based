@@ -611,7 +611,7 @@ void CUIInventoryWnd::CheckForcedWeightVolumeUpdate() {
 	for (const auto& item : place_to_search) {
 		auto artefact = smart_cast<CArtefact*>(item);
 		if (artefact && !fis_zero(artefact->m_fTTLOnDecrease) && !fis_zero(artefact->GetCondition()) &&
-			(!fis_zero(artefact->GetAdditionalMaxWeight()) || !fis_zero(artefact->GetAdditionalMaxVolume()))) {
+			(!fis_zero(artefact->GetItemEffect(CInventoryItem::eAdditionalWeight)) || !fis_zero(artefact->GetItemEffect(CInventoryItem::eAdditionalVolume)))) {
 			need_update = true;
 			break;
 		}

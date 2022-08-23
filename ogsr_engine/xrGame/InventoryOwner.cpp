@@ -344,20 +344,18 @@ float  CInventoryOwner::MaxCarryWeight () const
 
 	auto outfit = GetOutfit();
 	if (outfit && !fis_zero(outfit->GetCondition()))
-		ret += outfit->GetAdditionalMaxWeight();
+		ret += outfit->GetItemEffect(CInventoryItem::eAdditionalWeight);
 
 	auto backpack = GetBackpack();
 	if (backpack && !fis_zero(backpack->GetCondition()))
-		ret += backpack->GetAdditionalMaxWeight();
+		ret += backpack->GetItemEffect(CInventoryItem::eAdditionalWeight);
 
-	if (this == Actor())
-	{
+	if (this == Actor()){
 		auto placement = psActorFlags.test(AF_ARTEFACTS_FROM_ALL) ? inventory().m_all : inventory().m_belt;
 		for (const auto& it : placement) {
 			auto artefact = smart_cast<CArtefact*>(it);
-
 			if (artefact && !fis_zero(artefact->GetCondition()))
-				ret += artefact->GetAdditionalMaxWeight();
+				ret += artefact->GetItemEffect(CInventoryItem::eAdditionalWeight);
 		}
 	}
 
@@ -377,20 +375,18 @@ float  CInventoryOwner::MaxCarryVolume() const
 
 	auto outfit = GetOutfit();
 	if (outfit && !fis_zero(outfit->GetCondition()))
-		ret += outfit->GetAdditionalMaxVolume();
+		ret += outfit->GetItemEffect(CInventoryItem::eAdditionalVolume);
 
 	auto backpack = GetBackpack();
 	if (backpack && !fis_zero(backpack->GetCondition()))
-		ret += backpack->GetAdditionalMaxVolume();
+		ret += backpack->GetItemEffect(CInventoryItem::eAdditionalVolume);
 
-	if (this == Actor())
-	{
+	if (this == Actor()){
 		auto placement = psActorFlags.test(AF_ARTEFACTS_FROM_ALL) ? inventory().m_all : inventory().m_belt;
-		for (const auto& it : placement) {
-			auto artefact = smart_cast<CArtefact*>(it);
-
+		for (const auto& item : placement) {
+			auto artefact = smart_cast<CArtefact*>(item);
 			if (artefact && !fis_zero(artefact->GetCondition()))
-				ret += artefact->GetAdditionalMaxVolume();
+				ret += artefact->GetItemEffect(CInventoryItem::eAdditionalVolume);
 		}
 	}
 

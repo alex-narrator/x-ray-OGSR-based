@@ -192,4 +192,6 @@ public:
 	float GetSatietyRestore		();
 	float GetAlcoholRestore		();
 	float GetThirstRestore		();
+
+	void ApplyRestoreEffect		(u32 effect_num, float value);
 };

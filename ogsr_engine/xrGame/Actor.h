@@ -65,18 +65,6 @@ class CLocationManager;
 
 class CActorCameraManager;
 
-struct ActorRestoreParams
-{
-	float	HealthRestoreSpeed;
-	float	PowerRestoreSpeed;
-	float	BleedingRestoreSpeed;
-	float	SatietyRestoreSpeed;
-	float	RadiationRestoreSpeed;
-	float	PsyHealthRestoreSpeed;
-	float	AlcoholRestoreSpeed;
-	float	ThirstRestoreSpeed;
-};
-
 class	CActor: 
 	public CEntityAlive, 
 	public IInputReceiver,
@@ -216,14 +204,13 @@ public:
 
 public:
 	//свойства артефактов
-	virtual void		UpdateArtefactsOnBelt	();
+	virtual void		UpdateActiveItemEffects	();
 
-	virtual float		HitArtefactsOnBelt		(float, ALife::EHitType);
+	virtual float		GetArtefactsProtection	(float, ALife::EHitType);
 
 	virtual void		UpdateArtefactPanel		();
 	virtual void		UpdateQuickSlotPanel	();
 protected:
-//	void ApplyArtefactEffects(ActorRestoreParams&, CArtefact*);
 	//звук тяжелого дыхания
 	ref_sound			m_HeavyBreathSnd;
 	ref_sound			m_BloodSnd;
@@ -240,7 +227,7 @@ protected:
 	// misc properties
 protected:
 	// Death
-	float					hit_slowmo;
+	float					hit_slowmo{};
 	float					hit_probability;
 	bool m_hit_slowmo_jump;
 
@@ -270,7 +257,7 @@ protected:
 	//разрешения на удаление трупа актера 
 	//после того как контролирующий его игрок зареспавнился заново. 
 	//устанавливается в game
-	u8 m_loaded_ph_box_id;
+	u8 m_loaded_ph_box_id{};
 private:
 	void					SwitchOutBorder(bool new_border_state);
 public:	
@@ -451,7 +438,8 @@ public:
 	bool					CanJump					(float weight);
 	bool					CanMove					();
 	float					CameraHeight			();
-	float					CurrentHeight;
+	// Alex ADD: for smooth crouch fix
+	float					CurrentHeight{};
 	bool					CanSprint				();
 	bool					CanRun					();
 	void					StopAnyMove				();
@@ -800,6 +788,25 @@ public:
 protected:
 	bool	m_bIsHardHold{};
 	bool	m_bRuckAmmoPlacement{};
+
+public:
+	enum ActorRestoreParams {
+		//restore
+		eHealthRestoreSpeed,
+		eRadiationRestoreSpeed,
+		eSatietyRestoreSpeed,
+		eThirstRestoreSpeed,
+		ePowerRestoreSpeed,
+		eBleedingRestoreSpeed,
+		ePsyHealthRestoreSpeed,
+		eAlcoholRestoreSpeed,
+		eRestoreParamMax,
+	};
+
+	float GetRestoreParam			(ActorRestoreParams param);
+	float GetTotalArtefactsEffect	(u32 i);
+protected:
+	svector<float, ActorRestoreParams::eRestoreParamMax> m_ActorRestoreParam;
 };
 
 extern bool		isActorAccelerated			(u32 mstate, bool ZoomMode);

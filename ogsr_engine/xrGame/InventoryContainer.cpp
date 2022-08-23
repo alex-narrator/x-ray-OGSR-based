@@ -28,14 +28,6 @@ u32 CInventoryContainer::Cost() const
 	return info.cost + m_cost;
 }
 
-float CInventoryContainer::RadiationRestoreSpeed() const
-{
-	SItemsInfo info;
-	CalcItems(info);
-
-	return /*Core.Features.test(xrCore::Feature::objects_radioactive) ? */( m_fRadiationRestoreSpeed + info.info[0] )/* : info.info[0]*/;
-}
-
 float CInventoryContainer::Weight() const
 {
 	SItemsInfo info;
@@ -59,8 +51,6 @@ u32	CInventoryContainer::CalcItems	(SItemsInfo &info) const
 			result++;
 			info.weight += itm->Weight();
 			info.cost	+= itm->Cost();
-			float rsp = itm->m_fRadiationRestoreSpeed;
-			info.info[0] += rsp > 0 ? rsp : 0; // нейтрализаторы радиации из рюкзака не работают (артефакты в т.ч.)
 		}
 	}
 

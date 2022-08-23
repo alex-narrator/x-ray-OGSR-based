@@ -93,32 +93,14 @@ public:
 	virtual void					PhTune								(dReal step)	{};
 
 	bool							m_bCanSpawnZone;
-
-	float							m_fHealthRestoreSpeed;
-	float							m_fSatietyRestoreSpeed;
-	float							m_fPowerRestoreSpeed;
-	float							m_fBleedingRestoreSpeed;
-	float							m_fPsyHealthRestoreSpeed;
-	float							m_fAlcoholRestoreSpeed;
-	float							m_fThirstRestoreSpeed;
-
-	HitImmunity::HitTypeSVec		m_HitTypeProtection;
-
-	float                           m_fAdditionalWalkAccel;
-	float                           m_fAdditionalJumpSpeed;
-	float							m_fAdditionalMaxWeight;
-	float							m_fAdditionalMaxVolume;
 	//
 	float							m_fRandomKMin;
 	float							m_fRandomKMax;
 	float							m_fRandomK;
 	float							GetRandomKoef() { return m_fRandomK; };
 
-	float							GetAdditionalWalkAccel();
-	float							GetAdditionalJumpSpeed();
-	float							GetAdditionalMaxWeight();
-	float							GetAdditionalMaxVolume();
-	float							GetHitTypeProtection(ALife::EHitType hit_type);
+	virtual float					GetHitTypeProtection(ALife::EHitType hit_type);
+	virtual float					GetItemEffect		(ItemEffects effect);
 
 	virtual void					UpdateConditionDecrease(float) override;
 

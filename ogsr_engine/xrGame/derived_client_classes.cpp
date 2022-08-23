@@ -190,7 +190,7 @@ void CInventoryScript::script_register(lua_State *L)
 			.def_readwrite( "always_ungroupable", &CInventoryItem::m_always_ungroupable )
 
 //			.def_readwrite( "psy_health_restore_speed", &CInventoryItem::m_fPsyHealthRestoreSpeed )
-			.def_readwrite( "radiation_restore_speed", &CInventoryItem::m_fRadiationRestoreSpeed )
+			//.def_readwrite( "radiation_restore_speed", &CInventoryItem::m_fRadiationRestoreSpeed )
 
 			//.property("class_name"						,			&get_lua_class_name)
 			.property("inv_name"						,			&get_item_name, &set_item_name)

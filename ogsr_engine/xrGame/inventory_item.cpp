@@ -52,10 +52,6 @@ CInventoryItem::CInventoryItem()
 	m_Description		= "";
 	m_cell_item			= NULL;
 
-	m_fRadiationRestoreSpeed	= 0.f;
-	m_fRadiationAccumFactor		= 0.f;
-	m_fRadiationAccumLimit		= 0.f;
-
 	m_fTTLOnDecrease			= 0.f;
 	m_fLastTimeCalled			= 0.f;
 
@@ -64,6 +60,12 @@ CInventoryItem::CInventoryItem()
 	loaded_belt_index = (u8)(-1);
 	m_highlight_equipped = false;
 	m_always_ungroupable = false;
+
+	m_HitTypeProtection.clear();
+	m_HitTypeProtection.resize(ALife::eHitTypeMax);
+
+	m_ItemEffect.clear();
+	m_ItemEffect.resize(eEffectMax);
 }
 
 CInventoryItem::~CInventoryItem() 
@@ -149,10 +151,35 @@ void CInventoryItem::Load(LPCSTR section)
 	if (pSettings->line_exist(section, "break_sound"))
 		sndBreaking.create(pSettings->r_string(section, "break_sound"), st_Effect, sg_SourceType);
 
-	//радіація
-	m_fRadiationRestoreSpeed	=	READ_IF_EXISTS	( pSettings, r_float, section,	"radiation_restore_speed", 0.f );
-	m_fRadiationAccumFactor		=	READ_IF_EXISTS	( pSettings, r_float, section,	"radiation_accum_factor",  0.f );	
-	m_fRadiationAccumLimit		=	READ_IF_EXISTS	( pSettings, r_float, section,	"radiation_accum_limit",   0.f );	
+	//*_restore_speed
+	m_ItemEffect[eHealthRestoreSpeed]						= READ_IF_EXISTS(pSettings, r_float, section, "health_restore_speed",		0.f);
+	m_ItemEffect[eRadiationRestoreSpeed]					= READ_IF_EXISTS(pSettings, r_float, section, "radiation_restore_speed",	0.f);
+	m_ItemEffect[eSatietyRestoreSpeed]						= READ_IF_EXISTS(pSettings, r_float, section, "satiety_restore_speed",		0.f);
+	m_ItemEffect[ePowerRestoreSpeed]						= READ_IF_EXISTS(pSettings, r_float, section, "power_restore_speed",		0.f);
+	m_ItemEffect[eBleedingRestoreSpeed]					= READ_IF_EXISTS(pSettings, r_float, section, "bleeding_restore_speed",		0.f);
+	m_ItemEffect[ePsyHealthRestoreSpeed]					= READ_IF_EXISTS(pSettings, r_float, section, "psy_health_restore_speed",	0.f);
+	m_ItemEffect[eAlcoholRestoreSpeed]						= READ_IF_EXISTS(pSettings, r_float, section, "alcohol_restore_speed",		0.f);
+	m_ItemEffect[eThirstRestoreSpeed]						= READ_IF_EXISTS(pSettings, r_float, section, "thirst_restore_speed",		0.f);
+	//addition
+	m_ItemEffect[eAdditionalWalkAccel]						= READ_IF_EXISTS(pSettings, r_float, section, "additional_walk_accel",		0.f);
+	m_ItemEffect[eAdditionalJumpSpeed]						= READ_IF_EXISTS(pSettings, r_float, section, "additional_jump_speed",		0.f);
+	m_ItemEffect[eAdditionalWeight]						= READ_IF_EXISTS(pSettings, r_float, section, "additional_max_weight",		0.f);
+	m_ItemEffect[eAdditionalVolume]						= READ_IF_EXISTS(pSettings, r_float, section, "additional_max_volume",		0.f);
+	//protection
+	m_HitTypeProtection[ALife::eHitTypeBurn]				= READ_IF_EXISTS(pSettings, r_float, section, "burn_protection",			0.f);
+	m_HitTypeProtection[ALife::eHitTypeStrike]				= READ_IF_EXISTS(pSettings, r_float, section, "strike_protection",			0.f);
+	m_HitTypeProtection[ALife::eHitTypeShock]				= READ_IF_EXISTS(pSettings, r_float, section, "shock_protection",			0.f);
+	m_HitTypeProtection[ALife::eHitTypeWound]				= READ_IF_EXISTS(pSettings, r_float, section, "wound_protection",			0.f);
+	m_HitTypeProtection[ALife::eHitTypeRadiation]			= READ_IF_EXISTS(pSettings, r_float, section, "radiation_protection",		0.f);
+	m_HitTypeProtection[ALife::eHitTypeTelepatic]			= READ_IF_EXISTS(pSettings, r_float, section, "telepatic_protection",		0.f);
+	m_HitTypeProtection[ALife::eHitTypeChemicalBurn]		= READ_IF_EXISTS(pSettings, r_float, section, "chemical_burn_protection",	0.f);
+	m_HitTypeProtection[ALife::eHitTypeExplosion]			= READ_IF_EXISTS(pSettings, r_float, section, "explosion_protection",		0.f);
+	m_HitTypeProtection[ALife::eHitTypeFireWound]			= READ_IF_EXISTS(pSettings, r_float, section, "fire_wound_protection",		0.f);
+	m_HitTypeProtection[ALife::eHitTypeWound_2]				= READ_IF_EXISTS(pSettings, r_float, section, "wound_2_protection",			0.f);
+	m_HitTypeProtection[ALife::eHitTypePhysicStrike]		= READ_IF_EXISTS(pSettings, r_float, section, "physic_strike_protection",	0.f);
+	//надбання вторинної радіації
+	m_fRadiationAccumFactor									= READ_IF_EXISTS(pSettings, r_float, section, "radiation_accum_factor",		0.f);	
+	m_fRadiationAccumLimit									= READ_IF_EXISTS(pSettings, r_float, section, "radiation_accum_limit",		0.f);
 	//
 	m_fTTLOnDecrease			=	READ_IF_EXISTS	(pSettings, r_float, section,	"ttl_on_dec", 0.f);
 	// hands
@@ -220,8 +247,8 @@ void	CInventoryItem::Hit					(SHit* pHDS)
 
 	if (pHDS->type() == ALife::eHitTypeRadiation && !fis_zero(m_fRadiationAccumFactor))
 	{
-		m_fRadiationRestoreSpeed += m_fRadiationAccumFactor * pHDS->damage();
-		clamp<float>(m_fRadiationRestoreSpeed, -m_fRadiationAccumLimit, m_fRadiationAccumLimit);
+		m_ItemEffect[eRadiationRestoreSpeed] += m_fRadiationAccumFactor * pHDS->damage();
+		clamp<float>(m_ItemEffect[eRadiationRestoreSpeed], -m_fRadiationAccumLimit, m_fRadiationAccumLimit);
 		//Msg("! item [%s] current m_fRadiationRestoreSpeed [%.3f]", object().cName().c_str(), m_fRadiationRestoreSpeed);
 	}
 
@@ -412,7 +439,7 @@ BOOL CInventoryItem::net_Spawn			(CSE_Abstract* DC)
 	CSE_ALifeInventoryItem			*pSE_InventoryItem = smart_cast<CSE_ALifeInventoryItem*>(e);
 	if (!pSE_InventoryItem)			return TRUE;
 
-	m_fRadiationRestoreSpeed = pSE_InventoryItem->m_fRadiationRestoreSpeed;
+	m_ItemEffect[eRadiationRestoreSpeed] = pSE_InventoryItem->m_fRadiationRestoreSpeed;
 	if (fis_zero(pSE_InventoryItem->m_fLastTimeCalled))
 		pSE_InventoryItem->m_fLastTimeCalled = Level().GetGameDayTimeSec();
 	m_fLastTimeCalled = pSE_InventoryItem->m_fLastTimeCalled;
@@ -455,7 +482,7 @@ void CInventoryItem::net_Export( CSE_Abstract* E ) {
   CSE_ALifeInventoryItem* item = smart_cast<CSE_ALifeInventoryItem*>( E );
   item->m_u8NumItems = 0;
   item->m_fCondition = m_fCondition;
-  item->m_fRadiationRestoreSpeed = m_fRadiationRestoreSpeed;
+  item->m_fRadiationRestoreSpeed = m_ItemEffect[eRadiationRestoreSpeed];
   item->m_fLastTimeCalled = m_fLastTimeCalled;
 };
 
@@ -838,4 +865,14 @@ void CInventoryItem::GetBriefInfo(xr_string& str_name, xr_string& icon_sect_name
 
 bool CInventoryItem::NeedForcedDescriptionUpdate() const {
 	return !fis_zero(GetCondition()) && !fis_zero(m_fTTLOnDecrease);
+}
+
+float CInventoryItem::GetHitTypeProtection(ALife::EHitType hit_type){
+	return m_HitTypeProtection[hit_type] * GetCondition();
+}
+
+float CInventoryItem::GetItemEffect(ItemEffects effect) {
+	//на випромінення радіації стан предмету не впливає (окрім як для артефактів)
+	float condition_k = (effect == eRadiationRestoreSpeed) ? 1.f : GetCondition();
+	return m_ItemEffect[effect] * condition_k;
 }

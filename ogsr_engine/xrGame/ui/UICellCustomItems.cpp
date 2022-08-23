@@ -74,7 +74,7 @@ bool CUIInventoryCellItem::EqualTo(CUICellItem* itm)
 								fsimilar(object()->GetCondition(), ci->object()->GetCondition(), 0.01f) &&
 								fsimilar(object()->Weight(), ci->object()->Weight(), 0.01f) &&
 								fsimilar(object()->Volume(), ci->object()->Volume(), 0.01f) &&
-								fsimilar(object()->m_fRadiationRestoreSpeed, ci->object()->m_fRadiationRestoreSpeed, 0.01f) &&
+								fsimilar(object()->GetItemEffect(CInventoryItem::eRadiationRestoreSpeed), ci->object()->GetItemEffect(CInventoryItem::eRadiationRestoreSpeed), 0.01f) &&
 								object()->object().cNameSect() == ci->object()->object().cNameSect() && 
 								object()->m_eItemPlace == ci->object()->m_eItemPlace &&
 								object()->Cost() == ci->object()->Cost()
@@ -290,7 +290,7 @@ void CUICBackpackCellItem::UpdateItemText() {
 	inherited::UpdateItemText();
 
 	string32				str;
-	sprintf_s(str, "%.0f%s", object()->GetAdditionalMaxVolume(), CStringTable().translate("st_l").c_str());
+	sprintf_s(str, "%.0f%s", object()->GetItemEffect(CInventoryItem::eAdditionalVolume), CStringTable().translate("st_l").c_str());
 
 	float pos_x{ GetWidth() - m_text_add->GetWidth() };
 	float pos_y{ GetHeight() - m_text_add->GetHeight() };

@@ -39,7 +39,7 @@ protected:
 	float					m_fMaxPowerUpInfluence{};
 	float					m_fSatietyInfluence{};
 	float					m_fRadiationInfluence{};
-	float					m_fPsyHealthInfluence;
+	float					m_fPsyHealthInfluence{};
 	float					m_fThirstInfluence{};
 	float					m_fAlcoholInfluence{};
 	//заживление ран на кол-во процентов
@@ -58,7 +58,7 @@ protected:
 	float					GetOnePortionVolume	();
 	u32						GetOnePortionCost	();
 
-	LPCSTR					m_sUseMenuTip;
+	LPCSTR					m_sUseMenuTip{};
 
 public:
 	int						GetStartPortionsNum	() const { return m_iStartPortionsNum; };

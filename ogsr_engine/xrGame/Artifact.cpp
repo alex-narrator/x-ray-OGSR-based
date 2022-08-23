@@ -73,9 +73,6 @@ CArtefact::CArtefact()
 	m_activationObj				= nullptr;
 
 	m_fRandomK					= 1.f;
-
-	m_HitTypeProtection.clear	();
-	m_HitTypeProtection.resize	(ALife::eHitTypeMax);
 }
 
 
@@ -93,34 +90,6 @@ void CArtefact::Load(LPCSTR section)
 			&m_TrailLightColor.r, &m_TrailLightColor.g, &m_TrailLightColor.b);
 		m_fTrailLightRange	= pSettings->r_float(section,"trail_light_range");
 	}
-
-
-	//*_restore_speed
-	m_fHealthRestoreSpeed								= READ_IF_EXISTS(pSettings, r_float, section, "health_restore_speed",		0.f);
-//	m_fRadiationRestoreSpeed							= READ_IF_EXISTS(pSettings, r_float, section, "radiation_restore_speed",	0.f);
-	m_fSatietyRestoreSpeed								= READ_IF_EXISTS(pSettings, r_float, section, "satiety_restore_speed",		0.f);
-	m_fPowerRestoreSpeed								= READ_IF_EXISTS(pSettings, r_float, section, "power_restore_speed",		0.f);
-	m_fBleedingRestoreSpeed								= READ_IF_EXISTS(pSettings, r_float, section, "bleeding_restore_speed",		0.f);
-	m_fPsyHealthRestoreSpeed							= READ_IF_EXISTS(pSettings, r_float, section, "psy_health_restore_speed",	0.f);
-	m_fAlcoholRestoreSpeed								= READ_IF_EXISTS(pSettings, r_float, section, "alcohol_restore_speed",		0.f);
-	m_fThirstRestoreSpeed								= READ_IF_EXISTS(pSettings, r_float, section, "thirst_restore_speed",		0.f);
-	//addition
-	m_fAdditionalMaxWeight								= READ_IF_EXISTS(pSettings, r_float, section, "additional_max_weight",		0.f);
-	m_fAdditionalMaxVolume								= READ_IF_EXISTS(pSettings, r_float, section, "additional_max_volume",		0.f);
-	m_fAdditionalWalkAccel								= READ_IF_EXISTS(pSettings, r_float, section, "additional_walk_accel",		0.f);
-	m_fAdditionalJumpSpeed								= READ_IF_EXISTS(pSettings, r_float, section, "additional_jump_speed",		0.f);
-	//protection
-	m_HitTypeProtection[ALife::eHitTypeBurn]			= READ_IF_EXISTS(pSettings, r_float, section, "burn_protection",			0.f);
-	m_HitTypeProtection[ALife::eHitTypeStrike]			= READ_IF_EXISTS(pSettings, r_float, section, "strike_protection",			0.f);
-	m_HitTypeProtection[ALife::eHitTypeShock]			= READ_IF_EXISTS(pSettings, r_float, section, "shock_protection",			0.f);
-	m_HitTypeProtection[ALife::eHitTypeWound]			= READ_IF_EXISTS(pSettings, r_float, section, "wound_protection",			0.f);
-	m_HitTypeProtection[ALife::eHitTypeRadiation]		= READ_IF_EXISTS(pSettings, r_float, section, "radiation_protection",		0.f);
-	m_HitTypeProtection[ALife::eHitTypeTelepatic]		= READ_IF_EXISTS(pSettings, r_float, section, "telepatic_protection",		0.f);
-	m_HitTypeProtection[ALife::eHitTypeChemicalBurn]	= READ_IF_EXISTS(pSettings, r_float, section, "chemical_burn_protection",	0.f);
-	m_HitTypeProtection[ALife::eHitTypeExplosion]		= READ_IF_EXISTS(pSettings, r_float, section, "explosion_protection",		0.f);
-	m_HitTypeProtection[ALife::eHitTypeFireWound]		= READ_IF_EXISTS(pSettings, r_float, section, "fire_wound_protection",		0.f);
-	m_HitTypeProtection[ALife::eHitTypeWound_2]			= READ_IF_EXISTS(pSettings, r_float, section, "wound_2_protection",			0.f);
-	m_HitTypeProtection[ALife::eHitTypePhysicStrike]	= READ_IF_EXISTS(pSettings, r_float, section, "physic_strike_protection",	0.f);
 
 	m_bCanSpawnZone = !!pSettings->line_exist("artefact_spawn_zones", section);
 	m_af_rank = READ_IF_EXISTS(pSettings, r_u8, section, "af_rank", 0);
@@ -488,29 +457,12 @@ void CArtefact::SwitchAfParticles(bool bOn)
 	}
 }
 
-float CArtefact::GetAdditionalWalkAccel()
-{
-	return m_fAdditionalWalkAccel * GetCondition() * GetRandomKoef();
+float	CArtefact::GetHitTypeProtection(ALife::EHitType hit_type){
+	return inherited::GetHitTypeProtection(hit_type) * GetRandomKoef();
 }
 
-float CArtefact::GetAdditionalJumpSpeed()
-{
-	return m_fAdditionalJumpSpeed * GetCondition() * GetRandomKoef();
-}
-
-float CArtefact::GetAdditionalMaxWeight()
-{
-	return m_fAdditionalMaxWeight * GetCondition() * GetRandomKoef();
-}
-
-float CArtefact::GetAdditionalMaxVolume()
-{
-	return m_fAdditionalMaxVolume * GetCondition() * GetRandomKoef();
-}
-
-float	CArtefact::GetHitTypeProtection(ALife::EHitType hit_type)
-{
-	return m_HitTypeProtection[hit_type] * GetCondition() * GetRandomKoef();
+float CArtefact::GetItemEffect(ItemEffects effect) {
+	return m_ItemEffect[effect] * GetCondition() * GetRandomKoef();
 }
 
 void CArtefact::UpdateConditionDecrease(float current_time)

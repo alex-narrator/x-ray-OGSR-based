@@ -214,11 +214,7 @@ void CActor::g_cl_CheckControls(u32 mstate_wf, Fvector &vControlAccel, float &Ju
 
 		if ((mstate_wf&mcJump))
 		{
-			float weight = GetCarryWeight() / MaxCarryWeight();//inventory().TotalWeight() / MaxCarryWeight();
-			//if (Core.Features.test(xrCore::Feature::condition_jump_weight_mod))
-			//	weight = inventory().TotalWeight() / (inventory().GetMaxWeight() + ArtefactsAddWeight(false));
-			//else
-			//	weight = inventory().TotalWeight() / MaxCarryWeight();
+			float weight = GetCarryWeight() / MaxCarryWeight();
 
 			if (CanJump(weight))
 			{
@@ -229,20 +225,19 @@ void CActor::g_cl_CheckControls(u32 mstate_wf, Fvector &vControlAccel, float &Ju
 				//Msg("m_fJumpSpeed = %.2f", m_fJumpSpeed);
 
 				auto placement = psActorFlags.test(AF_ARTEFACTS_FROM_ALL) ? inventory().m_all : inventory().m_belt;
-				for (const auto& it : placement) {
-					auto artefact = smart_cast<CArtefact*>(it);
-
+				for (const auto& item : placement) {
+					auto artefact = smart_cast<CArtefact*>(item);
 					if (artefact && !fis_zero(artefact->GetCondition()))
-						jump_speed += m_fJumpSpeed * artefact->GetAdditionalJumpSpeed();
+						jump_speed += m_fJumpSpeed * artefact->GetItemEffect(CInventoryItem::eAdditionalJumpSpeed);
 				}
 
 				auto outfit = GetOutfit();
 				if (outfit && !fis_zero(outfit->GetCondition()))
-					jump_speed += outfit->GetAdditionalJumpSpeed();
+					jump_speed += m_fJumpSpeed * outfit->GetItemEffect(CInventoryItem::eAdditionalJumpSpeed);
 
 				auto backpack = GetBackpack();
 				if (backpack && !fis_zero(backpack->GetCondition()))
-					jump_speed += backpack->GetAdditionalJumpSpeed();
+					jump_speed += m_fJumpSpeed * backpack->GetItemEffect(CInventoryItem::eAdditionalJumpSpeed);
 
 				//Msg("additional jump_speed = %.2f", jump_speed);
 				jump_speed *= conditions().GetSmoothOwerweightKoef();
@@ -364,18 +359,17 @@ void CActor::g_cl_CheckControls(u32 mstate_wf, Fvector &vControlAccel, float &Ju
 				auto placement = psActorFlags.test(AF_ARTEFACTS_FROM_ALL) ? inventory().m_all : inventory().m_belt;
 				for (const auto& it : placement) {
 					auto artefact = smart_cast<CArtefact*>(it);
-
 					if (artefact && !fis_zero(artefact->GetCondition()))
-						walk_accel += m_fWalkAccel * artefact->GetAdditionalWalkAccel();
+						walk_accel += m_fWalkAccel * artefact->GetItemEffect(CInventoryItem::eAdditionalWalkAccel);
 				}
 
 				auto outfit = GetOutfit();
 				if (outfit && !fis_zero(outfit->GetCondition()))
-					walk_accel += outfit->GetAdditionalWalkAccel();
+					walk_accel += m_fWalkAccel * outfit->GetItemEffect(CInventoryItem::eAdditionalWalkAccel);
 
 				auto backpack = GetBackpack();
 				if (backpack && !fis_zero(backpack->GetCondition()))
-					walk_accel += backpack->GetAdditionalWalkAccel();
+					walk_accel += m_fWalkAccel * backpack->GetItemEffect(CInventoryItem::eAdditionalWalkAccel);
 
 				//Msg("additional walk_accel = %.2f", walk_accel);
 				walk_accel *= conditions().GetSmoothOwerweightKoef();

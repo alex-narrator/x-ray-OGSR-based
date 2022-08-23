@@ -18,21 +18,9 @@
 
 CEatableItem::CEatableItem()
 {
-	m_fHealthInfluence = 0;
-	m_fPowerInfluence = 0;
-	m_fSatietyInfluence = 0;
-	m_fRadiationInfluence = 0;
-	m_fPsyHealthInfluence = 0;
-	m_fAlcoholInfluence = 0;
-
-	m_bUsePortionVolume = false;
-	m_fSelfRadiationInfluence = 0.1;
-
 	m_iPortionsNum = -1;
 
 	m_physic_item	= 0;
-
-	m_sUseMenuTip = nullptr;
 }
 
 CEatableItem::~CEatableItem()
@@ -132,14 +120,14 @@ void CEatableItem::UseBy (CEntityAlive* entity_alive)
 
 	auto econd = &entity_alive->conditions();
 
-	econd->ChangeHealth		(m_fHealthInfluence		* GetCondition());
-	econd->ChangePower		(m_fPowerInfluence		* GetCondition());
-	econd->ChangeSatiety	(m_fSatietyInfluence	* GetCondition());
-	econd->ChangeRadiation	((m_fRadiationInfluence + m_fRadiationRestoreSpeed*m_fSelfRadiationInfluence)	* GetCondition());
-	econd->ChangePsyHealth	(m_fPsyHealthInfluence	* GetCondition());
-	econd->ChangeBleeding	(m_fWoundsHealPerc		* GetCondition());
-	econd->ChangeAlcohol	(m_fAlcoholInfluence	* GetCondition());
-	econd->ChangeThirst		(m_fThirstInfluence		* GetCondition());
+	econd->ChangeHealth		(GetHealthInfluence()	);
+	econd->ChangePower		(GetPowerInfluence()	);
+	econd->ChangeSatiety	(GetSatietyInfluence()	);
+	econd->ChangeRadiation	(GetRadiationInfluence());
+	econd->ChangePsyHealth	(GetPsyHealthInfluence());
+	econd->ChangeBleeding	(GetWoundsHealPerc()	);
+	econd->ChangeAlcohol	(GetAlcoholInfluence()	);
+	econd->ChangeThirst		(GetThirstInfluence()	);
 	
 	entity_alive->conditions().SetMaxPower( entity_alive->conditions().GetMaxPower()+m_fMaxPowerUpInfluence );
 	
@@ -246,7 +234,7 @@ float CEatableItem::GetSatietyInfluence() {
 	return m_fSatietyInfluence * GetCondition();
 }
 float CEatableItem::GetRadiationInfluence() {
-	return (m_fRadiationInfluence + m_fRadiationRestoreSpeed * m_fSelfRadiationInfluence) * GetCondition();
+	return (m_fRadiationInfluence + GetItemEffect(eRadiationRestoreSpeed) * m_fSelfRadiationInfluence) * GetCondition();
 }
 float CEatableItem::GetPsyHealthInfluence() {
 	return m_fPsyHealthInfluence * GetCondition();

@@ -3,8 +3,11 @@
 #include "UIXmlInit.h"
 #include "UIStatic.h"
 #include "UIScrollView.h"
-#include "../actor.h"
-#include "../CustomOutfit.h"
+#include "Actor.h"
+#include "Inventory.h"
+#include "Artifact.h"
+#include "CustomOutfit.h"
+#include "Backpack.h"
 #include "../string_table.h"
 
 CUIOutfitInfo::CUIOutfitInfo()
@@ -33,8 +36,8 @@ LPCSTR _imm_names []={
 	"additional_walk_accel",
 	"additional_jump_speed",
 	//
-	"additional_max_weight",
-	"additional_max_volume",
+	//"additional_max_weight",
+	//"additional_max_volume",
 	//
 	"burn_immunity",
 	"shock_immunity",
@@ -60,8 +63,8 @@ LPCSTR _imm_st_names[]={
 	"ui_inv_walk_accel",
 	"ui_inv_jump_speed",
 	//
-	"ui_inv_weight",
-	"ui_inv_volume",
+	//"ui_inv_weight",
+	//"ui_inv_volume",
 	//
 	"ui_inv_outfit_burn_protection",
 	"ui_inv_outfit_shock_protection",
@@ -101,45 +104,6 @@ void CUIOutfitInfo::InitFromXml(CUIXml& xml_doc)
 
 }
 
-float CUIOutfitInfo::GetRestoreParam(u32 i)
-{
-	float r = 0;
-
-	auto outfit = Actor()->GetOutfit();
-	if (outfit) 
-	{
-		switch (i)
-		{
-		case _item_health_restore_speed:
-			r = outfit->m_fHealthRestoreSpeed; break;
-		case _item_radiation_restore_speed:
-			r = outfit->m_fRadiationRestoreSpeed; break;
-		case _item_satiety_restore_speed:
-			r = outfit->m_fSatietyRestoreSpeed; break;
-		case _item_thirst_restore_speed:
-			r = outfit->m_fThirstRestoreSpeed; break;
-		case _item_power_restore_speed:
-			r = outfit->m_fPowerRestoreSpeed; break;
-		case _item_bleeding_restore_speed:
-			r = outfit->m_fBleedingRestoreSpeed; break;
-		case _item_psy_health_restore_speed:
-			r = outfit->m_fPsyHealthRestoreSpeed; break;
-		case _item_alcohol_restore_speed:
-			r = outfit->m_fAlcoholRestoreSpeed; break;
-		case _item_additional_walk_accel:
-			r = outfit->GetAdditionalWalkAccel(); break;
-		case _item_additional_jump_speed:
-			r = outfit->GetAdditionalJumpSpeed(); break;
-		case _item_additional_weight:
-			r = outfit->GetAdditionalMaxWeight(); break;
-		case _item_additional_volume:
-			r = outfit->GetAdditionalMaxVolume(); break;
-		}
-	}
-
-	return r;
-}
-
 #include "script_game_object.h"
 
 void CUIOutfitInfo::Update()
@@ -147,6 +111,7 @@ void CUIOutfitInfo::Update()
 	string128 _buff;
 
 	auto outfit = Actor()->GetOutfit();
+	auto backpack = Actor()->GetBackpack();
 
 	m_listWnd->Clear(false); // clear existing items and do not scroll to top
 
@@ -156,55 +121,62 @@ void CUIOutfitInfo::Update()
 
 		if (!_s) continue;
 
-		float _val_outfit{};
-		float _val_af{};
+		float _val{};
 
-		if (i < _max_item_index1)
-		{
-			_val_outfit = GetRestoreParam(i);
+		if (i < _hit_type_protection_index){
+			if (i < _item_additional_walk_accel){
+				_val = Actor()->GetRestoreParam(CActor::ActorRestoreParams(i));
+			}
+			else {
+				if (outfit)
+					_val = outfit->GetItemEffect(CInventoryItem::ItemEffects(i));
+				if (backpack)
+					_val += backpack->GetItemEffect(CInventoryItem::ItemEffects(i));
+
+				if (!psActorFlags.is(AF_ARTEFACT_DETECTOR_CHECK) || Actor()->HasDetector()) {
+					_val += Actor()->GetTotalArtefactsEffect(i);
+				}
+			}
 		}
-		else
+		else 
 		{
 			if (outfit)
-				_val_outfit = outfit->GetHitTypeProtection(ALife::EHitType(i - _max_item_index1));
+				_val = outfit->GetHitTypeProtection(ALife::EHitType(i - _hit_type_protection_index));
 
 			if (!psActorFlags.is(AF_ARTEFACT_DETECTOR_CHECK) || Actor()->HasDetector()) {
-				_val_af = Actor()->HitArtefactsOnBelt(1.0f, ALife::EHitType(i - _max_item_index1));
-				_val_af = 1.0f - _val_af;
+				_val += (1.0f - Actor()->GetArtefactsProtection(1.0f, ALife::EHitType(i - _hit_type_protection_index)));
 			}
 		}
 
-		if (fis_zero(_val_outfit) && fis_zero(_val_af))
+		if (fis_zero(_val))
 		{
 			continue;
 		}
 
-		LPCSTR _sn = "";
-		if (i != _item_radiation_restore_speed
-			&& i != _item_power_restore_speed)
+		LPCSTR _sn = "%";
+		_val *= 100.0f;
+
+		if (i == _item_radiation_restore_speed)
 		{
-			_val_outfit *= 100.0f;
-			_val_af *= 100.0f;
-			_sn = "%";
+			_val /= 100.0f;
+			_sn = *CStringTable().translate("st_rad");
 		}
 
-		if (i == _item_bleeding_restore_speed)
-			_val_outfit *= -1.0f;
-
-		LPCSTR _color = (_val_outfit > 0) ? "%c[green]" : "%c[red]";
-
-		if (i == _item_bleeding_restore_speed || i == _item_radiation_restore_speed)
-			_color = (_val_outfit > 0) ? "%c[red]" : "%c[green]";
-
-		LPCSTR _imm_name = *CStringTable().translate(_imm_st_names[i]);
-
-		int _sz = sprintf_s(_buff, sizeof(_buff), "%s ", _imm_name);
-		_sz += sprintf_s(_buff + _sz, sizeof(_buff) - _sz, "%s %+.f%s", _color, _val_outfit, _sn);
-
-		if (!fsimilar(_val_af, 0.0f))
-		{
-			_sz += sprintf_s(_buff + _sz, sizeof(_buff) - _sz, "%s %+.f%%", (_val_af > 0.0f) ? "%c[green]" : "%c[red]", _val_af);
+		if (i == _item_bleeding_restore_speed || i == _item_alcohol_restore_speed) {
+			_val *= -1.0f;
 		}
+
+		LPCSTR _color = (_val > 0) ? "%c[green]" : "%c[red]";
+
+		if (i == _item_bleeding_restore_speed || i == _item_radiation_restore_speed || i == _item_alcohol_restore_speed) {
+			_color = (_val > 0) ? "%c[red]" : "%c[green]";
+		}
+
+		sprintf_s(_buff, "%s %s %+.f %s",
+			CStringTable().translate(_imm_st_names[i]).c_str(),
+			_color,
+			_val,
+			_sn);
 
 		_s->SetText(_buff);
 

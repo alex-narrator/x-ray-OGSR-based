@@ -205,16 +205,10 @@ CActor::CActor() : CEntityAlive(),current_ik_cam_shift(0)
 	m_fDrugPsyProtectionCoeff	= 1.f;
 	m_fDrugRadProtectionCoeff	= 1.f;
 	
-	m_loaded_ph_box_id = 0;
 	updated = false;
 
-	// Alex ADD: for smooth crouch fix
-	CurrentHeight = 0.f;
-
-    hit_slowmo = 0.f;
-
-	m_bIsHardHold			= false;
-	m_bRuckAmmoPlacement	= false;
+	m_ActorRestoreParam.clear();
+	m_ActorRestoreParam.resize(eRestoreParamMax);
 }
 
 
@@ -561,7 +555,7 @@ void	CActor::Hit							(SHit* pHDS)
 
 	HitMark(HDS.damage(), HDS.dir, HDS.who, HDS.bone(), HDS.p_in_bone_space, HDS.impulse, HDS.hit_type);
 
-			float hit_power	= HitArtefactsOnBelt(HDS.damage(), HDS.hit_type);
+			float hit_power	= GetArtefactsProtection(HDS.damage(), HDS.hit_type);
 
 			if (GodMode())
 			{
@@ -1224,8 +1218,8 @@ void CActor::shedule_Update	(u32 DT)
 
 //	UpdateSleep									();
 
-	//для свойст артефактов, находящихся на поясе
-	UpdateArtefactsOnBelt						();
+	//для усіх предметів що впливають на параметри актора
+	UpdateActiveItemEffects();
 	if ( !m_holder )
 	  m_pPhysics_support->in_shedule_Update( DT );
 
@@ -1476,7 +1470,7 @@ void CActor::UpdateQuickSlotPanel()
 
 constexpr auto ARTEFACTS_UPDATE_TIME = 0.100f;
 
-void CActor::UpdateArtefactsOnBelt()
+void CActor::UpdateActiveItemEffects()
 {
 	static float update_time = 0;
 
@@ -1493,79 +1487,46 @@ void CActor::UpdateArtefactsOnBelt()
 
 	auto cond = &conditions();
 
-	auto placement = psActorFlags.test(AF_ARTEFACTS_FROM_ALL) ? inventory().m_all : inventory().m_belt;
-	for (const auto& it : placement){
-		auto artefact = smart_cast<CArtefact*>(it);
-		//
-		if (artefact && !fis_zero(artefact->GetCondition())){
-			float random_k = artefact->GetRandomKoef();
-			float condition = artefact->GetCondition();
-			//
-			cond->ChangeBleeding	(cond->GetWoundIncarnation	() * artefact->m_fBleedingRestoreSpeed	* f_update_time * random_k * condition);
-			cond->ChangeHealth		(cond->GetHealthRestore		() * artefact->m_fHealthRestoreSpeed	* f_update_time * random_k * condition);
-			cond->ChangePower		(cond->GetPowerRestore		() * artefact->m_fPowerRestoreSpeed		* f_update_time * random_k * condition);
-			cond->ChangeSatiety		(cond->GetSatietyRestore	() * artefact->m_fSatietyRestoreSpeed	* f_update_time * random_k * condition);
-			cond->ChangeThirst		(cond->GetThirstRestore		() * artefact->m_fThirstRestoreSpeed	* f_update_time * random_k * condition);
-			cond->ChangePsyHealth	(cond->GetPsyHealthRestore	() * artefact->m_fPsyHealthRestoreSpeed * f_update_time * random_k * condition);
-			cond->ChangeAlcohol		(cond->GetAlcoholRestore	() * artefact->m_fAlcoholRestoreSpeed	* f_update_time * random_k * condition);
+	//проходимо по усім рестор_параметрам для актора
+	for (int i = 0; i < eRestoreParamMax; ++i) {
+		//nullifying values
+		m_ActorRestoreParam[i] = 0.f;
+
+		if (i == eRadiationRestoreSpeed) {
+			//OBJECTS_RADIOACTIVE - new version
+			for (const auto& item : inventory().m_all) {
+				float radiation_restore_speed = item->GetItemEffect(CInventoryItem::ItemEffects(i));
+				if (item != inventory().ActiveItem()) {//що взяте в руки те випромінює на повну
+					if (GetOutfit()) //костюм захищає від радіації речей
+						radiation_restore_speed *= (1.f - GetOutfit()->GetHitTypeProtection(ALife::eHitTypeRadiation));
+					if (GetBackpack() && inventory().InRuck(item)) //рюкзак захищає від радіації речей у рюкзаку
+						radiation_restore_speed *= (1.f - GetBackpack()->GetHitTypeProtection(ALife::eHitTypeRadiation));
+				}
+				m_ActorRestoreParam[i] += radiation_restore_speed;
+			}
 		}
-	}
-
-	//OBJECTS_RADIOACTIVE - new version
-	for (const auto& it : inventory().m_all){
-		auto iitem = smart_cast<CInventoryItem*>(it);
-		auto artefact = smart_cast<CArtefact*>(iitem);
-
-		float radiation_restore_speed = iitem->m_fRadiationRestoreSpeed;
-
-		if (iitem != inventory().ActiveItem()) {//що взяте в руки те випромінює на повну
-			if (GetOutfit()) //костюм захищає від радіації речей
-				radiation_restore_speed *= (1.f - GetOutfit()->GetHitTypeProtection(ALife::eHitTypeRadiation));
-			if (GetBackpack() && inventory().InRuck(iitem)) //рюкзак захищає від радіації речей у рюкзаку
-				radiation_restore_speed *= (1.f - GetBackpack()->GetHitTypeProtection(ALife::eHitTypeRadiation));
+		else {
+			//artefacts
+			m_ActorRestoreParam[i] += GetTotalArtefactsEffect(i);
+			//outfit
+			auto outfit = GetOutfit();
+			if (outfit && !fis_zero(outfit->GetCondition())) {
+				m_ActorRestoreParam[i] += outfit->GetItemEffect(CInventoryItem::ItemEffects(i));
+			}
+			//backpack
+			auto backpack = GetBackpack();
+			if (backpack && !fis_zero(backpack->GetCondition())) {
+				m_ActorRestoreParam[i] += backpack->GetItemEffect(CInventoryItem::ItemEffects(i));
+			}
 		}
-
-		if (artefact){
-			radiation_restore_speed *= artefact->GetRandomKoef();
-			//condition впливає на випромінення радіації тільки для артефактів
-			radiation_restore_speed *= artefact->GetCondition();
-		}
-
-		cond->ChangeRadiation(cond->GetRadiationRestore() * radiation_restore_speed * f_update_time);
-	}
-
-	auto outfit = GetOutfit();
-	if (outfit){
-		float condition = outfit->GetCondition();
-		if (!fis_zero(condition)){
-			cond->ChangeBleeding	(cond->GetWoundIncarnation	() * outfit->m_fBleedingRestoreSpeed	* f_update_time * condition);
-			cond->ChangeHealth		(cond->GetHealthRestore		() * outfit->m_fHealthRestoreSpeed		* f_update_time * condition);
-			cond->ChangePower		(cond->GetPowerRestore		() * outfit->m_fPowerRestoreSpeed		* f_update_time * condition);
-			cond->ChangeSatiety		(cond->GetSatietyRestore	() * outfit->m_fSatietyRestoreSpeed		* f_update_time * condition);
-			cond->ChangeThirst		(cond->GetThirstRestore		() * outfit->m_fThirstRestoreSpeed		* f_update_time * condition);
-			cond->ChangePsyHealth	(cond->GetPsyHealthRestore	() * outfit->m_fPsyHealthRestoreSpeed	* f_update_time * condition);
-			cond->ChangeAlcohol		(cond->GetAlcoholRestore	() * outfit->m_fAlcoholRestoreSpeed		* f_update_time * condition);
-		}
-	}
-
-	auto backpack = GetBackpack();
-	if (backpack){
-		float condition = backpack->GetCondition();
-		if (!fis_zero(condition)){
-			cond->ChangeBleeding	(cond->GetWoundIncarnation	() * backpack->m_fBleedingRestoreSpeed	* f_update_time * condition);
-			cond->ChangeHealth		(cond->GetHealthRestore		() * backpack->m_fHealthRestoreSpeed	* f_update_time * condition);
-			cond->ChangePower		(cond->GetPowerRestore		() * backpack->m_fPowerRestoreSpeed		* f_update_time * condition);
-			cond->ChangeSatiety		(cond->GetSatietyRestore	() * backpack->m_fSatietyRestoreSpeed	* f_update_time * condition);
-			cond->ChangeThirst		(cond->GetThirstRestore		() * backpack->m_fThirstRestoreSpeed	* f_update_time * condition);
-			cond->ChangePsyHealth	(cond->GetPsyHealthRestore	() * backpack->m_fPsyHealthRestoreSpeed	* f_update_time * condition);
-			cond->ChangeAlcohol		(cond->GetAlcoholRestore	() * backpack->m_fAlcoholRestoreSpeed	* f_update_time * condition);
-		}
+		//apllying effect on actor conditions
+		cond->ApplyRestoreEffect(i, m_ActorRestoreParam[i] * f_update_time);
 	}
 
 	callback( GameObject::eUpdateArtefactsOnBelt )( f_update_time );
 }
 
-float	CActor::HitArtefactsOnBelt(float hit_power, ALife::EHitType hit_type) {
+float	CActor::GetArtefactsProtection(float hit_power, ALife::EHitType hit_type) {
 	float res_hit_power_k		= 1.0f;
 	float _af_count				= 0.0f;
 
@@ -1579,16 +1540,16 @@ float	CActor::HitArtefactsOnBelt(float hit_power, ALife::EHitType hit_type) {
 				_af_count += 1.0f;
 		}
 	}
-	// учет иммунитета от шлема
-	PIItem helm = inventory().m_slots[HELMET_SLOT].m_pIItem;
-	if (helm) {
-		CArtefact*	helmet = smart_cast<CArtefact*>(helm);
-		if (helmet && !fis_zero(helmet->GetHitTypeProtection(hit_type)) && !fis_zero(helmet->GetCondition()))
-		{
-				res_hit_power_k += 1.0f - helmet->GetHitTypeProtection(hit_type);
-				_af_count += 1.0f;
-		}
-	}
+	//// учет иммунитета от шлема
+	//PIItem helm = inventory().m_slots[HELMET_SLOT].m_pIItem;
+	//if (helm) {
+	//	CArtefact*	helmet = smart_cast<CArtefact*>(helm);
+	//	if (helmet && !fis_zero(helmet->GetHitTypeProtection(hit_type)) && !fis_zero(helmet->GetCondition()))
+	//	{
+	//			res_hit_power_k += 1.0f - helmet->GetHitTypeProtection(hit_type);
+	//			_af_count += 1.0f;
+	//	}
+	//}
 
 	res_hit_power_k -= _af_count;
 
@@ -1993,10 +1954,25 @@ bool CActor::IsHitToBackPack(SHit* pHDS)
 	return result;
 }
 
-
 #include "SimpleDetectorSHOC.h"
 bool CActor::HasDetector()
 {
 	auto item_in_det_slot = inventory().ItemFromSlot(DETECTOR_SLOT);
 	return (smart_cast<CCustomDetector*>(item_in_det_slot) || smart_cast<CSimpleDetectorSHOC*>(item_in_det_slot));
+}
+
+float CActor::GetRestoreParam(ActorRestoreParams param) {
+	return m_ActorRestoreParam[param];
+}
+
+float CActor::GetTotalArtefactsEffect(u32 i) {
+	float res{};
+	auto placement = psActorFlags.test(AF_ARTEFACTS_FROM_ALL) ? inventory().m_all : inventory().m_belt;
+	for (const auto& item : placement) {
+		auto artefact = smart_cast<CArtefact*>(item);
+		if (artefact && !fis_zero(artefact->GetCondition())) {
+				res += artefact->GetItemEffect(CInventoryItem::ItemEffects(i));
+		}
+	}
+	return res;
 }
