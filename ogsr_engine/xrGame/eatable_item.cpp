@@ -21,6 +21,9 @@ CEatableItem::CEatableItem()
 	m_iPortionsNum = -1;
 
 	m_physic_item	= 0;
+
+	m_ItemInfluence.clear();
+	m_ItemInfluence.resize(eInfluenceMax);
 }
 
 CEatableItem::~CEatableItem()
@@ -37,16 +40,16 @@ void CEatableItem::Load(LPCSTR section)
 {
 	inherited::Load(section);
 
-	m_fHealthInfluence			= READ_IF_EXISTS	(pSettings,r_float,section,"eat_health",		0.0f);//pSettings->r_float(section, "eat_health");
-	m_fPowerInfluence			= READ_IF_EXISTS	(pSettings,r_float,section,"eat_power",			0.0f);//pSettings->r_float(section, "eat_power");
-	m_fMaxPowerUpInfluence		= READ_IF_EXISTS	(pSettings,r_float,section,"eat_max_power",		0.0f);
-	m_fSatietyInfluence			= READ_IF_EXISTS	(pSettings,r_float,section,"eat_satiety",		0.0f);//pSettings->r_float(section, "eat_satiety");
-	m_fRadiationInfluence		= READ_IF_EXISTS	(pSettings,r_float,section,"eat_radiation",		0.0f);//pSettings->r_float(section, "eat_radiation");
-	m_fPsyHealthInfluence		= READ_IF_EXISTS	(pSettings,r_float,section,"eat_psyhealth",		0.0f);
-	m_fAlcoholInfluence			= READ_IF_EXISTS	(pSettings,r_float,section,"eat_alcohol",		0.0f);
-	m_fThirstInfluence			= READ_IF_EXISTS	(pSettings,r_float,section,"eat_thirst",		0.0f);
-	m_fWoundsHealPerc			= READ_IF_EXISTS	(pSettings,r_float,section,"wounds_heal_perc",	0.0f);//pSettings->r_float(section, "wounds_heal_perc");
-	clamp						(m_fWoundsHealPerc, 0.f, 1.f);
+	m_ItemInfluence[eHealthInfluence]		= READ_IF_EXISTS	(pSettings,r_float,section,"eat_health",		0.0f);//pSettings->r_float(section, "eat_health");
+	m_ItemInfluence[ePowerInfluence]		= READ_IF_EXISTS	(pSettings,r_float,section,"eat_power",			0.0f);//pSettings->r_float(section, "eat_power");
+	m_ItemInfluence[eMaxPowerInfluence]		= READ_IF_EXISTS	(pSettings,r_float,section,"eat_max_power",		0.0f);
+	m_ItemInfluence[eSatietyInfluence]		= READ_IF_EXISTS	(pSettings,r_float,section,"eat_satiety",		0.0f);//pSettings->r_float(section, "eat_satiety");
+	m_ItemInfluence[eRadiationInfluence]	= READ_IF_EXISTS	(pSettings,r_float,section,"eat_radiation",		0.0f);//pSettings->r_float(section, "eat_radiation");
+	m_ItemInfluence[ePsyHealthInfluence]	= READ_IF_EXISTS	(pSettings,r_float,section,"eat_psyhealth",		0.0f);
+	m_ItemInfluence[eAlcoholInfluence]		= READ_IF_EXISTS	(pSettings,r_float,section,"eat_alcohol",		0.0f);
+	m_ItemInfluence[eThirstInfluence]		= READ_IF_EXISTS	(pSettings,r_float,section,"eat_thirst",		0.0f);
+	m_ItemInfluence[eWoundsHealPerc]		= READ_IF_EXISTS	(pSettings,r_float,section,"wounds_heal_perc",	0.0f);//pSettings->r_float(section, "wounds_heal_perc");
+	clamp						(m_ItemInfluence[eWoundsHealPerc], 0.f, 1.f);
 	
 	m_iStartPortionsNum			= READ_IF_EXISTS	(pSettings, r_s32, section, "eat_portions_num", 1);
 	VERIFY						(m_iPortionsNum < 10000);
@@ -118,18 +121,9 @@ void CEatableItem::UseBy (CEntityAlive* entity_alive)
 	//R_ASSERT		(m_pCurrentInventory==IO->m_inventory);
 	//R_ASSERT		(object().H_Parent()->ID()==entity_alive->ID());
 
-	auto econd = &entity_alive->conditions();
-
-	econd->ChangeHealth		(GetHealthInfluence()	);
-	econd->ChangePower		(GetPowerInfluence()	);
-	econd->ChangeSatiety	(GetSatietyInfluence()	);
-	econd->ChangeRadiation	(GetRadiationInfluence());
-	econd->ChangePsyHealth	(GetPsyHealthInfluence());
-	econd->ChangeBleeding	(GetWoundsHealPerc()	);
-	econd->ChangeAlcohol	(GetAlcoholInfluence()	);
-	econd->ChangeThirst		(GetThirstInfluence()	);
-	
-	entity_alive->conditions().SetMaxPower( entity_alive->conditions().GetMaxPower()+m_fMaxPowerUpInfluence );
+	for (int i = 0; i < eInfluenceMax; ++i) {
+		ApplyInfluence(ItemInfluence(i), entity_alive, GetItemInfluence(ItemInfluence(i)));
+	}
 	
 	//уменьшить количество порций
 	if(m_iPortionsNum > 0)
@@ -153,19 +147,10 @@ void CEatableItem::UseBy (CEntityAlive* entity_alive)
 }
 void CEatableItem::ZeroAllEffects()
 {
-	m_fHealthInfluence = 0.f;
-	m_fPowerInfluence = 0.f;
-	m_fSatietyInfluence = 0.f;
-	m_fRadiationInfluence = 0.f;
-	m_fMaxPowerUpInfluence = 0.f;
-	m_fPsyHealthInfluence = 0.f;
-	m_fWoundsHealPerc = 0.f;
-	m_fThirstInfluence = 0.f;
-	m_fAlcoholInfluence = 0.f;
-}
-void CEatableItem::SetRadiation(float _rad)
-{
-	m_fRadiationInfluence = _rad;
+	for (int i = 0; i < eInfluenceMax; ++i) {
+		//nullifying values
+		m_ItemInfluence[i] = 0.f;
+	}
 }
 
 float CEatableItem::GetOnePortionWeight()
@@ -221,30 +206,47 @@ u32 CEatableItem::GetOnePortionCost()
 	return rest;
 }
 
-float CEatableItem::GetHealthInfluence() {
-	return m_fHealthInfluence * GetCondition();
+float CEatableItem::GetItemInfluence(ItemInfluence influence) {
+	if (influence == eRadiationInfluence) {
+		return (m_ItemInfluence[influence] + GetItemEffect(eRadiationRestoreSpeed) * m_fSelfRadiationInfluence) * GetCondition();
+	}
+	return m_ItemInfluence[influence] * GetCondition();
 }
-float CEatableItem::GetPowerInfluence() {
-	return m_fPowerInfluence * GetCondition();
-}
-float CEatableItem::GetMaxPowerUpInfluence() {
-	return m_fMaxPowerUpInfluence * GetCondition();
-}
-float CEatableItem::GetSatietyInfluence() {
-	return m_fSatietyInfluence * GetCondition();
-}
-float CEatableItem::GetRadiationInfluence() {
-	return (m_fRadiationInfluence + GetItemEffect(eRadiationRestoreSpeed) * m_fSelfRadiationInfluence) * GetCondition();
-}
-float CEatableItem::GetPsyHealthInfluence() {
-	return m_fPsyHealthInfluence * GetCondition();
-}
-float CEatableItem::GetThirstInfluence() {
-	return m_fThirstInfluence * GetCondition();
-}
-float CEatableItem::GetAlcoholInfluence() {
-	return m_fAlcoholInfluence * GetCondition();
-}
-float CEatableItem::GetWoundsHealPerc() {
-	return m_fWoundsHealPerc * GetCondition();
+
+void CEatableItem::ApplyInfluence(ItemInfluence influence_num, CEntityAlive* entity_alive, float value) {
+	if (!entity_alive || fis_zero(value)) return;
+	auto econd = &entity_alive->conditions();
+	switch (influence_num)
+	{
+	case eHealthInfluence: {
+		econd->ChangeHealth(value);
+	}break;
+	case ePowerInfluence: {
+		econd->ChangePower(value);
+	}break;
+	case eMaxPowerInfluence: {
+		econd->ChangeMaxPower(value);
+	}break;
+	case eSatietyInfluence: {
+		econd->ChangeSatiety(value);
+	}break;
+	case eRadiationInfluence: {
+		econd->ChangeRadiation(value);
+	}break;
+	case ePsyHealthInfluence: {
+		econd->ChangePsyHealth(value);
+	}break;
+	case eAlcoholInfluence: {
+		econd->ChangeAlcohol(value);
+	}break;
+	case eThirstInfluence: {
+		econd->ChangeThirst(value);
+	}break;
+	case eWoundsHealPerc: {
+		econd->ChangeBleeding(value);
+	}break;
+	default:
+		Msg("%s unknown influence num [%d]", __FUNCTION__, influence_num);
+		break;
+	}
 }

@@ -176,6 +176,12 @@ void CEntityCondition::ChangeBleeding(float percent)
 	}
 }
 
+void CEntityCondition::ChangeMaxPower(float value)
+{
+	m_fPowerMax += value;
+	clamp(m_fPowerMax, 0.0f, 1.0f);
+}
+
 bool RemoveWoundPred(CWound* pWound)
 {
 	if(pWound->GetDestroy())

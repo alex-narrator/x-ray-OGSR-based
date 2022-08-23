@@ -523,7 +523,6 @@ void CActorCondition::ChangeThirst(float value)
 	clamp(m_fThirst, 0.0f, 1.0f);
 }
 
-
 void CActorCondition::UpdateTutorialThresholds()
 {
 	string256						cb_name;
@@ -729,7 +728,7 @@ void CActorCondition::UpdatePower()
 	else
 		k_max_power = 1.0f;
 
-	SetMaxPower(GetMaxPower() - m_fPowerLeakSpeed * m_fDeltaTime * k_max_power); //кажется это таки "сонливость" - постоянное уменьшение максимальной выносливости
+	ChangeMaxPower(-m_fPowerLeakSpeed * m_fDeltaTime * k_max_power); //кажется это таки "сонливость" - постоянное уменьшение максимальной выносливости
 
 	//коэффициенты уменьшения восстановления силы от сытоти и радиации
 	/*float radiation_power_k = 1.f;

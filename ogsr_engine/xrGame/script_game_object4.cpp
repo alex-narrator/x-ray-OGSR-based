@@ -637,15 +637,15 @@ void CScriptGameObject::ZeroEffects()
 	}
 	item->ZeroAllEffects();
 }
-void CScriptGameObject::SetRadiationInfluence(float rad)
-{
-	CEatableItem						*item = smart_cast<CEatableItem*>(&object());
-	if (!item) {
-		ai().script_engine().script_log(ScriptStorage::eLuaMessageTypeError, "CEatableItem : cannot access class member ZeroEffects!");
-		return;
-	}
-	item->SetRadiation(rad);
-}
+//void CScriptGameObject::SetRadiationInfluence(float rad)
+//{
+//	CEatableItem						*item = smart_cast<CEatableItem*>(&object());
+//	if (!item) {
+//		ai().script_engine().script_log(ScriptStorage::eLuaMessageTypeError, "CEatableItem : cannot access class member ZeroEffects!");
+//		return;
+//	}
+//	item->SetRadiation(rad);
+//}
 
 void CScriptGameObject::SetDrugRadProtection(float _prot)
 {

@@ -4,7 +4,6 @@
 
 #include "string_table.h"
 
-#include "inventory_item.h"
 #include "eatable_item.h"
 
 constexpr auto EATABLE_PARAMS = "eatable_params.xml";
@@ -74,57 +73,20 @@ bool CUIEatableParams::Check(CInventoryItem* obj) {
 		return false;
 }
 
-float CUIEatableParams::GetEffectValue(u32 i, CInventoryItem* obj){
-	float r = 0;
-
-	if (!obj) return r;
-
-	auto pEatable = smart_cast<CEatableItem*>(obj);
-
-	switch (i)
-	{
-	case _health_influence:{
-		r = pEatable->GetHealthInfluence();
-	}break;
-	case _power_influence: {
-		r = pEatable->GetPowerInfluence();
-	}break;
-	case _max_power_influence: {
-		r = pEatable->GetMaxPowerUpInfluence();
-	}break;
-	case _satiety_influence: {
-		r = pEatable->GetSatietyInfluence();
-	}break;
-	case _radiation_influence: {
-		r = pEatable->GetRadiationInfluence();
-	}break;
-	case _psy_health_influence: {
-		r = pEatable->GetPsyHealthInfluence();
-	}break;
-	case _alcohol_influence: {
-		r = pEatable->GetAlcoholInfluence();
-	}break;
-	case _thirst_influence: {
-		r = pEatable->GetThirstInfluence();
-	}break;
-	case _wounds_heal_perc: {
-		r = pEatable->GetWoundsHealPerc();
-	}break;
-	}
-
-	return r;
-}
-
 void CUIEatableParams::SetInfo(CInventoryItem* obj) {
 	string128					text_to_show;
 	float						_h = 0.0f;
 	DetachAll();
 
+	if (!obj) return;
+
+	auto pEatable = smart_cast<CEatableItem*>(obj);
+
 	for (u32 i = 0; i < _max_item_index; ++i){
 		
 		CUIStatic* _s = m_info_items[i];
 		
-		float _val = GetEffectValue(i, obj);
+		float _val = pEatable->GetItemInfluence(CEatableItem::ItemInfluence(i));
 		if (fis_zero(_val)) continue;
 
 		auto effect_name = CStringTable().translate(effect_names[i]).c_str();
