@@ -37,7 +37,7 @@ public:
 	virtual void	Load				(LPCSTR section);
 	virtual BOOL	net_Spawn			(CSE_Abstract* DC);
 	virtual void	net_Destroy			();
-	virtual void net_Export( CSE_Abstract* E );
+	virtual void	net_Export			( CSE_Abstract* E );
 
 	virtual void	OnH_A_Chield		();
 	virtual void	OnH_B_Independent	(bool just_before_destroy);
@@ -72,6 +72,9 @@ protected:
 
 	shared_str				m_NightVisionSect;
 
+	CUIStaticItem*			m_UINightVision{};
+	shared_str				m_NightVisionTexture{};
+
 	enum EStats{
 		eTorchActive				= (1<<0),
 		eNightVisionActive			= (1<<1),
@@ -90,6 +93,11 @@ public:
 
 	virtual void	afterDetach				();
 	virtual void	renderable_Render		();
+
+	virtual void	DrawHUDMask				();
+
+	virtual void	OnMoveToSlot			(EItemPlace prevPlace);
+	virtual void	OnMoveToRuck			(EItemPlace prevPlace);
 
 	// alpet: управление светом фонаря
 	IRender_Light  *GetLight(int target = 0) const;

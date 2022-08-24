@@ -218,7 +218,7 @@ protected:
 public:
 	void				SetPickUpItem	(CInventoryItem* PickUpItem);
 
-	bool                IsHUDElementAllowed(EHUDElement element);
+	bool                IsHUDElementAllowed	(EHUDElement element);
 
 	DECLARE_SCRIPT_REGISTER_FUNCTION
 };

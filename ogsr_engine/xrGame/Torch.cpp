@@ -73,6 +73,7 @@ CTorch::~CTorch(void)
 	HUD_SOUND::DestroySound	(SndNightVisionOff);
 	HUD_SOUND::DestroySound	(SndNightVisionIdle);
 	HUD_SOUND::DestroySound	(SndNightVisionBroken);
+	xr_delete(m_UINightVision);
 }
 
 inline bool CTorch::can_use_dynamic_lights	()
@@ -120,7 +121,8 @@ void CTorch::Load(LPCSTR section)
 		if (pSettings->line_exist(section, "snd_night_vision_broken"))
 			HUD_SOUND::LoadSound(section, "snd_night_vision_broken", SndNightVisionBroken, SOUND_TYPE_ITEM_USING);
 
-		m_NightVisionSect = READ_IF_EXISTS(pSettings, r_string, section, "night_vision_effector", nullptr);
+		m_NightVisionSect		= READ_IF_EXISTS(pSettings, r_string, section, "night_vision_effector", nullptr);
+		m_NightVisionTexture	= READ_IF_EXISTS(pSettings, r_string, section, "night_vision_texture",	nullptr);
 	}
 }
 
@@ -138,7 +140,7 @@ void CTorch::SwitchNightVision(bool vision_on)
 	if (!pA)
 		return;
 
-	auto* pActorTorch = smart_cast<CTorch*>(pA->inventory().ItemFromSlot(TORCH_SLOT));
+	auto* pActorTorch = pA->GetTorch();//smart_cast<CTorch*>(pA->inventory().ItemFromSlot(TORCH_SLOT));
 	if (pActorTorch && pActorTorch != this)
 		return;
 
@@ -570,3 +572,32 @@ void CTorch::calc_m_delta_h( float range ) {
 float CTorch::get_range() const {
   return light_render->get_range();
 }
+
+void CTorch::DrawHUDMask(){
+	if (m_bNightVisionEnabled && m_bNightVisionOn && !!m_NightVisionTexture){
+		m_UINightVision->SetPos(0, 0);
+		m_UINightVision->SetRect(0, 0, UI_BASE_WIDTH, UI_BASE_HEIGHT);
+		m_UINightVision->Render();
+	}
+}
+
+void CTorch::OnMoveToSlot(EItemPlace prevPlace) {
+	inherited::OnMoveToSlot(prevPlace);
+	if (smart_cast<CActor*>(H_Parent())) {
+		if (m_UINightVision)
+			xr_delete(m_UINightVision);
+		if (m_bNightVisionEnabled && !!m_NightVisionTexture) {
+			m_UINightVision = xr_new<CUIStaticItem>();
+			m_UINightVision->Init(m_NightVisionTexture.c_str(), "hud\\default", 0, 0, alNone);
+		}
+	}
+};
+
+
+void CTorch::OnMoveToRuck(EItemPlace prevPlace) {
+	inherited::OnMoveToRuck(prevPlace);
+	if (smart_cast<CActor*>(H_Parent()) && prevPlace == eItemPlaceSlot) {
+		if (m_UINightVision)
+			xr_delete(m_UINightVision);
+	}
+};

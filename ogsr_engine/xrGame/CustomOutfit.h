@@ -38,4 +38,9 @@ public:
 	const shared_str&				GetFullIconName			() const	{return m_full_icon_name;};
 
 	bool m_bIsHelmetAllowed{};
+
+	virtual void					DrawHUDMask				();
+protected:
+	CUIStaticItem*					m_UIVisor{};
+	shared_str						m_VisorTexture{};
 };

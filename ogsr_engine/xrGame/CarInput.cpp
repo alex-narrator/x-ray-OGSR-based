@@ -154,7 +154,7 @@ void CCar::OnKeyboardPress(int cmd)
 	case kNIGHT_VISION: {
 		auto* Act = OwnerActor();
 		if (Act) {
-			auto* pTorch = smart_cast<CTorch*>(Act->inventory().ItemFromSlot(TORCH_SLOT));
+			auto* pTorch = Act->GetTorch();//smart_cast<CTorch*>(Act->inventory().ItemFromSlot(TORCH_SLOT));
 			if (pTorch) {
 				pTorch->SwitchNightVision();
 			}

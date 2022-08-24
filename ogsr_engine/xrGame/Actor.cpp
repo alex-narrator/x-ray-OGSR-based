@@ -24,6 +24,7 @@
 #include "CustomOutfit.h"
 #include "Warbelt.h"
 #include "Backpack.h"
+#include "Torch.h"
 #include "actorcondition.h"
 #include "UIGameCustom.h"
 #include "game_cl_base_weapon_usage_statistic.h"
@@ -869,7 +870,7 @@ void CActor::UpdateCL	()
 			HUD().ShowCrosshair(!psHUD_Flags.test(HUD_CROSSHAIR_BUILD) && pWeapon->use_crosshair());
 
 			psHUD_Flags.set( HUD_CROSSHAIR_RT2, pWeapon->show_crosshair() );
-			psHUD_Flags.set( HUD_DRAW_RT,		pWeapon->show_indicators() );
+			psHUD_Flags.set( HUD_DRAW_RT,		pWeapon->show_indicators());
 
 			// Обновляем двойной рендер от оружия [Update SecondVP with weapon data]
 			pWeapon->UpdateSecondVP();	//--#SM+#-- +SecondVP+
@@ -1740,6 +1741,12 @@ CBackpack* CActor::GetBackpack() const
 	return _bp ? smart_cast<CBackpack*>(_bp) : NULL;
 }
 
+CTorch* CActor::GetTorch() const
+{
+	PIItem _tc = inventory().m_slots[TORCH_SLOT].m_pIItem;
+	return _tc ? smart_cast<CTorch*>(_tc) : NULL;
+}
+
 void CActor::block_action(EGameActions cmd)
 {
 	if (m_blocked_actions.find(cmd) == m_blocked_actions.end() )
@@ -1975,4 +1982,9 @@ float CActor::GetTotalArtefactsEffect(u32 i) {
 		}
 	}
 	return res;
+}
+
+void CActor::DrawHUDMasks() {
+	if (GetTorch()) GetTorch()->DrawHUDMask();
+	if (GetOutfit()) GetOutfit()->DrawHUDMask();
 }

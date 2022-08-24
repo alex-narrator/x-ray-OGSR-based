@@ -9,6 +9,7 @@
 #include "../actor.h"
 #include "../HUDManager.h"
 #include "../PDA.h"
+#include "CustomOutfit.h"
 #include "../character_info.h"
 #include "../inventory.h"
 #include "../UIGameSP.h"
@@ -305,16 +306,17 @@ void CUIMainIngameWnd::Init()
 	HUD_SOUND::LoadSound					("maingame_ui", "snd_new_contact"		, m_contactSnd		, SOUND_TYPE_IDLE);
 }
 
-//float UIStaticDiskIO_start_time = 0.0f;
 void CUIMainIngameWnd::Draw()
 {
 	if(!m_pActor) return;
+
+	m_pActor->DrawHUDMasks();
 
 	CUIWindow::Draw();
 
 	if (IsHUDElementAllowed(ePDA)) UIZoneMap->Render();
 
-	RenderQuickInfos();		
+	RenderQuickInfos();
 }
 
 void CUIMainIngameWnd::SetAmmoIcon (const shared_str& sect_name)
@@ -392,12 +394,12 @@ void CUIMainIngameWnd::Update()
 		if(show_bar)
 			UIHealthBar.SetProgressPos(m_pActor->GetfHealth() * 100.0f);
 		// Armor bar
-		PIItem	Outfit = m_pActor->inventory().ItemFromSlot(OUTFIT_SLOT);
-		show_bar = Outfit && eHudLaconicOff == g_eHudLaconic;
+		auto pOutfit = m_pActor->GetOutfit();
+		show_bar = pOutfit && eHudLaconicOff == g_eHudLaconic;
 		UIArmorBar.Show					(show_bar);
 		UIStaticArmor.Show				(show_bar);
 		if(show_bar)
-			UIArmorBar.SetProgressPos		(Outfit->GetCondition()*100);
+			UIArmorBar.SetProgressPos		(pOutfit->GetCondition()*100);
 
 		UpdateActiveItemInfo				();
 
@@ -434,7 +436,7 @@ void CUIMainIngameWnd::Update()
 				//
 			case ewiArmor:
 				if (IsHUDElementAllowed(eArmor))
-					value = 1 - Outfit->GetCondition();
+					value = 1 - pOutfit->GetCondition();
 				break;
 			case ewiHealth:
 				if (b_show_icon)

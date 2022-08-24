@@ -152,34 +152,34 @@ void CInventoryItem::Load(LPCSTR section)
 		sndBreaking.create(pSettings->r_string(section, "break_sound"), st_Effect, sg_SourceType);
 
 	//*_restore_speed
-	m_ItemEffect[eHealthRestoreSpeed]						= READ_IF_EXISTS(pSettings, r_float, section, "health_restore_speed",		0.f);
-	m_ItemEffect[eRadiationRestoreSpeed]					= READ_IF_EXISTS(pSettings, r_float, section, "radiation_restore_speed",	0.f);
-	m_ItemEffect[eSatietyRestoreSpeed]						= READ_IF_EXISTS(pSettings, r_float, section, "satiety_restore_speed",		0.f);
-	m_ItemEffect[ePowerRestoreSpeed]						= READ_IF_EXISTS(pSettings, r_float, section, "power_restore_speed",		0.f);
+	m_ItemEffect[eHealthRestoreSpeed]					= READ_IF_EXISTS(pSettings, r_float, section, "health_restore_speed",		0.f);
+	m_ItemEffect[eRadiationRestoreSpeed]				= READ_IF_EXISTS(pSettings, r_float, section, "radiation_restore_speed",	0.f);
+	m_ItemEffect[eSatietyRestoreSpeed]					= READ_IF_EXISTS(pSettings, r_float, section, "satiety_restore_speed",		0.f);
+	m_ItemEffect[ePowerRestoreSpeed]					= READ_IF_EXISTS(pSettings, r_float, section, "power_restore_speed",		0.f);
 	m_ItemEffect[eBleedingRestoreSpeed]					= READ_IF_EXISTS(pSettings, r_float, section, "bleeding_restore_speed",		0.f);
-	m_ItemEffect[ePsyHealthRestoreSpeed]					= READ_IF_EXISTS(pSettings, r_float, section, "psy_health_restore_speed",	0.f);
-	m_ItemEffect[eAlcoholRestoreSpeed]						= READ_IF_EXISTS(pSettings, r_float, section, "alcohol_restore_speed",		0.f);
-	m_ItemEffect[eThirstRestoreSpeed]						= READ_IF_EXISTS(pSettings, r_float, section, "thirst_restore_speed",		0.f);
+	m_ItemEffect[ePsyHealthRestoreSpeed]				= READ_IF_EXISTS(pSettings, r_float, section, "psy_health_restore_speed",	0.f);
+	m_ItemEffect[eAlcoholRestoreSpeed]					= READ_IF_EXISTS(pSettings, r_float, section, "alcohol_restore_speed",		0.f);
+	m_ItemEffect[eThirstRestoreSpeed]					= READ_IF_EXISTS(pSettings, r_float, section, "thirst_restore_speed",		0.f);
 	//addition
-	m_ItemEffect[eAdditionalWalkAccel]						= READ_IF_EXISTS(pSettings, r_float, section, "additional_walk_accel",		0.f);
-	m_ItemEffect[eAdditionalJumpSpeed]						= READ_IF_EXISTS(pSettings, r_float, section, "additional_jump_speed",		0.f);
+	m_ItemEffect[eAdditionalWalkAccel]					= READ_IF_EXISTS(pSettings, r_float, section, "additional_walk_accel",		0.f);
+	m_ItemEffect[eAdditionalJumpSpeed]					= READ_IF_EXISTS(pSettings, r_float, section, "additional_jump_speed",		0.f);
 	m_ItemEffect[eAdditionalWeight]						= READ_IF_EXISTS(pSettings, r_float, section, "additional_max_weight",		0.f);
 	m_ItemEffect[eAdditionalVolume]						= READ_IF_EXISTS(pSettings, r_float, section, "additional_max_volume",		0.f);
 	//protection
-	m_HitTypeProtection[ALife::eHitTypeBurn]				= READ_IF_EXISTS(pSettings, r_float, section, "burn_protection",			0.f);
-	m_HitTypeProtection[ALife::eHitTypeStrike]				= READ_IF_EXISTS(pSettings, r_float, section, "strike_protection",			0.f);
-	m_HitTypeProtection[ALife::eHitTypeShock]				= READ_IF_EXISTS(pSettings, r_float, section, "shock_protection",			0.f);
-	m_HitTypeProtection[ALife::eHitTypeWound]				= READ_IF_EXISTS(pSettings, r_float, section, "wound_protection",			0.f);
-	m_HitTypeProtection[ALife::eHitTypeRadiation]			= READ_IF_EXISTS(pSettings, r_float, section, "radiation_protection",		0.f);
-	m_HitTypeProtection[ALife::eHitTypeTelepatic]			= READ_IF_EXISTS(pSettings, r_float, section, "telepatic_protection",		0.f);
-	m_HitTypeProtection[ALife::eHitTypeChemicalBurn]		= READ_IF_EXISTS(pSettings, r_float, section, "chemical_burn_protection",	0.f);
-	m_HitTypeProtection[ALife::eHitTypeExplosion]			= READ_IF_EXISTS(pSettings, r_float, section, "explosion_protection",		0.f);
-	m_HitTypeProtection[ALife::eHitTypeFireWound]			= READ_IF_EXISTS(pSettings, r_float, section, "fire_wound_protection",		0.f);
-	m_HitTypeProtection[ALife::eHitTypeWound_2]				= READ_IF_EXISTS(pSettings, r_float, section, "wound_2_protection",			0.f);
-	m_HitTypeProtection[ALife::eHitTypePhysicStrike]		= READ_IF_EXISTS(pSettings, r_float, section, "physic_strike_protection",	0.f);
+	m_HitTypeProtection[ALife::eHitTypeBurn]			= READ_IF_EXISTS(pSettings, r_float, section, "burn_protection",			0.f);
+	m_HitTypeProtection[ALife::eHitTypeStrike]			= READ_IF_EXISTS(pSettings, r_float, section, "strike_protection",			0.f);
+	m_HitTypeProtection[ALife::eHitTypeShock]			= READ_IF_EXISTS(pSettings, r_float, section, "shock_protection",			0.f);
+	m_HitTypeProtection[ALife::eHitTypeWound]			= READ_IF_EXISTS(pSettings, r_float, section, "wound_protection",			0.f);
+	m_HitTypeProtection[ALife::eHitTypeRadiation]		= READ_IF_EXISTS(pSettings, r_float, section, "radiation_protection",		0.f);
+	m_HitTypeProtection[ALife::eHitTypeTelepatic]		= READ_IF_EXISTS(pSettings, r_float, section, "telepatic_protection",		0.f);
+	m_HitTypeProtection[ALife::eHitTypeChemicalBurn]	= READ_IF_EXISTS(pSettings, r_float, section, "chemical_burn_protection",	0.f);
+	m_HitTypeProtection[ALife::eHitTypeExplosion]		= READ_IF_EXISTS(pSettings, r_float, section, "explosion_protection",		0.f);
+	m_HitTypeProtection[ALife::eHitTypeFireWound]		= READ_IF_EXISTS(pSettings, r_float, section, "fire_wound_protection",		0.f);
+	m_HitTypeProtection[ALife::eHitTypeWound_2]			= READ_IF_EXISTS(pSettings, r_float, section, "wound_2_protection",			0.f);
+	m_HitTypeProtection[ALife::eHitTypePhysicStrike]	= READ_IF_EXISTS(pSettings, r_float, section, "physic_strike_protection",	0.f);
 	//надбання вторинної радіації
-	m_fRadiationAccumFactor									= READ_IF_EXISTS(pSettings, r_float, section, "radiation_accum_factor",		0.f);	
-	m_fRadiationAccumLimit									= READ_IF_EXISTS(pSettings, r_float, section, "radiation_accum_limit",		0.f);
+	m_fRadiationAccumFactor								= READ_IF_EXISTS(pSettings, r_float, section, "radiation_accum_factor",		0.f);	
+	m_fRadiationAccumLimit								= READ_IF_EXISTS(pSettings, r_float, section, "radiation_accum_limit",		0.f);
 	//
 	m_fTTLOnDecrease			=	READ_IF_EXISTS	(pSettings, r_float, section,	"ttl_on_dec", 0.f);
 	// hands
@@ -291,7 +291,7 @@ void CInventoryItem::OnH_B_Independent(bool just_before_destroy)
 
 void CInventoryItem::OnH_A_Independent()
 {
-	m_eItemPlace				= eItemPlaceUndefined;	
+	m_eItemPlace = eItemPlaceUndefined;	
 	inherited::OnH_A_Independent();
 }
 
@@ -853,7 +853,7 @@ void CInventoryItem::UpdateConditionDecrease(float current_time)
 	ChangeCondition(-condition_dec);
 
 	TryBreakToPieces(false);
-	//	Msg("IItem [%s] change condition on [%.6f]|current condition [%.6f]|delta_time  [%.6f], current time [%.6f]", object().cName().c_str(), condition_dec, GetCondition(), delta_time, current_time);
+	//Msg("IItem [%s] change condition on [%.6f]|current condition [%.6f]|delta_time  [%.6f], current time [%.6f]", object().cName().c_str(), condition_dec, GetCondition(), delta_time, current_time);
 }
 
 void CInventoryItem::GetBriefInfo(xr_string& str_name, xr_string& icon_sect_name, xr_string& str_count)

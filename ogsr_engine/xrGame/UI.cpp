@@ -77,11 +77,10 @@ void CUI::UIOnFrame()
 #include "huditem.h"
 bool CUI::Render()
 {
-	if( GameIndicatorsShown() )
-	{
-		if (pUIGame) 
-			pUIGame->Render	();
-	}
+	//if( GameIndicatorsShown() ){
+	//	if (pUIGame) 
+	//		pUIGame->Render	();
+	//}
 
 	CEntity* pEntity = smart_cast<CEntity*>(Level().CurrentEntity());
 	if (pEntity)
@@ -112,6 +111,12 @@ bool CUI::Render()
 	}
 	else
 		m_pMessagesWnd->Draw();
+
+	if (GameIndicatorsShown()) {
+		//викликати після UIMainIngameWnd->Draw() щоб інфомеседжи та статик активного завдання малювалися поверх худових масок броні/пнб
+		if (pUIGame)
+			pUIGame->Render();
+	}
 
 	DoRenderDialogs();
 

@@ -168,15 +168,15 @@ void CActor::IR_OnKeyboardPress(int cmd){
 			pActiveWeapon->SwitchNightVision();
 		else
 		{
-			CTorch* pTorch = smart_cast<CTorch*>(inventory().ItemFromSlot(TORCH_SLOT));
-			if (pTorch)
-				pTorch->SwitchNightVision();
+			//CTorch* pTorch = smart_cast<CTorch*>(inventory().ItemFromSlot(TORCH_SLOT));
+			if (GetTorch())
+				GetTorch()->SwitchNightVision();
 		}
 		} break;
 	case kTORCH: { 
-			CTorch* pTorch = smart_cast<CTorch*>(inventory().ItemFromSlot(TORCH_SLOT));
-			if (pTorch) {
-				pTorch->Switch();
+			//CTorch* pTorch = smart_cast<CTorch*>(inventory().ItemFromSlot(TORCH_SLOT));
+			if (GetTorch()) {
+				GetTorch()->Switch();
 			}
 		} break;
 	case kWPN_8:

@@ -1272,14 +1272,13 @@ bool CWeapon::Action(s32 cmd, u32 flags)
 			if (IsZoomEnabled())
 			{
 				auto pActor = smart_cast<const CActor*>(H_Parent());
-				auto pTorch = smart_cast<CTorch*>(pActor->inventory().ItemFromSlot(TORCH_SLOT));
+				auto pTorch = pActor->GetTorch();//smart_cast<CTorch*>(pActor->inventory().ItemFromSlot(TORCH_SLOT));
 				if (pTorch && pTorch->IsNightVisionOn())
 				{
-					if (IsScopeAttached() && !IsGrenadeMode())
-					{
+					//if (IsScopeAttached() && !IsGrenadeMode()){
 						HUD().GetUI()->AddInfoMessage("actor_state", "cant_aim");
 						return false;
-					}
+					//}
 				}
 
 				if (!pActor->conditions().IsCantWalk())
@@ -2409,7 +2408,7 @@ bool CWeapon::show_crosshair()
 
 bool CWeapon::show_indicators()
 {
-	return !(IsZoomed() && (ZoomTexture() || !m_bScopeShowIndicators));
+	return !(IsZoomed() && !IsRotatingToZoom() && (ZoomTexture() || !m_bScopeShowIndicators));
 }
 
 float CWeapon::GetConditionToShow	() const

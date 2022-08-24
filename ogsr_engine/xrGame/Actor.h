@@ -24,6 +24,7 @@ class CActorCondition;
 class CCustomOutfit;
 class CWarbelt;
 class CBackpack;
+class CTorch;
 class CCustomDetector;
 class CKnownContactsRegistryWrapper;
 class CEncyclopediaRegistryWrapper;
@@ -635,9 +636,10 @@ protected:
 		Fvector							m_AutoPickUp_AABB_Offset;
 public:
 		void SetWeaponHideState( u32 State, bool bSet, bool now = false );
-		virtual CCustomOutfit*			GetOutfit() const;
-		virtual CWarbelt*				GetWarbelt() const;
-		virtual CBackpack*				GetBackpack() const;
+		virtual CCustomOutfit*			GetOutfit	() const;
+		virtual CWarbelt*				GetWarbelt	() const;
+		virtual CBackpack*				GetBackpack	() const;
+		virtual CTorch*					GetTorch	() const;
 private:
 	CActorCondition				*m_entity_condition;
 
@@ -784,6 +786,8 @@ public:
 
 	bool	IsRuckAmmoPlacement		() { return m_bRuckAmmoPlacement; };
 	void	SetRuckAmmoPlacement	(bool set_ruck) { m_bRuckAmmoPlacement = set_ruck; };
+
+	void	DrawHUDMasks();
 
 protected:
 	bool	m_bIsHardHold{};

@@ -26,6 +26,7 @@ CCustomOutfit::CCustomOutfit()
 CCustomOutfit::~CCustomOutfit() 
 {
 	xr_delete(m_boneProtection);
+	xr_delete(m_UIVisor);
 }
 
 void CCustomOutfit::Load(LPCSTR section) 
@@ -41,6 +42,8 @@ void CCustomOutfit::Load(LPCSTR section)
 	m_full_icon_name		= pSettings->r_string(section,"full_icon_name");
 
 	m_bIsHelmetAllowed		= !!READ_IF_EXISTS(pSettings, r_bool, section, "helmet_allowed", true);
+
+	m_VisorTexture			= READ_IF_EXISTS(pSettings, r_string, section, "visor_texture", nullptr);
 }
 
 float	CCustomOutfit::HitThruArmour(SHit* pHDS)
@@ -82,6 +85,13 @@ void	CCustomOutfit::OnMoveToSlot		(EItemPlace prevPlace)
 
 			if(!m_bIsHelmetAllowed)
 				m_pCurrentInventory->DropSlotsToRuck(HELMET_SLOT);
+
+			if (m_UIVisor)
+				xr_delete(m_UIVisor);
+			if (!!m_VisorTexture) {
+				m_UIVisor = xr_new<CUIStaticItem>();
+				m_UIVisor->Init(m_VisorTexture.c_str(), "hud\\default", 0, 0, alNone);
+			}
 		}
 	}
 }
@@ -101,6 +111,9 @@ void CCustomOutfit::OnMoveToRuck(EItemPlace prevPlace)
 			}
 
 			g_player_hud->load_default();
+
+			if (m_UIVisor)
+				xr_delete(m_UIVisor);
 		}
 	}
 }
@@ -118,3 +131,11 @@ float CCustomOutfit::GetPowerLoss()
 	};
 	return m_fPowerLoss;
 };
+
+void CCustomOutfit::DrawHUDMask() {
+	if (!!m_VisorTexture && !m_bIsHelmetAllowed) {
+		m_UIVisor->SetPos(0, 0);
+		m_UIVisor->SetRect(0, 0, UI_BASE_WIDTH, UI_BASE_HEIGHT);
+		m_UIVisor->Render();
+	}
+}
