@@ -63,7 +63,6 @@ BOOL	CCustomOutfit::BonePassBullet					(int boneID)
 	return m_boneProtection->getBonePassBullet(s16(boneID));
 };
 
-#include "torch.h"
 void	CCustomOutfit::OnMoveToSlot		(EItemPlace prevPlace)
 {
 	inherited::OnMoveToSlot(prevPlace);
@@ -92,6 +91,8 @@ void	CCustomOutfit::OnMoveToSlot		(EItemPlace prevPlace)
 				m_UIVisor = xr_new<CUIStaticItem>();
 				m_UIVisor->Init(m_VisorTexture.c_str(), "hud\\default", 0, 0, alNone);
 			}
+
+			pActor->UpdateVisorEfects();
 		}
 	}
 }
@@ -114,6 +115,8 @@ void CCustomOutfit::OnMoveToRuck(EItemPlace prevPlace)
 
 			if (m_UIVisor)
 				xr_delete(m_UIVisor);
+
+			pActor->UpdateVisorEfects();
 		}
 	}
 }
@@ -133,7 +136,7 @@ float CCustomOutfit::GetPowerLoss()
 };
 
 void CCustomOutfit::DrawHUDMask() {
-	if (!!m_VisorTexture && !m_bIsHelmetAllowed) {
+	if (m_UIVisor && !!m_VisorTexture && !m_bIsHelmetAllowed) {
 		m_UIVisor->SetPos(0, 0);
 		m_UIVisor->SetRect(0, 0, UI_BASE_WIDTH, UI_BASE_HEIGHT);
 		m_UIVisor->Render();

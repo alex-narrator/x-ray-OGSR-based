@@ -158,9 +158,9 @@ void CActor::IR_OnKeyboardPress(int cmd){
 		else
 			mstate_wishful |= mcRLookout;
 	}break;
-	case kCAM_1:	cam_Set			(eacFirstEye);				break;
-	case kCAM_2:	cam_Set			(eacLookAt);				break;
-	case kCAM_3:	cam_Set			(eacFreeLook);				break;
+	case kCAM_1:	cam_Set(eacFirstEye);	UpdateVisorEfects(); break;
+	case kCAM_2:	cam_Set(eacLookAt);		UpdateVisorEfects(); break;
+	case kCAM_3:	cam_Set(eacFreeLook);	UpdateVisorEfects(); break;
 	case kNIGHT_VISION: {
 		auto pActiveWeapon = smart_cast<CWeaponMagazined*>(inventory().ActiveItem());
 
@@ -168,13 +168,11 @@ void CActor::IR_OnKeyboardPress(int cmd){
 			pActiveWeapon->SwitchNightVision();
 		else
 		{
-			//CTorch* pTorch = smart_cast<CTorch*>(inventory().ItemFromSlot(TORCH_SLOT));
 			if (GetTorch())
 				GetTorch()->SwitchNightVision();
 		}
 		} break;
 	case kTORCH: { 
-			//CTorch* pTorch = smart_cast<CTorch*>(inventory().ItemFromSlot(TORCH_SLOT));
 			if (GetTorch()) {
 				GetTorch()->Switch();
 			}

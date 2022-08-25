@@ -880,10 +880,10 @@ void		xrRender_initconsole	()
 #endif
 	CMD3(CCC_Mask, "r2_disable_hom", &ps_r2_ls_flags_ext, R2FLAGEXT_DISABLE_HOM);
 
-	CMD3(CCC_Mask,  "r2_rain_drops", &ps_r2_ls_flags_ext, R2FLAGEXT_RAIN_DROPS);
-	CMD3(CCC_Mask,  "r2_rain_drops_control", &ps_r2_ls_flags_ext, R2FLAGEXT_RAIN_DROPS_CONTROL);
-	CMD4(CCC_Float, "r2_rain_drops_intensity", &ps_r2_rain_drops_intensity, 0.f, 1.f);
-	CMD4(CCC_Float, "r2_rain_drops_speed", &ps_r2_rain_drops_speed, 0.8f, 5.f);
+	CMD3(CCC_Mask,  "r2_rain_drops",			&ps_r2_ls_flags_ext,			R2FLAGEXT_RAIN_DROPS);
+	CMD3(CCC_Mask,  "r2_rain_drops_control",	&ps_r2_ls_flags_ext,			R2FLAGEXT_RAIN_DROPS_CONTROL);
+	CMD4(CCC_Float, "r2_rain_drops_intensity",	&ps_r2_rain_drops_intensity,	0.f, 1.f);
+	CMD4(CCC_Float, "r2_rain_drops_speed",		&ps_r2_rain_drops_speed,		0.8f, 5.f);
 
 #if RENDER==R_R4
 	CMD3(CCC_Mask, "r_sslr_enable", &ps_r2_ls_flags_ext, R2FLAGEXT_SSLR);

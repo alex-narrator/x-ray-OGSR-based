@@ -1272,7 +1272,7 @@ bool CWeapon::Action(s32 cmd, u32 flags)
 			if (IsZoomEnabled())
 			{
 				auto pActor = smart_cast<const CActor*>(H_Parent());
-				auto pTorch = pActor->GetTorch();//smart_cast<CTorch*>(pActor->inventory().ItemFromSlot(TORCH_SLOT));
+				auto pTorch = pActor->GetTorch();
 				if (pTorch && pTorch->IsNightVisionOn())
 				{
 					//if (IsScopeAttached() && !IsGrenadeMode()){

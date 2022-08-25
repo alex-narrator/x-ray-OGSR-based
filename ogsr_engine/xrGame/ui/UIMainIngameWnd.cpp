@@ -310,8 +310,6 @@ void CUIMainIngameWnd::Draw()
 {
 	if(!m_pActor) return;
 
-	m_pActor->DrawHUDMasks();
-
 	CUIWindow::Draw();
 
 	if (IsHUDElementAllowed(ePDA)) UIZoneMap->Render();

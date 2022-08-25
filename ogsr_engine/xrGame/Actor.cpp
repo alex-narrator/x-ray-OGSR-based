@@ -712,6 +712,7 @@ void CActor::Die(CObject* who)
 	}
 
 	cam_Set					(eacFreeLook);
+	UpdateVisorEfects		();
 	mstate_wishful	&=		~mcAnyMove;
 	mstate_real		&=		~mcAnyMove;
 
@@ -1985,6 +1986,20 @@ float CActor::GetTotalArtefactsEffect(u32 i) {
 }
 
 void CActor::DrawHUDMasks() {
+	if (!g_Alive() || eacFirstEye != cam_active) return;
+	auto pWeapon = smart_cast<CWeapon*>(inventory().ActiveItem());
+	if (pWeapon && pWeapon->IsZoomed() && !pWeapon->show_indicators())
+		return;
 	if (GetTorch()) GetTorch()->DrawHUDMask();
 	if (GetOutfit()) GetOutfit()->DrawHUDMask();
+}
+#include "../xr_3da/XR_IOConsole.h"
+void CActor::UpdateVisorEfects() {
+	bool has_visor = GetOutfit() && !GetOutfit()->m_bIsHelmetAllowed;
+	bool b_enable_effect = eacFirstEye == cam_active && g_Alive() && has_visor;
+	string128 _buff{};
+	sprintf(_buff, "r2_rain_drops_control %d", b_enable_effect);
+	Console->Execute(_buff);
+	sprintf(_buff, "r2_visor_refl_control %d", b_enable_effect);
+	Console->Execute(_buff);
 }

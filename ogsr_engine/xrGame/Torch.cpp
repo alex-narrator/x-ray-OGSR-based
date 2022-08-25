@@ -574,7 +574,7 @@ float CTorch::get_range() const {
 }
 
 void CTorch::DrawHUDMask(){
-	if (m_bNightVisionEnabled && m_bNightVisionOn && !!m_NightVisionTexture){
+	if (m_UINightVision && m_bNightVisionEnabled && m_bNightVisionOn && !!m_NightVisionTexture){
 		m_UINightVision->SetPos(0, 0);
 		m_UINightVision->SetRect(0, 0, UI_BASE_WIDTH, UI_BASE_HEIGHT);
 		m_UINightVision->Render();
