@@ -135,6 +135,9 @@
 	<string id="ui_mm_r2_visor_refl">
 		<text>ќтражени€ на стекле</text>
 	</string>
+	<string id="ui_mm_hud_textures_autoresize">
+		<text>јвтораст€гивание текстур прицелов и масок</text>
+	</string>	
 	
 <!-- режимы свободных рук начало -->
 	<string id="ui_mm_free_hands">
@@ -402,6 +405,16 @@
 	<string id="video_settings_desc_visor_refl">
 		<text>r2_visor_refl</text>
 	</string>	
+	
+	<string id="video_settings_name_hud_textures_autoresize">
+		<text>јвтораст€гивание текстур прицелов и масок - hud_textures_autoresize</text>
+	</string>
+	<string id="video_settings_desc_hud_textures_autoresize">
+		<text>¬ключить автораст€гиваемые прицельные сетки и маски брони/шлемов. 
+		ƒл€ этой опции текстуры прицельных сеток/масок должны иметь разрешение 1600x1000 (либо любое другое с таким же соотношением?). 
+		“екстуры сеток будут автоматически подстраиватьс€ под любое разрешение экрана.
+		ƒл€ полного применени€ изменений требуетс€ перезагрузка сохранени€.</text>
+	</string>		
 	
 	<string id="game_object_throw_drop">
 	    <text>ќтбросить [$$ACTION_USE$$]\n ќтпустить [$$ACTION_ADDITIONAL_ACTION$$]+[$$ACTION_USE$$]</text>

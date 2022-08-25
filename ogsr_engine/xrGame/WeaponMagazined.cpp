@@ -1336,7 +1336,7 @@ void CWeaponMagazined::LoadZoomParams(LPCSTR section)
 			if (scope_tex_name_broken)
 			{
 				m_UIScope = xr_new<CUIStaticItem>();
-				m_UIScope->Init(scope_tex_name_broken, Core.Features.test(xrCore::Feature::scope_textures_autoresize) ? "hud\\scope" : "hud\\default", 0, 0, alNone);
+				m_UIScope->Init(scope_tex_name_broken, psHUD_Flags.test(HUD_TEXTURES_AUTORESIZE) ? "hud\\scope" : "hud\\default", 0, 0, alNone);
 			}
 		}
 
@@ -1399,7 +1399,7 @@ void CWeaponMagazined::LoadZoomParams(LPCSTR section)
 	if (!scope_tex_name) return;
 
 	m_UIScope = xr_new<CUIStaticItem>();
-	m_UIScope->Init(scope_tex_name, Core.Features.test(xrCore::Feature::scope_textures_autoresize) ? "hud\\scope" : "hud\\default", 0, 0, alNone);
+	m_UIScope->Init(scope_tex_name, psHUD_Flags.test(HUD_TEXTURES_AUTORESIZE) ? "hud\\scope" : "hud\\default", 0, 0, alNone);
 }
 
 void CWeaponMagazined::ApplySilencerKoeffs	()

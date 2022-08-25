@@ -20,6 +20,7 @@ enum HUD_Flags: u32 {
 	//HUD_SMALL_FONT = 1 << 12, // использовать уменьшенный шрифт
 	HUD_STOP_MISSILE_PLAYING = 1 << 13, //отключение анимаций подбрасывания для гранат и болта
 	HUD_USE_LUMINOSITY = 1 << 14,
+	HUD_TEXTURES_AUTORESIZE = 1 << 15,
 };
 
 class CUI;

@@ -588,7 +588,7 @@ void CTorch::OnMoveToSlot(EItemPlace prevPlace) {
 			xr_delete(m_UINightVision);
 		if (m_bNightVisionEnabled && !!m_NightVisionTexture) {
 			m_UINightVision = xr_new<CUIStaticItem>();
-			m_UINightVision->Init(m_NightVisionTexture.c_str(), "hud\\default", 0, 0, alNone);
+			m_UINightVision->Init(m_NightVisionTexture.c_str(), psHUD_Flags.test(HUD_TEXTURES_AUTORESIZE) ? "hud\\scope" : "hud\\default", 0, 0, alNone);
 		}
 	}
 };

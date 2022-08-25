@@ -1200,6 +1200,7 @@ void CCC_RegisterCommands()
 
 	CMD3(CCC_Mask,				"hud_stop_missile_playing", &psHUD_Flags,				HUD_STOP_MISSILE_PLAYING);	//отключение анимаций подбрасывания для гранат и болта
 	CMD3(CCC_Mask,				"hud_use_luminosity",		&psHUD_Flags,				HUD_USE_LUMINOSITY		);	//использование освещённости вместо заметности на худовой шкале
+	CMD3(CCC_Mask,				"hud_textures_autoresize",	&psHUD_Flags,				HUD_TEXTURES_AUTORESIZE	);
 
 	CMD3(CCC_Mask,				"hud_crosshair",			&psHUD_Flags,				HUD_CROSSHAIR			);
 	CMD3(CCC_Mask,				"hud_crosshair_dist",		&psHUD_Flags,				HUD_CROSSHAIR_DIST		);
