@@ -2374,6 +2374,20 @@ u32 CWeapon::Cost() const
 	return res;
 }
 
+float CWeapon::Volume() const
+{
+	float res = m_volume;
+
+	if (GrenadeLauncherAttachable() && IsGrenadeLauncherAttached())
+		res += READ_IF_EXISTS(pSettings, r_float, GetGrenadeLauncherName(), "inv_volume", .0f);
+	if (ScopeAttachable() && IsScopeAttached())
+		res += READ_IF_EXISTS(pSettings, r_float, GetScopeName(), "inv_volume", .0f);
+	if (SilencerAttachable() && IsSilencerAttached())
+		res += res += READ_IF_EXISTS(pSettings, r_float, GetSilencerName(), "inv_volume", .0f);
+
+	return res;
+}
+
 void CWeapon::Hide(bool now)
 {
 	if (now)

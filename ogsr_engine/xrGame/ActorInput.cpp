@@ -164,7 +164,7 @@ void CActor::IR_OnKeyboardPress(int cmd){
 	case kNIGHT_VISION: {
 		auto pActiveWeapon = smart_cast<CWeaponMagazined*>(inventory().ActiveItem());
 
-		if (pActiveWeapon && pActiveWeapon->IsScopeAttached() && pActiveWeapon->IsZoomed() && !pActiveWeapon->IsGrenadeMode())
+		if (pActiveWeapon && pActiveWeapon->IsZoomed())
 			pActiveWeapon->SwitchNightVision();
 		else
 		{

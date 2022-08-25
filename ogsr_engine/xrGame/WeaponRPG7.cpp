@@ -183,3 +183,14 @@ void CWeaponRPG7::PlayAnimReload()
 	// play anim with MixIn=FALSE to avoid issue with blinking rocket during reload
 	PlayHUDMotion({ "anim_reload", "anm_reload" }, false, GetState());
 }
+
+float CWeaponRPG7::Volume() const
+{
+	float res = inherited::Volume();
+
+	//додамо обсяг спорядженого пострілу
+	if (GetAmmoElapsed())
+		res += READ_IF_EXISTS(pSettings, r_float, m_ammoTypes[m_ammoType].c_str(), "inv_volume", .0f);
+
+	return res;
+}

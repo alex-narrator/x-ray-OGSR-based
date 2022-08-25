@@ -28,6 +28,8 @@ public:
 	virtual void UnloadMagazine				(bool spawn_ammo = true);
 	virtual void PlayAnimReload();
 
+	virtual float Volume() const;
+
 protected:
 	shared_str	m_sGrenadeBoneName;
 	shared_str	m_sHudGrenadeBoneName;

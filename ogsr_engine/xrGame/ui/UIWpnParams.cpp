@@ -104,7 +104,7 @@ void CUIWpnParams::SetInfo(CInventoryItem* obj)
 		CUIXmlInit::InitStatic(uiXml, "wpn_params:dispertion", 0, dispertion_static);
 		pos_top = dispertion_static->GetPosTop();
 		dispertion_static->SetWndPos(dispertion_static->GetPosLeft(), _h + pos_top);
-		sprintf_s(temp_text, " %.1f", pSettings->r_float(item_section, "fire_dispersion_base"));
+		sprintf_s(temp_text, " %.1f", pSettings->r_float(item_section, "fire_dispersion_base") * 10.f);
 		strconcat(sizeof(text_to_show), text_to_show, CStringTable().translate("st_dispertion").c_str(), temp_text);
 		dispertion_static->SetText(text_to_show);
 		m_CapInfo.AttachChild(dispertion_static);
