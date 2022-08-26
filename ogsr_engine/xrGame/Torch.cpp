@@ -104,14 +104,9 @@ void CTorch::Load(LPCSTR section)
 	}
 
 
-	m_bNightVisionEnabled = !!READ_IF_EXISTS(pSettings, r_bool, section, "night_vision", FALSE);//!!pSettings->r_bool(section,"night_vision");
+	m_bNightVisionEnabled = !!READ_IF_EXISTS(pSettings, r_bool, section, "night_vision", FALSE);
 	if(m_bNightVisionEnabled)
 	{
-		//HUD_SOUND::LoadSound(section,"snd_night_vision_on"	, SndNightVisionOn	, SOUND_TYPE_ITEM_USING);
-		//HUD_SOUND::LoadSound(section,"snd_night_vision_off"	, SndNightVisionOff	, SOUND_TYPE_ITEM_USING);
-		//HUD_SOUND::LoadSound(section,"snd_night_vision_idle", SndNightVisionIdle	, SOUND_TYPE_ITEM_USING);
-		//HUD_SOUND::LoadSound(section,"snd_night_vision_broken", SndNightVisionBroken, SOUND_TYPE_ITEM_USING);
-
 		if (pSettings->line_exist(section, "snd_night_vision_on"))
 			HUD_SOUND::LoadSound(section, "snd_night_vision_on", SndNightVisionOn, SOUND_TYPE_ITEM_USING);
 		if (pSettings->line_exist(section, "snd_night_vision_off"))

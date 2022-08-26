@@ -35,7 +35,6 @@
 #include "antirad.h"
 #include "PHCapture.h"
 
-//bool g_bAutoClearCrouch = true;
 extern int g_bHudAdjustMode;
 
 void CActor::IR_OnKeyboardPress(int cmd){
@@ -61,9 +60,6 @@ void CActor::IR_OnKeyboardPress(int cmd){
 	{
 	case kWPN_FIRE:
 		{
-			if (inventory().ActiveItem() && inventory().ActiveItem()->StopSprintOnFire()) {
-				mstate_wishful &=~mcSprint;
-			}
 			//-----------------------------
 			if (OnServer())
 			{

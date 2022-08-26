@@ -80,7 +80,7 @@ public:
 //.	virtual LPCSTR				NameComplex			();
 	shared_str					ItemDescription		() { return m_Description; }
 	virtual void				GetBriefInfo		(xr_string& str_name, xr_string& icon_sect_name, xr_string& str_count)/* {}*/;
-	virtual bool				NeedBriefInfo() { return m_need_brief_info; };
+	virtual bool				NeedBriefInfo		() { return m_need_brief_info; };
 	
 	virtual void				OnEvent				(NET_Packet& P, u16 type);
 	
@@ -94,8 +94,8 @@ public:
 
 	virtual EHandDependence		HandDependence		()	const	{return eHandDependence;};
 	virtual bool				IsSingleHanded		()	const	{return m_bIsSingleHanded;};
-	virtual bool				Activate( bool = false );									// !!! Переопределить. (см. в Inventory.cpp)
-	virtual void				Deactivate( bool = false );								// !!! Переопределить. (см. в Inventory.cpp)
+	virtual bool				Activate			( bool = false );									// !!! Переопределить. (см. в Inventory.cpp)
+	virtual void				Deactivate			( bool = false );								// !!! Переопределить. (см. в Inventory.cpp)
 	virtual bool				Action				(s32 cmd, u32 flags) {return false;}	// true если известная команда, иначе false
 
 	virtual void				OnH_B_Chield		();
@@ -128,8 +128,8 @@ public:
 	virtual float				Volume				() const	{ return m_volume;	}
 	virtual void                SetVolume			(float v)	{ m_volume = v;		}
 
-	float 						m_fRadiationAccumFactor{};          // alpet: скорость появления вторичной радиактивности
-	float 						m_fRadiationAccumLimit{};			  // alpet: предел вторичной радиоактивности 
+			float 				m_fRadiationAccumFactor{};          // alpet: скорость появления вторичной радиактивности
+			float 				m_fRadiationAccumLimit{};			  // alpet: предел вторичной радиоактивности 
 
 public:
 	CInventory*					m_pCurrentInventory;
@@ -172,14 +172,14 @@ public:
 			void				ChangeCondition		(float fDeltaCondition);
 	virtual	void				SetCondition	    (float fNewCondition) { m_fCondition = fNewCondition; ChangeCondition(0.0f); }		
 
-                        u8                      selected_slot;
-                        const xr_vector<u8>&    GetSlots()     { return m_slots;      }
-                        const char*            GetSlotsSect() { return m_slots_sect; }
-                        void                    SetSlot(u8 slot); // alpet: реально это SelectSlot
-                        virtual u8              GetSlot() const;
-						u8 BaseSlot() const { return m_slots.empty() ? NO_ACTIVE_SLOT : m_slots.front(); }
-                        u32                     GetSlotsCount() const { return m_slots.size(); }
-                        bool                    IsPlaceable (u8 min_slot, u8 max_slot);
+              u8                selected_slot;
+const xr_vector<u8>&			GetSlots			(){ return m_slots;      }
+      const char*				GetSlotsSect		(){ return m_slots_sect; }
+            void                SetSlot				(u8 slot); // alpet: реально это SelectSlot
+	  virtual u8				GetSlot				() const;
+			  u8				BaseSlot			() const { return m_slots.empty() ? NO_ACTIVE_SLOT : m_slots.front(); }
+              u32               GetSlotsCount		() const { return m_slots.size(); }
+			 bool               IsPlaceable			(u8 min_slot, u8 max_slot);
 
 			bool				Belt				()							{return !!m_flags.test(Fbelt);}
 			void				Belt				(bool on_belt)				{m_flags.set(Fbelt,on_belt);}
@@ -193,8 +193,8 @@ public:
 	virtual bool				IsNecessaryItem	    (const shared_str& item_sect){return false;};
 
 protected:
-	xr_vector<u8> m_slots;
-	LPCSTR        m_slots_sect;
+	xr_vector<u8>				m_slots;
+	LPCSTR						m_slots_sect;
 	float						m_fCondition;
 
 	float						m_fControlInertionFactor;
@@ -215,8 +215,6 @@ public:
 	virtual	bool				IsSprintAllowed				() const		{return !!m_flags.test(FAllowSprint);} ;
 
 	virtual	float				GetControlInertionFactor	() const;
-
-	virtual bool				StopSprintOnFire() { return true; }
 
 protected:
 	virtual void				UpdateXForm	();
