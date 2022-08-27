@@ -25,6 +25,7 @@ class CCustomOutfit;
 class CWarbelt;
 class CBackpack;
 class CTorch;
+class CNightVisionDevice;
 class CCustomDetector;
 class CKnownContactsRegistryWrapper;
 class CEncyclopediaRegistryWrapper;
@@ -640,6 +641,7 @@ public:
 		virtual CWarbelt*				GetWarbelt	() const;
 		virtual CBackpack*				GetBackpack	() const;
 		virtual CTorch*					GetTorch	() const;
+		virtual CNightVisionDevice*		GetNightVisionDevice() const;
 private:
 	CActorCondition				*m_entity_condition;
 

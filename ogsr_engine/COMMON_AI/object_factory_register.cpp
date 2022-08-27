@@ -139,6 +139,7 @@
 #	include "AdvancedDetector.h"
 
 #	include "torch.h"
+#	include "NightVisionDevice.h"
 #	include "pda.h"
 
 #	include "searchlight.h"
@@ -330,6 +331,7 @@ void CObjectFactory::register_classes	()
 
 	// Devices
 	ADD(CTorch					,CSE_ALifeItemTorch				,CLSID_DEVICE_TORCH				,"device_torch");
+	ADD(CNightVisionDevice		,CSE_ALifeItemNightVisionDevice	,CLSID_DEVICE_NIGHT_VISION		,"device_night_vision");
 	ADD(CPda					,CSE_ALifeItemPDA				,CLSID_DEVICE_PDA				,"device_pda");
 
 	// objects

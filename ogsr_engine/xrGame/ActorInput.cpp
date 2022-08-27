@@ -2,6 +2,7 @@
 #include <dinput.h>
 #include "Actor.h"
 #include "Torch.h"
+#include "NightVisionDevice.h"
 #include "trade.h"
 #include "../xr_3da/camerabase.h"
 #ifdef DEBUG
@@ -164,8 +165,8 @@ void CActor::IR_OnKeyboardPress(int cmd){
 			pActiveWeapon->SwitchNightVision();
 		else
 		{
-			if (GetTorch())
-				GetTorch()->SwitchNightVision();
+			if (GetNightVisionDevice())
+				GetNightVisionDevice()->SwitchNightVision();
 		}
 		} break;
 	case kTORCH: { 

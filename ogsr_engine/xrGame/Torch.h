@@ -46,40 +46,25 @@ public:
 
 			void	Switch				();
 			void	Switch				(bool light_on);
-			bool	torch_active			() const;
+			bool	torch_active		() const;
 
 	virtual bool	can_be_attached		() const;
-	void calc_m_delta_h( float );
-	float get_range() const;
+			void	calc_m_delta_h		( float );
+			float	get_range			() const;
 
-public:
-			void	SwitchNightVision		  ();
-			void	SwitchNightVision		  (bool light_on);
-			void	UpdateSwitchNightVision   ();
-			bool	IsNightVisionOn () { return m_bNightVisionOn; };
 protected:
-	bool					m_bTorchLightEnabled{};
-	bool					m_bNightVisionEnabled{};
-	bool					m_bNightVisionOn{};
-
 	HUD_SOUND				SndTorchOn;
 	HUD_SOUND				SndTorchOff;
-	//
-	HUD_SOUND				SndNightVisionOn;
-	HUD_SOUND				SndNightVisionOff;
-	HUD_SOUND				SndNightVisionIdle;
-	HUD_SOUND				SndNightVisionBroken;
 
-	shared_str				m_NightVisionSect;
-
-	CUIStaticItem*			m_UINightVision{};
-	shared_str				m_NightVisionTexture{};
+	shared_str				m_light_descr_sect{};
 
 	enum EStats{
 		eTorchActive				= (1<<0),
 		eNightVisionActive			= (1<<1),
 		eAttached					= (1<<2)
 	};
+
+	void LoadLightDefinitions		(shared_str light_sect);
 
 public:
 
@@ -93,11 +78,6 @@ public:
 
 	virtual void	afterDetach				();
 	virtual void	renderable_Render		();
-
-	virtual void	DrawHUDMask				();
-
-	virtual void	OnMoveToSlot			(EItemPlace prevPlace);
-	virtual void	OnMoveToRuck			(EItemPlace prevPlace);
 
 	// alpet: управление светом фонаря
 	IRender_Light  *GetLight(int target = 0) const;

@@ -46,7 +46,7 @@ public:
 	virtual void	OnEvent					(NET_Packet& P, u16 type);
 	virtual BOOL	net_Spawn				(CSE_Abstract* DC);
 	virtual void	net_Destroy				();
-	virtual void net_Export( CSE_Abstract* E );
+	virtual void	net_Export				( CSE_Abstract* E );
 	virtual void	save					(NET_Packet &output_packet);
 	virtual void	load					(IReader &input_packet);
 	virtual BOOL	net_SaveRelevant		()								{return TRUE;}

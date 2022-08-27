@@ -329,7 +329,6 @@ void CSE_ALifeItemTorch::UPDATE_Read		(NET_Packet	&tNetPacket)
 	
 	BYTE F = tNetPacket.r_u8();
 	m_active					= !!(F & eTorchActive);
-	m_nightvision_active		= !!(F & eNightVisionActive);
 	m_attached					= !!(F & eAttached);
 }
 
@@ -339,6 +338,51 @@ void CSE_ALifeItemTorch::UPDATE_Write		(NET_Packet	&tNetPacket)
 
 	BYTE F = 0;
 	F |= (m_active ? eTorchActive : 0);
+	F |= (m_attached ? eAttached : 0);
+	tNetPacket.w_u8(F);
+}
+
+////////////////////////////////////////////////////////////////////////////
+// CSE_ALifeItemNightVisionDevice
+////////////////////////////////////////////////////////////////////////////
+CSE_ALifeItemNightVisionDevice::CSE_ALifeItemNightVisionDevice(LPCSTR caSection) : CSE_ALifeItem(caSection){
+}
+
+CSE_ALifeItemNightVisionDevice::~CSE_ALifeItemNightVisionDevice()
+{
+}
+
+BOOL	CSE_ALifeItemNightVisionDevice::Net_Relevant()
+{
+	if (m_attached) return true;
+	return inherited::Net_Relevant();
+}
+
+
+void CSE_ALifeItemNightVisionDevice::STATE_Read(NET_Packet& tNetPacket, u16 size)
+{
+	inherited::STATE_Read(tNetPacket, size);
+}
+
+void CSE_ALifeItemNightVisionDevice::STATE_Write(NET_Packet& tNetPacket)
+{
+	inherited::STATE_Write(tNetPacket);
+}
+
+void CSE_ALifeItemNightVisionDevice::UPDATE_Read(NET_Packet& tNetPacket)
+{
+	inherited::UPDATE_Read(tNetPacket);
+
+	BYTE F = tNetPacket.r_u8();
+	m_nightvision_active = !!(F & eNightVisionActive);
+	m_attached = !!(F & eAttached);
+}
+
+void CSE_ALifeItemNightVisionDevice::UPDATE_Write(NET_Packet& tNetPacket)
+{
+	inherited::UPDATE_Write(tNetPacket);
+
+	BYTE F = 0;
 	F |= (m_nightvision_active ? eNightVisionActive : 0);
 	F |= (m_attached ? eAttached : 0);
 	tNetPacket.w_u8(F);

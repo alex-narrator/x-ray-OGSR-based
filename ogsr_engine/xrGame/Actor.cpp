@@ -25,6 +25,7 @@
 #include "Warbelt.h"
 #include "Backpack.h"
 #include "Torch.h"
+#include "NightVisionDevice.h"
 #include "actorcondition.h"
 #include "UIGameCustom.h"
 #include "game_cl_base_weapon_usage_statistic.h"
@@ -1748,6 +1749,12 @@ CTorch* CActor::GetTorch() const
 	return _tc ? smart_cast<CTorch*>(_tc) : NULL;
 }
 
+CNightVisionDevice* CActor::GetNightVisionDevice() const
+{
+	PIItem _nv = inventory().m_slots[TORCH_SLOT].m_pIItem;
+	return _nv ? smart_cast<CNightVisionDevice*>(_nv) : NULL;
+}
+
 void CActor::block_action(EGameActions cmd)
 {
 	if (m_blocked_actions.find(cmd) == m_blocked_actions.end() )
@@ -1990,7 +1997,7 @@ void CActor::DrawHUDMasks() {
 	auto pWeapon = smart_cast<CWeapon*>(inventory().ActiveItem());
 	if (pWeapon && pWeapon->IsZoomed() && !pWeapon->show_indicators())
 		return;
-	if (GetTorch()) GetTorch()->DrawHUDMask();
+	if (GetNightVisionDevice()) GetNightVisionDevice()->DrawHUDMask();
 	if (GetOutfit()) GetOutfit()->DrawHUDMask();
 }
 #include "../xr_3da/XR_IOConsole.h"

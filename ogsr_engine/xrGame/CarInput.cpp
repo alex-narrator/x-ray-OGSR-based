@@ -18,6 +18,7 @@
 #include "level.h"
 #include "CarWeapon.h"
 #include "Torch.h"
+#include "NightVisionDevice.h"
 #include "inventory.h"
 
 void	CCar::OnMouseMove(int dx, int dy)
@@ -154,9 +155,9 @@ void CCar::OnKeyboardPress(int cmd)
 	case kNIGHT_VISION: {
 		auto* Act = OwnerActor();
 		if (Act) {
-			auto* pTorch = Act->GetTorch();//smart_cast<CTorch*>(Act->inventory().ItemFromSlot(TORCH_SLOT));
-			if (pTorch) {
-				pTorch->SwitchNightVision();
+			auto* pNightVis = Act->GetNightVisionDevice();
+			if (pNightVis) {
+				pNightVis->SwitchNightVision();
 			}
 		}
 	} break;

@@ -32,7 +32,7 @@ void CExplosiveRocket::Load(LPCSTR section)
 	inherited::Load(section);
 	CInventoryItem::Load(section);
 	CExplosive::Load(section);
-	m_safe_dist_to_explode = READ_IF_EXISTS( pSettings, r_float, section, "safe_dist_to_explode", 0 );
+	m_safe_dist_to_explode = READ_IF_EXISTS( pSettings, r_float, section, "safe_dist_to_explode", 0.f);
 }
 
 BOOL CExplosiveRocket::net_Spawn(CSE_Abstract* DC) 
