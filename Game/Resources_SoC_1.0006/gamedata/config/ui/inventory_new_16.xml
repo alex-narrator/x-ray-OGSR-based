@@ -70,7 +70,7 @@
             cell_width = "30" cell_height="30" rows_num="2" cols_num="2"
             custom_placement="0"/>
 			
-	<dragdrop_torch x="590" y="70" width="60" height="60"
+	<dragdrop_on_head x="590" y="70" width="60" height="60"
             cell_width = "30" cell_height="30" rows_num="2" cols_num="2"
             custom_placement="0"/>
 			

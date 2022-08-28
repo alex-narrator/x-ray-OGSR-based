@@ -129,11 +129,11 @@ void CUIInventoryWnd::InitInventory()
 		m_pUIDetectorList->SetItem		(itm);
 	}
 
-	_itm								= m_pInv->m_slots[TORCH_SLOT].m_pIItem;
+	_itm								= m_pInv->m_slots[ON_HEAD_SLOT].m_pIItem;
 	if (_itm)
 	{
 		CUICellItem* itm				= create_cell_item(_itm);
-		m_pUITorchList->SetItem			(itm);
+		m_pUIOnHeadList->SetItem			(itm);
 	}
 
 	_itm								= m_pInv->m_slots[PDA_SLOT].m_pIItem;
@@ -436,7 +436,7 @@ bool CUIInventoryWnd::OnItemSelected(CUICellItem* itm)
 		m_pUIArtefactList,
 		//
 		m_pUIDetectorList, 
-		m_pUITorchList, 
+		m_pUIOnHeadList, 
 		m_pUIPdaList,
 		//
 		m_pUIQuickList_0,
@@ -587,7 +587,7 @@ void CUIInventoryWnd::ClearAllLists()
 	m_pUIArtefactList->ClearAll				(true);
 	//
 	m_pUIDetectorList->ClearAll				(true);
-	m_pUITorchList->ClearAll				(true);
+	m_pUIOnHeadList->ClearAll				(true);
 	m_pUIPdaList->ClearAll					(true);
 	//
 	m_pUIQuickList_0->ClearAll				(true);

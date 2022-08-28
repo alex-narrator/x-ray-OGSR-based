@@ -95,7 +95,7 @@ CInventory::CInventory()
 
 	m_slots[PDA_SLOT].m_bVisible				= false;
 	m_slots[OUTFIT_SLOT].m_bVisible				= false;
-	m_slots[TORCH_SLOT].m_bVisible				= false;
+	m_slots[ON_HEAD_SLOT].m_bVisible				= false;
 	m_slots[HELMET_SLOT].m_bVisible				= false;
 //	m_slots[NIGHT_VISION_SLOT].m_bVisible		= false;
 //	m_slots[BIODETECTOR_SLOT].m_bVisible		= false;

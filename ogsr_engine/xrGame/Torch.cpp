@@ -60,6 +60,8 @@ CTorch::CTorch(void)
 		TORCH_OFFSET.x = 0;
 		TORCH_OFFSET.z = 0;
 	}
+
+	SetSlot(ON_HEAD_SLOT);
 }
 
 CTorch::~CTorch(void) 
@@ -357,20 +359,9 @@ void CTorch::net_Export( CSE_Abstract* E ) {
   torch->m_attached = ( pA && pA->attached( this ) );
 }
 
-bool  CTorch::can_be_attached		() const
-{
-//	if( !inherited::can_be_attached() ) return false;
-
+bool  CTorch::can_be_attached		() const{
 	const CActor *pA = smart_cast<const CActor *>(H_Parent());
-	if (pA) 
-	{
-//		if(pA->inventory().Get(ID(), false))
-		if((const CTorch*)smart_cast<CTorch*>(pA->inventory().m_slots[GetSlot()].m_pIItem) == this )
-			return true;
-		else
-			return false;
-	}
-	return true;
+	return pA ? (pA->GetTorch() == this) : true;
 }
 
 void CTorch::afterDetach			()

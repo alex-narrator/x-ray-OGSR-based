@@ -1745,13 +1745,13 @@ CBackpack* CActor::GetBackpack() const
 
 CTorch* CActor::GetTorch() const
 {
-	PIItem _tc = inventory().m_slots[TORCH_SLOT].m_pIItem;
+	PIItem _tc = inventory().m_slots[ON_HEAD_SLOT].m_pIItem;
 	return _tc ? smart_cast<CTorch*>(_tc) : NULL;
 }
 
 CNightVisionDevice* CActor::GetNightVisionDevice() const
 {
-	PIItem _nv = inventory().m_slots[TORCH_SLOT].m_pIItem;
+	PIItem _nv = inventory().m_slots[ON_HEAD_SLOT].m_pIItem;
 	return _nv ? smart_cast<CNightVisionDevice*>(_nv) : NULL;
 }
 

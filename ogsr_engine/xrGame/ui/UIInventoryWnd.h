@@ -110,7 +110,7 @@ protected:
 	CUIDragDropListEx*			m_pUIArtefactList;
 
 	CUIDragDropListEx*			m_pUIDetectorList;
-	CUIDragDropListEx*			m_pUITorchList;
+	CUIDragDropListEx*			m_pUIOnHeadList;
 	CUIDragDropListEx*			m_pUIPdaList;
 
 	CUIDragDropListEx*			m_pUIQuickList_0;

@@ -9,6 +9,7 @@
 #include "ai_sounds.h"
 
 CNightVisionDevice::CNightVisionDevice(void){
+	SetSlot(ON_HEAD_SLOT);
 }
 
 CNightVisionDevice::~CNightVisionDevice(void){
@@ -153,20 +154,9 @@ void CNightVisionDevice::net_Export(CSE_Abstract* E) {
 	night_vis->m_attached = (pA && pA->attached(this));
 }
 
-bool  CNightVisionDevice::can_be_attached() const
-{
-	//	if( !inherited::can_be_attached() ) return false;
-
+bool  CNightVisionDevice::can_be_attached() const{
 	const CActor* pA = smart_cast<const CActor*>(H_Parent());
-	if (pA)
-	{
-		//		if(pA->inventory().Get(ID(), false))
-		if ((const CNightVisionDevice*)smart_cast<CNightVisionDevice*>(pA->inventory().m_slots[GetSlot()].m_pIItem) == this)
-			return true;
-		else
-			return false;
-	}
-	return true;
+	return pA ? (pA->GetNightVisionDevice() == this) : true;
 }
 
 void CNightVisionDevice::afterAttach() {

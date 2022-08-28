@@ -44,7 +44,7 @@ CUIInventoryWnd::CUIInventoryWnd() :
 	m_pUIOutfitList(nullptr), m_pUIHelmetList(nullptr), m_pUIWarBeltList(nullptr), m_pUIBackPackList(nullptr), 
 	m_pUIKnifeList(nullptr), m_pUIPistolList(nullptr), m_pUIAutomaticList(nullptr), m_pUIBinocularList(nullptr),
 	m_pUIGrenadeList(nullptr), m_pUIArtefactList(nullptr),
-	m_pUIDetectorList(nullptr), m_pUITorchList(nullptr), m_pUIPdaList(nullptr),
+	m_pUIDetectorList(nullptr), m_pUIOnHeadList(nullptr), m_pUIPdaList(nullptr),
 	m_pUIQuickList_0(nullptr), m_pUIQuickList_1(nullptr), m_pUIQuickList_2(nullptr), m_pUIQuickList_3(nullptr)
 {
 	m_iCurrentActiveSlot				= NO_ACTIVE_SLOT;
@@ -180,9 +180,9 @@ void CUIInventoryWnd::Init()
 	xml_init.InitDragDropListEx			(uiXml, "dragdrop_detector", 0, m_pUIDetectorList);
 	BindDragDropListEnents				(m_pUIDetectorList);
 
-	m_pUITorchList						= xr_new<CUIDragDropListEx>(); AttachChild(m_pUITorchList); m_pUITorchList->SetAutoDelete(true);
-	xml_init.InitDragDropListEx			(uiXml, "dragdrop_torch", 0, m_pUITorchList);
-	BindDragDropListEnents				(m_pUITorchList);
+	m_pUIOnHeadList						= xr_new<CUIDragDropListEx>(); AttachChild(m_pUIOnHeadList); m_pUIOnHeadList->SetAutoDelete(true);
+	xml_init.InitDragDropListEx			(uiXml, "dragdrop_on_head", 0, m_pUIOnHeadList);
+	BindDragDropListEnents				(m_pUIOnHeadList);
 
 	m_pUIPdaList						= xr_new<CUIDragDropListEx>(); AttachChild(m_pUIPdaList); m_pUIPdaList->SetAutoDelete(true);
 	xml_init.InitDragDropListEx			(uiXml, "dragdrop_pda", 0, m_pUIPdaList);
@@ -220,7 +220,7 @@ void CUIInventoryWnd::Init()
 	m_slots_array[ARTEFACT_SLOT]		= m_pUIArtefactList;
 
 	m_slots_array[DETECTOR_SLOT]		= m_pUIDetectorList;
-	m_slots_array[TORCH_SLOT]			= m_pUITorchList;
+	m_slots_array[ON_HEAD_SLOT]			= m_pUIOnHeadList;
 	m_slots_array[PDA_SLOT]				= m_pUIPdaList;
 
 	m_slots_array[QUICK_SLOT_0]			= m_pUIQuickList_0;

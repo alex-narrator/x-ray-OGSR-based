@@ -52,3 +52,9 @@ void CBackpack::HitItemsInBackPack(SHit* pHDS, bool hit_random_item){
 		}
 	}
 }
+
+bool  CBackpack::can_be_attached() const{
+	const CActor* pA = smart_cast<const CActor*>(H_Parent());
+	return pA ? (pA->GetBackpack() == this) : true;
+	return true;
+}

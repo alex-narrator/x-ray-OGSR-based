@@ -10,7 +10,9 @@ public:
 	virtual						~CBackpack();
 	virtual void				Load(LPCSTR section);
 
-	virtual void				Hit(SHit* pHDS);
-	void						HitItemsInBackPack(SHit* pHDS, bool hit_random_item);
+	virtual void				Hit					(SHit* pHDS);
+	void						HitItemsInBackPack	(SHit* pHDS, bool hit_random_item);
+
+	virtual bool				can_be_attached() const;
 };
 

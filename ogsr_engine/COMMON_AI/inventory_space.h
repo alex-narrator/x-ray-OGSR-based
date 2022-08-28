@@ -14,7 +14,7 @@ constexpr auto BOLT_SLOT			= 5;
 constexpr auto OUTFIT_SLOT			= 6;
 constexpr auto PDA_SLOT				= 7;
 constexpr auto DETECTOR_SLOT		= 8;
-constexpr auto TORCH_SLOT			= 9;
+constexpr auto ON_HEAD_SLOT			= 9;
 constexpr auto ARTEFACT_SLOT		= 10;
 constexpr auto HELMET_SLOT			= 11;
 //quick slots
