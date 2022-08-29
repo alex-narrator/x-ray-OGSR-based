@@ -46,15 +46,15 @@
             cell_width = "23" cell_height="30" rows_num="2" cols_num="1"
             custom_placement="0" vertical_placement="1" condition_progress_bar="1"/>
 
-	<dragdrop_pistol x="150" y="118" width="117" height="104"
-            cell_width = "39" cell_height="52" rows_num="2" cols_num="3"
-            custom_placement="0" condition_progress_bar="1" vertical_placement="1"/>
+	<dragdrop_on_shoulder x="33" y="118" width="235" height="104"
+            cell_width = "39" cell_height="52" rows_num="2" cols_num="6"
+            custom_placement="0" condition_progress_bar="1" vertical_placement="0"/>
 			
-    <dragdrop_automatic x="300" y="118" width="235" height="104"
+    <dragdrop_on_back x="300" y="118" width="235" height="104"
             cell_width = "39" cell_height="52" rows_num="2" cols_num="6"
             custom_placement="0" condition_progress_bar="1"/>
 
-	<dragdrop_binocular x="390" y="0" width="120" height="60"
+	<dragdrop_holster x="390" y="0" width="120" height="60"
             cell_width = "30" cell_height="30" rows_num="2" cols_num="4"
             custom_placement="0" condition_progress_bar="1"/>
 			

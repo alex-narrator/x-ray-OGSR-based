@@ -660,3 +660,20 @@ float CInventoryOwner::deficit(const shared_str& section) const
 bool CInventoryOwner::IsVolumeUnlimited() const {
 	return fis_zero(MaxCarryVolume());
 }
+
+bool CInventoryOwner::CanPutInSlot(PIItem item, u32 slot) {
+	switch (slot)
+	{
+	case QUICK_SLOT_0:
+	case QUICK_SLOT_1:
+	case QUICK_SLOT_2:
+	case QUICK_SLOT_3:
+	{
+		if (this != Actor()) {
+			return false;
+		}
+	}
+	default:
+		return true;
+	}
+}

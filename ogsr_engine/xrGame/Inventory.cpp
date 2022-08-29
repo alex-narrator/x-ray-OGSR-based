@@ -28,7 +28,7 @@ using namespace InventoryUtilities;
 
 // what to block
 u32	INV_STATE_BLOCK_ALL		= 0xffffffff;
-u32	INV_STATE_BLOCK_2H		= 1<<FIRST_WEAPON_SLOT|1<<SECOND_WEAPON_SLOT|1<<ARTEFACT_SLOT; //вважаємо що саме у цих слотах будуть "дворучні" предмети та блокуємо їх
+u32	INV_STATE_BLOCK_2H		= 1<<ON_SHOULDER_SLOT|1<<ON_BACK_SLOT|1<<ARTEFACT_SLOT; //вважаємо що саме у цих слотах будуть "дворучні" предмети та блокуємо їх
 u32	INV_STATE_INV_WND		= INV_STATE_BLOCK_2H;
 u32	INV_STATE_BUY_MENU		= INV_STATE_BLOCK_ALL;
 u32	INV_STATE_LADDER		= INV_STATE_BLOCK_2H;
@@ -1556,13 +1556,13 @@ bool CInventory::activate_slot(u32 slot)
 	{
 	case  KNIFE_SLOT:
 		return true;
-	case  FIRST_WEAPON_SLOT:
+	case  ON_SHOULDER_SLOT:
 		return true;
-	case  SECOND_WEAPON_SLOT:
+	case  ON_BACK_SLOT:
 		return true;
 	case  GRENADE_SLOT:
 		return true;
-	case  APPARATUS_SLOT:
+	case  HOLSTER_SLOT:
 		return true;
 	case  BOLT_SLOT:
 		return true;

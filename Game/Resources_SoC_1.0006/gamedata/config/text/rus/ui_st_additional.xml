@@ -18,6 +18,9 @@
 	<string id="st_rpm_units">
 		<text>выс./мин</text>
 	</string>
+	<string id="st_dispertion_units">
+		<text>MOA</text>
+	</string>
 	<string id="ui_st_pda_account_unavailable">
 		<text>[счёт недоступен]</text>
 	</string>
@@ -525,5 +528,113 @@
 	</string>
 	<string id="st_volume">
 		<text>объём</text>
+	</string>
+	
+	<string id="st_pda_change_spot_hint">
+		<text>Изменить текст метки</text>
+	</string>
+	<string id="st_pda_delete_spot">
+		<text>Удалить метку</text>
+	</string>
+
+	<string id="st_move">
+		<text>перенести</text>
+	</string>
+	<string id="st_move_all">
+		<text>перенести все</text>
+	</string>
+
+	<string id="st_move_to_slot_0">
+		<text>в ножны</text>
+	</string>
+	<string id="st_move_to_slot_1">
+		<text>на плечо</text>
+	</string>
+	<string id="st_attach_addon_to_wpn_in_slot_1">
+		<text>прикрепить %s к %s на плече</text>
+	</string>
+	<string id="st_move_to_slot_2">
+		<text>за спину</text>
+	</string>
+	<string id="st_attach_addon_to_wpn_in_slot_2">
+		<text>прикрепить %s к %s за спиной</text>
+	</string>
+	<string id="st_move_to_slot_3">
+		<text>в подсумок</text>
+	</string>
+	<string id="st_move_to_slot_4">
+		<text>в кобуру</text>
+	</string>
+	<string id="st_attach_addon_to_wpn_in_slot_4">
+		<text>прикрепить %s к %s в кобуре</text>
+	</string>
+
+	<string id="st_move_to_slot_7">
+		<text>экипировать</text>
+	</string>
+	<string id="st_move_to_slot_8">
+		<text>экипировать</text>
+	</string>
+	<string id="st_move_to_slot_9">
+		<text>на голову</text>
+	</string>
+	<string id="st_move_to_slot_10">
+		<text>в руки</text>
+	</string>
+	<string id="st_move_to_slot_11">
+		<text>надеть</text>
+	</string>
+	
+	<string id="st_move_to_slot_12">
+		<text>в карман 1</text>
+	</string>
+	<string id="st_attach_addon_to_wpn_in_slot_12">
+		<text>прикрепить %s к %s в кармане 1</text>
+	</string>
+	<string id="st_move_to_slot_13">
+		<text>в карман 2</text>
+	</string>	
+	<string id="st_attach_addon_to_wpn_in_slot_13">
+		<text>прикрепить %s к %s в кармане 2</text>
+	</string>	
+	<string id="st_move_to_slot_14">
+		<text>в карман 3</text>
+	</string>	
+	<string id="st_attach_addon_to_wpn_in_slot_14">
+		<text>прикрепить %s к %s в кармане 3</text>
+	</string>	
+	<string id="st_move_to_slot_15">
+		<text>в карман 4</text>
+	</string>	
+	<string id="st_attach_addon_to_wpn_in_slot_15">
+		<text>прикрепить %s к %s в кармане 4</text>
+	</string>	
+	
+	<string id="st_move_to_slot_16">
+		<text>надеть</text>
+	</string>	
+	<string id="st_move_to_slot_17">
+		<text>надеть</text>
+	</string>	
+	
+	<string id="kb_cam_1">
+		<text>Вид от первого лица</text>
+	</string>
+	<string id="kb_cam_2">
+		<text>Вид от третьего лица</text>
+	</string>
+	<string id="kb_cam_3">
+		<text>Вид от третьего лица (freelook)</text>
+	</string>
+
+	<string id="inventory_item_use_or_drag">
+		<text>Поднять предмет ($$ACTION_USE$$) \n Перетащить предмет (SHIFT+$$ACTION_USE$$)</text>
+	</string>
+	<string id="game_object_drag">
+		<text>Перетащить предмет (SHIFT+$$ACTION_USE$$)</text>
+	</string>
+
+	<string id="st_press_any_key">
+		<text>Нажмите любую клавишу для перехода к игре</text>
 	</string>
 </string_table>

@@ -8,7 +8,7 @@
 CWeaponFN2000::CWeaponFN2000() : CWeaponMagazined("FN2000",SOUND_TYPE_WEAPON_SNIPERRIFLE)
 {
 	m_weight = 1.5f;
-	SetSlot( SECOND_WEAPON_SLOT );
+	SetSlot( ON_BACK_SLOT );
 }
 
 CWeaponFN2000::~CWeaponFN2000()

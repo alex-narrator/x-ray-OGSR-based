@@ -24,7 +24,7 @@ bool CCustomDetector::CheckCompatibilityInt(CHudItem* itm, u16* slot_to_activate
 
     CInventoryItem& iitm = itm->item();
     u32 slot = iitm.BaseSlot();
-    bool bres = (slot == FIRST_WEAPON_SLOT || slot == KNIFE_SLOT || slot == BOLT_SLOT);
+    bool bres = (slot == ON_SHOULDER_SLOT || slot == KNIFE_SLOT || slot == BOLT_SLOT);
     CActor* pActor = smart_cast<CActor*>(H_Parent());
     auto& Inv = pActor->inventory();
 
@@ -37,11 +37,11 @@ bool CCustomDetector::CheckCompatibilityInt(CHudItem* itm, u16* slot_to_activate
         if (Inv.ItemFromSlot(KNIFE_SLOT))
             *slot_to_activate = KNIFE_SLOT;
 
-        if (Inv.ItemFromSlot(SECOND_WEAPON_SLOT) && Inv.ItemFromSlot(SECOND_WEAPON_SLOT)->BaseSlot() != SECOND_WEAPON_SLOT)
-            *slot_to_activate = SECOND_WEAPON_SLOT;
+        if (Inv.ItemFromSlot(ON_BACK_SLOT) && Inv.ItemFromSlot(ON_BACK_SLOT)->BaseSlot() != ON_BACK_SLOT)
+            *slot_to_activate = ON_BACK_SLOT;
 
-        if (Inv.ItemFromSlot(FIRST_WEAPON_SLOT) && Inv.ItemFromSlot(FIRST_WEAPON_SLOT)->BaseSlot() != SECOND_WEAPON_SLOT)
-            *slot_to_activate = FIRST_WEAPON_SLOT;
+        if (Inv.ItemFromSlot(ON_SHOULDER_SLOT) && Inv.ItemFromSlot(ON_SHOULDER_SLOT)->BaseSlot() != ON_BACK_SLOT)
+            *slot_to_activate = ON_SHOULDER_SLOT;
 
         if (*slot_to_activate != NO_ACTIVE_SLOT)
             bres = true;

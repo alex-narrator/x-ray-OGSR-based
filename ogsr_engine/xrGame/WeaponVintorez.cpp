@@ -4,7 +4,7 @@
 CWeaponVintorez::CWeaponVintorez(void) : CWeaponMagazined("VINTOREZ",SOUND_TYPE_WEAPON_SNIPERRIFLE)
 {
 	m_weight = 1.5f;
-	SetSlot( SECOND_WEAPON_SLOT );
+	SetSlot( ON_BACK_SLOT );
 }
 
 CWeaponVintorez::~CWeaponVintorez(void)

@@ -102,9 +102,9 @@ protected:
 	CUIDragDropListEx*			m_pUIBackPackList;
 
 	CUIDragDropListEx*			m_pUIKnifeList;
-	CUIDragDropListEx*			m_pUIPistolList;
-	CUIDragDropListEx*			m_pUIAutomaticList;
-	CUIDragDropListEx*			m_pUIBinocularList;
+	CUIDragDropListEx*			m_pUIOnShoulderList;
+	CUIDragDropListEx*			m_pUIOnBackList;
+	CUIDragDropListEx*			m_pUIHolsterList;
 
 	CUIDragDropListEx*			m_pUIGrenadeList;
 	CUIDragDropListEx*			m_pUIArtefactList;

@@ -90,23 +90,23 @@ void CUIInventoryWnd::InitInventory()
 		CUICellItem* itm = create_cell_item(_itm);
 		m_pUIKnifeList->SetItem(itm);
 	}
-	_itm								= m_pInv->m_slots[FIRST_WEAPON_SLOT].m_pIItem;
+	_itm								= m_pInv->m_slots[ON_SHOULDER_SLOT].m_pIItem;
 	if(_itm)
 	{
 		CUICellItem* itm				= create_cell_item(_itm);
-		m_pUIPistolList->SetItem		(itm);
+		m_pUIOnShoulderList->SetItem		(itm);
 	}
-	_itm								= m_pInv->m_slots[SECOND_WEAPON_SLOT].m_pIItem;
+	_itm								= m_pInv->m_slots[ON_BACK_SLOT].m_pIItem;
 	if(_itm)
 	{
 		CUICellItem* itm				= create_cell_item(_itm);
-		m_pUIAutomaticList->SetItem		(itm);
+		m_pUIOnBackList->SetItem		(itm);
 	}
-	_itm								= m_pInv->m_slots[APPARATUS_SLOT].m_pIItem;
+	_itm								= m_pInv->m_slots[HOLSTER_SLOT].m_pIItem;
 	if (_itm)
 	{
 		CUICellItem* itm				= create_cell_item(_itm);
-		m_pUIBinocularList->SetItem		(itm);
+		m_pUIHolsterList->SetItem		(itm);
 	}
 
 	_itm								= m_pInv->m_slots[GRENADE_SLOT].m_pIItem;
@@ -428,9 +428,9 @@ bool CUIInventoryWnd::OnItemSelected(CUICellItem* itm)
 		m_pUIBackPackList,
 		//
 		m_pUIKnifeList,
-		m_pUIPistolList, 
-		m_pUIAutomaticList, 
-		m_pUIBinocularList,
+		m_pUIOnShoulderList, 
+		m_pUIOnBackList, 
+		m_pUIHolsterList,
 		// 
 		m_pUIGrenadeList,
 		m_pUIArtefactList,
@@ -579,9 +579,9 @@ void CUIInventoryWnd::ClearAllLists()
 	m_pUIBackPackList->ClearAll				(true);
 	//
 	m_pUIKnifeList->ClearAll				(true);
-	m_pUIPistolList->ClearAll				(true);
-	m_pUIAutomaticList->ClearAll			(true);
-	m_pUIBinocularList->ClearAll			(true);
+	m_pUIOnShoulderList->ClearAll				(true);
+	m_pUIOnBackList->ClearAll			(true);
+	m_pUIHolsterList->ClearAll			(true);
 	//
 	m_pUIGrenadeList->ClearAll				(true);
 	m_pUIArtefactList->ClearAll				(true);

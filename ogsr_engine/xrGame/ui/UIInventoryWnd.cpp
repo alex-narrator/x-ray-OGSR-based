@@ -42,7 +42,7 @@ CUIInventoryWnd*	g_pInvWnd = NULL;
 CUIInventoryWnd::CUIInventoryWnd() : 
 	m_pUIBagList(nullptr), m_pUIBeltList(nullptr), 
 	m_pUIOutfitList(nullptr), m_pUIHelmetList(nullptr), m_pUIWarBeltList(nullptr), m_pUIBackPackList(nullptr), 
-	m_pUIKnifeList(nullptr), m_pUIPistolList(nullptr), m_pUIAutomaticList(nullptr), m_pUIBinocularList(nullptr),
+	m_pUIKnifeList(nullptr), m_pUIOnShoulderList(nullptr), m_pUIOnBackList(nullptr), m_pUIHolsterList(nullptr),
 	m_pUIGrenadeList(nullptr), m_pUIArtefactList(nullptr),
 	m_pUIDetectorList(nullptr), m_pUIOnHeadList(nullptr), m_pUIPdaList(nullptr),
 	m_pUIQuickList_0(nullptr), m_pUIQuickList_1(nullptr), m_pUIQuickList_2(nullptr), m_pUIQuickList_3(nullptr)
@@ -156,17 +156,17 @@ void CUIInventoryWnd::Init()
 	xml_init.InitDragDropListEx			(uiXml, "dragdrop_knife", 0, m_pUIKnifeList);
 	BindDragDropListEnents				(m_pUIKnifeList);
 
-	m_pUIPistolList						= xr_new<CUIDragDropListEx>(); AttachChild(m_pUIPistolList); m_pUIPistolList->SetAutoDelete(true);
-	xml_init.InitDragDropListEx			(uiXml, "dragdrop_pistol", 0, m_pUIPistolList);
-	BindDragDropListEnents				(m_pUIPistolList);
+	m_pUIOnShoulderList					= xr_new<CUIDragDropListEx>(); AttachChild(m_pUIOnShoulderList); m_pUIOnShoulderList->SetAutoDelete(true);
+	xml_init.InitDragDropListEx			(uiXml, "dragdrop_on_shoulder", 0, m_pUIOnShoulderList);
+	BindDragDropListEnents				(m_pUIOnShoulderList);
 
-	m_pUIAutomaticList					= xr_new<CUIDragDropListEx>(); AttachChild(m_pUIAutomaticList); m_pUIAutomaticList->SetAutoDelete(true);
-	xml_init.InitDragDropListEx			(uiXml, "dragdrop_automatic", 0, m_pUIAutomaticList);
-	BindDragDropListEnents				(m_pUIAutomaticList);
+	m_pUIOnBackList						= xr_new<CUIDragDropListEx>(); AttachChild(m_pUIOnBackList); m_pUIOnBackList->SetAutoDelete(true);
+	xml_init.InitDragDropListEx			(uiXml, "dragdrop_on_back", 0, m_pUIOnBackList);
+	BindDragDropListEnents				(m_pUIOnBackList);
 
-	m_pUIBinocularList					= xr_new<CUIDragDropListEx>(); AttachChild(m_pUIBinocularList); m_pUIBinocularList->SetAutoDelete(true);
-	xml_init.InitDragDropListEx			(uiXml, "dragdrop_binocular", 0, m_pUIBinocularList);
-	BindDragDropListEnents				(m_pUIBinocularList);
+	m_pUIHolsterList				= xr_new<CUIDragDropListEx>(); AttachChild(m_pUIHolsterList); m_pUIHolsterList->SetAutoDelete(true);
+	xml_init.InitDragDropListEx			(uiXml, "dragdrop_holster", 0, m_pUIHolsterList);
+	BindDragDropListEnents				(m_pUIHolsterList);
 
 	m_pUIGrenadeList					= xr_new<CUIDragDropListEx>(); AttachChild(m_pUIGrenadeList); m_pUIGrenadeList->SetAutoDelete(true);
 	xml_init.InitDragDropListEx			(uiXml, "dragdrop_grenade", 0, m_pUIGrenadeList);
@@ -188,19 +188,19 @@ void CUIInventoryWnd::Init()
 	xml_init.InitDragDropListEx			(uiXml, "dragdrop_pda", 0, m_pUIPdaList);
 	BindDragDropListEnents				(m_pUIPdaList);
 
-	m_pUIQuickList_0			= xr_new<CUIDragDropListEx>(); AttachChild(m_pUIQuickList_0); m_pUIQuickList_0->SetAutoDelete(true);
+	m_pUIQuickList_0					= xr_new<CUIDragDropListEx>(); AttachChild(m_pUIQuickList_0); m_pUIQuickList_0->SetAutoDelete(true);
 	xml_init.InitDragDropListEx			(uiXml, "dragdrop_quick_0", 0, m_pUIQuickList_0);
 	BindDragDropListEnents				(m_pUIQuickList_0);
 
-	m_pUIQuickList_1			= xr_new<CUIDragDropListEx>(); AttachChild(m_pUIQuickList_1); m_pUIQuickList_1->SetAutoDelete(true);
+	m_pUIQuickList_1					= xr_new<CUIDragDropListEx>(); AttachChild(m_pUIQuickList_1); m_pUIQuickList_1->SetAutoDelete(true);
 	xml_init.InitDragDropListEx			(uiXml, "dragdrop_quick_1", 0, m_pUIQuickList_1);
 	BindDragDropListEnents				(m_pUIQuickList_1);
 
-	m_pUIQuickList_2			= xr_new<CUIDragDropListEx>(); AttachChild(m_pUIQuickList_2); m_pUIQuickList_2->SetAutoDelete(true);
+	m_pUIQuickList_2					= xr_new<CUIDragDropListEx>(); AttachChild(m_pUIQuickList_2); m_pUIQuickList_2->SetAutoDelete(true);
 	xml_init.InitDragDropListEx			(uiXml, "dragdrop_quick_2", 0, m_pUIQuickList_2);
 	BindDragDropListEnents				(m_pUIQuickList_2);
 
-	m_pUIQuickList_3			= xr_new<CUIDragDropListEx>(); AttachChild(m_pUIQuickList_3); m_pUIQuickList_3->SetAutoDelete(true);
+	m_pUIQuickList_3					= xr_new<CUIDragDropListEx>(); AttachChild(m_pUIQuickList_3); m_pUIQuickList_3->SetAutoDelete(true);
 	xml_init.InitDragDropListEx			(uiXml, "dragdrop_quick_3", 0, m_pUIQuickList_3);
 	BindDragDropListEnents				(m_pUIQuickList_3);
 
@@ -212,9 +212,9 @@ void CUIInventoryWnd::Init()
 	m_slots_array[BACKPACK_SLOT]		= m_pUIBackPackList;
 
 	m_slots_array[KNIFE_SLOT]			= m_pUIKnifeList;
-	m_slots_array[FIRST_WEAPON_SLOT]	= m_pUIPistolList;
-	m_slots_array[SECOND_WEAPON_SLOT]	= m_pUIAutomaticList;
-	m_slots_array[APPARATUS_SLOT]		= m_pUIBinocularList;
+	m_slots_array[ON_SHOULDER_SLOT]		= m_pUIOnShoulderList;
+	m_slots_array[ON_BACK_SLOT]			= m_pUIOnBackList;
+	m_slots_array[HOLSTER_SLOT]			= m_pUIHolsterList;
 
 	m_slots_array[GRENADE_SLOT]			= m_pUIGrenadeList;
 	m_slots_array[ARTEFACT_SLOT]		= m_pUIArtefactList;

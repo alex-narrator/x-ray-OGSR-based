@@ -6,10 +6,10 @@ constexpr auto CMD_STOP				= (1<<1);
 constexpr auto NO_ACTIVE_SLOT		= 0xff;
 
 constexpr auto KNIFE_SLOT			= 0;
-constexpr auto FIRST_WEAPON_SLOT	= 1;
-constexpr auto SECOND_WEAPON_SLOT	= 2;
+constexpr auto ON_SHOULDER_SLOT		= 1;
+constexpr auto ON_BACK_SLOT			= 2;
 constexpr auto GRENADE_SLOT			= 3;
-constexpr auto APPARATUS_SLOT		= 4;
+constexpr auto HOLSTER_SLOT			= 4;
 constexpr auto BOLT_SLOT			= 5;
 constexpr auto OUTFIT_SLOT			= 6;
 constexpr auto PDA_SLOT				= 7;
