@@ -163,16 +163,22 @@ void CActor::IR_OnKeyboardPress(int cmd){
 
 		if (pActiveWeapon && pActiveWeapon->IsZoomed())
 			pActiveWeapon->SwitchNightVision();
-		else
-		{
-			if (GetNightVisionDevice())
-				GetNightVisionDevice()->SwitchNightVision();
+		else{
+			if (GetNightVisionDevice()) {
+				if(inventory().ActiveItem() && inventory().ActiveItem()->cast_hud_item() && inventory().ActiveItem()->cast_hud_item()->IsPending())
+					HUD().GetUI()->AddInfoMessage("item_usage", "hands_not_free");
+				else
+					GetNightVisionDevice()->SwitchNightVision();
+			}
 		}
 		} break;
 	case kTORCH: { 
-			if (GetTorch()) {
+		if (GetTorch()) {
+			if (inventory().ActiveItem() && inventory().ActiveItem()->cast_hud_item() && inventory().ActiveItem()->cast_hud_item()->IsPending())
+				HUD().GetUI()->AddInfoMessage("item_usage", "hands_not_free");
+			else
 				GetTorch()->Switch();
-			}
+		}
 		} break;
 	case kWPN_8:
 	{
