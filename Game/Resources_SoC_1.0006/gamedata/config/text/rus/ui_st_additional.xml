@@ -93,6 +93,9 @@
 	<string id="kb_quick_throw_grenade">
 		<text>Быстрый бросок гранаты</text>
 	</string>
+	<string id="kb_quick_knife_stab">
+		<text>Быстрый удар ножом</text>
+	</string>
 	
 	<string id="st_not_enough_money_to_trade">
 		<text>недостаточно денег</text>

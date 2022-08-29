@@ -265,6 +265,10 @@ void CActor::IR_OnKeyboardPress(int cmd){
 	{
 		ActorQuickThrowGrenade();
 	}break;
+	case kQUICK_KNIFE_STAB:
+	{
+		ActorQuickKnifeStab();
+	}break;
 	}
 }
 void CActor::IR_OnMouseWheel(int direction){
@@ -745,4 +749,18 @@ void CActor::ActorQuickThrowGrenade(){
 	}
 	else
 		pGrenade->Action(kWPN_FIRE, CMD_START);
+}
+#include "WeaponKnife.h"
+void CActor::ActorQuickKnifeStab() {
+	auto& inv = inventory();
+	auto pKnife = smart_cast<CWeaponKnife*>(inv.m_slots[KNIFE_SLOT].m_pIItem);
+	if (!pKnife) return;
+
+	if (inv.GetActiveSlot() != KNIFE_SLOT) {
+		inv.SetPrevActiveSlot(inv.GetActiveSlot());
+		pKnife->m_bIsQuickStab = true;
+		inv.Activate(KNIFE_SLOT, eGeneral, true, true);
+	}
+	else
+		pKnife->Action(kWPN_FIRE, CMD_START);
 }

@@ -772,9 +772,10 @@ public:
 	float   m_fThrowImpulse;	//сила с которой актор отбрасывает предмет
 	float	m_fKickImpulse;		//сила с которой актор пинает предмет
 	float	m_fHoldingDistance; //расстояние перед актором на котором находится удерживаемый предмет
-	void	ActorThrow();
-	void	ActorKick();
-	void	ActorQuickThrowGrenade();
+	void	ActorThrow				();
+	void	ActorKick				();
+	void	ActorQuickThrowGrenade	();
+	void	ActorQuickKnifeStab		();
 	//множитель для управления интенсивностью эффектора качания в прицеливании
 	float	GetZoomEffectorK();
 	void	SetHardHold(bool val) { m_bIsHardHold = val; };

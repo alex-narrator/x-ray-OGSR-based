@@ -40,6 +40,7 @@
 		<command id="kb_kick"				    	exe="kick"/>
 		<command id="kb_additional_action"			exe="additional_action"/>
 		<command id="kb_quick_throw_grenade"		exe="quick_throw_grenade"/>
+		<command id="kb_quick_knife_stab"			exe="quick_knife_stab"/>
 	</group>
 	<group name="kb_grp_inventory">
 		<command id="kb_inventory"					exe="inventory"/>
