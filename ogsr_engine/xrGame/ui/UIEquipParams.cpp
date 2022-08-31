@@ -13,7 +13,7 @@
 #include "CustomOutfit.h"
 #include "Warbelt.h"
 #include "WeaponAmmo.h"
-#include "Scope.h"
+#include "Addons.h"
 #include "InventoryContainer.h"
 
 constexpr auto equip_params = "equip_params.xml";

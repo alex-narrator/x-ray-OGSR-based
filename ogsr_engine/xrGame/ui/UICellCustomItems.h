@@ -89,7 +89,15 @@ class CUIWeaponCellItem :public CUIInventoryCellItem
 {
 	typedef  CUIInventoryCellItem	inherited;
 public:
-	enum eAddonType{	eSilencer=0, eScope, eLauncher, eMaxAddon};
+	enum eAddonType{
+		eSilencer, 
+		eScope, 
+		eLauncher, 
+		eLaser, 
+		eFlashlight, 
+		eMaxAddon
+	};
+
 	CUIStatic*					m_addons					[eMaxAddon];
 protected:
 	virtual		void			UpdateItemText();
@@ -98,10 +106,12 @@ protected:
 	void						DestroyIcon					(eAddonType);
 	CUIStatic*					GetIcon						(eAddonType);
 	void						InitAddon					(CUIStatic* s, CIconParams &params, Fvector2 offset, bool b_rotate);
-	void						InitAllAddons				(CUIStatic* s_silencer, CUIStatic* s_scope, CUIStatic* s_launcher, bool b_vertical);
+	void						InitAllAddons				(CUIStatic* s_silencer, CUIStatic* s_scope, CUIStatic* s_launcher, CUIStatic* s_laser, CUIStatic* s_flashlight, bool b_vertical);
 	bool						is_scope					();
 	bool						is_silencer					();
 	bool						is_launcher					();
+	bool						is_laser					();
+	bool						is_flashlight				();
 public:
 								CUIWeaponCellItem			(CWeapon* itm);
 				virtual			~CUIWeaponCellItem			();

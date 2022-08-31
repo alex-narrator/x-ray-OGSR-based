@@ -132,6 +132,8 @@ ph_mass			 			= 1
 scope_status				= 0
 silencer_status				= 2
 grenade_launcher_status		= 0
+laser_status = 2
+flashlight_status = 2
 
 zoom_enabled				= true
 scope_zoom_factor	    	= 55
@@ -165,8 +167,36 @@ silencer_light_var_color	= 0.05
 silencer_light_var_range	= 0.5
 silencer_light_time 		= 0.2
 
+laser_name  				= wpn_addon_laser_red, wpn_addon_laser_green		; section name for the attachable silencer
+laser_x 					= 65						; offset in inventory icon
+laser_y 					= -18
 
- 
+laserdot_attach_bone = wpn_body 
+laserdot_attach_offset_x = -0.001 (-left / +right)
+laserdot_attach_offset_y = 0.057 (+up / -down)
+laserdot_attach_offset_z = 0.0 (-to screen / +from screen)
+laserdot_world_attach_offset_x = 0.0
+laserdot_world_attach_offset_y = 0.1
+laserdot_world_attach_offset_z = 0.05
+
+flashlight_name  				= wpn_addon_flashlight		; section name for the attachable silencer
+flashlight_x 					= 65						; offset in inventory icon
+flashlight_y 					= -18
+
+torch_light_bone = wpn_body
+torch_attach_offset_x = -0.008
+torch_attach_offset_y = 0.048
+torch_attach_offset_z = 0.0
+torch_world_attach_offset_x = 0.0
+torch_world_attach_offset_y = 0.05
+torch_world_attach_offset_z = 0.25
+torch_omni_attach_offset_x = 0.0 
+torch_omni_attach_offset_y = 0.0
+torch_omni_attach_offset_z = 0.0
+torch_omni_world_attach_offset_x = 0.0 
+torch_omni_world_attach_offset_y = 0.0
+torch_omni_world_attach_offset_z = 0.0
+
 [wpn_beretta_hud]
 shell_point			= -0.000000,0.060000,-0.400000
 fire_point			= -0.002000,0.056000,-0.300999

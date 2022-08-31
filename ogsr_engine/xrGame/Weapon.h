@@ -150,7 +150,7 @@ public:
 	EWeaponSubStates		GetReloadState		() const		{ return (EWeaponSubStates)m_sub_state;}
 	u8 idle_state();
 protected:
-	bool					m_bTriStateReload;
+	bool					m_bTriStateReload{};
 	u8						m_sub_state;
 	u8						m_idle_state;
 	// Weapon fires now
@@ -170,13 +170,17 @@ public:
 			bool IsGrenadeLauncherAttached	() const;
 			bool IsScopeAttached			() const;
 			bool IsSilencerAttached			() const;
+			bool IsLaserAttached			() const;
+			bool IsFlashlightAttached		() const;
 
 //	bool			IsGrenadeMode() const;
 	virtual bool IsGrenadeMode() const { return false; };
 
-	virtual bool GrenadeLauncherAttachable() const;
-	virtual bool ScopeAttachable() const;
-	virtual bool SilencerAttachable() const;
+	virtual bool GrenadeLauncherAttachable	() const;
+	virtual bool ScopeAttachable			() const;
+	virtual bool SilencerAttachable			() const;
+	virtual bool LaserAttachable			() const;
+	virtual bool FlashlightAttachable		() const;
 	virtual bool UseScopeTexture();
 
 	//обновление видимости для косточек аддонов
@@ -192,10 +196,16 @@ public:
 	int	GetSilencerY		();
 	int	GetGrenadeLauncherX	();
 	int	GetGrenadeLauncherY	();
+	int	GetLaserX			();
+	int	GetLaserY			();
+	int	GetFlashlightX		();
+	int	GetFlashlightY		();
 
 	const shared_str GetScopeName				() const { return m_scopes		[m_cur_scope]		; }
 	const shared_str GetSilencerName			() const { return m_silencers	[m_cur_silencer]	; }
 	const shared_str GetGrenadeLauncherName		() const { return m_glaunchers	[m_cur_glauncher]	; }
+	const shared_str GetLaserName				() const { return m_lasers		[m_cur_laser]		; }
+	const shared_str GetFlashlightName			() const { return m_flashlights	[m_cur_flashlight]	; }
 
 	u8		GetAddonsState						()		const		{return m_flagsAddOnState;};
 	void	SetAddonsState						(u8 st)	{m_flagsAddOnState=st;}
@@ -226,9 +236,11 @@ protected:
 	u8 m_flagsAddOnState;
 
 	//возможность подключения различных аддонов
-	ALife::EWeaponAddonStatus	m_eScopeStatus;
-	ALife::EWeaponAddonStatus	m_eSilencerStatus;
-	ALife::EWeaponAddonStatus	m_eGrenadeLauncherStatus;
+	ALife::EWeaponAddonStatus	m_eScopeStatus{};
+	ALife::EWeaponAddonStatus	m_eSilencerStatus{};
+	ALife::EWeaponAddonStatus	m_eGrenadeLauncherStatus{};
+	ALife::EWeaponAddonStatus	m_eLaserStatus{};
+	ALife::EWeaponAddonStatus	m_eFlashlightStatus{};
 
 
 	//смещение иконов апгрейдов в инвентаре
@@ -241,7 +253,7 @@ protected:
 ///////////////////////////////////////////////////
 protected:
 	//разрешение регулирования приближения. Real Wolf.
-	bool			m_bScopeDynamicZoom;
+	bool			m_bScopeDynamicZoom{};
 	//run-time zoom factor
 	float			m_fRTZoomFactor;
 	float			m_fMinScopeZoomFactor;
@@ -253,7 +265,7 @@ protected:
 	//время приближения
 	float			m_fZoomRotateTime;
 	//текстура для снайперского прицела, в режиме приближения
-	CUIStaticItem*	m_UIScope;
+	CUIStaticItem* m_UIScope{};
 	//коэффициент увеличения прицеливания
 	float			m_fIronSightZoomFactor;
 	//коэффициент увеличения прицела
@@ -262,7 +274,7 @@ protected:
 	bool			m_bZoomMode;
 	//от 0 до 1, показывает насколько процентов
 	//мы перемещаем HUD  
-	float			m_fZoomRotationFactor;
+	float			m_fZoomRotationFactor{};
 	//коэффициент увеличения во втором вьюпорте при зуме
 	float			m_fSecondVPZoomFactor;
 	//прятать перекрестие в режиме прицеливания
@@ -330,11 +342,11 @@ public:
 	IC		bool			strapped_mode		() const {return m_strapped_mode;}
 
 protected:
-	LPCSTR					m_strap_bone0;
-	LPCSTR					m_strap_bone1;
+	LPCSTR					m_strap_bone0{};
+	LPCSTR					m_strap_bone1{};
 	Fmatrix					m_StrapOffset;
-	bool					m_strapped_mode;
-	bool					m_can_be_strapped;
+	bool					m_strapped_mode{};
+	bool					m_can_be_strapped{};
 
 	Fmatrix					m_Offset;
 
@@ -436,7 +448,7 @@ protected:
 	//увеличение изношености при выстреле из подствольника
 	float					conditionDecreasePerShotGL;
 	//увеличение изношености при выстреле с глушителем для самого глушителя
-	float					conditionDecreasePerShotSilencerSelf;
+	float					conditionDecreasePerShotSilencerSelf{};
 
 	//  [8/2/2005]
 	float					m_fPDM_disp_base			;
@@ -465,9 +477,9 @@ protected:
 			void			StopFlameParticles2	();
 			void			UpdateFlameParticles2();
 protected:
-	shared_str					m_sFlameParticles2;
+	shared_str				m_sFlameParticles2{};
 	//объект партиклов для стрельбы из 2-го ствола
-	CParticlesObject*		m_pFlameParticles2;
+	CParticlesObject*		m_pFlameParticles2{};
 
 //////////////////////////////////////////////////////////////////////////
 // Weapon and ammo
@@ -503,7 +515,7 @@ protected:
 
 	//для подсчета в GetAmmoCurrent
 	mutable int				iAmmoCurrent;
-	mutable u32				m_dwAmmoCurrentCalcFrame;	//кадр на котором просчитали кол-во патронов
+	mutable u32				m_dwAmmoCurrentCalcFrame{};	//кадр на котором просчитали кол-во патронов
 
 	virtual bool			IsNecessaryItem	    (const shared_str& item_sect);
 
@@ -513,8 +525,8 @@ public:
 	xr_vector<shared_str>	m_ammoTypes;
 	xr_vector<shared_str>	m_highlightAddons;
 
-	CWeaponAmmo*			m_pAmmo;
-	u32						m_ammoType;
+	CWeaponAmmo*			m_pAmmo{};
+	u32						m_ammoType{};
 	BOOL					m_bHasTracers;
 	u8						m_u8TracerColorID;
 	u32						m_set_next_ammoType_on_reload;
@@ -586,33 +598,22 @@ public:
 	//Функция из ганслингера для приблизительной коррекции разности фовов худа и мира. Так себе на самом деле, но более годных способов я не нашел.
 	void CorrectDirFromWorldToHud(Fvector& dir);
 
-private:
+protected:
 	float hud_recalc_koef{};
 
-	bool has_laser{};
 	shared_str laserdot_attach_bone;
 	Fvector laserdot_attach_offset{}, laserdot_world_attach_offset{};
 	ref_light laser_light_render;
 	CLAItem* laser_lanim{};
 	float laser_fBrightness{ 1.f };
+	bool m_bIsLaserOn{};
 
 	void UpdateLaser();
 public:
-	void SwitchLaser(bool on) {
-		if (!has_laser)
-			return;
+	void SwitchLaser(bool on);
+	bool IsLaserOn() const;
 
-		if (on)
-			m_flagsAddOnState |= CSE_ALifeItemWeapon::eWeaponAddonLaserOn;
-		else
-			m_flagsAddOnState &= ~CSE_ALifeItemWeapon::eWeaponAddonLaserOn;
-	}
-	inline bool IsLaserOn() const {
-		return m_flagsAddOnState & CSE_ALifeItemWeapon::eWeaponAddonLaserOn;
-	}
-
-private:
-	bool has_flashlight{};
+protected:
 	shared_str flashlight_attach_bone;
 	Fvector flashlight_attach_offset{}, flashlight_omni_attach_offset{}, flashlight_world_attach_offset{}, flashlight_omni_world_attach_offset{};
 	ref_light flashlight_render;
@@ -620,21 +621,12 @@ private:
 	ref_glow flashlight_glow;
 	CLAItem* flashlight_lanim{};
 	float flashlight_fBrightness{ 1.f };
+	bool m_bIsFlashlightOn{};
 
 	void UpdateFlashlight();
 public:
-	void SwitchFlashlight(bool on) {
-		if (!has_flashlight)
-			return;
-
-		if (on)
-			m_flagsAddOnState |= CSE_ALifeItemWeapon::eWeaponAddonFlashlightOn;
-		else
-			m_flagsAddOnState &= ~CSE_ALifeItemWeapon::eWeaponAddonFlashlightOn;
-	}
-	inline bool IsFlashlightOn() const {
-		return m_flagsAddOnState & CSE_ALifeItemWeapon::eWeaponAddonFlashlightOn;
-	}
+	void SwitchFlashlight(bool on);
+	bool IsFlashlightOn() const;
 
 public:
 	bool IsAmmoWasSpawned() { return m_bAmmoWasSpawned; };
@@ -649,14 +641,20 @@ public:
 	IC void ReloadWeapon() { Reload(); };
 	virtual	bool TryToGetAmmo(u32) { return true; };
 
-	xr_vector<shared_str>	m_scopes;
-	u8						m_cur_scope;
+	xr_vector<shared_str>	m_scopes{};
+	u8						m_cur_scope{};
 
-	xr_vector<shared_str>	m_silencers;
-	u8						m_cur_silencer;
+	xr_vector<shared_str>	m_silencers{};
+	u8						m_cur_silencer{};
 
-	xr_vector<shared_str>	m_glaunchers;
-	u8						m_cur_glauncher;
+	xr_vector<shared_str>	m_glaunchers{};
+	u8						m_cur_glauncher{};
+
+	xr_vector<shared_str>	m_lasers{};
+	u8						m_cur_laser{};
+
+	xr_vector<shared_str>	m_flashlights{};
+	u8						m_cur_flashlight{};
 
 	bool					camRecoilCompensation;
 

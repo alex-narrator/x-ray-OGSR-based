@@ -97,9 +97,8 @@ SERVER_ENTITY_DECLARE_BEGIN(CSE_ALifeItemTorch,CSE_ALifeItem)
 		eTorchActive				= (1<<0),
 		eAttached					= (1<<1)
 	};
-	bool							m_active;
-	bool							m_nightvision_active;
-	bool							m_attached;
+	bool							m_active{};
+	bool							m_attached{};
 									CSE_ALifeItemTorch	(LPCSTR caSection);
     virtual							~CSE_ALifeItemTorch	();
 	virtual BOOL					Net_Relevant			();
@@ -149,20 +148,28 @@ SERVER_ENTITY_DECLARE_BEGIN(CSE_ALifeItemWeapon,CSE_ALifeItem)
 	//текущее состояние аддонов
 	enum EWeaponAddonState : u8
 	{
-		eWeaponAddonScope = 1 << 0,
+		eWeaponAddonScope			= 1 << 0,
 		eWeaponAddonGrenadeLauncher = 1 << 1,
-		eWeaponAddonSilencer = 1 << 2,
-
-		eWeaponAddonLaserOn = 1 << 3,
-		eWeaponAddonFlashlightOn = 1 << 4,
+		eWeaponAddonSilencer		= 1 << 2,
+		eWeaponAddonLaser			= 1 << 3,
+		eWeaponAddonFlashlight		= 1 << 4,
 
 		//KRodin: TODO: эти пять свободных флагов можно использовать для хранения какой-то полезной информации, типа установлен ли на оружие лцу, фонарик и тп.
 		//emaxflag = 1<<7,
 	};
 
-	EWeaponAddonStatus				m_scope_status;
-	EWeaponAddonStatus				m_silencer_status;				
-	EWeaponAddonStatus				m_grenade_launcher_status;
+	//флаги
+	enum EStats {
+		eMisfire		= (1 << 0),
+		eLaserOn		= (1 << 1),
+		eFlashlightOn	= (1 << 2),
+	};
+
+	EWeaponAddonStatus				m_scope_status{};
+	EWeaponAddonStatus				m_silencer_status{};
+	EWeaponAddonStatus				m_grenade_launcher_status{};
+	EWeaponAddonStatus				m_laser_status{};
+	EWeaponAddonStatus				m_flashlight_status{};
 
 	u32								timestamp{};
 	u8								wpn_flags;
@@ -179,11 +186,15 @@ SERVER_ENTITY_DECLARE_BEGIN(CSE_ALifeItemWeapon,CSE_ALifeItem)
 	u32								m_ef_main_weapon_type;
 	u32								m_ef_weapon_type;
 	//
-	bool							bMisfire;
+	bool							bMisfire{};
+	bool							m_bIsLaserOn{};
+	bool							m_bIsFlashlightOn{};
 	//
-	u8								m_cur_scope;
-	u8								m_cur_silencer;
-	u8								m_cur_glauncher;
+	u8								m_cur_scope{};
+	u8								m_cur_silencer{};
+	u8								m_cur_glauncher{};
+	u8								m_cur_laser{};
+	u8								m_cur_flashlight{};
 	//
 	u32								m_MagazineSize;
 
@@ -206,6 +217,11 @@ add_to_type_list(CSE_ALifeItemWeapon)
 #define script_type_list save_type_list(CSE_ALifeItemWeapon)
 
 SERVER_ENTITY_DECLARE_BEGIN(CSE_ALifeItemWeaponMagazined,CSE_ALifeItemWeapon)
+	//флаги
+	enum EStats {
+		eMagazineAttached	= (1 << 0),
+		eNightVisionOn		= (1 << 1),
+	};
 u8			m_u8CurFireMode;
 //присоединён ли магазин
 bool		m_bIsMagazineAttached;
@@ -230,9 +246,9 @@ add_to_type_list(CSE_ALifeItemWeaponMagazined)
 #define script_type_list save_type_list(CSE_ALifeItemWeaponMagazined)
 
 SERVER_ENTITY_DECLARE_BEGIN(CSE_ALifeItemWeaponMagazinedWGL, CSE_ALifeItemWeaponMagazined)
-bool			m_bGrenadeMode;
-u8			ammo_type2;
-u16			a_elapsed2;
+bool		m_bGrenadeMode{};
+u8			ammo_type2{};
+u16			a_elapsed2{};
 CSE_ALifeItemWeaponMagazinedWGL(LPCSTR caSection);
 virtual							~CSE_ALifeItemWeaponMagazinedWGL();
 

@@ -261,7 +261,9 @@ public:
 	virtual float	Weight() const;
 	virtual float	Volume() const;
 
-	virtual void	LoadZoomParams(LPCSTR section);
+	virtual void	LoadZoomParams		(LPCSTR section);
+	virtual void	LoadLaserParams		(LPCSTR section);
+	virtual void	LoadFlashlightParams(LPCSTR section);
 	//
 	LPCSTR			binoc_vision_sect;
 	//
@@ -279,8 +281,8 @@ public:
 	virtual bool	IsNightVisionEnabled	()const { return m_bNightVisionEnabled; };
 	virtual bool	IsVisionPresent			() const { return m_bVision; };
 protected:
-	bool			m_bNightVisionEnabled;
-	bool			m_bNightVisionSwitchedOn;
+	bool			m_bNightVisionEnabled{};
+	bool			m_bNightVisionSwitchedOn{};
 	//передёргивание затвора
 	virtual void	OnShutter();
 	virtual void	switch2_Shutter();

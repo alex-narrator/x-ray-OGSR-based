@@ -399,6 +399,7 @@
     <ClInclude Include="..\COMMON_AI\random32.h" />
     <ClInclude Include="..\COMMON_AI\server_entity_wrapper.h" />
     <ClInclude Include="..\COMMON_AI\server_entity_wrapper_inline.h" />
+    <ClInclude Include="Addons.h" />
     <ClInclude Include="AdvancedDetector.h" />
     <ClInclude Include="ai\monsters\anti_aim_ability.h" />
     <ClInclude Include="ai\monsters\group_states\group_state_attack.h" />
@@ -1282,9 +1283,6 @@
     <ClInclude Include="Missile.h" />
     <ClInclude Include="WeaponMagazined.h" />
     <ClInclude Include="WeaponMagazinedWGrenade.h" />
-    <ClInclude Include="Scope.h" />
-    <ClInclude Include="Silencer.h" />
-    <ClInclude Include="GrenadeLauncher.h" />
     <ClInclude Include="CustomRocket.h" />
     <ClInclude Include="ExplosiveRocket.h" />
     <ClInclude Include="RocketLauncher.h" />
@@ -1665,6 +1663,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\COMMON_AI\random32.cpp" />
+    <ClCompile Include="Addons.cpp" />
     <ClCompile Include="AdvancedDetector.cpp" />
     <ClCompile Include="ai\monsters\anti_aim_ability.cpp" />
     <ClCompile Include="ai\monsters\monster_aura.cpp" />
@@ -2224,9 +2223,6 @@
     <ClCompile Include="Missile.cpp" />
     <ClCompile Include="WeaponMagazined.cpp" />
     <ClCompile Include="WeaponMagazinedWGrenade.cpp" />
-    <ClCompile Include="Scope.cpp" />
-    <ClCompile Include="Silencer.cpp" />
-    <ClCompile Include="GrenadeLauncher.cpp" />
     <ClCompile Include="CustomRocket.cpp" />
     <ClCompile Include="ExplosiveRocket.cpp" />
     <ClCompile Include="RocketLauncher.cpp" />

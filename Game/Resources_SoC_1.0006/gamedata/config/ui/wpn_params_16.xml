@@ -47,6 +47,12 @@
 		<cap_glauncher x="0" y="5" width="91" height="8">
 			<text font="letterica16" r="124" g="119" b="115">st_compatible_glauncher</text>
 		</cap_glauncher>
+		<cap_laser x="0" y="5" width="91" height="8">
+			<text font="letterica16" r="124" g="119" b="115">st_compatible_laser</text>
+		</cap_laser>
+		<cap_flashlight x="0" y="5" width="91" height="8">
+			<text font="letterica16" r="124" g="119" b="115">st_compatible_flashlight</text>
+		</cap_flashlight>
 		
 		<list_item x="0" y="0" width="91" height="16">
 			<text font="letterica16" r="124" g="119" b="115"></text>

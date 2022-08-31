@@ -321,6 +321,50 @@ void CUIWpnParams::SetInfo(CInventoryItem* obj)
 				_h += list_item_h;
 			}
 		}
+		//сумісні ЛЦВ
+		if (pWeapon->LaserAttachable()) {
+			//гранатомет - заголовок
+			auto cap_laser_static = xr_new<CUIStatic>(); cap_laser_static->SetAutoDelete(true);
+			CUIXmlInit::InitStatic(uiXml, "wpn_params:cap_laser", 0, cap_laser_static);
+			pos_top = cap_laser_static->GetPosTop();
+			cap_laser_static->SetWndPos(cap_laser_static->GetPosLeft(), _h + pos_top);
+			m_CapInfo.AttachChild(cap_laser_static);
+			_h += list_item_h + pos_top;
+			//сумісні гранатомети - список
+			for (const auto& laser : pWeapon->m_lasers) {
+				auto laser_name = pSettings->r_string(laser, "inv_name");
+				auto laser_static = xr_new<CUIStatic>();
+				CUIXmlInit::InitStatic(uiXml, "wpn_params:list_item", 0, laser_static);
+				laser_static->SetAutoDelete(true);
+				laser_static->SetWndPos(laser_static->GetPosLeft(), _h);
+				strconcat(sizeof(text_to_show), text_to_show, marker_, CStringTable().translate(laser_name).c_str());
+				laser_static->SetText(text_to_show);
+				m_CapInfo.AttachChild(laser_static);
+				_h += list_item_h;
+			}
+		}
+		//сумісні ліхтарі
+		if (pWeapon->FlashlightAttachable()) {
+			//гранатомет - заголовок
+			auto cap_flashlight_static = xr_new<CUIStatic>(); cap_flashlight_static->SetAutoDelete(true);
+			CUIXmlInit::InitStatic(uiXml, "wpn_params:cap_flashlight", 0, cap_flashlight_static);
+			pos_top = cap_flashlight_static->GetPosTop();
+			cap_flashlight_static->SetWndPos(cap_flashlight_static->GetPosLeft(), _h + pos_top);
+			m_CapInfo.AttachChild(cap_flashlight_static);
+			_h += list_item_h + pos_top;
+			//сумісні гранатомети - список
+			for (const auto& flashlight : pWeapon->m_flashlights) {
+				auto flashlight_name = pSettings->r_string(flashlight, "inv_name");
+				auto flashlight_static = xr_new<CUIStatic>();
+				CUIXmlInit::InitStatic(uiXml, "wpn_params:list_item", 0, flashlight_static);
+				flashlight_static->SetAutoDelete(true);
+				flashlight_static->SetWndPos(flashlight_static->GetPosLeft(), _h);
+				strconcat(sizeof(text_to_show), text_to_show, marker_, CStringTable().translate(flashlight_name).c_str());
+				flashlight_static->SetText(text_to_show);
+				m_CapInfo.AttachChild(flashlight_static);
+				_h += list_item_h;
+			}
+		}
 	}
 
 	SetHeight(_h);

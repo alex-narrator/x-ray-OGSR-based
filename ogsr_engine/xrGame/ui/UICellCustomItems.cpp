@@ -357,9 +357,11 @@ CUIWeaponCellItem::CUIWeaponCellItem(CWeapon* itm)
 :inherited(itm)
 {
 	b_auto_drag_childs = false;
-	m_addons[eSilencer]		= NULL;
-	m_addons[eScope]		= NULL;
-	m_addons[eLauncher]		= NULL;
+	m_addons[eSilencer]		= nullptr;
+	m_addons[eScope]		= nullptr;
+	m_addons[eLauncher]		= nullptr;
+	m_addons[eLaser]		= nullptr;
+	m_addons[eFlashlight]	= nullptr;
 
 	m_cell_size.set(INV_GRID_WIDTHF, INV_GRID_HEIGHTF);
 
@@ -376,6 +378,12 @@ CUIWeaponCellItem::CUIWeaponCellItem(CWeapon* itm)
 
 	if(itm->GrenadeLauncherAttachable())
 		m_addon_offset[eLauncher].set(object()->GetGrenadeLauncherX(), object()->GetGrenadeLauncherY());
+
+	if (itm->LaserAttachable())
+		m_addon_offset[eLaser].set(object()->GetLaserX(), object()->GetLaserY());
+
+	if (itm->FlashlightAttachable())
+		m_addon_offset[eFlashlight].set(object()->GetFlashlightX(), object()->GetFlashlightY());
 }
 
 void CUIWeaponCellItem::UpdateItemText()
@@ -400,19 +408,20 @@ void CUIWeaponCellItem::UpdateItemText()
 CUIWeaponCellItem::~CUIWeaponCellItem(){
 }
 
-bool CUIWeaponCellItem::is_scope()
-{
+bool CUIWeaponCellItem::is_scope(){
 	return object()->ScopeAttachable()&&object()->IsScopeAttached();
 }
-
-bool CUIWeaponCellItem::is_silencer()
-{
+bool CUIWeaponCellItem::is_silencer(){
 	return object()->SilencerAttachable()&&object()->IsSilencerAttached();
 }
-
-bool CUIWeaponCellItem::is_launcher()
-{
+bool CUIWeaponCellItem::is_launcher(){
 	return object()->GrenadeLauncherAttachable()&&object()->IsGrenadeLauncherAttached();
+}
+bool CUIWeaponCellItem::is_laser() {
+	return object()->LaserAttachable() && object()->IsLaserAttached();
+}
+bool CUIWeaponCellItem::is_flashlight() {
+	return object()->FlashlightAttachable() && object()->IsFlashlightAttached();
 }
 
 void CUIWeaponCellItem::CreateIcon(eAddonType t, CIconParams &params)
@@ -443,53 +452,72 @@ void CUIWeaponCellItem::Update()
 	bool bForceReInitAddons = (b != Heading());
 
 	if (object()->SilencerAttachable()){
-		if (object()->IsSilencerAttached())
-		{
-			if (!GetIcon(eSilencer) || bForceReInitAddons)
-			{
+		if (object()->IsSilencerAttached()){
+			if (!GetIcon(eSilencer) || bForceReInitAddons){
 				CIconParams params(object()->GetSilencerName());
 				CreateIcon	(eSilencer, params);
 				InitAddon	(GetIcon(eSilencer), params, m_addon_offset[eSilencer], Heading());
 			}
 		}
-		else
-		{
+		else{
 			if (m_addons[eSilencer])
 				DestroyIcon(eSilencer);
 		}
 	}
 
 	if (object()->ScopeAttachable()){
-		if (object()->IsScopeAttached())
-		{
-			if (!GetIcon(eScope) || bForceReInitAddons)
-			{
+		if (object()->IsScopeAttached()){
+			if (!GetIcon(eScope) || bForceReInitAddons){
 				CIconParams params(object()->GetScopeName());
 				CreateIcon	(eScope, params);
 				InitAddon	(GetIcon(eScope), params, m_addon_offset[eScope], Heading());
 			}
 		}
-		else
-		{
+		else{
 			if (m_addons[eScope])
 				DestroyIcon(eScope);
 		}
 	}
 
 	if (object()->GrenadeLauncherAttachable()){
-		if (object()->IsGrenadeLauncherAttached())
-		{
-			if (!GetIcon(eLauncher) || bForceReInitAddons)
-			{
+		if (object()->IsGrenadeLauncherAttached()){
+			if (!GetIcon(eLauncher) || bForceReInitAddons){
 				CIconParams params(object()->GetGrenadeLauncherName());
 				CreateIcon	(eLauncher, params);
 				InitAddon	(GetIcon(eLauncher), params, m_addon_offset[eLauncher], Heading());
 			}
 		}
-		else
-		{
+		else{
 			if (m_addons[eLauncher])
 				DestroyIcon(eLauncher);
+		}
+	}
+
+	if (object()->LaserAttachable()) {
+		if (object()->IsLaserAttached()){
+			if (!GetIcon(eLaser) || bForceReInitAddons){
+				CIconParams params(object()->GetLaserName());
+				CreateIcon(eLaser, params);
+				InitAddon(GetIcon(eLaser), params, m_addon_offset[eLaser], Heading());
+			}
+		}
+		else{
+			if (m_addons[eLaser])
+				DestroyIcon(eLaser);
+		}
+	}
+
+	if (object()->FlashlightAttachable()) {
+		if (object()->IsFlashlightAttached()) {
+			if (!GetIcon(eFlashlight) || bForceReInitAddons) {
+				CIconParams params(object()->GetFlashlightName());
+				CreateIcon(eFlashlight, params);
+				InitAddon(GetIcon(eFlashlight), params, m_addon_offset[eFlashlight], Heading());
+			}
+		}
+		else {
+			if (m_addons[eFlashlight])
+				DestroyIcon(eFlashlight);
 		}
 	}
 }
@@ -501,11 +529,13 @@ void CUIWeaponCellItem::OnAfterChild(CUIDragDropListEx* parent_list)
 	CUIStatic* s_silencer = is_silencer() ? GetIcon(eSilencer) : NULL;
 	CUIStatic* s_scope = is_scope() ? GetIcon(eScope) : NULL;
 	CUIStatic* s_launcher = is_launcher() ? GetIcon(eLauncher) : NULL;
+	CUIStatic* s_laser = is_laser() ? GetIcon(eLaser) : NULL;
+	CUIStatic* s_flashlight = is_flashlight() ? GetIcon(eFlashlight) : NULL;
 	
-	InitAllAddons(s_silencer, s_scope, s_launcher, parent_list->GetVerticalPlacement());
+	InitAllAddons(s_silencer, s_scope, s_launcher, s_laser, s_flashlight, parent_list->GetVerticalPlacement());
 }
 
-void CUIWeaponCellItem::InitAllAddons(CUIStatic* s_silencer, CUIStatic* s_scope, CUIStatic* s_launcher, bool b_vertical)
+void CUIWeaponCellItem::InitAllAddons(CUIStatic* s_silencer, CUIStatic* s_scope, CUIStatic* s_launcher, CUIStatic* s_laser, CUIStatic* s_flashlight, bool b_vertical)
 {
 	CIconParams params;
 
@@ -520,6 +550,14 @@ void CUIWeaponCellItem::InitAllAddons(CUIStatic* s_silencer, CUIStatic* s_scope,
 	if (s_launcher) {
 		params.Load(*object()->GetGrenadeLauncherName());
 		InitAddon(s_launcher, params, m_addon_offset[eLauncher], b_vertical);
+	}
+	if (s_laser) {
+		params.Load(*object()->GetLaserName());
+		InitAddon(s_laser, params, m_addon_offset[eLaser], b_vertical);
+	}
+	if (s_flashlight) {
+		params.Load(*object()->GetFlashlightName());
+		InitAddon(s_flashlight, params, m_addon_offset[eFlashlight], b_vertical);
 	}
 }
 
@@ -624,27 +662,36 @@ CUIDragItem* CUIWeaponCellItem::CreateDragItem()
 
     CIconParams params;
 
-	CUIStatic* s_silencer	= nullptr;
-	CUIStatic* s_scope	= nullptr;
-	CUIStatic* s_launcher	= nullptr;
+	CUIStatic* s_silencer{};
+	CUIStatic* s_scope{};
+	CUIStatic* s_launcher{};
+	CUIStatic* s_laser{};
+	CUIStatic* s_flashlight{};
 
-    if (GetIcon(eSilencer))
-    {
+    if (GetIcon(eSilencer)){
         params.Load(object()->GetSilencerName());
         s_silencer = MakeAddonStatic(i, params);
     }
 
-    if (GetIcon(eScope))
-    {
+    if (GetIcon(eScope)){
         params.Load(object()->GetScopeName());
         s_scope = MakeAddonStatic(i, params);
     }
 
-    if (GetIcon(eLauncher))
-    {
+    if (GetIcon(eLauncher)){
         params.Load(object()->GetGrenadeLauncherName());
         s_launcher = MakeAddonStatic(i, params);
     }
+
+	if (GetIcon(eLaser)) {
+		params.Load(object()->GetLaserName());
+		s_laser = MakeAddonStatic(i, params);
+	}
+
+	if (GetIcon(eFlashlight)) {
+		params.Load(object()->GetFlashlightName());
+		s_flashlight = MakeAddonStatic(i, params);
+	}
 
     /*
     CUIStatic* s_silencer = GetIcon(eSilencer) ? MakeAddonStatic(i, params) : NULL;
@@ -653,7 +700,7 @@ CUIDragItem* CUIWeaponCellItem::CreateDragItem()
     */
 
 	if (Heading()) m_cell_size.set(m_cell_size.y, m_cell_size.x);   // swap before	
-	InitAllAddons(s_silencer, s_scope, s_launcher, false);
+	InitAllAddons(s_silencer, s_scope, s_launcher, s_laser, s_flashlight, false);
 	if (Heading()) m_cell_size.set(m_cell_size.y, m_cell_size.x);  // swap after
 	
 	return				i;

@@ -3,7 +3,7 @@
 #include "HUDManager.h"
 #include "entity.h"
 #include "ParticlesObject.h"
-#include "GrenadeLauncher.h"
+#include "Addons.h"
 #include "xrserver_objects_alife_items.h"
 #include "ExplosiveRocket.h"
 #include "Actor_Flags.h"

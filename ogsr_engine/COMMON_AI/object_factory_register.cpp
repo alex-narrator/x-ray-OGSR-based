@@ -93,9 +93,7 @@
 #	include "WeaponMounted.h"
 #	include "WeaponStatMgun.h"
 
-#	include "scope.h"
-#	include "silencer.h"
-#	include "grenadelauncher.h"
+#	include "Addons.h"
 
 #	include "bolt.h"
 #	include "medkit.h"
@@ -271,6 +269,8 @@ void CObjectFactory::register_classes	()
 	ADD(CScope					,CSE_ALifeItem					,CLSID_OBJECT_W_SCOPE			,"wpn_scope");
 	ADD(CSilencer				,CSE_ALifeItem					,CLSID_OBJECT_W_SILENCER		,"wpn_silencer");
 	ADD(CGrenadeLauncher		,CSE_ALifeItem					,CLSID_OBJECT_W_GLAUNCHER		,"wpn_grenade_launcher");
+	ADD(CLaser					,CSE_ALifeItem					,CLSID_OBJECT_W_LASER			,"wpn_laser");
+	ADD(CFlashlight				,CSE_ALifeItem					,CLSID_OBJECT_W_FLASHLIGHT		,"wpn_flashlight");
 
 	// Inventory
 	ADD(CBolt					,CSE_ALifeItemBolt				,CLSID_IITEM_BOLT				,"obj_bolt");

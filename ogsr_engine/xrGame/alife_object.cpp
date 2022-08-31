@@ -33,11 +33,18 @@ void CSE_ALifeObject::spawn_supplies		(LPCSTR ini_string)
 		for (u32 k = 0, j; ini.r_line("spawn",k,&N,&V); k++) {
 			VERIFY				(xr_strlen(N));
 	
-			float f_cond						= 1.0f;
-			bool bScope							= false;
-			bool bSilencer						= false;
-			bool bLauncher						= false;
+			float f_cond		{1.0f};
+			bool bScope{},
+				bSilencer{},
+				bLauncher{},
+				bLaser{},
+				bFlashlight{};
 
+			u32 cur_scope{},
+				cur_silencer{},
+				cur_launcher{},
+				cur_laser{},
+				cur_flashlight{};
 			
 			j					= 1;
 			p					= 1.f;
@@ -50,6 +57,19 @@ void CSE_ALifeObject::spawn_supplies		(LPCSTR ini_string)
 				bScope				= (NULL!=strstr(V,"scope"));
 				bSilencer			= (NULL!=strstr(V,"silencer"));
 				bLauncher			= (NULL!=strstr(V,"launcher"));
+				bLaser				= (NULL!=strstr(V,"laser"));
+				bFlashlight			= (NULL!=strstr(V,"flashlight"));
+				//custom multi-addon to install
+				if (NULL != strstr(V, "scope="))
+					cur_scope = (u32)atof(strstr(V, "scope=") + 6);
+				if (NULL != strstr(V, "silencer="))
+					cur_silencer = (u32)atof(strstr(V, "silencer=") + 9);
+				if (NULL != strstr(V, "launcher="))
+					cur_launcher = (u32)atof(strstr(V, "launcher=") + 9);
+				if (NULL != strstr(V, "laser="))
+					cur_laser = (u32)atof(strstr(V, "laser=") + 6);
+				if (NULL != strstr(V, "flashlight="))
+					cur_flashlight = (u32)atof(strstr(V, "flashlight=") + 11);
 				//probability
 				if(NULL!=strstr(V,"prob="))
 					p				= (float)atof(strstr(V,"prob=")+5);
@@ -63,12 +83,26 @@ void CSE_ALifeObject::spawn_supplies		(LPCSTR ini_string)
 					//подсоединить аддоны к оружию, если включены соответствующие флажки
 					CSE_ALifeItemWeapon* W =  smart_cast<CSE_ALifeItemWeapon*>(E);
 					if (W) {
-						if (W->m_scope_status == CSE_ALifeItemWeapon::eAddonAttachable)
+						if (W->m_scope_status == CSE_ALifeItemWeapon::eAddonAttachable) {
 							W->m_addon_flags.set(CSE_ALifeItemWeapon::eWeaponAddonScope, bScope);
-						if (W->m_silencer_status == CSE_ALifeItemWeapon::eAddonAttachable)
+							W->m_cur_scope = cur_scope;
+						}
+						if (W->m_silencer_status == CSE_ALifeItemWeapon::eAddonAttachable) {
 							W->m_addon_flags.set(CSE_ALifeItemWeapon::eWeaponAddonSilencer, bSilencer);
-						if (W->m_grenade_launcher_status == CSE_ALifeItemWeapon::eAddonAttachable)
+							W->m_cur_silencer = cur_silencer;
+						}
+						if (W->m_grenade_launcher_status == CSE_ALifeItemWeapon::eAddonAttachable) {
 							W->m_addon_flags.set(CSE_ALifeItemWeapon::eWeaponAddonGrenadeLauncher, bLauncher);
+							W->m_cur_glauncher = cur_launcher;
+						}
+						if (W->m_laser_status == CSE_ALifeItemWeapon::eAddonAttachable) {
+							W->m_addon_flags.set(CSE_ALifeItemWeapon::eWeaponAddonLaser, bLaser);
+							W->m_cur_laser = cur_laser;
+						}
+						if (W->m_flashlight_status == CSE_ALifeItemWeapon::eAddonAttachable) {
+							W->m_addon_flags.set(CSE_ALifeItemWeapon::eWeaponAddonFlashlight, bFlashlight);
+							W->m_cur_flashlight = cur_flashlight;
+						}
 					}
 					CSE_ALifeInventoryItem* IItem = smart_cast<CSE_ALifeInventoryItem*>(E);
 					if(IItem)

@@ -104,6 +104,8 @@ constexpr auto CLSID_OBJECT_A_M209            = MK_CLSID('A','_','M','2','0','9'
 constexpr auto CLSID_OBJECT_W_SCOPE           = MK_CLSID('W','_','S','C','O','P','E',' ');
 constexpr auto CLSID_OBJECT_W_SILENCER        = MK_CLSID('W','_','S','I','L','E','N','C');
 constexpr auto CLSID_OBJECT_W_GLAUNCHER       = MK_CLSID('W','_','G','L','A','U','N','C');
+constexpr auto CLSID_OBJECT_W_LASER			  = MK_CLSID('W','_','L','A','S','E','R',' ');
+constexpr auto CLSID_OBJECT_W_FLASHLIGHT      = MK_CLSID('W','_','F','L','A','S','H','L');
 
 // Modifiers
 constexpr auto CLSID_OBJECT_M_QDAMAGE         = MK_CLSID('O','_','Q','D','M','G',' ',' ');

@@ -41,6 +41,8 @@
 		<command id="kb_additional_action"			exe="additional_action"/>
 		<command id="kb_quick_throw_grenade"		exe="quick_throw_grenade"/>
 		<command id="kb_quick_knife_stab"			exe="quick_knife_stab"/>
+		<command id="kb_laser_on"					exe="laser_on"/>
+		<command id="kb_flashlight"					exe="flashlight"/>
 	</group>
 	<group name="kb_grp_inventory">
 		<command id="kb_inventory"					exe="inventory"/>

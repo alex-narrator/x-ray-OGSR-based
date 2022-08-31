@@ -314,15 +314,28 @@ void CUITradeWnd::ActivatePropertiesBox()
 			}
 			//
 			if (pWeapon->GrenadeLauncherAttachable() && pWeapon->IsGrenadeLauncherAttached()) {
-				m_pUIPropertiesBox->AddItem("st_detach_gl", NULL, INVENTORY_DETACH_GRENADE_LAUNCHER_ADDON);
+				sprintf(temp, "%s %s", CStringTable().translate("st_detach").c_str(), CStringTable().translate(pSettings->r_string(pWeapon->GetGrenadeLauncherName().c_str(), "inv_name_short")).c_str());
+				m_pUIPropertiesBox->AddItem(temp, (void*)pWeapon->GetGrenadeLauncherName().c_str(), INVENTORY_DETACH_ADDON);
 				b_show = true;
 			}
 			if (pWeapon->ScopeAttachable() && pWeapon->IsScopeAttached()) {
-				m_pUIPropertiesBox->AddItem("st_detach_scope", NULL, INVENTORY_DETACH_SCOPE_ADDON);
+				sprintf(temp, "%s %s", CStringTable().translate("st_detach").c_str(), CStringTable().translate(pSettings->r_string(pWeapon->GetScopeName().c_str(), "inv_name_short")).c_str());
+				m_pUIPropertiesBox->AddItem(temp, (void*)pWeapon->GetScopeName().c_str(), INVENTORY_DETACH_ADDON);
 				b_show = true;
 			}
 			if (pWeapon->SilencerAttachable() && pWeapon->IsSilencerAttached()) {
-				m_pUIPropertiesBox->AddItem("st_detach_silencer", NULL, INVENTORY_DETACH_SILENCER_ADDON);
+				sprintf(temp, "%s %s", CStringTable().translate("st_detach").c_str(), CStringTable().translate(pSettings->r_string(pWeapon->GetSilencerName().c_str(), "inv_name_short")).c_str());
+				m_pUIPropertiesBox->AddItem(temp, (void*)pWeapon->GetSilencerName().c_str(), INVENTORY_DETACH_ADDON);
+				b_show = true;
+			}
+			if (pWeapon->LaserAttachable() && pWeapon->IsLaserAttached()) {
+				sprintf(temp, "%s %s", CStringTable().translate("st_detach").c_str(), CStringTable().translate(pSettings->r_string(pWeapon->GetLaserName().c_str(), "inv_name_short")).c_str());
+				m_pUIPropertiesBox->AddItem(temp, (void*)pWeapon->GetLaserName().c_str(), INVENTORY_DETACH_ADDON);
+				b_show = true;
+			}
+			if (pWeapon->FlashlightAttachable() && pWeapon->IsFlashlightAttached()) {
+				sprintf(temp, "%s %s", CStringTable().translate("st_detach").c_str(), CStringTable().translate(pSettings->r_string(pWeapon->GetFlashlightName().c_str(), "inv_name_short")).c_str());
+				m_pUIPropertiesBox->AddItem(temp, (void*)pWeapon->GetFlashlightName().c_str(), INVENTORY_DETACH_ADDON);
 				b_show = true;
 			}
 			if (smart_cast<CWeaponMagazined*>(pWeapon)) {
@@ -428,10 +441,8 @@ void CUITradeWnd::SendMessage(CUIWindow *pWnd, s16 msg, void *pData)
 						auto WpnMagaz = static_cast<CWeaponMagazined*>(pWpn);
 						WpnMagaz->UnloadMagazine();
 						WpnMagaz->PullShutter();
-						if (auto WpnMagazWgl = smart_cast<CWeaponMagazinedWGrenade*>(WpnMagaz))
-						{
-							if (WpnMagazWgl->IsGrenadeLauncherAttached())
-							{
+						if (auto WpnMagazWgl = smart_cast<CWeaponMagazinedWGrenade*>(WpnMagaz)){
+							if (WpnMagazWgl->IsGrenadeLauncherAttached()){
 								WpnMagazWgl->PerformSwitchGL();
 								WpnMagazWgl->UnloadMagazine();
 								WpnMagazWgl->PerformSwitchGL();
@@ -472,22 +483,8 @@ void CUITradeWnd::SendMessage(CUIWindow *pWnd, s16 msg, void *pData)
 					//SetCurrentItem(NULL);
 					PlaySnd(eInvMagUnload);
 				}break;
-				case INVENTORY_DETACH_SCOPE_ADDON:
-				{
-					auto wpn = smart_cast<CWeapon*>(CurrentIItem());
-					wpn->Detach(wpn->GetScopeName().c_str(), true);
-					PlaySnd(eInvDetachAddon);
-				}break;
-				case INVENTORY_DETACH_SILENCER_ADDON:
-				{
-					auto wpn = smart_cast<CWeapon*>(CurrentIItem());
-					wpn->Detach(wpn->GetSilencerName().c_str(), true);
-					PlaySnd(eInvDetachAddon);
-				}break;
-				case INVENTORY_DETACH_GRENADE_LAUNCHER_ADDON:
-				{
-					auto wpn = smart_cast<CWeapon*>(CurrentIItem());
-					wpn->Detach(wpn->GetGrenadeLauncherName().c_str(), true);
+				case INVENTORY_DETACH_ADDON: {
+					CurrentIItem()->cast_weapon()->Detach((const char*)(m_pUIPropertiesBox->GetClickedItem()->GetData()), true);
 					PlaySnd(eInvDetachAddon);
 				}break;
 				case INVENTORY_DROP_ACTION:

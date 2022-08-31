@@ -128,7 +128,7 @@
 #	include "smart_zone.h"
 #	include "F1.h"
 #	include "RGD5.h"
-#	include "Scope.h"
+#	include "Addons.h"
 #	include "StalkerOutfit.h"
 #	include "Torch.h"
 #	include "InfoDocument.h"

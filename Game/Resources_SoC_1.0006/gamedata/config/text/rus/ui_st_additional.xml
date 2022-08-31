@@ -18,6 +18,9 @@
 	<string id="st_rpm_units">
 		<text>выс./мин</text>
 	</string>
+	<string id="st_detach">
+		<text>отсоединить</text>
+	</string>
 	<string id="st_dispertion_units">
 		<text>MOA</text>
 	</string>
@@ -474,6 +477,12 @@
 	<string id="st_compatible_glauncher">
 		<text>подствольники:</text>
 	</string>
+	<string id="st_compatible_laser">
+		<text>ЛЦУ:</text>
+	</string>
+	<string id="st_compatible_flashlight">
+		<text>фонари:</text>
+	</string>	
 	<string id="st_current_ammo_count">
 		<text>Заряжено:</text>
 	</string>
