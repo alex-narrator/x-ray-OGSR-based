@@ -205,6 +205,8 @@ protected:
 	EHandDependence				eHandDependence;
 	bool						m_bIsSingleHanded;
 
+	float						m_fDecreaseUpdateTime{};
+
 	////////// network //////////////////////////////////////////////////
 public:
 	virtual void				net_Export					( CSE_Abstract* E );

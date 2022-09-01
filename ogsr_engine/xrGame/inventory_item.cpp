@@ -185,6 +185,8 @@ void CInventoryItem::Load(LPCSTR section)
 	// hands
 	eHandDependence				= EHandDependence(READ_IF_EXISTS(pSettings, r_u32, section, "hand_dependence", hdNone));
 	m_bIsSingleHanded			= !!READ_IF_EXISTS(pSettings, r_bool, section, "single_handed", TRUE);
+
+	m_fDecreaseUpdateTime		= READ_IF_EXISTS(pSettings, r_float, section, "ttl_on_dec_update_time", 1.f);
 }
 
 
@@ -832,10 +834,14 @@ void CInventoryItem::UpdateConditionDecrease(float current_time)
 	if (fis_zero(m_fTTLOnDecrease) ||
 		fis_zero(m_fCondition)) return;
 
-	float delta_time = 0.f;
+	float delta_time{};
 
 	if (current_time > m_fLastTimeCalled)
 		delta_time = current_time - m_fLastTimeCalled;
+
+	if (delta_time < m_fDecreaseUpdateTime * Level().GetGameTimeFactor()) return;
+
+	//Msg("delta time [%.6f] for item [%s]", delta_time, Name());
 
 	m_fLastTimeCalled = Level().GetGameDayTimeSec();
 
