@@ -780,6 +780,10 @@ BOOL CWeapon::net_Spawn		(CSE_Abstract* DC)
 	if (IsFlashlightAttached())
 		m_bIsFlashlightOn = E->m_bIsFlashlightOn;
 
+	m_bZoomMode = E->m_bZoom;
+	if (m_bZoomMode)	OnZoomIn();
+	else			OnZoomOut();
+
 	UpdateAddonsVisibility();
 	InitAddons();
 
@@ -813,9 +817,6 @@ BOOL CWeapon::IsUpdating()
 void CWeapon::net_Export( CSE_Abstract* E ) {
   inherited::net_Export( E );
 
-  //CSE_ALifeInventoryItem *itm = smart_cast<CSE_ALifeInventoryItem*>( E );
-  //itm->m_fCondition = m_fCondition;
-
   CSE_ALifeItemWeapon* wpn = smart_cast<CSE_ALifeItemWeapon*>( E );
   wpn->wpn_flags = IsUpdating() ? 1 : 0;
   wpn->a_elapsed = u16( iAmmoElapsed );
@@ -837,26 +838,12 @@ void CWeapon::net_Export( CSE_Abstract* E ) {
   wpn->m_bIsFlashlightOn = m_bIsFlashlightOn;
 }
 
-void CWeapon::save(NET_Packet &output_packet)
-{
+void CWeapon::save(NET_Packet &output_packet){
 	inherited::save	(output_packet);
-	save_data		(iAmmoElapsed,		output_packet);
-	save_data		(m_flagsAddOnState, output_packet);
-	save_data		(m_ammoType,		output_packet);
-	save_data		(m_bZoomMode,		output_packet);
 }
 
-void CWeapon::load(IReader &input_packet)
-{
+void CWeapon::load(IReader &input_packet){
 	inherited::load	(input_packet);
-	load_data		(iAmmoElapsed,		input_packet);
-	load_data		(m_flagsAddOnState, input_packet);
-	UpdateAddonsVisibility	();
-	load_data		(m_ammoType,		input_packet);
-	load_data		(m_bZoomMode,		input_packet);
-
-	if (m_bZoomMode)	OnZoomIn();
-		else			OnZoomOut();
 }
 
 

@@ -142,8 +142,7 @@ void CSE_ALifeInventoryItem::UPDATE_Write	(NET_Packet &tNetPacket)
 void CSE_ALifeInventoryItem::UPDATE_Read	(NET_Packet &tNetPacket)
 {
 	u16 m_wVersion = base()->m_wVersion;
-	if (m_wVersion > 118)
-	{
+	if (m_wVersion > 118){
 		tNetPacket.r_float_q8(m_fCondition, 0.0f, 1.0f);
 		tNetPacket.r_float(m_fRadiationRestoreSpeed);
 		tNetPacket.r_float(m_fLastTimeCalled);

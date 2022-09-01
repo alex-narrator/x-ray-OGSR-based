@@ -350,7 +350,7 @@ float  CInventoryOwner::MaxCarryWeight () const
 	if (backpack && !fis_zero(backpack->GetCondition()))
 		ret += backpack->GetItemEffect(CInventoryItem::eAdditionalWeight);
 
-	if (this == Actor()){
+	if (inventory().OwnerIsActor()){
 		auto placement = psActorFlags.test(AF_ARTEFACTS_FROM_ALL) ? inventory().m_all : inventory().m_belt;
 		for (const auto& it : placement) {
 			auto artefact = smart_cast<CArtefact*>(it);
@@ -381,7 +381,7 @@ float  CInventoryOwner::MaxCarryVolume() const
 	if (backpack && !fis_zero(backpack->GetCondition()))
 		ret += backpack->GetItemEffect(CInventoryItem::eAdditionalVolume);
 
-	if (this == Actor()){
+	if (inventory().OwnerIsActor()){
 		auto placement = psActorFlags.test(AF_ARTEFACTS_FROM_ALL) ? inventory().m_all : inventory().m_belt;
 		for (const auto& item : placement) {
 			auto artefact = smart_cast<CArtefact*>(item);
@@ -662,18 +662,5 @@ bool CInventoryOwner::IsVolumeUnlimited() const {
 }
 
 bool CInventoryOwner::CanPutInSlot(PIItem item, u32 slot) {
-	switch (slot)
-	{
-	case QUICK_SLOT_0:
-	case QUICK_SLOT_1:
-	case QUICK_SLOT_2:
-	case QUICK_SLOT_3:
-	{
-		if (this != Actor()) {
-			return false;
-		}
-	}
-	default:
-		return true;
-	}
+	return true;
 }

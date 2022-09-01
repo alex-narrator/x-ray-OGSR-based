@@ -1030,6 +1030,9 @@ bool CInventory::CanPutInSlot(PIItem pIItem, bool check_all) const
 
 	if (IsSlotDisabled(pIItem->GetSlot())) return false;
 
+	//костиль від вильотів при забиранні речей з інвентаря мерців, чомуся якщо річ у слоті то іноді вилітає ругаючись на CInventory::DropItem: InSlot(pIItem)
+	if (!smart_cast<CEntityAlive*>(m_pOwner)->g_Alive() && !m_slots[pIItem->GetSlot()].m_bPersistent) return false;
+
 	if(pIItem->GetSlot() < m_slots.size() && 
 		!m_slots[pIItem->GetSlot()].m_pIItem)
 		return true;

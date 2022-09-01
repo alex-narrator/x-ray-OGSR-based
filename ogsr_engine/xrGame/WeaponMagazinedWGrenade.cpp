@@ -69,8 +69,7 @@ void CWeaponMagazinedWGrenade::Load	(LPCSTR section)
 
 	m_sFlameParticles2 = pSettings->r_string(section, "grenade_flame_particles");
 
-	if(m_eGrenadeLauncherStatus == ALife::eAddonPermanent)
-	{
+	if(m_eGrenadeLauncherStatus == ALife::eAddonPermanent){
 		CRocketLauncher::m_fLaunchSpeed = pSettings->r_float(section, "grenade_vel");
 	}
 
@@ -79,8 +78,7 @@ void CWeaponMagazinedWGrenade::Load	(LPCSTR section)
 	// load ammo classes SECOND (grenade_class)
 	m_ammoTypes2.clear	(); 
 	LPCSTR				S = pSettings->r_string(section,"grenade_class");
-	if (S && S[0]) 
-	{
+	if (S && S[0]) {
 		string128		_ammoItem;
 		int				count		= _GetItemCount	(S);
 		for (int it=0; it<count; ++it)	
@@ -844,20 +842,12 @@ void CWeaponMagazinedWGrenade::UpdateGrenadeVisibility(bool visibility)
 void CWeaponMagazinedWGrenade::save(NET_Packet &output_packet)
 {
 	inherited::save(output_packet);
-	save_data(m_bGrenadeMode, output_packet);
-	save_data(m_magazine2.size(), output_packet);
-	save_data(m_ammoType2, output_packet);
 	//Msg( "~~[%s][%s] saved: m_bGrenadeMode: [%d], m_magazine2.size(): [%u], m_ammoType2: [%u]", __FUNCTION__, this->Name(), m_bGrenadeMode, m_magazine2.size(), m_ammoType2 );
 }
 
 void CWeaponMagazinedWGrenade::load(IReader &input_packet)
 {
 	inherited::load(input_packet);
-
-	load_data(m_bGrenadeMode, input_packet);
-	load_data(iAmmoElapsed2, input_packet);
-//	if ( ai().get_alife()->header().version() >= 5 )
-	load_data( m_ammoType2, input_packet );
 	//Msg( "~~[%s][%s] loaded: m_bGrenadeMode: [%d], iAmmoElapsed2: [%d], m_ammoType2: [%u]", __FUNCTION__, this->Name(), m_bGrenadeMode, iAmmoElapsed2, m_ammoType2 );
 }
 
