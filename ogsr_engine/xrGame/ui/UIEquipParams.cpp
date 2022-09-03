@@ -14,6 +14,7 @@
 #include "Warbelt.h"
 #include "WeaponAmmo.h"
 #include "Addons.h"
+#include "PowerBattery.h"
 #include "InventoryContainer.h"
 
 constexpr auto equip_params = "equip_params.xml";
@@ -38,7 +39,9 @@ bool CUIEquipParams::Check(CInventoryItem* obj){
 		smart_cast<CWarbelt*>			(obj) ||
 		smart_cast<CCustomOutfit*>		(obj) ||
 		smart_cast<CScope*>				(obj) ||
-		smart_cast<CInventoryContainer*>(obj)) {
+		smart_cast<CInventoryContainer*>(obj) ||
+		smart_cast<CPowerBattery*>		(obj) ||
+		obj->IsPowerConsumer()					) {
 		return true;
 	}else
 		return false;
@@ -62,6 +65,22 @@ void CUIEquipParams::SetInfo(CInventoryItem* obj){
 	float list_item_h = uiXml.ReadAttribFlt("equip_params:list_item", 0, "height");
 
 	float _h{};
+
+	auto pBattery = smart_cast<CPowerBattery*>(obj);
+	if (obj->IsPowerConsumer() || pBattery && pBattery->IsCharger()) {
+		auto power_level_static = xr_new<CUIStatic>();
+		CUIXmlInit::InitStatic(uiXml, "equip_params:power_level", 0, power_level_static);
+		power_level_static->SetAutoDelete(true);
+		pos_top = power_level_static->GetPosTop();
+		power_level_static->SetWndPos(power_level_static->GetPosLeft(), _h + pos_top);
+		float power_level = obj->GetPowerLevel();
+		power_level *= 100.f;
+		sprintf_s(temp_text, " %.0f", power_level);
+		strconcat(sizeof(text_to_show), text_to_show, CStringTable().translate("st_power_level").c_str(), temp_text,"%");
+		power_level_static->SetText(text_to_show);
+		m_CapInfo.AttachChild(power_level_static);
+		_h += list_item_h;
+	}
 
 	auto pScope = smart_cast<CScope*>(obj);
 	if (pScope) {

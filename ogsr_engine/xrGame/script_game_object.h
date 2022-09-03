@@ -165,6 +165,13 @@ public:
 			u32					Cost				() const;
 			float				GetCondition		() const;
 			void				SetCondition		(float val);
+			//
+			bool				IsPowerConsumer		() const;
+			bool				CanBeCharged		() const;
+			void				ChangePowerLevel	(float);
+			void				SetPowerLevel		(float);
+			float				GetPowerLevel		() const;
+			void				Recharge			();
 
 	// CEntity
 	_DECLARE_FUNCTION10	(DeathTime	,	u32		);

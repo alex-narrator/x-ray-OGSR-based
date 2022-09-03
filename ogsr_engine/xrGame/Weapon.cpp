@@ -1290,7 +1290,7 @@ bool CWeapon::Action(s32 cmd, u32 flags)
 			{
 				auto pActor = smart_cast<const CActor*>(H_Parent());
 				auto pNightVis = pActor->GetNightVisionDevice();
-				if (pNightVis && pNightVis->IsNightVisionOn())
+				if (pNightVis && pNightVis->IsPowerOn())
 				{
 					//if (IsScopeAttached() && !IsGrenadeMode()){
 						HUD().GetUI()->AddInfoMessage("actor_state", "cant_aim");

@@ -206,6 +206,9 @@ constexpr auto CLSID_EQUIPMENT_EXO            = MK_CLSID('E','Q','U','_','E','X'
 constexpr auto CLSID_WARBELT				  = MK_CLSID('I','I','_','W','R','B','L','T');
 constexpr auto CLSID_BACKPACK				  = MK_CLSID('I','I','_','B','P','A','C','K');
 
+//power battery
+constexpr auto CLSID_POWER_BATTERY			  = MK_CLSID('I','I','_','P','W','R','B','T');
+
 // Game types
 constexpr auto CLSID_SV_GAME_SINGLE           = MK_CLSID('S','V','_','S','I','N','G','L');
 constexpr auto CLSID_CL_GAME_SINGLE           = MK_CLSID('C','L','_','S','I','N','G','L');

@@ -363,7 +363,7 @@ u32 CWeaponAmmo::Cost() const
 
 void CWeaponAmmo::UnloadBox()
 {
-	if (/*!m_pCurrentInventory || */!m_boxCurr) return;
+	if (!m_boxCurr) return;
 
 	if (m_pCurrentInventory) //попробуем доложить патроны в наявные пачки
 	{

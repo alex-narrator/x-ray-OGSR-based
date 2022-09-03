@@ -101,7 +101,7 @@ void CCustomDetectorSHOC::shedule_Update(u32 dt)
 {
 	inherited::shedule_Update(dt);
 
-	if (!IsWorking()) return;
+	if (!IsPowerOn()) return;
 	if (!H_Parent()) return;
 
 	Position().set(H_Parent()->Position());
@@ -130,7 +130,7 @@ void CCustomDetectorSHOC::UpdateCL()
 {
 	inherited::UpdateCL();
 
-	if (!IsWorking()) return;
+	if (!IsPowerOn()) return;
 	if (!H_Parent()) return;
 
 	if (!m_pCurrentActor) return;
@@ -232,31 +232,26 @@ u32	CCustomDetectorSHOC::ef_detector_type() const
 void CCustomDetectorSHOC::OnMoveToRuck(EItemPlace prevPlace)
 {
 	inherited::OnMoveToRuck(prevPlace);
-	TurnOff();
+	Switch(false);
 }
 
 void CCustomDetectorSHOC::OnMoveToSlot(EItemPlace prevPlace)
 {
 	inherited::OnMoveToSlot(prevPlace);
-	TurnOn();
+	Switch(true);
 }
 
 void CCustomDetectorSHOC::OnMoveToBelt(EItemPlace prevPlace)
 {
 	inherited::OnMoveToBelt(prevPlace);
-	TurnOn();
+	Switch(true);
 }
 
-void CCustomDetectorSHOC::TurnOn()
-{
-	m_bWorking = true;
-	UpdateMapLocations();
-	UpdateNightVisionMode();
-}
+void CCustomDetectorSHOC::Switch(bool turn_on) {
+	if (turn_on && fis_zero(GetPowerLevel())) return;
+	inherited::Switch(turn_on);
 
-void CCustomDetectorSHOC::TurnOff()
-{
-	m_bWorking = false;
+	m_bWorking = turn_on;
 	UpdateMapLocations();
 	UpdateNightVisionMode();
 }
@@ -281,7 +276,7 @@ void CCustomDetectorSHOC::UpdateMapLocations() // called on turn on/off only
 {
 	ZONE_INFO_MAP_IT it;
 	for (it = m_ZoneInfoMap.begin(); it != m_ZoneInfoMap.end(); ++it)
-		AddRemoveMapSpot(it->first, IsWorking());
+		AddRemoveMapSpot(it->first, IsPowerOn());
 }
 
 #include "clsid_game.h"
@@ -293,7 +288,7 @@ void CCustomDetectorSHOC::UpdateNightVisionMode()
 	bool bOn = bNightVision &&
 		m_pCurrentActor &&
 		m_pCurrentActor == Level().CurrentViewEntity() &&
-		IsWorking() &&
+		IsPowerOn() &&
 		m_nightvision_particle.size();
 
 	ZONE_INFO_MAP_IT it;

@@ -82,7 +82,8 @@ void CUIPdaContactsWnd::Update()
 		RemoveAll			();
 
 		CPda*	pPda		= Actor()->GetPDA	();
-		if(!pPda)			return;
+		bool pda_workable = Actor()->HasPDAWorkable();
+		if(!pda_workable)			return;
 
 		const auto m_pda_list = pPda->ActivePDAContacts();
 

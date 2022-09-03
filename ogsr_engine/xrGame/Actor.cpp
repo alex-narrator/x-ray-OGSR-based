@@ -1970,10 +1970,14 @@ bool CActor::IsHitToBackPack(SHit* pHDS)
 }
 
 #include "SimpleDetectorSHOC.h"
-bool CActor::HasDetector()
-{
+bool CActor::HasDetectorWorkable(){
 	auto item_in_det_slot = inventory().ItemFromSlot(DETECTOR_SLOT);
-	return (smart_cast<CCustomDetector*>(item_in_det_slot) || smart_cast<CSimpleDetectorSHOC*>(item_in_det_slot));
+	return (smart_cast<CCustomDetector*>(item_in_det_slot) || smart_cast<CSimpleDetectorSHOC*>(item_in_det_slot)) && 
+		item_in_det_slot->IsPowerOn() && !fis_zero(item_in_det_slot->GetCondition());
+}
+#include "PDA.h"
+bool CActor::HasPDAWorkable(){
+	return GetPDA() && GetPDA()->IsPowerOn() && !fis_zero(GetPDA()->GetCondition());
 }
 
 float CActor::GetRestoreParam(ActorRestoreParams param) {

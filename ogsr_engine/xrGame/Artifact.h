@@ -102,7 +102,7 @@ public:
 	virtual float					GetHitTypeProtection(ALife::EHitType hit_type);
 	virtual float					GetItemEffect		(ItemEffects effect);
 
-	virtual void					UpdateConditionDecrease(float) override;
+	virtual void					UpdateConditionDecrease() override;
 
 public:
 	enum EAFHudStates {

@@ -426,6 +426,55 @@ void CScriptGameObject::SetCondition	(float val)
 	// val					-= inventory_item->GetCondition();
 	inventory_item->SetCondition			(val);
 }
+//power consumption
+bool CScriptGameObject::IsPowerConsumer() const{
+	CInventoryItem* inventory_item = smart_cast<CInventoryItem*>(&object());
+	if (!inventory_item) {
+		ai().script_engine().script_log(ScriptStorage::eLuaMessageTypeError, "CSciptEntity : cannot access class member IsPowerConsumer!");
+		return false;
+	}
+	return inventory_item->IsPowerConsumer();
+}
+bool CScriptGameObject::CanBeCharged() const {
+	CInventoryItem* inventory_item = smart_cast<CInventoryItem*>(&object());
+	if (!inventory_item) {
+		ai().script_engine().script_log(ScriptStorage::eLuaMessageTypeError, "CSciptEntity : cannot access class member CanBeCharged!");
+		return false;
+	}
+	return inventory_item->CanBeCharged();
+}
+void CScriptGameObject::ChangePowerLevel(float val){
+	CInventoryItem* inventory_item = smart_cast<CInventoryItem*>(&object());
+	if (!inventory_item) {
+		ai().script_engine().script_log(ScriptStorage::eLuaMessageTypeError, "CSciptEntity : cannot access class member ChangePowerLevel!");
+		return;
+	}
+	inventory_item->ChangePowerLevel(val);
+}
+void CScriptGameObject::SetPowerLevel(float val) {
+	CInventoryItem* inventory_item = smart_cast<CInventoryItem*>(&object());
+	if (!inventory_item) {
+		ai().script_engine().script_log(ScriptStorage::eLuaMessageTypeError, "CSciptEntity : cannot access class member SetPowerLevel!");
+		return;
+	}
+	inventory_item->SetPowerLevel(val);
+}
+float CScriptGameObject::GetPowerLevel() const{
+	CInventoryItem* inventory_item = smart_cast<CInventoryItem*>(&object());
+	if (!inventory_item) {
+		ai().script_engine().script_log(ScriptStorage::eLuaMessageTypeError, "CSciptEntity : cannot access class member GetPowerLevel!");
+		return			(false);
+	}
+	return				(inventory_item->GetPowerLevel());
+}
+void CScriptGameObject::Recharge() {
+	CInventoryItem* inventory_item = smart_cast<CInventoryItem*>(&object());
+	if (!inventory_item) {
+		ai().script_engine().script_log(ScriptStorage::eLuaMessageTypeError, "CSciptEntity : cannot access class member Recharge!");
+		return;
+	}
+	inventory_item->Recharge();
+}
 
 void CScriptGameObject::eat				(CScriptGameObject *item)
 {

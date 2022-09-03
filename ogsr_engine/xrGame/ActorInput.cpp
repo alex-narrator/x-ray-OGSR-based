@@ -171,7 +171,7 @@ void CActor::IR_OnKeyboardPress(int cmd){
 				if(inventory().ActiveItem() && inventory().ActiveItem()->cast_hud_item() && inventory().ActiveItem()->cast_hud_item()->IsPending())
 					HUD().GetUI()->AddInfoMessage("item_usage", "hands_not_free");
 				else
-					GetNightVisionDevice()->SwitchNightVision();
+					GetNightVisionDevice()->Switch();
 			}
 		}
 		} break;

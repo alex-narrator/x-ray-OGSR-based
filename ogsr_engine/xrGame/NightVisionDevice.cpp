@@ -36,12 +36,12 @@ void CNightVisionDevice::Load(LPCSTR section){
 	m_NightVisionTexture	= READ_IF_EXISTS(pSettings, r_string, section, "night_vision_texture", nullptr);
 }
 
-void CNightVisionDevice::SwitchNightVision(){
+void CNightVisionDevice::Switch(){
 	if (OnClient()) return;
-	SwitchNightVision(!m_bNightVisionOn);
+	Switch(!m_bNightVisionOn);
 }
 
-void CNightVisionDevice::SwitchNightVision(bool vision_on){
+void CNightVisionDevice::Switch(bool turn_on){
 	auto pA = smart_cast<CActor*>(H_Parent());
 	if (!pA)
 		return;
@@ -49,6 +49,9 @@ void CNightVisionDevice::SwitchNightVision(bool vision_on){
 	auto* pActorTorch = pA->GetNightVisionDevice();
 	if (pActorTorch && pActorTorch != this)
 		return;
+
+	if (turn_on && fis_zero(GetPowerLevel())) return;
+	inherited::Switch(turn_on);
 
 	bool bPlaySoundFirstPerson = (pA == Level().CurrentViewEntity());
 
@@ -76,7 +79,7 @@ void CNightVisionDevice::SwitchNightVision(bool vision_on){
 		}
 		else
 		{
-			m_bNightVisionOn = vision_on;
+			m_bNightVisionOn = turn_on;
 
 			if (m_bNightVisionOn)
 			{
@@ -106,11 +109,11 @@ void CNightVisionDevice::SwitchNightVision(bool vision_on){
 	}
 }
 
-void CNightVisionDevice::UpdateSwitchNightVision(){
+void CNightVisionDevice::UpdateSwitch(){
 	if (OnClient()) return;
 	auto* pA = smart_cast<CActor*>(H_Parent());
 	if (pA && m_bNightVisionOn && !pA->Cameras().GetPPEffector((EEffectorPPType)effNightvision))
-		SwitchNightVision(true);
+		Switch(true);
 }
 
 BOOL CNightVisionDevice::net_Spawn(CSE_Abstract* DC){
@@ -124,7 +127,7 @@ BOOL CNightVisionDevice::net_Spawn(CSE_Abstract* DC){
 }
 
 void CNightVisionDevice::net_Destroy(){
-	SwitchNightVision(false);
+	Switch(false);
 	inherited::net_Destroy();
 }
 
@@ -132,7 +135,7 @@ void CNightVisionDevice::OnH_B_Independent(bool just_before_destroy)
 {
 	inherited::OnH_B_Independent(just_before_destroy);
 
-	SwitchNightVision(false);
+	Switch(false);
 
 	HUD_SOUND::StopSound(SndNightVisionOn);
 	HUD_SOUND::StopSound(SndNightVisionOff);
@@ -143,7 +146,7 @@ void CNightVisionDevice::OnH_B_Independent(bool just_before_destroy)
 
 void CNightVisionDevice::UpdateCL(){
 	inherited::UpdateCL();
-	UpdateSwitchNightVision();
+	UpdateSwitch();
 }
 
 void CNightVisionDevice::net_Export(CSE_Abstract* E) {
@@ -173,9 +176,8 @@ void CNightVisionDevice::afterAttach() {
 
 void CNightVisionDevice::afterDetach(){
 	inherited::afterDetach();
-	SwitchNightVision(false);
 	if (smart_cast<CActor*>(H_Parent())) {
-		SwitchNightVision(false);
+		Switch(false);
 		if (m_UINightVision)
 			xr_delete(m_UINightVision);
 	}

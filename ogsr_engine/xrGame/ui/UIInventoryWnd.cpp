@@ -352,7 +352,7 @@ void CUIInventoryWnd::Update()
 		UIProgressBarSatiety.SetProgressPos(v);
 
 		v = cond->GetRadiation()*100.0f;
-		if (Actor()->HasDetector()) //удаляем шкалу радиации для прогрессбара в инвентаре если не экипирован детектор -- NO_RAD_UI_WITHOUT_DETECTOR_IN_SLOT
+		if (Actor()->HasDetectorWorkable()) //удаляем шкалу радиации для прогрессбара в инвентаре если не экипирован детектор -- NO_RAD_UI_WITHOUT_DETECTOR_IN_SLOT
 		{
 			UIProgressBackRadiation.Show(true);
 			UIProgressBarRadiation.Show(true);
@@ -369,7 +369,7 @@ void CUIInventoryWnd::Update()
 		// update money
 		string64						sMoney;
 		sprintf_s						(sMoney,"%d %s", _money, CStringTable().translate("ui_st_money_regional").c_str());
-		UIMoneyWnd.SetText				(Actor()->GetPDA() ? sMoney : CStringTable().translate("ui_st_pda_account_unavailable").c_str());
+		UIMoneyWnd.SetText				(Actor()->HasPDAWorkable() ? sMoney : CStringTable().translate("ui_st_pda_account_unavailable").c_str());
 
 		if (m_b_need_update_stats)
 		{

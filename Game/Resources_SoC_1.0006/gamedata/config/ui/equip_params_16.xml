@@ -6,6 +6,10 @@
 			<text font="letterica16" r="124" g="119" b="115"></text>
 		</cap_info>	
 		<!-- дочірні статики -->
+		<power_level x="0" y="0" width="91" height="8">
+			<text font="letterica16" r="124" g="119" b="115"></text>
+		</power_level>
+		
 		<outfit_helmet_inbuild x="0" y="0" width="91" height="8">
 			<text font="letterica16" r="124" g="119" b="115"></text>
 		</outfit_helmet_inbuild>

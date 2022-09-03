@@ -193,8 +193,8 @@ void CUIPdaWnd::Update()
 	UpdateDateTime			();
 
 	// Real Wolf: если предмет убрали, когда окно было открыто, то закрываем его. 07.08.2014.
-	auto PDA = Actor()->GetPDA();
-	if (!PDA && IsShown())
+	bool pda_workable = Actor()->HasPDAWorkable();
+	if (!pda_workable && IsShown())
 		GetHolder()->StartStopMenu(this, true);
 }
 

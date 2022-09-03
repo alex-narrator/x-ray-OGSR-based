@@ -66,6 +66,11 @@ CInventoryItem::CInventoryItem()
 
 	m_ItemEffect.clear();
 	m_ItemEffect.resize(eEffectMax);
+
+	m_power_sources.clear();
+
+	m_fPowerLevel = 1.f;
+	m_fPowerConsumingUpdateTime = Level().GetGameDayTimeSec();
 }
 
 CInventoryItem::~CInventoryItem() 
@@ -186,7 +191,16 @@ void CInventoryItem::Load(LPCSTR section)
 	eHandDependence				= EHandDependence(READ_IF_EXISTS(pSettings, r_u32, section, "hand_dependence", hdNone));
 	m_bIsSingleHanded			= !!READ_IF_EXISTS(pSettings, r_bool, section, "single_handed", TRUE);
 
-	m_fDecreaseUpdateTime		= READ_IF_EXISTS(pSettings, r_float, section, "ttl_on_dec_update_time", 1.f);
+	if (pSettings->line_exist(section, "power_source")){
+		LPCSTR str = pSettings->r_string(section, "power_source");
+		for (int i = 0, count = _GetItemCount(str); i < count; ++i){
+			string128 power_source_section;
+			_GetItem(str, i, power_source_section);
+			m_power_sources.push_back(power_source_section);
+		}
+	}
+
+	m_fTTLOnPowerConsumption	= READ_IF_EXISTS(pSettings, r_float, section, "ttl_on_power", 0.f);
 }
 
 
@@ -194,6 +208,8 @@ void  CInventoryItem::ChangeCondition(float fDeltaCondition)
 {
 	m_fCondition += fDeltaCondition;
 	clamp(m_fCondition, 0.f, 1.f);
+	if (fis_zero(GetCondition()) && IsPowerConsumer() && IsPowerOn())
+		Switch(false);
 	auto se_obj = object().alife_object();
 	if (se_obj)
 	{
@@ -326,7 +342,8 @@ void CInventoryItem::UpdateCL()
 #endif
 	if (b_brake_item)
 		object().DestroyObject();
-	UpdateConditionDecrease(Level().GetGameDayTimeSec());
+	UpdateConditionDecrease();
+	UpdatePowerConsumption();
 }
 
 void CInventoryItem::OnEvent (NET_Packet& P, u16 type)
@@ -460,8 +477,10 @@ void CInventoryItem::save(NET_Packet &packet)
 	else
           packet.w_u8( (u8)m_eItemPlace );
 
-        if ( m_eItemPlace == eItemPlaceSlot )
-	  packet.w_u8( (u8)GetSlot() );
+	if ( m_eItemPlace == eItemPlaceSlot )
+		packet.w_u8( (u8)GetSlot() );
+
+	packet.w_float_q16(m_fPowerLevel, 0.f, 1.f);
 
 	if (object().H_Parent()) {
 		packet.w_u8			(0);
@@ -494,13 +513,15 @@ void CInventoryItem::load(IReader &packet)
 	  }
 	}
 
-        if ( m_eItemPlace == eItemPlaceSlot )
-          if ( ai().get_alife()->header().version() < 4 ) {
-            auto slots = GetSlots();
+    if ( m_eItemPlace == eItemPlaceSlot )
+		if ( ai().get_alife()->header().version() < 4 ) {
+			auto slots = GetSlots();
             SetSlot( slots.size() ? slots[ 0 ] : NO_ACTIVE_SLOT );
-          }
-          else
-            SetSlot( packet.r_u8() );
+		}
+		else
+			SetSlot( packet.r_u8() );
+
+	m_fPowerLevel = packet.r_float_q16(0.f, 1.f);
 
 	u8						tmp = packet.r_u8();
 	if (!tmp)
@@ -829,17 +850,18 @@ void CInventoryItem::TryBreakToPieces(bool play_effects)
 	}
 }
 
-void CInventoryItem::UpdateConditionDecrease(float current_time)
+constexpr auto CONDITION_DECREASE_UPDATE_TIME = 1.f;
+void CInventoryItem::UpdateConditionDecrease()
 {
 	if (fis_zero(m_fTTLOnDecrease) ||
 		fis_zero(m_fCondition)) return;
 
 	float delta_time{};
-
+	float current_time = Level().GetGameDayTimeSec();
 	if (current_time > m_fLastTimeCalled)
 		delta_time = current_time - m_fLastTimeCalled;
 
-	if (delta_time < m_fDecreaseUpdateTime * Level().GetGameTimeFactor()) return;
+	if (delta_time < CONDITION_DECREASE_UPDATE_TIME * Level().GetGameTimeFactor()) return;
 
 	//Msg("delta time [%.6f] for item [%s]", delta_time, Name());
 
@@ -863,7 +885,8 @@ void CInventoryItem::GetBriefInfo(xr_string& str_name, xr_string& icon_sect_name
 }
 
 bool CInventoryItem::NeedForcedDescriptionUpdate() const {
-	return !fis_zero(GetCondition()) && !fis_zero(m_fTTLOnDecrease);
+	return !fis_zero(GetCondition()) && !fis_zero(m_fTTLOnDecrease) ||
+		IsPowerConsumer() && IsPowerOn();
 }
 
 float CInventoryItem::GetHitTypeProtection(ALife::EHitType hit_type){
@@ -874,4 +897,79 @@ float CInventoryItem::GetItemEffect(ItemEffects effect) {
 	//на випромінення радіації стан предмету не впливає (окрім як для артефактів)
 	float condition_k = (effect == eRadiationRestoreSpeed) ? 1.f : GetCondition();
 	return m_ItemEffect[effect] * condition_k;
+}
+
+constexpr auto POWER_CONSUMING_UPDATE_TIME = 1.f;
+void CInventoryItem::UpdatePowerConsumption() {
+	auto pActor = smart_cast<CActor*>(object().H_Parent());
+	if (!IsPowerConsumer() || !pActor || !IsPowerOn() || fis_zero(GetCondition())) return;
+
+	float delta_time{};
+	float current_time = Level().GetGameDayTimeSec();
+
+	if (current_time > m_fPowerConsumingUpdateTime)
+		delta_time = current_time - m_fPowerConsumingUpdateTime;
+
+	if (delta_time < POWER_CONSUMING_UPDATE_TIME * Level().GetGameTimeFactor()) return;
+
+	m_fPowerConsumingUpdateTime = Level().GetGameDayTimeSec();
+
+	float power_dec =
+		(1.f / (m_fTTLOnPowerConsumption * 3600.f)) *	//приведення до ігрових годин
+		delta_time;
+
+	ChangePowerLevel(-power_dec);
+}
+
+bool CInventoryItem::IsPowerConsumer() const {
+	return !fis_zero(m_fTTLOnPowerConsumption);
+}
+
+bool CInventoryItem::IsPowerOn() const {
+	return false;
+}
+
+void CInventoryItem::ChangePowerLevel(float value) {
+	m_fPowerLevel += value;
+	clamp(m_fPowerLevel, 0.f, 1.f);
+
+	if (fis_zero(m_fPowerLevel) && IsPowerOn())
+		Switch(false);
+}
+
+void CInventoryItem::SetPowerLevel(float value) {
+	m_fPowerLevel = value;
+	clamp(m_fPowerLevel, 0.f, 1.f);
+
+	if (fis_zero(m_fPowerLevel) && IsPowerOn())
+		Switch(false);
+}
+
+void CInventoryItem::Switch() {
+	Switch(!IsPowerOn());
+}
+
+void CInventoryItem::Switch(bool turn_on) {
+	if (!IsPowerConsumer()) return;
+	m_fPowerConsumingUpdateTime = turn_on ? Level().GetGameDayTimeSec() : 0.f;
+}
+
+bool CInventoryItem::CanBeCharged() const {
+	return IsPowerConsumer() && !fis_zero(GetCondition()) && m_fPowerLevel < 0.8f;
+}
+
+bool CInventoryItem::CanBeChargedBy(CInventoryItem* item) const {
+	if (!CanBeCharged() || m_power_sources.empty()) return false;
+	bool is_compatible{};
+	for (const auto& sect : m_power_sources) {
+		if (sect == item->object().cNameSect() && item->Useful()) {
+			is_compatible = true;
+			break;
+		}
+	}
+	return is_compatible;
+}
+
+void CInventoryItem::Recharge() {
+	SetPowerLevel(1.f);
 }

@@ -289,6 +289,10 @@ void CUIItemInfo::Update()
 		if (UIArtefactParams) {
 			UIArtefactParams->SetInfo(m_pInvItem);
 		}
+
+		if (UIEquipParams) {
+			UIEquipParams->SetInfo(m_pInvItem);
+		}
 	}
 
 	inherited::Update();

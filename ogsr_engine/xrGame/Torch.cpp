@@ -108,24 +108,27 @@ void CTorch::Switch()
 	Switch					(bActive);
 }
 
-void CTorch::Switch	(bool light_on)
+void CTorch::Switch	(bool turn_on)
 {
+	if (turn_on && fis_zero(GetPowerLevel())) return;
+	inherited::Switch(turn_on);
+
 	bool was_switched_on = m_switched_on;
 
-	m_switched_on			= light_on;
+	m_switched_on			= turn_on;
 	if (can_use_dynamic_lights())
 	{
-		light_render->set_active(light_on);
-		light_omni->set_active(light_on);
+		light_render->set_active(turn_on);
+		light_omni->set_active(turn_on);
 	}
-	glow_render->set_active					(light_on);
+	glow_render->set_active					(turn_on);
 
 	if (*light_trace_bone) 
 	{
 		IKinematics* pVisual				= smart_cast<IKinematics*>(Visual()); VERIFY(pVisual);
 		u16 bi								= pVisual->LL_BoneID(light_trace_bone);
 
-		pVisual->LL_SetBoneVisible			(bi,	light_on,	TRUE);
+		pVisual->LL_SetBoneVisible			(bi, turn_on,	TRUE);
 		pVisual->CalculateBones				(TRUE);
 	}
 
@@ -140,7 +143,7 @@ void CTorch::Switch	(bool light_on)
 	}
 }
 
-bool CTorch::torch_active					() const
+bool CTorch::IsPowerOn() const
 {
 	return (m_switched_on);
 }

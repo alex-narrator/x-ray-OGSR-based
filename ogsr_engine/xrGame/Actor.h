@@ -785,7 +785,8 @@ public:
 	//визначаємо чи треба передати хіт до рюкзака та його вмісту
 	bool	IsHitToBackPack(SHit* pHDS);
 
-	bool	HasDetector();
+	bool	HasDetectorWorkable();
+	bool	HasPDAWorkable();
 
 	bool	IsRuckAmmoPlacement		() { return m_bRuckAmmoPlacement; };
 	void	SetRuckAmmoPlacement	(bool set_ruck) { m_bRuckAmmoPlacement = set_ruck; };

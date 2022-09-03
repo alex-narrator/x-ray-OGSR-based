@@ -465,7 +465,7 @@ float CArtefact::GetItemEffect(ItemEffects effect) {
 	return m_ItemEffect[effect] * GetCondition() * GetRandomKoef();
 }
 
-void CArtefact::UpdateConditionDecrease(float current_time)
+void CArtefact::UpdateConditionDecrease()
 {
 	if (!m_pCurrentInventory || !psActorFlags.test(AF_ARTEFACTS_FROM_ALL) && !m_pCurrentInventory->InBelt(this) ||
 		!smart_cast<CActor*>(H_Parent()))
@@ -474,7 +474,7 @@ void CArtefact::UpdateConditionDecrease(float current_time)
 		return;
 	}
 
-	inherited::UpdateConditionDecrease(current_time);
+	inherited::UpdateConditionDecrease();
 	//	Msg("! Artefact [%s] change condition on [%.6f]|current condition [%.6f]|delta_time  [%.6f]|time_factor [%.6f]", cName().c_str(), condition_dec, GetCondition(), Device.fTimeDelta, Level().GetGameTimeFactor());
 }
 

@@ -6116,6 +6116,9 @@
     <ClInclude Include="Addons.h">
       <Filter>Core\Client\Objects\items &amp; weapons\Weapons\Custom Weapon\Addons</Filter>
     </ClInclude>
+    <ClInclude Include="PowerBattery.h">
+      <Filter>Core\Client\Objects\items &amp; weapons\Devices</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="damage_manager.cpp">
@@ -8935,6 +8938,9 @@
     </ClCompile>
     <ClCompile Include="Addons.cpp">
       <Filter>Core\Client\Objects\items &amp; weapons\Weapons\Custom Weapon\Addons</Filter>
+    </ClCompile>
+    <ClCompile Include="PowerBattery.cpp">
+      <Filter>Core\Client\Objects\items &amp; weapons\Devices</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

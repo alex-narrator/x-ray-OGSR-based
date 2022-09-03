@@ -438,5 +438,13 @@ class_<CScriptGameObject> script_register_game_object2(class_<CScriptGameObject>
 		.def( "add_feel_touch",    ( void ( CScriptGameObject::* )( float, const luabind::object&, const luabind::functor<void>& ) )( &CScriptGameObject::addFeelTouch ) )
 		.def( "remove_feel_touch", ( void ( CScriptGameObject::* )( const luabind::object&, const luabind::functor<void>&, const luabind::functor<bool>& ) )( &CScriptGameObject::removeFeelTouch ) )
 		.def( "remove_feel_touch", ( void ( CScriptGameObject::* )( const luabind::object&, const luabind::functor<void>& ) )( &CScriptGameObject::removeFeelTouch ) )
+
+		//power consumption
+		.def("is_power_consumer",	&CScriptGameObject::IsPowerConsumer)
+		.def("can_be_charged",		&CScriptGameObject::CanBeCharged)
+		.def("change_power_level",	&CScriptGameObject::ChangePowerLevel)
+		.def("set_power_level",		&CScriptGameObject::SetPowerLevel)
+		.def("get_power_level",		&CScriptGameObject::GetPowerLevel)
+		.def("recharge",			&CScriptGameObject::Recharge)
 	;
 }

@@ -43,13 +43,11 @@ public:
 	virtual CObject*						GetOwnerObject			();
 
 
-			void							TurnOn					();
-			void							TurnOff					();
-	
-			bool 							IsActive				() {return IsOn();}
-			bool 							IsOn					() {return !m_bTurnedOff;}
-			bool 							IsOff					() {return m_bTurnedOff;}
+	virtual void							OnMoveToSlot			(EItemPlace prevPlace) override;
+	virtual void							OnMoveToRuck			(EItemPlace prevPlace) override;
 
+	virtual	void							Switch					(bool);
+	virtual bool							IsPowerOn				() const { return m_bTurnedOn; };
 
 			xr_map<u16, CPda*>				ActivePDAContacts		();
 			CPda*							GetPdaFromOwner			(CObject* owner);
@@ -73,5 +71,5 @@ protected:
 	shared_str					m_SpecificChracterOwner;
 	xr_string								m_sFullName;
 
-	bool									m_bTurnedOff;
+	bool									m_bTurnedOn;
 };

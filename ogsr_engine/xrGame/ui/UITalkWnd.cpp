@@ -96,7 +96,7 @@ void CUITalkWnd::InitTalkDialog()
 
 	UITradeWnd->Hide							();
 	// режим бартерной торговли
-	if (!m_pActor->GetPDA())
+	if (!m_pActor->HasPDAWorkable())
 	{
 		u_NonBarterMoney = m_pActor->get_money(); //получаем деньги на виртуальном ПДА-счете актора
 		if (!m_pOthersInvOwner->InfinitiveMoney()) u_NonBarterMoneyOther = m_pOthersInvOwner->get_money(); //получаем деньги на виртуальном ПДА-счете контрагента, если контрагент не бесконечно богатый торговец
@@ -278,7 +278,7 @@ void CUITalkWnd::Hide()
 	if (m_pActor->IsTalking()) m_pActor->StopTalk();
 
 	// режим бартерной торговли
-	if (!m_pActor->GetPDA())
+	if (!m_pActor->HasPDAWorkable())
 	{
 		m_pActor->set_money(u_NonBarterMoney, true);                                                          //вернём деньги с виртуального ПДА-счета актора
 		if (!m_pOthersInvOwner->InfinitiveMoney()) m_pOthersInvOwner->set_money(u_NonBarterMoneyOther, true); //вернём деньги с виртуального ПДА-счета контрагента

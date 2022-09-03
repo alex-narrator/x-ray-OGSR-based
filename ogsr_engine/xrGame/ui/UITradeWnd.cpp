@@ -240,7 +240,7 @@ void CUITradeWnd::InitTrade(CInventoryOwner* pOur, CInventoryOwner* pOthers)
 	UpdateLists							(eBoth);
 
 	// режим бартерной торговли
-	if (!m_pInvOwner->GetPDA())
+	if (!Actor()->HasPDAWorkable())
 	{
 		m_uidata->UIOurMoneyStatic.SetText(*CStringTable().translate("ui_st_pda_account_unavailable"));   //закроем статиком кол-во денег актора, т.к. оно еще не обновилось и не ноль
 		m_uidata->UIOtherMoneyStatic.SetText(*CStringTable().translate("ui_st_pda_account_unavailable")); //закроем статиком кол-во денег контрагента, т.к. оно еще не обновилось и не ---
@@ -725,7 +725,7 @@ void CUITradeWnd::PerformTrade()
 		string256				deal_refuse_text; //строка с текстом сообщения-отказа при невозмжности совершить торговую сделку
 		//условия для формирования текста
 		LPCSTR                  trader_name = others_money < 0 ? m_pOthersInvOwner->Name() : m_pInvOwner->Name(); //от чьего имени выдаётся сообщение
-		STRING_ID               refusal_text = /*g_actor*/m_pInvOwner->GetPDA() ? "st_not_enough_money_to_trade" : "st_not_enough_money_to_barter"; //текст сообщения отказа в зависимости от торговля/бартер
+		STRING_ID               refusal_text = Actor()->HasPDAWorkable() ? "st_not_enough_money_to_trade" : "st_not_enough_money_to_barter"; //текст сообщения отказа в зависимости от торговля/бартер
 		//показываем статик с текстом отказа
 		m_uidata->UIDealMsg = HUD().GetUI()->UIGame()->AddCustomStatic("not_enough_money", true); //показать статик
 		strconcat(sizeof(deal_refuse_text), deal_refuse_text, trader_name, ": ", *CStringTable().translate(refusal_text)); //сформировать текст
@@ -815,7 +815,7 @@ void CUITradeWnd::UpdatePrices()
           sprintf_s( buf, "%d %s", (int)m_pOthersInvOwner->get_money(), money_name);
           m_uidata->UIOtherMoneyStatic.SetText(buf);
 	}//else
-	if (m_pOthersInvOwner->InfinitiveMoney() || (!m_pOthersInvOwner->InfinitiveMoney() && !m_pInvOwner->GetPDA())) //закроем --- счетчик денег контрагента, если в режиме бартера
+	if (m_pOthersInvOwner->InfinitiveMoney() || (!m_pOthersInvOwner->InfinitiveMoney() && !Actor()->HasPDAWorkable())) //закроем --- счетчик денег контрагента, если в режиме бартера
 	{
 		m_uidata->UIOtherMoneyStatic.SetText("---");
 	}

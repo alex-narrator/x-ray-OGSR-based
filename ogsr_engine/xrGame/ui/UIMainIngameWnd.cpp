@@ -360,8 +360,9 @@ void CUIMainIngameWnd::Update()
 	{
 			string256				text_str;
 			CPda* _pda	= m_pActor->GetPDA();
+			bool pda_workable = m_pActor->HasPDAWorkable();
 			u32 _cn		= 0;
-			if(_pda && 0!= (_cn=_pda->ActiveContactsNum()) )
+			if(pda_workable && 0!= (_cn=_pda->ActiveContactsNum()) )
 			{
 				sprintf_s(text_str, "%d", _cn);
 				UIPdaOnline.SetText(text_str);
@@ -643,7 +644,7 @@ void CUIMainIngameWnd::ReceiveNews(GAME_NEWS_DATA* news)
 {
 	VERIFY(news->texture_name.size());
 	CActor* pActor = smart_cast<CActor*>(Level().CurrentEntity());
-	if (pActor->GetPDA())
+	if (pActor->HasPDAWorkable())
 		HUD().GetUI()->m_pMessagesWnd->AddIconedPdaMessage(*(news->texture_name), news->tex_rect, news->SingleLineText(), news->show_time);
 }
 
@@ -774,7 +775,7 @@ void CUIMainIngameWnd::UpdateFlashingIcons()
 	CActor* pActor = smart_cast<CActor*>(Level().CurrentEntity());
 	for (FlashingIcons_it it = m_FlashingIcons.begin(); it != m_FlashingIcons.end(); ++it)
 	{
-		if (pActor->GetPDA())
+		if (pActor->HasPDAWorkable())
 			it->second->Update();
 		else
 			it->second->Show(false);
@@ -784,7 +785,7 @@ void CUIMainIngameWnd::UpdateFlashingIcons()
 void CUIMainIngameWnd::AnimateContacts(bool b_snd)
 {
 	CActor* pActor = smart_cast<CActor*>(Level().CurrentEntity());
-	if (!pActor->GetPDA()) return;
+	if (!pActor->HasPDAWorkable()) return;
 
 	UIPdaOnline.ResetClrAnimation	();
 
@@ -950,11 +951,11 @@ bool CUIMainIngameWnd::IsHUDElementAllowed(EHUDElement element)
 	{
 	case ePDA: //ПДА
 	{
-		return allow_devices_hud && m_pActor->GetPDA();
+		return allow_devices_hud && m_pActor->HasPDAWorkable();
 	}break;
 	case eDetector: //Детектор (иконка радиационного заражения)
 	{
-		return allow_devices_hud && m_pActor->HasDetector();
+		return allow_devices_hud && m_pActor->HasDetectorWorkable();
 	}break;
 	case eActiveItem: //Информация об предмете в руках (для оружия - кол-во/тип заряженных патронов, режим огня)
 	{

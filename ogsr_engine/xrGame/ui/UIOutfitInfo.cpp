@@ -133,7 +133,7 @@ void CUIOutfitInfo::Update()
 				if (backpack)
 					_val += backpack->GetItemEffect(CInventoryItem::ItemEffects(i));
 
-				if (!psActorFlags.is(AF_ARTEFACT_DETECTOR_CHECK) || Actor()->HasDetector()) {
+				if (!psActorFlags.is(AF_ARTEFACT_DETECTOR_CHECK) || Actor()->HasDetectorWorkable()) {
 					_val += Actor()->GetTotalArtefactsEffect(i);
 				}
 			}
@@ -143,7 +143,7 @@ void CUIOutfitInfo::Update()
 			if (outfit)
 				_val = outfit->GetHitTypeProtection(ALife::EHitType(i - _hit_type_protection_index));
 
-			if (!psActorFlags.is(AF_ARTEFACT_DETECTOR_CHECK) || Actor()->HasDetector()) {
+			if (!psActorFlags.is(AF_ARTEFACT_DETECTOR_CHECK) || Actor()->HasDetectorWorkable()) {
 				_val += (1.0f - Actor()->GetArtefactsProtection(1.0f, ALife::EHitType(i - _hit_type_protection_index)));
 			}
 		}

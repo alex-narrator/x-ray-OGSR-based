@@ -109,7 +109,7 @@ void CUITalkDialogWnd::Show()
 	inherited::Enable(true);
 
 	// режим бартерной торговли
-	if (g_actor->GetPDA())
+	if (g_actor->HasPDAWorkable())
 		UIToTradeButton.SetText(*CStringTable().translate("ui_st_trade"));  //напишем "торговать" на кнопке, вместо "бартер"
 	else
 		UIToTradeButton.SetText(*CStringTable().translate("ui_st_barter")); //напишем "бартер" на кнопке, вместо "торговать"

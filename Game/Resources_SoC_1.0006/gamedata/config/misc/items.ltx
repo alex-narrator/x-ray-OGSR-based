@@ -67,6 +67,9 @@ eat_portions_num = 2
 
 menu_use_tip = st_eat
 
+radiation_accum_factor = 0.1
+radiation_accum_limit = 1
+
 ; food item
 animation_slot		= 4
 
@@ -579,6 +582,10 @@ inv_grid_height		= 1
 inv_grid_x			= 6
 inv_grid_y			= 13
 cost				= 20
+
+ttl_on_power 		= 2
+power_source 		=  powerbank
+
 attach_angle_offset		= 3.080506,-1.493053,-1.202040   ;устанавливается в радианах Angle*PI/180
 attach_position_offset	= 0.080000,0.021273,0.100000
 attach_bone_name		= bip01_r_hand
@@ -603,6 +610,9 @@ inv_grid_height		= 1
 inv_grid_x			= 16
 inv_grid_y			= 12
 slot				= 9
+
+ttl_on_power 		= 1
+power_source 		= battery, powerbank
 
 ;вещью нельзя торговать
 can_trade				= true
@@ -635,6 +645,9 @@ inv_grid_x			= 16
 inv_grid_y			= 12
 
 slot				= 9
+
+ttl_on_power 		= 1
+power_source 		= battery, powerbank
 
 ;вещью нельзя торговать
 can_trade				= true
@@ -685,6 +698,8 @@ cost				= 500	;30
 ;belt				= true;
 default_to_ruck		= false
 
+ttl_on_power 		= 1
+power_source 		= battery, powerbank
 
 ;описание распознаваемых детектором зон
 zone_class_1		= zone_mosquito_bald

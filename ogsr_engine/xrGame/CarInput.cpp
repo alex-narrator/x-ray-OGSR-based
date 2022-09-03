@@ -157,7 +157,7 @@ void CCar::OnKeyboardPress(int cmd)
 		if (Act) {
 			auto* pNightVis = Act->GetNightVisionDevice();
 			if (pNightVis) {
-				pNightVis->SwitchNightVision();
+				pNightVis->Switch();
 			}
 		}
 	} break;

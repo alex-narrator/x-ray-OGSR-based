@@ -24,7 +24,7 @@ CPda::CPda(void)
 	m_SpecificChracterOwner = NULL;
 
 	
-	TurnOff					();
+	Switch					(false);
 }
 
 CPda::~CPda() 
@@ -45,7 +45,7 @@ BOOL CPda::net_Spawn(CSE_Abstract* DC)
 void CPda::net_Destroy() 
 {
 	inherited::net_Destroy		();
-	TurnOff						();
+	Switch						(false);
 	feel_touch.clear			();
 }
 
@@ -63,27 +63,27 @@ void CPda::shedule_Update(u32 dt)
 	if(!H_Parent()) return;
 	Position().set	(H_Parent()->Position());
 
-	if( IsOn() && Level().CurrentEntity() && Level().CurrentEntity()->ID()==H_Parent()->ID() )
+	if(IsPowerOn() && Level().CurrentEntity() && Level().CurrentEntity()->ID()==H_Parent()->ID() )
 	{
 		CEntityAlive* EA = smart_cast<CEntityAlive*>(H_Parent());
 		if(!EA || !EA->g_Alive())
 		{
-			TurnOff();
+			Switch(false);
 			return;
 		}
 
-                m_changed = false;
+        m_changed = false;
 		feel_touch_update(Position(),m_fRadius);
 		UpdateActiveContacts	();
 
-                if ( m_changed ) {
-                  if ( HUD().GetUI() ) {
-                    CUIGameSP* pGameSP = smart_cast<CUIGameSP*>( HUD().GetUI()->UIGame() );
-                    if ( pGameSP )
-                      pGameSP->PdaMenu->PdaContentsChanged( pda_section::contacts );
-                  }
-                  m_changed = false;
-                }
+		if ( m_changed ) {
+        if ( HUD().GetUI() ) {
+			CUIGameSP* pGameSP = smart_cast<CUIGameSP*>( HUD().GetUI()->UIGame() );
+			if ( pGameSP )
+				pGameSP->PdaMenu->PdaContentsChanged( pda_section::contacts );
+		}
+		m_changed = false;
+		}
 	}
 }
 
@@ -145,11 +145,11 @@ BOOL CPda::feel_touch_contact(CObject* O)
 
 void CPda::OnH_A_Chield() 
 {
-	VERIFY(IsOff());
+	VERIFY(!IsPowerOn());
 
 	//включить PDA только если оно находится у первого владельца
 	if(H_Parent()->ID() == m_idOriginalOwner){
-		TurnOn					();
+		Switch(true);
 		if(m_sFullName.empty()){
 			m_sFullName.assign(inherited::Name());
 			m_sFullName += " ";
@@ -164,7 +164,7 @@ void CPda::OnH_B_Independent(bool just_before_destroy)
 	inherited::OnH_B_Independent(just_before_destroy);
 	
 	//выключить
-	TurnOff();
+	Switch(false);
 }
 
 
@@ -229,17 +229,16 @@ CPda* CPda::GetPdaFromOwner(CObject* owner)
 }
 
 
-void CPda::TurnOn() {
-  m_bTurnedOff = false;
-  m_changed    = true;
+void CPda::Switch(bool turn_on) {
+	if (turn_on && fis_zero(GetPowerLevel())) return;
+	inherited::Switch(turn_on);
+
+	m_bTurnedOn = turn_on;
+	if (turn_on)
+		m_changed = true;
+	else
+		m_active_contacts.clear();
 }
-
-
-void CPda::TurnOff() {
-  m_bTurnedOff = true;
-  m_active_contacts.clear();
-}
-
 
 void CPda::net_Relcase( CObject *O ) {
   inherited::net_Relcase( O );
@@ -248,4 +247,14 @@ void CPda::net_Relcase( CObject *O ) {
       if ( I != m_active_contacts.end() )
         m_active_contacts.erase( I );
   }
+}
+
+void CPda::OnMoveToRuck(EItemPlace prevPlace){
+	inherited::OnMoveToRuck(prevPlace);
+	Switch(false);
+}
+
+void CPda::OnMoveToSlot(EItemPlace prevPlace){
+	inherited::OnMoveToSlot(prevPlace);
+	Switch(true);
 }

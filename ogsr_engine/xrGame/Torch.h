@@ -44,9 +44,9 @@ public:
 
 	virtual void	UpdateCL			();
 
-			void	Switch				();
-			void	Switch				(bool light_on);
-			bool	torch_active		() const;
+	virtual	void	Switch				();
+	virtual	void	Switch				(bool);
+	virtual bool	IsPowerOn			() const;
 
 	virtual bool	can_be_attached		() const;
 			void	calc_m_delta_h		( float );

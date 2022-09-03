@@ -120,7 +120,7 @@ void CUIArtefactParams::SetInfo(CInventoryItem* obj)
 
 	bool show_window = true;
 	if (artefact) {
-		show_window = !psActorFlags.is(AF_ARTEFACT_DETECTOR_CHECK) || pActor->HasDetector();
+		show_window = !psActorFlags.is(AF_ARTEFACT_DETECTOR_CHECK) || pActor->HasDetectorWorkable();
 	}
 
 	Show(show_window);

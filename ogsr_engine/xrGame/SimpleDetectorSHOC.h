@@ -55,9 +55,8 @@ public:
 	virtual void feel_touch_delete(CObject* O);
 	virtual BOOL feel_touch_contact(CObject* O);
 
-	void TurnOn();
-	void TurnOff();
-	bool IsWorking() { return m_bWorking; }
+	virtual bool IsPowerOn() const { return m_bWorking; }
+	virtual	void Switch(bool);
 
 	virtual void OnMoveToSlot(EItemPlace prevPlace) override;
 	virtual void OnMoveToRuck(EItemPlace prevPlace) override;

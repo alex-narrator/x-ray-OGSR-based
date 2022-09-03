@@ -205,8 +205,6 @@ protected:
 	EHandDependence				eHandDependence;
 	bool						m_bIsSingleHanded;
 
-	float						m_fDecreaseUpdateTime{};
-
 	////////// network //////////////////////////////////////////////////
 public:
 	virtual void				net_Export					( CSE_Abstract* E );
@@ -282,7 +280,8 @@ public:
 	//проміжок часу до повного розряджання
 			float				m_fTTLOnDecrease;
 			float				m_fLastTimeCalled;
-	virtual void				UpdateConditionDecrease(float);
+	virtual void				UpdateConditionDecrease();
+	virtual void				UpdatePowerConsumption();
 	virtual bool				NeedForcedDescriptionUpdate() const;
 
 protected:
@@ -311,10 +310,28 @@ public:
 
 	virtual float					GetItemEffect		(ItemEffects effect);
 	virtual float					GetHitTypeProtection(ALife::EHitType hit_type);
+
+	xr_vector<shared_str>			m_power_sources{};
+	virtual bool					IsPowerConsumer		() const;
+			void					ChangePowerLevel	(float);
+			void					SetPowerLevel		(float);
+	virtual float					GetPowerLevel		() const { return m_fPowerLevel; };
+
+	virtual	void					Switch			(bool);
+	virtual	void					Switch			();
+	virtual bool					IsPowerOn		() const;
+
+	virtual bool					CanBeCharged	() const;
+	virtual bool					CanBeChargedBy	(CInventoryItem*) const;
+	virtual void					Recharge();
 protected:
 	HitImmunity::HitTypeSVec		m_HitTypeProtection;
 
 	svector<float, ItemEffects::eEffectMax> m_ItemEffect;
+
+	float							m_fTTLOnPowerConsumption{};
+	float							m_fPowerLevel;
+	float							m_fPowerConsumingUpdateTime;
 };
 
 #include "inventory_item_inline.h"

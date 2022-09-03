@@ -1,20 +1,21 @@
 #include "stdafx.h"
 #include "UIInventoryWnd.h"
-#include "../actor.h"
+#include "Actor.h"
 #include "Addons.h"
-#include "../Artifact.h"
-#include "../eatable_item.h"
-#include "../BottleItem.h"
-#include "../WeaponMagazined.h"
-#include "../WeaponMagazinedWGrenade.h"
-#include "../inventory.h"
-#include "../game_base.h"
-#include "../game_cl_base.h"
-#include "../xr_level_controller.h"
+#include "Artifact.h"
+#include "eatable_item.h"
+#include "BottleItem.h"
+#include "WeaponMagazined.h"
+#include "WeaponMagazinedWGrenade.h"
+#include "PowerBattery.h"
+#include "inventory.h"
+#include "game_base.h"
+#include "game_cl_base.h"
+#include "xr_level_controller.h"
 #include "UICellItem.h"
 #include "UIListBoxItem.h"
-#include "../CustomOutfit.h"
-#include "../string_table.h"
+#include "CustomOutfit.h"
+#include "string_table.h"
 #include <regex>
 
 void CUIInventoryWnd::EatItem(PIItem itm)
@@ -156,16 +157,13 @@ void CUIInventoryWnd::ActivatePropertiesBox()
 			UIPropertiesBox.AddItem(temp, (void*)pWeapon->GetFlashlightName().c_str(), INVENTORY_DETACH_ADDON);
 			b_show = true;
 		}
-		if(smart_cast<CWeaponMagazined*>(pWeapon))
-		{
+		if(smart_cast<CWeaponMagazined*>(pWeapon)){
 			auto WpnMagazWgl = smart_cast<CWeaponMagazinedWGrenade*>(pWeapon);
 			bool b = pWeapon->GetAmmoElapsed() > 0 || WpnMagazWgl && !WpnMagazWgl->m_magazine2.empty() || smart_cast<CWeaponMagazined*>(pWeapon)->IsMagazineAttached();
 
-			if(!b)
-			{
+			if(!b){
 				CUICellItem * itm = CurrentItem();
-				for(u32 i=0; i<itm->ChildsCount(); ++i)
-				{
+				for(u32 i=0; i<itm->ChildsCount(); ++i){
 					auto pWeaponChild = static_cast<CWeaponMagazined*>(itm->Child(i)->m_pData);
 					auto WpnMagazWglChild = smart_cast<CWeaponMagazinedWGrenade*>(pWeaponChild);
 					if (pWeaponChild->GetAmmoElapsed() > 0 || ( WpnMagazWglChild && !WpnMagazWglChild->m_magazine2.empty() ))
@@ -188,7 +186,9 @@ void CUIInventoryWnd::ActivatePropertiesBox()
         static std::regex wpn_re( R"(\{WPN\})" );
 	for (u8 i = 0; i < SLOTS_TOTAL; ++i) {
 		PIItem tgt = m_pInv->m_slots[i].m_pIItem;
-		if (tgt && tgt->CanAttach(CurrentIItem())) {
+		if (!tgt) continue;
+		//attach addon
+		if (tgt->CanAttach(CurrentIItem())) {
 			string128 trans_str;
 			strconcat(sizeof(trans_str), trans_str, "st_attach_addon_to_wpn_in_slot_", std::to_string(i).c_str());
 			string128 str = { 0 };
@@ -200,11 +200,14 @@ void CUIInventoryWnd::ActivatePropertiesBox()
 			UIPropertiesBox.AddItem( s.c_str(), (void*)tgt, INVENTORY_ATTACH_ADDON );
 			b_show = true;
 		}
+		//charge device
+		if (tgt->CanBeChargedBy(CurrentIItem())) {
+			sprintf(temp, "%s %s", CStringTable().translate("st_charge").c_str(), tgt->NameShort());
+			UIPropertiesBox.AddItem(temp, (void*)tgt, INVENTORY_CHARGE_DEVICE);
+		}
 	}
 
-
 	LPCSTR _action = nullptr;
-
 	if (pEatableItem)
 		_action = pEatableItem->GetUseMenuTip();
 	if(_action){
@@ -344,6 +347,11 @@ void CUIInventoryWnd::ProcessPropertiesBoxClicked	()
 			}
 			PlaySnd(eInvMagUnload);
 		}break;
+		case INVENTORY_CHARGE_DEVICE:
+			auto battery = smart_cast<CPowerBattery*>(CurrentIItem());
+			battery->Charge((PIItem)(UIPropertiesBox.GetClickedItem()->GetData()));
+			SetCurrentItem(nullptr);
+			break;
 		}
 	}
 }

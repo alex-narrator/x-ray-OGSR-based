@@ -131,3 +131,32 @@ inv_weight 	= 0
 inv_grid_width  = 0
 inv_grid_height = 0
 quest_item      = true
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;BATTERY;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+[battery]:identity_immunities
+GroupControlSection	= spawn_group
+discovery_dependency =
+class				= II_PWRBT
+cform				= skeleton
+visual				= equipments\item_datchik1.ogf
+description			= battery_descr
+
+inv_name			= battery
+inv_name_short		= battery
+inv_weight			= 0.1
+
+inv_grid_width		= 1
+inv_grid_height		= 1
+inv_grid_x			= 9
+inv_grid_y			= 14
+cost				= 500	;30
+default_to_ruck		= false
+
+[powerbank]:battery
+description			= powerbank_descr
+inv_name			= powerbank
+inv_name_short		= powerbank
+inv_weight			= 0.3
+
+charge_count = 5
+rechargeable = true

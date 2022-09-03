@@ -24,10 +24,10 @@ public:
 
 	virtual void	DrawHUDMask			();
 
-			void	SwitchNightVision			();
-			void	SwitchNightVision			(bool light_on);
-			void	UpdateSwitchNightVision		();
-			bool	IsNightVisionOn				() { return m_bNightVisionOn; };
+	virtual void	Switch		();
+	virtual void	Switch		(bool);
+			void	UpdateSwitch();
+	virtual bool	IsPowerOn	() { return m_bNightVisionOn; };
 protected:
 			bool					m_bNightVisionOn{};
 
