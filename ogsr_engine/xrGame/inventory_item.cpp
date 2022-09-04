@@ -455,6 +455,7 @@ BOOL CInventoryItem::net_Spawn			(CSE_Abstract* DC)
 	if (fis_zero(pSE_InventoryItem->m_fLastTimeCalled))
 		pSE_InventoryItem->m_fLastTimeCalled = Level().GetGameDayTimeSec();
 	m_fLastTimeCalled = pSE_InventoryItem->m_fLastTimeCalled;
+	m_fPowerLevel = pSE_InventoryItem->m_fPowerLevel;
 
 	if (!fis_zero(m_fTTLOnDecrease))
 		object().processing_activate();
@@ -480,8 +481,6 @@ void CInventoryItem::save(NET_Packet &packet)
 	if ( m_eItemPlace == eItemPlaceSlot )
 		packet.w_u8( (u8)GetSlot() );
 
-	packet.w_float_q16(m_fPowerLevel, 0.f, 1.f);
-
 	if (object().H_Parent()) {
 		packet.w_u8			(0);
 		return;
@@ -498,6 +497,7 @@ void CInventoryItem::net_Export( CSE_Abstract* E ) {
   item->m_fCondition = m_fCondition;
   item->m_fRadiationRestoreSpeed = m_ItemEffect[eRadiationRestoreSpeed];
   item->m_fLastTimeCalled = m_fLastTimeCalled;
+  item->m_fPowerLevel = m_fPowerLevel;
 };
 
 void CInventoryItem::load(IReader &packet)
@@ -520,8 +520,6 @@ void CInventoryItem::load(IReader &packet)
 		}
 		else
 			SetSlot( packet.r_u8() );
-
-	m_fPowerLevel = packet.r_float_q16(0.f, 1.f);
 
 	u8						tmp = packet.r_u8();
 	if (!tmp)

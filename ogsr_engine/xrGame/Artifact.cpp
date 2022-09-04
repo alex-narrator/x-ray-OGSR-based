@@ -134,8 +134,7 @@ BOOL CArtefact::net_Spawn(CSE_Abstract* DC)
 			else if (cnt == 1)
 				m_fRandomK = ::Random.randF(0.f, pSettings->r_float(cNameSect(), "random_k"));
 		}
-	//debug
-	//Msg("net_Spawn [%s] (id [%d]) with random k [%.4f]", cNameSect().c_str(), ID(), GetRandomKoef());
+	//Msg("%s [%s] (id [%d]) with random k [%.4f]",__FUNCTION__, cNameSect().c_str(), ID(), GetRandomKoef());
 	return result;	
 }
 

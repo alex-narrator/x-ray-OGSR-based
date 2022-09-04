@@ -47,8 +47,9 @@ public:
 	CSE_ALifeObject* m_self{};
 	u32								m_last_update_time;
 
-	float 							m_fRadiationRestoreSpeed;
-	float							m_fLastTimeCalled;
+	float 							m_fRadiationRestoreSpeed{};
+	float							m_fLastTimeCalled{};
+	float							m_fPowerLevel;
 
 									CSE_ALifeInventoryItem	(LPCSTR caSection);
 	virtual							~CSE_ALifeInventoryItem	();

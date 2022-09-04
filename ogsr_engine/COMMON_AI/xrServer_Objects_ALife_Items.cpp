@@ -57,8 +57,9 @@ CSE_ALifeInventoryItem::CSE_ALifeInventoryItem(LPCSTR caSection)
 	State.angular_vel.set		(0.f,0.f,0.f);
 	State.linear_vel.set		(0.f,0.f,0.f);
 
-	m_fRadiationRestoreSpeed	= READ_IF_EXISTS(pSettings, r_float, caSection, "radiation_restore_speed", 0.f);
-	m_fLastTimeCalled			= 0.f;
+	if (pSettings->line_exist(caSection, "radiation_restore_speed"))
+		m_fRadiationRestoreSpeed	= pSettings->r_float(caSection, "radiation_restore_speed");
+	m_fPowerLevel				= 1.f;
 }
 
 CSE_Abstract *CSE_ALifeInventoryItem::init	()
@@ -95,9 +96,10 @@ static inline bool check (const u8 &mask, const u8 &test)
 
 void CSE_ALifeInventoryItem::UPDATE_Write	(NET_Packet &tNetPacket)
 {
-	tNetPacket.w_float_q8(m_fCondition, 0.0f, 1.0f);
-	tNetPacket.w_float(m_fRadiationRestoreSpeed);
-	tNetPacket.w_float(m_fLastTimeCalled);
+	tNetPacket.w_float_q8	(m_fCondition, 0.0f, 1.0f);
+	tNetPacket.w_float		(m_fRadiationRestoreSpeed);
+	tNetPacket.w_float		(m_fLastTimeCalled);
+	tNetPacket.w_float_q8	(m_fPowerLevel, 0.0f, 1.0f);
 
 	if (!m_u8NumItems) {
 		tNetPacket.w_u8				(0);
@@ -143,9 +145,10 @@ void CSE_ALifeInventoryItem::UPDATE_Read	(NET_Packet &tNetPacket)
 {
 	u16 m_wVersion = base()->m_wVersion;
 	if (m_wVersion > 118){
-		tNetPacket.r_float_q8(m_fCondition, 0.0f, 1.0f);
-		tNetPacket.r_float(m_fRadiationRestoreSpeed);
-		tNetPacket.r_float(m_fLastTimeCalled);
+		tNetPacket.r_float_q8	(m_fCondition, 0.0f, 1.0f);
+		tNetPacket.r_float		(m_fRadiationRestoreSpeed);
+		tNetPacket.r_float		(m_fLastTimeCalled);
+		tNetPacket.r_float_q8	(m_fPowerLevel, 0.0f, 1.0f);
 	}
 
 	tNetPacket.r_u8					(m_u8NumItems);
