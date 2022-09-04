@@ -209,12 +209,14 @@ public:
 	//размещение патронов на поясе при разрядке оружия в руках
 	void					TryAmmoCustomPlacement(CInventoryItem* pIItem);
 
-	u32						BeltSize	() const;
+	u32						BeltSize			() const;
 
-	void					DropBeltToRuck	();
-	void					DropSlotsToRuck	(u32 min_slot, u32 max_slot = NO_ACTIVE_SLOT);
-	void					UpdateVolumeDropOut();
-	bool					IsSlotDisabled	(u32) const;
+	void					DropBeltToRuck		();
+	void					DropSlotsToRuck		(u32 min_slot, u32 max_slot = NO_ACTIVE_SLOT);
+	void					UpdateVolumeDropOut	();
+	bool					IsSlotDisabled		(u32) const;
+
+	void					TryRestoreSlot		(CInventoryItem* pIItem);
 
 	bool					activate_slot		(u32 slot);
 	bool					IsAllItemsLoaded	() const;

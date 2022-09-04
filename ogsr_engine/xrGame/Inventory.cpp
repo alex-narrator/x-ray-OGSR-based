@@ -278,14 +278,12 @@ bool CInventory::DropItem(CGameObject *pObj)
 			m_ruck.erase(std::find(m_ruck.begin(), m_ruck.end(), pIItem));
 		}break;
 	case eItemPlaceSlot:{
+			TryRestoreSlot(pIItem);
 			ASSERT_FMT(InSlot(pIItem), "CInventory::DropItem: InSlot(pIItem): [%s], id: [%u], owner [%s]", pObj->cName().c_str(), pObj->ID(), m_pOwner->Name());
 			if(m_iActiveSlot == pIItem->GetSlot()) 
 				Activate	(NO_ACTIVE_SLOT);
 
 			m_slots[pIItem->GetSlot()].m_pIItem = NULL;	
-
-			// хак для учета снятия брони - надо менять визуал актору
-//			pIItem->OnDrop();
 
 			pIItem->object().processing_deactivate();
 		}break;
@@ -1030,15 +1028,14 @@ bool CInventory::CanPutInSlot(PIItem pIItem, bool check_all) const
 
 	if (IsSlotDisabled(pIItem->GetSlot())) return false;
 
-	//костиль від вильотів при забиранні речей з інвентаря мерців, чомуся якщо річ у слоті то іноді вилітає ругаючись на CInventory::DropItem: InSlot(pIItem)
-	if (!smart_cast<CEntityAlive*>(m_pOwner)->g_Alive() && !m_slots[pIItem->GetSlot()].m_bPersistent) return false;
-
 	if(pIItem->GetSlot() < m_slots.size() && 
 		!m_slots[pIItem->GetSlot()].m_pIItem)
 		return true;
 
 	//оглянемо усі доступні слоти
 	//якщо знайдемо вільний - його й встановимо цільовим
+	//з цим кодом є проблеми - він встановлює слот при спробі забрати ітем зі слоту чужого інвентаря
+	//тому коли виконується CInventory::DropItem предмет повертає GetSlot() != слоту в якому є предмет
 	if (check_all) {
 		for (const auto& slot : pIItem->GetSlots()) {
 			if (CanPutInSlot(pIItem, slot)) {
@@ -1551,6 +1548,18 @@ bool CInventory::IsSlotDisabled(u32 slot) const
 	}
 
 	return false;
+}
+
+void CInventory::TryRestoreSlot(CInventoryItem* pIItem) {
+	//у випадку коли інвентар віддає речі до іншого інвентаря та виконано CanPutInSlot(pIItem, true)
+	//pIItem->GetSlot() встановлюється != слоту у якому предмет знаходиться, тому відновимо реальний слот
+	for (const auto& slot : pIItem->GetSlots()) {
+		if (m_slots[slot].m_pIItem == pIItem && slot != pIItem->GetSlot()) {
+			/*Msg("~ %s: [%s], id: [%u], owner [%s], getslot [%u], real slot [%u]",__FUNCTION__, pIItem->object().cName().c_str(), pIItem->object().ID(), m_pOwner->Name(), pIItem->GetSlot(), slot);*/
+			pIItem->SetSlot(slot);
+			break;
+		}
+	}
 }
 
 bool CInventory::activate_slot(u32 slot)

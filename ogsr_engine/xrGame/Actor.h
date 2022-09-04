@@ -794,6 +794,8 @@ public:
 	void	DrawHUDMasks		();
 	void	UpdateVisorEfects	();
 
+	virtual bool IsVolumeUnlimited() const { return false; };
+
 protected:
 	bool	m_bIsHardHold{};
 	bool	m_bRuckAmmoPlacement{};
