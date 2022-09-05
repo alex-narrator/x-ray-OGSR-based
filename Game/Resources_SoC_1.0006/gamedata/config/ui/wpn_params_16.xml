@@ -25,9 +25,6 @@
 		<current_ammo_type x="0" y="5" width="91" height="8">
 			<text font="letterica16" r="124" g="119" b="115"></text>
 		</current_ammo_type>	
-		<current_mag_type x="0" y="5" width="91" height="8">
-			<text font="letterica16" r="124" g="119" b="115"></text>
-		</current_mag_type>		
 		<cap_current_scope x="0" y="5" width="91" height="8">
 			<text font="letterica16" r="124" g="119" b="115">st_current_scope</text>
 		</cap_current_scope>
@@ -38,21 +35,9 @@
 		<cap_magazine x="0" y="5" width="91" height="8">
 			<text font="letterica16" r="124" g="119" b="115">st_compatible_magazine</text>
 		</cap_magazine>		
-		<cap_scope x="0" y="5" width="91" height="8">
-			<text font="letterica16" r="124" g="119" b="115">st_compatible_scope</text>
-		</cap_scope>		
-		<cap_silencer x="0" y="5" width="91" height="8">
-			<text font="letterica16" r="124" g="119" b="115">st_compatible_silencer</text>
-		</cap_silencer>		
-		<cap_glauncher x="0" y="5" width="91" height="8">
-			<text font="letterica16" r="124" g="119" b="115">st_compatible_glauncher</text>
-		</cap_glauncher>
-		<cap_laser x="0" y="5" width="91" height="8">
-			<text font="letterica16" r="124" g="119" b="115">st_compatible_laser</text>
-		</cap_laser>
-		<cap_flashlight x="0" y="5" width="91" height="8">
-			<text font="letterica16" r="124" g="119" b="115">st_compatible_flashlight</text>
-		</cap_flashlight>
+		<cap_addons x="0" y="5" width="91" height="8">
+			<text font="letterica16" r="124" g="119" b="115">st_compatible_addon</text>
+		</cap_addons>		
 		
 		<list_item x="0" y="0" width="91" height="16">
 			<text font="letterica16" r="124" g="119" b="115"></text>

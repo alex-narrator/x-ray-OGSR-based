@@ -104,7 +104,9 @@ void CUIWpnParams::SetInfo(CInventoryItem* obj)
 		CUIXmlInit::InitStatic(uiXml, "wpn_params:dispertion", 0, dispertion_static);
 		pos_top = dispertion_static->GetPosTop();
 		dispertion_static->SetWndPos(dispertion_static->GetPosLeft(), _h + pos_top);
-		sprintf_s(temp_text, " %.1f %s", pSettings->r_float(item_section, "fire_dispersion_base") * 10, CStringTable().translate("st_dispertion_units").c_str());
+		float fire_dispertion = pSettings->r_float(item_section, "fire_dispersion_base");
+		fire_dispertion *= 10.f;
+		sprintf_s(temp_text, " %.1f %s", fire_dispertion, CStringTable().translate("st_dispertion_units").c_str());
 		strconcat(sizeof(text_to_show), text_to_show, CStringTable().translate("st_dispertion").c_str(), temp_text);
 		dispertion_static->SetText(text_to_show);
 		m_CapInfo.AttachChild(dispertion_static);
@@ -121,27 +123,20 @@ void CUIWpnParams::SetInfo(CInventoryItem* obj)
 	m_CapInfo.AttachChild(bulkiness_static);
 	_h += list_item_h + pos_top;
 	//тип спорядженого боєприпасу
-	if (pWeapon->GetAmmoElapsed() && !pWeaponKnife && !pWeaponBinoc) {
+	if (!pWeaponKnife && !pWeaponBinoc && (pWeapon->HasDetachableMagazine() && pWeaponMag->IsMagazineAttached() || pWeapon->GetAmmoElapsed())) {
 		auto current_ammo_type_static = xr_new<CUIStatic>(); current_ammo_type_static->SetAutoDelete(true);
 		CUIXmlInit::InitStatic(uiXml, "wpn_params:current_ammo_type", 0, current_ammo_type_static);
 		pos_top = current_ammo_type_static->GetPosTop();
 		current_ammo_type_static->SetWndPos(current_ammo_type_static->GetPosLeft(), _h + pos_top);
-		sprintf_s(temp_text, " %s", pWeapon->GetCurrentAmmo_ShortName());
+		if (pWeapon->HasDetachableMagazine() && pWeaponMag->IsMagazineAttached() && pWeapon->GetAmmoElapsed())
+			sprintf_s(temp_text, " %s, %s", pWeapon->GetCurrentAmmo_ShortName(), pWeaponMag->GetCurrentMagazine_ShortName());
+		else if (pWeapon->GetAmmoElapsed())
+			sprintf_s(temp_text, " %s", pWeapon->GetCurrentAmmo_ShortName());
+		else
+			sprintf_s(temp_text, " %s", pWeaponMag->GetCurrentMagazine_ShortName());
 		strconcat(sizeof(text_to_show), text_to_show, CStringTable().translate("st_current_ammo_type").c_str(), temp_text);
 		current_ammo_type_static->SetText(text_to_show);
 		m_CapInfo.AttachChild(current_ammo_type_static);
-		_h += list_item_h + pos_top;
-	}
-	//тип приєднаного магазину
-	if (pWeapon->HasDetachableMagazine() && pWeaponMag->IsMagazineAttached()) {
-		auto current_mag_type_static = xr_new<CUIStatic>(); current_mag_type_static->SetAutoDelete(true);
-		CUIXmlInit::InitStatic(uiXml, "wpn_params:current_mag_type", 0, current_mag_type_static);
-		pos_top = current_mag_type_static->GetPosTop();
-		current_mag_type_static->SetWndPos(current_mag_type_static->GetPosLeft(), _h + pos_top);
-		sprintf_s(temp_text, " %s", pWeaponMag->GetCurrentMagazine_ShortName());
-		strconcat(sizeof(text_to_show), text_to_show, CStringTable().translate("st_current_mag_type").c_str(), temp_text);
-		current_mag_type_static->SetText(text_to_show);
-		m_CapInfo.AttachChild(current_mag_type_static);
 		_h += list_item_h + pos_top;
 	}
 	//поточний приціл
@@ -255,114 +250,95 @@ void CUIWpnParams::SetInfo(CInventoryItem* obj)
 				_h += list_item_h;
 			}
 		}
-		//сумісні приціли
-		if (pWeapon->ScopeAttachable()) {
-			//приціл - заголовок
-			auto cap_scope_static = xr_new<CUIStatic>(); cap_scope_static->SetAutoDelete(true);
-			CUIXmlInit::InitStatic(uiXml, "wpn_params:cap_scope", 0, cap_scope_static);
-			pos_top = cap_scope_static->GetPosTop();
-			cap_scope_static->SetWndPos(cap_scope_static->GetPosLeft(), _h + pos_top);
-			m_CapInfo.AttachChild(cap_scope_static);
+		
+		bool has_addon =
+			pWeapon->ScopeAttachable() ||
+			pWeapon->SilencerAttachable() ||
+			pWeapon->GrenadeLauncherAttachable() ||
+			pWeapon->LaserAttachable() ||
+			pWeapon->FlashlightAttachable();
+
+		if (has_addon) {
+			//адони - заголовок
+			auto cap_addons_static = xr_new<CUIStatic>(); cap_addons_static->SetAutoDelete(true);
+			CUIXmlInit::InitStatic(uiXml, "wpn_params:cap_addons", 0, cap_addons_static);
+			pos_top = cap_addons_static->GetPosTop();
+			cap_addons_static->SetWndPos(cap_addons_static->GetPosLeft(), _h + pos_top);
+			m_CapInfo.AttachChild(cap_addons_static);
 			_h += list_item_h + pos_top;
-			//сумісні приціли - список
-			for (const auto& scope : pWeapon->m_scopes) {
-				auto scope_name = pSettings->r_string(scope, "inv_name");
-				auto scope_static = xr_new<CUIStatic>();
-				CUIXmlInit::InitStatic(uiXml, "wpn_params:list_item", 0, scope_static);
-				scope_static->SetAutoDelete(true);
-				scope_static->SetWndPos(scope_static->GetPosLeft(), _h);
-				strconcat(sizeof(text_to_show), text_to_show, marker_, CStringTable().translate(scope_name).c_str());
-				scope_static->SetText(text_to_show);
-				m_CapInfo.AttachChild(scope_static);
-				_h += list_item_h;
+			if (pWeapon->ScopeAttachable()) {
+				//сумісні приціли - список
+				for (const auto& scope : pWeapon->m_scopes) {
+					auto scope_name = pSettings->r_string(scope, "inv_name");
+					auto scope_static = xr_new<CUIStatic>();
+					CUIXmlInit::InitStatic(uiXml, "wpn_params:list_item", 0, scope_static);
+					scope_static->SetAutoDelete(true);
+					scope_static->SetWndPos(scope_static->GetPosLeft(), _h);
+					strconcat(sizeof(text_to_show), text_to_show, marker_, CStringTable().translate(scope_name).c_str());
+					scope_static->SetText(text_to_show);
+					m_CapInfo.AttachChild(scope_static);
+					_h += list_item_h;
+				}
 			}
-		}
-		//сумісні глушники
-		if (pWeapon->SilencerAttachable()) {
-			//сумісні глушниик - заголовок
-			auto cap_silencer_static = xr_new<CUIStatic>(); cap_silencer_static->SetAutoDelete(true);
-			CUIXmlInit::InitStatic(uiXml, "wpn_params:cap_silencer", 0, cap_silencer_static);
-			pos_top = cap_silencer_static->GetPosTop();
-			cap_silencer_static->SetWndPos(cap_silencer_static->GetPosLeft(), _h + pos_top);
-			m_CapInfo.AttachChild(cap_silencer_static);
-			_h += list_item_h + pos_top;
-			//глушник - список
-			for (const auto& silencer : pWeapon->m_silencers) {
-				auto silencer_name = pSettings->r_string(silencer, "inv_name");
-				auto silencer_static = xr_new<CUIStatic>();
-				CUIXmlInit::InitStatic(uiXml, "wpn_params:list_item", 0, silencer_static);
-				silencer_static->SetAutoDelete(true);
-				silencer_static->SetWndPos(silencer_static->GetPosLeft(), _h);
-				strconcat(sizeof(text_to_show), text_to_show, marker_, CStringTable().translate(silencer_name).c_str());
-				silencer_static->SetText(text_to_show);
-				m_CapInfo.AttachChild(silencer_static);
-				_h += list_item_h;
+			//сумісні глушники
+			if (pWeapon->SilencerAttachable()) {
+				//глушник - список
+				for (const auto& silencer : pWeapon->m_silencers) {
+					auto silencer_name = pSettings->r_string(silencer, "inv_name");
+					auto silencer_static = xr_new<CUIStatic>();
+					CUIXmlInit::InitStatic(uiXml, "wpn_params:list_item", 0, silencer_static);
+					silencer_static->SetAutoDelete(true);
+					silencer_static->SetWndPos(silencer_static->GetPosLeft(), _h);
+					strconcat(sizeof(text_to_show), text_to_show, marker_, CStringTable().translate(silencer_name).c_str());
+					silencer_static->SetText(text_to_show);
+					m_CapInfo.AttachChild(silencer_static);
+					_h += list_item_h;
+				}
 			}
-		}
-		//сумісні гранатомети
-		if (pWeapon->GrenadeLauncherAttachable()) {
-			//гранатомет - заголовок
-			auto cap_glauncher_static = xr_new<CUIStatic>(); cap_glauncher_static->SetAutoDelete(true);
-			CUIXmlInit::InitStatic(uiXml, "wpn_params:cap_glauncher", 0, cap_glauncher_static);
-			pos_top = cap_glauncher_static->GetPosTop();
-			cap_glauncher_static->SetWndPos(cap_glauncher_static->GetPosLeft(), _h + pos_top);
-			m_CapInfo.AttachChild(cap_glauncher_static);
-			_h += list_item_h + pos_top;
-			//сумісні гранатомети - список
-			for (const auto& glauncher : pWeapon->m_glaunchers) {
-				auto glauncher_name = pSettings->r_string(glauncher, "inv_name");
-				auto glauncher_static = xr_new<CUIStatic>();
-				CUIXmlInit::InitStatic(uiXml, "wpn_params:list_item", 0, glauncher_static);
-				glauncher_static->SetAutoDelete(true);
-				glauncher_static->SetWndPos(glauncher_static->GetPosLeft(), _h);
-				strconcat(sizeof(text_to_show), text_to_show, marker_, CStringTable().translate(glauncher_name).c_str());
-				glauncher_static->SetText(text_to_show);
-				m_CapInfo.AttachChild(glauncher_static);
-				_h += list_item_h;
+			//сумісні гранатомети
+			if (pWeapon->GrenadeLauncherAttachable()) {
+				//сумісні гранатомети - список
+				for (const auto& glauncher : pWeapon->m_glaunchers) {
+					auto glauncher_name = pSettings->r_string(glauncher, "inv_name");
+					auto glauncher_static = xr_new<CUIStatic>();
+					CUIXmlInit::InitStatic(uiXml, "wpn_params:list_item", 0, glauncher_static);
+					glauncher_static->SetAutoDelete(true);
+					glauncher_static->SetWndPos(glauncher_static->GetPosLeft(), _h);
+					strconcat(sizeof(text_to_show), text_to_show, marker_, CStringTable().translate(glauncher_name).c_str());
+					glauncher_static->SetText(text_to_show);
+					m_CapInfo.AttachChild(glauncher_static);
+					_h += list_item_h;
+				}
 			}
-		}
-		//сумісні ЛЦВ
-		if (pWeapon->LaserAttachable()) {
-			//гранатомет - заголовок
-			auto cap_laser_static = xr_new<CUIStatic>(); cap_laser_static->SetAutoDelete(true);
-			CUIXmlInit::InitStatic(uiXml, "wpn_params:cap_laser", 0, cap_laser_static);
-			pos_top = cap_laser_static->GetPosTop();
-			cap_laser_static->SetWndPos(cap_laser_static->GetPosLeft(), _h + pos_top);
-			m_CapInfo.AttachChild(cap_laser_static);
-			_h += list_item_h + pos_top;
-			//сумісні гранатомети - список
-			for (const auto& laser : pWeapon->m_lasers) {
-				auto laser_name = pSettings->r_string(laser, "inv_name");
-				auto laser_static = xr_new<CUIStatic>();
-				CUIXmlInit::InitStatic(uiXml, "wpn_params:list_item", 0, laser_static);
-				laser_static->SetAutoDelete(true);
-				laser_static->SetWndPos(laser_static->GetPosLeft(), _h);
-				strconcat(sizeof(text_to_show), text_to_show, marker_, CStringTable().translate(laser_name).c_str());
-				laser_static->SetText(text_to_show);
-				m_CapInfo.AttachChild(laser_static);
-				_h += list_item_h;
+			//сумісні ЛЦВ
+			if (pWeapon->LaserAttachable()) {
+				//сумісні ЛЦВ - список
+				for (const auto& laser : pWeapon->m_lasers) {
+					auto laser_name = pSettings->r_string(laser, "inv_name");
+					auto laser_static = xr_new<CUIStatic>();
+					CUIXmlInit::InitStatic(uiXml, "wpn_params:list_item", 0, laser_static);
+					laser_static->SetAutoDelete(true);
+					laser_static->SetWndPos(laser_static->GetPosLeft(), _h);
+					strconcat(sizeof(text_to_show), text_to_show, marker_, CStringTable().translate(laser_name).c_str());
+					laser_static->SetText(text_to_show);
+					m_CapInfo.AttachChild(laser_static);
+					_h += list_item_h;
+				}
 			}
-		}
-		//сумісні ліхтарі
-		if (pWeapon->FlashlightAttachable()) {
-			//гранатомет - заголовок
-			auto cap_flashlight_static = xr_new<CUIStatic>(); cap_flashlight_static->SetAutoDelete(true);
-			CUIXmlInit::InitStatic(uiXml, "wpn_params:cap_flashlight", 0, cap_flashlight_static);
-			pos_top = cap_flashlight_static->GetPosTop();
-			cap_flashlight_static->SetWndPos(cap_flashlight_static->GetPosLeft(), _h + pos_top);
-			m_CapInfo.AttachChild(cap_flashlight_static);
-			_h += list_item_h + pos_top;
-			//сумісні гранатомети - список
-			for (const auto& flashlight : pWeapon->m_flashlights) {
-				auto flashlight_name = pSettings->r_string(flashlight, "inv_name");
-				auto flashlight_static = xr_new<CUIStatic>();
-				CUIXmlInit::InitStatic(uiXml, "wpn_params:list_item", 0, flashlight_static);
-				flashlight_static->SetAutoDelete(true);
-				flashlight_static->SetWndPos(flashlight_static->GetPosLeft(), _h);
-				strconcat(sizeof(text_to_show), text_to_show, marker_, CStringTable().translate(flashlight_name).c_str());
-				flashlight_static->SetText(text_to_show);
-				m_CapInfo.AttachChild(flashlight_static);
-				_h += list_item_h;
+			//сумісні ліхтарі
+			if (pWeapon->FlashlightAttachable()) {
+				//сумісні ліхтарі - список
+				for (const auto& flashlight : pWeapon->m_flashlights) {
+					auto flashlight_name = pSettings->r_string(flashlight, "inv_name");
+					auto flashlight_static = xr_new<CUIStatic>();
+					CUIXmlInit::InitStatic(uiXml, "wpn_params:list_item", 0, flashlight_static);
+					flashlight_static->SetAutoDelete(true);
+					flashlight_static->SetWndPos(flashlight_static->GetPosLeft(), _h);
+					strconcat(sizeof(text_to_show), text_to_show, marker_, CStringTable().translate(flashlight_name).c_str());
+					flashlight_static->SetText(text_to_show);
+					m_CapInfo.AttachChild(flashlight_static);
+					_h += list_item_h;
+				}
 			}
 		}
 	}

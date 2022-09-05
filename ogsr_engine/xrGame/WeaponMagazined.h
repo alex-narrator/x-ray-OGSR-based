@@ -36,6 +36,9 @@ protected:
 	HUD_SOUND		SndNightVisionIdle;
 	HUD_SOUND		SndNightVisionBroken;
 
+	HUD_SOUND		SndLaserSwitch;
+	HUD_SOUND		SndFlashlightSwitch;
+
 	//звук текущего выстрела
 	HUD_SOUND*		m_pSndShotCurrent;
 
@@ -280,6 +283,9 @@ public:
 
 	virtual bool	IsNightVisionEnabled	()const { return m_bNightVisionEnabled; };
 	virtual bool	IsVisionPresent			() const { return m_bVision; };
+
+	virtual void	SwitchLaser				(bool on);
+	virtual void	SwitchFlashlight		(bool on);
 protected:
 	bool			m_bNightVisionEnabled{};
 	bool			m_bNightVisionSwitchedOn{};

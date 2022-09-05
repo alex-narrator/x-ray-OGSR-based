@@ -610,7 +610,7 @@ protected:
 
 	void UpdateLaser();
 public:
-	void SwitchLaser(bool on);
+	virtual void SwitchLaser(bool on) {};
 	bool IsLaserOn() const;
 
 protected:
@@ -625,7 +625,7 @@ protected:
 
 	void UpdateFlashlight();
 public:
-	void SwitchFlashlight(bool on);
+	virtual void SwitchFlashlight(bool on) {};
 	bool IsFlashlightOn() const;
 
 public:

@@ -2784,32 +2784,8 @@ float CWeapon::GetHitPowerForActor() const {
 	return fvHitPower[g_SingleGameDifficulty];
 }
 
-void CWeapon::SwitchLaser(bool on) {
-	if (!IsLaserAttached())
-		return;
-
-	m_bIsLaserOn = on ? true : false;
-
-	if (!m_bIsLaserOn) {
-		laser_light_render->set_active(false);
-	}
-}
-
 bool CWeapon::IsLaserOn() const {
 	return m_bIsLaserOn;
-}
-
-void  CWeapon::SwitchFlashlight(bool on) {
-	if (!IsFlashlightAttached())
-		return;
-
-	m_bIsFlashlightOn = on ? true : false;
-
-	if (!m_bIsFlashlightOn) {
-		flashlight_render->set_active(false);
-		flashlight_omni->set_active(false);
-		flashlight_glow->set_active(false);
-	}
 }
 
 bool CWeapon::IsFlashlightOn() const {

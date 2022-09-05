@@ -468,29 +468,11 @@
 	<string id="st_compatible_magazine">
 		<text>магазины:</text>
 	</string>
-	<string id="st_compatible_scope">
-		<text>прицелы:</text>
-	</string>
-	<string id="st_compatible_silencer">
-		<text>глушители:</text>
-	</string>
-	<string id="st_compatible_glauncher">
-		<text>подствольники:</text>
-	</string>
-	<string id="st_compatible_laser">
-		<text>ЛЦУ:</text>
-	</string>
-	<string id="st_compatible_flashlight">
-		<text>фонари:</text>
-	</string>	
-	<string id="st_current_ammo_count">
-		<text>Заряжено:</text>
+	<string id="st_compatible_addon">
+		<text>обвес:</text>
 	</string>
 	<string id="st_current_ammo_type">
-		<text>Боеприпас:</text>
-	</string>
-	<string id="st_current_mag_type">
-		<text>Магазин:</text>
+		<text>Заряжен:</text>
 	</string>
 	<string id="st_not_loaded">
 		<text>[не заряжен]</text>

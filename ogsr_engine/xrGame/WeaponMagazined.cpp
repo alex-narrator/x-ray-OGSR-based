@@ -83,6 +83,9 @@ CWeaponMagazined::~CWeaponMagazined()
 	HUD_SOUND::DestroySound(SndNightVisionIdle);
 	HUD_SOUND::DestroySound(SndNightVisionBroken);
 	//
+	HUD_SOUND::DestroySound(SndLaserSwitch);
+	HUD_SOUND::DestroySound(SndFlashlightSwitch);
+	//
 	if (m_binoc_vision)
 		xr_delete(m_binoc_vision);
 }
@@ -111,6 +114,9 @@ void CWeaponMagazined::StopHUDSounds		()
 	HUD_SOUND::StopSound(SndNightVisionOff);
 	HUD_SOUND::StopSound(SndNightVisionIdle);
 	HUD_SOUND::StopSound(SndNightVisionBroken);
+	//
+	HUD_SOUND::StopSound(SndLaserSwitch);
+	HUD_SOUND::StopSound(SndFlashlightSwitch);
 
 	inherited::StopHUDSounds();
 }
@@ -1336,7 +1342,7 @@ void CWeaponMagazined::InitAddons()
 		conditionDecreasePerShotSilencerSelf = READ_IF_EXISTS(pSettings, r_float, GetSilencerName(), "condition_shot_dec", .0f);
 	}
 
-	if (IsSilencerAttached() /*&& SilencerAttachable()*/ && !IsSilencerBroken())
+	if (IsSilencerAttached() && !IsSilencerBroken())
 	{
 		//flame
 		if (SilencerAttachable() && pSettings->line_exist(GetSilencerName(), "silencer_flame_particles"))
@@ -1354,7 +1360,6 @@ void CWeaponMagazined::InitAddons()
 			m_sSilencerSmokeParticles = m_sSmokeParticles.c_str();
 
 		HUD_SOUND::StopSound(sndSilencerShot);
-		HUD_SOUND::DestroySound(sndSilencerShot);
 
 		if (SilencerAttachable() && pSettings->line_exist(GetSilencerName(), "snd_silncer_shot"))
 			HUD_SOUND::LoadSound(GetSilencerName().c_str(), "snd_silncer_shot", sndSilencerShot, m_eSoundShot);
@@ -1422,9 +1427,7 @@ void CWeaponMagazined::LoadZoomParams(LPCSTR section)
 	}
 
 	HUD_SOUND::StopSound(sndZoomIn);
-	HUD_SOUND::DestroySound(sndZoomIn);
 	HUD_SOUND::StopSound(sndZoomOut);
-	HUD_SOUND::DestroySound(sndZoomOut);
 
 	if (pSettings->line_exist(section, "snd_zoomin"))
 		HUD_SOUND::LoadSound(section, "snd_zoomin", sndZoomIn, SOUND_TYPE_ITEM_USING);
@@ -1438,13 +1441,9 @@ void CWeaponMagazined::LoadZoomParams(LPCSTR section)
 	if (m_bNightVisionEnabled)
 	{
 		HUD_SOUND::StopSound(SndNightVisionOn);
-		HUD_SOUND::DestroySound(SndNightVisionOn);
 		HUD_SOUND::StopSound(SndNightVisionOff);
-		HUD_SOUND::DestroySound(SndNightVisionOff);
 		HUD_SOUND::StopSound(SndNightVisionIdle);
-		HUD_SOUND::DestroySound(SndNightVisionIdle);
 		HUD_SOUND::StopSound(SndNightVisionBroken);
-		HUD_SOUND::DestroySound(SndNightVisionBroken);
 
 		if (pSettings->line_exist(section, "snd_night_vision_on"))
 			HUD_SOUND::LoadSound(section, "snd_night_vision_on", SndNightVisionOn, SOUND_TYPE_ITEM_USING);
@@ -1517,8 +1516,14 @@ void CWeaponMagazined::ApplySilencerKoeffs	()
 
 void CWeaponMagazined::LoadLaserParams(LPCSTR section) {
 	laserdot_attach_bone = READ_IF_EXISTS(pSettings, r_string, cNameSect().c_str(), "laserdot_attach_bone", "");
-	laserdot_attach_offset = Fvector{ READ_IF_EXISTS(pSettings, r_float, cNameSect().c_str(), "laserdot_attach_offset_x", 0.0f), READ_IF_EXISTS(pSettings, r_float, cNameSect().c_str(), "laserdot_attach_offset_y", 0.0f), READ_IF_EXISTS(pSettings, r_float, cNameSect().c_str(), "laserdot_attach_offset_z", 0.0f) };
-	laserdot_world_attach_offset = Fvector{ READ_IF_EXISTS(pSettings, r_float, cNameSect().c_str(), "laserdot_world_attach_offset_x", 0.0f), READ_IF_EXISTS(pSettings, r_float, cNameSect().c_str(), "laserdot_world_attach_offset_y", 0.0f), READ_IF_EXISTS(pSettings, r_float, cNameSect().c_str(), "laserdot_world_attach_offset_z", 0.0f) };
+	laserdot_attach_offset = Fvector{ 
+		READ_IF_EXISTS(pSettings, r_float, cNameSect().c_str(), "laserdot_attach_offset_x", 0.0f), 
+		READ_IF_EXISTS(pSettings, r_float, cNameSect().c_str(), "laserdot_attach_offset_y", 0.0f), 
+		READ_IF_EXISTS(pSettings, r_float, cNameSect().c_str(), "laserdot_attach_offset_z", 0.0f) };
+	laserdot_world_attach_offset = Fvector{ 
+		READ_IF_EXISTS(pSettings, r_float, cNameSect().c_str(), "laserdot_world_attach_offset_x", 0.0f), 
+		READ_IF_EXISTS(pSettings, r_float, cNameSect().c_str(), "laserdot_world_attach_offset_y", 0.0f), 
+		READ_IF_EXISTS(pSettings, r_float, cNameSect().c_str(), "laserdot_world_attach_offset_z", 0.0f) };
 
 	const bool b_r2 = psDeviceFlags.test(rsR2) || psDeviceFlags.test(rsR3) || psDeviceFlags.test(rsR4);
 
@@ -1537,14 +1542,30 @@ void CWeaponMagazined::LoadLaserParams(LPCSTR section) {
 	laser_light_render->set_range(range);
 	laser_light_render->set_cone(deg2rad(READ_IF_EXISTS(pSettings, r_float, m_light_section, "spot_angle", 1.f)));
 	laser_light_render->set_texture(READ_IF_EXISTS(pSettings, r_string, m_light_section, "spot_texture", nullptr));
+
+	HUD_SOUND::StopSound(SndLaserSwitch);
+	if (pSettings->line_exist(section, "snd_laser_switch"))
+		HUD_SOUND::LoadSound(section, "snd_laser_switch", SndLaserSwitch, SOUND_TYPE_ITEM_USING);
 }
 
 void CWeaponMagazined::LoadFlashlightParams(LPCSTR section) {
-	flashlight_attach_bone = pSettings->r_string(cNameSect().c_str(), "torch_light_bone");
-	flashlight_attach_offset = Fvector{ pSettings->r_float(cNameSect().c_str(), "torch_attach_offset_x"), pSettings->r_float(cNameSect().c_str(), "torch_attach_offset_y"), pSettings->r_float(cNameSect().c_str(), "torch_attach_offset_z") };
-	flashlight_omni_attach_offset = Fvector{ pSettings->r_float(cNameSect().c_str(), "torch_omni_attach_offset_x"), pSettings->r_float(cNameSect().c_str(), "torch_omni_attach_offset_y"), pSettings->r_float(cNameSect().c_str(), "torch_omni_attach_offset_z") };
-	flashlight_world_attach_offset = Fvector{ pSettings->r_float(cNameSect().c_str(), "torch_world_attach_offset_x"), pSettings->r_float(cNameSect().c_str(), "torch_world_attach_offset_y"), pSettings->r_float(cNameSect().c_str(), "torch_world_attach_offset_z") };
-	flashlight_omni_world_attach_offset = Fvector{ pSettings->r_float(cNameSect().c_str(), "torch_omni_world_attach_offset_x"), pSettings->r_float(cNameSect().c_str(), "torch_omni_world_attach_offset_y"), pSettings->r_float(cNameSect().c_str(), "torch_omni_world_attach_offset_z") };
+	flashlight_attach_bone = READ_IF_EXISTS(pSettings, r_string, cNameSect().c_str(), "torch_light_bone", "");
+	flashlight_attach_offset = Fvector{ 
+		READ_IF_EXISTS(pSettings, r_float, cNameSect().c_str(), "torch_attach_offset_x", 0.0f),
+		READ_IF_EXISTS(pSettings, r_float, cNameSect().c_str(), "torch_attach_offset_y", 0.0f),
+		READ_IF_EXISTS(pSettings, r_float, cNameSect().c_str(), "torch_attach_offset_z", 0.0f) };
+	flashlight_omni_attach_offset = Fvector{ 
+		READ_IF_EXISTS(pSettings, r_float, cNameSect().c_str(), "torch_omni_attach_offset_x", 0.0f),
+		READ_IF_EXISTS(pSettings, r_float, cNameSect().c_str(), "torch_omni_attach_offset_y", 0.0f),
+		READ_IF_EXISTS(pSettings, r_float, cNameSect().c_str(), "torch_omni_attach_offset_z", 0.0f) };
+	flashlight_world_attach_offset = Fvector{ 
+		READ_IF_EXISTS(pSettings, r_float, cNameSect().c_str(), "torch_world_attach_offset_x", 0.0f),
+		READ_IF_EXISTS(pSettings, r_float, cNameSect().c_str(), "torch_world_attach_offset_y", 0.0f),
+		READ_IF_EXISTS(pSettings, r_float, cNameSect().c_str(), "torch_world_attach_offset_z", 0.0f) };
+	flashlight_omni_world_attach_offset = Fvector{ 
+		READ_IF_EXISTS(pSettings, r_float, cNameSect().c_str(), "torch_omni_world_attach_offset_x", 0.0f),
+		READ_IF_EXISTS(pSettings, r_float, cNameSect().c_str(), "torch_omni_world_attach_offset_y", 0.0f),
+		READ_IF_EXISTS(pSettings, r_float, cNameSect().c_str(), "torch_omni_world_attach_offset_z", 0.0f) };
 
 	const bool b_r2 = psDeviceFlags.test(rsR2) || psDeviceFlags.test(rsR3) || psDeviceFlags.test(rsR4);
 
@@ -1577,6 +1598,10 @@ void CWeaponMagazined::LoadFlashlightParams(LPCSTR section) {
 	flashlight_glow->set_texture(READ_IF_EXISTS(pSettings, r_string, m_light_section, "glow_texture", "glow\\glow_torch_r2"));
 	flashlight_glow->set_color(clr);
 	flashlight_glow->set_radius(READ_IF_EXISTS(pSettings, r_float, m_light_section, "glow_radius", 0.3f));
+
+	HUD_SOUND::StopSound(SndFlashlightSwitch);
+	if (pSettings->line_exist(section, "snd_flashlight_switch"))
+		HUD_SOUND::LoadSound(section, "snd_flashlight_switch", SndFlashlightSwitch, SOUND_TYPE_ITEM_USING);
 }
 
 //виртуальные функции для проигрывания анимации HUD
@@ -2289,4 +2314,30 @@ LPCSTR	CWeaponMagazined::GetCurrentMagazine_ShortName()
 	if (iAmmoElapsed <= chamber_ammo)
 		mag_short_name = pSettings->r_string(GetMagazineEmptySect(), "inv_name_short");
 	return CStringTable().translate(mag_short_name).c_str();
+}
+
+void CWeaponMagazined::SwitchLaser(bool on) {
+	if (!IsLaserAttached())
+		return;
+
+	m_bIsLaserOn = on;
+	PlaySound(SndLaserSwitch, get_LastFP());
+
+	if (!m_bIsLaserOn) {
+		laser_light_render->set_active(false);
+	}
+}
+
+void  CWeaponMagazined::SwitchFlashlight(bool on) {
+	if (!IsFlashlightAttached())
+		return;
+
+	m_bIsFlashlightOn = on;
+	PlaySound(SndFlashlightSwitch, get_LastFP());
+
+	if (!m_bIsFlashlightOn) {
+		flashlight_render->set_active(false);
+		flashlight_omni->set_active(false);
+		flashlight_glow->set_active(false);
+	}
 }

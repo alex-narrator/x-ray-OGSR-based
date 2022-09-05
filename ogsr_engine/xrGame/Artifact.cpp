@@ -122,12 +122,10 @@ BOOL CArtefact::net_Spawn(CSE_Abstract* DC)
 	if (auto se_artefact = smart_cast<CSE_ALifeItemArtefact*>(DC))
 		if (se_artefact->m_fRandomK != 1.f)
 			m_fRandomK = se_artefact->m_fRandomK;
-		else if (pSettings->line_exist(cNameSect(), "random_k"))
-		{
+		else if (pSettings->line_exist(cNameSect(), "random_k")){
 			LPCSTR str = pSettings->r_string(cNameSect(), "random_k");
 			int cnt = _GetItemCount(str);
-			if (cnt > 1)							//заданы границы рандома свойств
-			{
+			if (cnt > 1){//заданы границы рандома свойств
 				Fvector2 m = pSettings->r_fvector2(cNameSect(), "random_k");
 				m_fRandomK = ::Random.randF(m.x, m.y);
 			}
