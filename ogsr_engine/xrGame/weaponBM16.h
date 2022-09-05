@@ -19,13 +19,15 @@ protected:
 	virtual void	PlayAnimShow					();
 	virtual void	PlayAnimHide					();
 	virtual void	PlayAnimIdleMoving				();
-	virtual void	PlayAnimIdleMovingSlow() override;
-	virtual void	PlayAnimIdleMovingCrouch() override;
-	virtual void	PlayAnimIdleMovingCrouchSlow() override;
+	virtual void	PlayAnimIdleMovingSlow			() override;
+	virtual void	PlayAnimIdleMovingCrouch		() override;
+	virtual void	PlayAnimIdleMovingCrouchSlow	() override;
 	virtual void	PlayAnimIdleSprint				();
 	virtual void	PlayAnimIdle					();
 	virtual void	PlayReloadSound					();
-	virtual void	UpdateSounds() override;
+	virtual void	UpdateSounds					() override;
+
+	virtual size_t	GetWeaponTypeForCollision		() const override { return BM_16; }
 
 	DECLARE_SCRIPT_REGISTER_FUNCTION
 };

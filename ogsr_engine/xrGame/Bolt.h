@@ -29,4 +29,7 @@ public:
 
 	virtual BOOL UsedAI_Locations() {return FALSE;}
 	virtual IDamageSource*	cast_IDamageSource			()	{return this;}
+
+protected:
+	virtual size_t GetWeaponTypeForCollision() const override { return Bolt; }
 };

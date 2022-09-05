@@ -48,6 +48,11 @@ protected:
 	ALife::EHitType		m_eHitType_ZeroCondition; //тип хита при полном износе
 protected:
 	virtual void		LoadFireParams					(LPCSTR section, LPCSTR prefix);
+
+	virtual size_t		GetWeaponTypeForCollision	() const override { return Knife_and_other; }
+	//TODO: рассчитать здесь позицию для коллизии
+	virtual Fvector		GetPositionForCollision		() override { return Device.vCameraPosition; }
+	virtual Fvector		GetDirectionForCollision	() override { return Device.vCameraDirection; }
 public:
 						CWeaponKnife(); 
 	virtual				~CWeaponKnife(); 

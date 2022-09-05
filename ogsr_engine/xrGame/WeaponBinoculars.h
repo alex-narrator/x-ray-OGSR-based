@@ -17,6 +17,11 @@ public:
 	virtual bool	use_crosshair		()	const {return false;}
 	virtual void	GetBriefInfo		(xr_string& str_name, xr_string& icon_sect_name, xr_string& str_count);
 
+protected:
+	virtual size_t	GetWeaponTypeForCollision	() const override { return Binocular; }
+	virtual Fvector GetPositionForCollision		() override { return Device.vCameraPosition; }
+	virtual Fvector GetDirectionForCollision	() override { return Device.vCameraDirection; }
+
 	DECLARE_SCRIPT_REGISTER_FUNCTION
 };
 add_to_type_list(CWeaponBinoculars)

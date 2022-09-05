@@ -55,6 +55,7 @@ private:
 	bool					m_thrown{};
 protected:
 	virtual	void			UpdateXForm							()		{ CMissile::UpdateXForm(); };
+	virtual size_t			GetWeaponTypeForCollision			() const override { return Knife_and_other; }
 public:
 
 	virtual BOOL			UsedAI_Locations					();

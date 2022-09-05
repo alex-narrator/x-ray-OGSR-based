@@ -36,6 +36,8 @@ protected:
 
 	shared_str	m_sRocketSection;
 
+	virtual size_t GetWeaponTypeForCollision() const override { return RPG; }
+
 	DECLARE_SCRIPT_REGISTER_FUNCTION
 };
 add_to_type_list(CWeaponRPG7)
