@@ -9,6 +9,7 @@
 class	 CKinematics;
 class	 CInifile;
 class	 CBoneData;
+class	CSkeletonX;
 struct	SEnumVerticesCallback;
 
 #pragma warning(push)
@@ -92,6 +93,18 @@ public:
 
 	virtual	void				BuildBoneMatrix		( const CBoneData* bd, CBoneInstance &bi, const Fmatrix *parent, u8 mask_channel = (1<<0) );
 	virtual void				OnCalculateBones	(){}
+
+	/************************* Add by Zander *******************************/
+	void SetRFlag(const u32 id, const bool v) override { children.at(id)->setRZFlag(v); }
+	bool GetRFlag(const u32 id) const override { return children.at(id)->getRZFlag(); }
+	u32 RChildCount() const override { return children.size(); }
+
+	Fvector3 RC_VisBox(const u32 id) override;
+	Fvector3 RC_VisCenter(const u32 id) override;
+	Fvector3 RC_VisBorderMin(const u32 id) override;
+	Fvector3 RC_VisBorderMax(const u32 id) override;
+	void RC_Dump() override;
+	/************************* End Add *************************************/
 	
 public:
 	dxRender_Visual*				m_lod;
