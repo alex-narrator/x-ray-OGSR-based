@@ -206,7 +206,7 @@ void CHUDTarget::Render()
 		clamp(fuzzyShowInfo,0.f,1.f);
 	}
 
-	if (auto Wpn = smart_cast<CWeapon*>(Actor->inventory().ActiveItem()); Wpn && Wpn->IsLaserOn())
+	if (auto Wpn = smart_cast<CWeapon*>(Actor->inventory().ActiveItem()); Wpn && Wpn->IsLaserOn() && !psActorFlags.test(AF_CROSSHAIR_DBG))
 		return;
 
 	Fvector2 scr_size;

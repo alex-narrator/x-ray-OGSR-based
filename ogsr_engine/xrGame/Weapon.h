@@ -575,10 +575,10 @@ public:
 		UpdateFlashlight();
 		inherited::processing_deactivate();
 	}
-
+	Fvector laserdot_attach_offset{}, laser_pos{};
 protected:
 	shared_str laserdot_attach_bone;
-	Fvector laserdot_attach_offset{}, laserdot_world_attach_offset{};
+	Fvector laserdot_world_attach_offset{};
 	ref_light laser_light_render;
 	CLAItem* laser_lanim{};
 	float laser_fBrightness{ 1.f };
@@ -588,10 +588,10 @@ protected:
 public:
 	virtual void SwitchLaser(bool on) {};
 	bool IsLaserOn() const;
-
+	Fvector flashlight_attach_offset{}, flashlight_pos{};
 protected:
 	shared_str flashlight_attach_bone;
-	Fvector flashlight_attach_offset{}, flashlight_omni_attach_offset{}, flashlight_world_attach_offset{}, flashlight_omni_world_attach_offset{};
+	Fvector flashlight_omni_attach_offset{}, flashlight_world_attach_offset{}, flashlight_omni_world_attach_offset{};
 	ref_light flashlight_render;
 	ref_light flashlight_omni;
 	ref_glow flashlight_glow;

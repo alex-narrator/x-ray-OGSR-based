@@ -287,7 +287,7 @@ void CActor::IR_OnKeyboardPress(int cmd){
 void CActor::IR_OnMouseWheel(int direction){
 	if (g_bHudAdjustMode)
 	{
-		g_player_hud->tune(Ivector().set(0, 0, direction));
+		g_player_hud->tune(Ivector{ 0, 0, direction });
 		return;
 	}
 
@@ -405,7 +405,7 @@ void CActor::IR_OnKeyboardHold(int cmd){
 void CActor::IR_OnMouseMove(int dx, int dy){
 	if (g_bHudAdjustMode)
 	{
-		g_player_hud->tune(Ivector().set(dx, dy, 0));
+		g_player_hud->tune(Ivector{ dx, dy, 0 });
 		return;
 	}
 
