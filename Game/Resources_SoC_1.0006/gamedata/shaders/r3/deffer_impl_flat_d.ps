@@ -1,4 +1,10 @@
-//#define USE_TDETAIL
-//#include "deffer_impl_flat.ps"
+#ifdef USE_TERRAIN_PARALLAX
 
 #include "deffer_impl_flat_parallax.ps"
+
+#else
+
+#define USE_TDETAIL
+#include "deffer_impl_flat.ps"
+
+#endif

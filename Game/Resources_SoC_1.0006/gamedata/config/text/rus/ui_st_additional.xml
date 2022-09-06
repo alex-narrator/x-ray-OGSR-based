@@ -220,6 +220,9 @@
 	<string id="ui_mm_detail_scale">
 		<text>Высота травы</text>
 	</string>
+	<string id="ui_mm_terrain_parallax">
+		<text>Еффект параллакса на террейне</text>
+	</string>
 	<string id="video_settings_name_detail_scale">
 		<text>Высота травы - r__detail_scale</text>
 	</string>
@@ -424,6 +427,13 @@
 		Текстуры сеток будут автоматически подстраиваться под любое разрешение экрана.
 		Для полного применения изменений требуется перезагрузка сохранения.</text>
 	</string>		
+	
+	<string id="video_settings_name_terrain_parallax">
+		<text>Еффект параллакса на террейне - r_terrain_parallax</text>
+	</string>
+	<string id="video_settings_desc_terrain_parallax">
+		<text>Для применения опции требуется перезапуск игрьі</text>
+	</string>	
 	
 	<string id="game_object_throw_drop">
 	    <text>Отбросить [$$ACTION_USE$$]\n Отпустить [$$ACTION_ADDITIONAL_ACTION$$]+[$$ACTION_USE$$]</text>
