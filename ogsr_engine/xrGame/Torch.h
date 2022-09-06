@@ -53,8 +53,8 @@ public:
 			float	get_range			() const;
 
 protected:
-	HUD_SOUND				SndTorchOn;
-	HUD_SOUND				SndTorchOff;
+	HUD_SOUND				sndTorchOn;
+	HUD_SOUND				sndTorchOff;
 
 	shared_str				m_light_descr_sect{};
 

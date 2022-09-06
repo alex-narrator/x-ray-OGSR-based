@@ -13,10 +13,10 @@ CNightVisionDevice::CNightVisionDevice(void){
 }
 
 CNightVisionDevice::~CNightVisionDevice(void){
-	HUD_SOUND::DestroySound(SndNightVisionOn);
-	HUD_SOUND::DestroySound(SndNightVisionOff);
-	HUD_SOUND::DestroySound(SndNightVisionIdle);
-	HUD_SOUND::DestroySound(SndNightVisionBroken);
+	HUD_SOUND::DestroySound(sndNightVisionOn);
+	HUD_SOUND::DestroySound(sndNightVisionOff);
+	HUD_SOUND::DestroySound(sndNightVisionIdle);
+	HUD_SOUND::DestroySound(sndNightVisionBroken);
 	xr_delete(m_UINightVision);
 }
 
@@ -24,13 +24,13 @@ void CNightVisionDevice::Load(LPCSTR section){
 	inherited::Load(section);
 
 	if (pSettings->line_exist(section, "snd_night_vision_on"))
-		HUD_SOUND::LoadSound(section, "snd_night_vision_on", SndNightVisionOn, SOUND_TYPE_ITEM_USING);
+		HUD_SOUND::LoadSound(section, "snd_night_vision_on", sndNightVisionOn, SOUND_TYPE_ITEM_USING);
 	if (pSettings->line_exist(section, "snd_night_vision_off"))
-		HUD_SOUND::LoadSound(section, "snd_night_vision_off", SndNightVisionOff, SOUND_TYPE_ITEM_USING);
+		HUD_SOUND::LoadSound(section, "snd_night_vision_off", sndNightVisionOff, SOUND_TYPE_ITEM_USING);
 	if (pSettings->line_exist(section, "snd_night_vision_idle"))
-		HUD_SOUND::LoadSound(section, "snd_night_vision_idle", SndNightVisionIdle, SOUND_TYPE_ITEM_USING);
+		HUD_SOUND::LoadSound(section, "snd_night_vision_idle", sndNightVisionIdle, SOUND_TYPE_ITEM_USING);
 	if (pSettings->line_exist(section, "snd_night_vision_broken"))
-		HUD_SOUND::LoadSound(section, "snd_night_vision_broken", SndNightVisionBroken, SOUND_TYPE_ITEM_USING);
+		HUD_SOUND::LoadSound(section, "snd_night_vision_broken", sndNightVisionBroken, SOUND_TYPE_ITEM_USING);
 
 	m_NightVisionSect		= READ_IF_EXISTS(pSettings, r_string, section, "night_vision_effector", nullptr);
 	m_NightVisionTexture	= READ_IF_EXISTS(pSettings, r_string, section, "night_vision_texture", nullptr);
@@ -74,7 +74,7 @@ void CNightVisionDevice::Switch(bool turn_on){
 
 		if (!b_allow)
 		{
-			HUD_SOUND::PlaySound(SndNightVisionBroken, pA->Position(), pA, bPlaySoundFirstPerson);
+			HUD_SOUND::PlaySound(sndNightVisionBroken, pA->Position(), pA, bPlaySoundFirstPerson);
 			return;
 		}
 		else
@@ -87,8 +87,8 @@ void CNightVisionDevice::Switch(bool turn_on){
 				if (!pp)
 				{
 					AddEffector(pA, effNightvision, m_NightVisionSect);
-					HUD_SOUND::PlaySound(SndNightVisionOn, pA->Position(), pA, bPlaySoundFirstPerson);
-					HUD_SOUND::PlaySound(SndNightVisionIdle, pA->Position(), pA, bPlaySoundFirstPerson, true);
+					HUD_SOUND::PlaySound(sndNightVisionOn, pA->Position(), pA, bPlaySoundFirstPerson);
+					HUD_SOUND::PlaySound(sndNightVisionIdle, pA->Position(), pA, bPlaySoundFirstPerson, true);
 				}
 			}
 		}
@@ -103,8 +103,8 @@ void CNightVisionDevice::Switch(bool turn_on){
 		if (pp)
 		{
 			pp->Stop(1.0f);
-			HUD_SOUND::PlaySound(SndNightVisionOff, pA->Position(), pA, bPlaySoundFirstPerson);
-			HUD_SOUND::StopSound(SndNightVisionIdle);
+			HUD_SOUND::PlaySound(sndNightVisionOff, pA->Position(), pA, bPlaySoundFirstPerson);
+			HUD_SOUND::StopSound(sndNightVisionIdle);
 		}
 	}
 }
@@ -137,9 +137,9 @@ void CNightVisionDevice::OnH_B_Independent(bool just_before_destroy)
 
 	Switch(false);
 
-	HUD_SOUND::StopSound(SndNightVisionOn);
-	HUD_SOUND::StopSound(SndNightVisionOff);
-	HUD_SOUND::StopSound(SndNightVisionIdle);
+	HUD_SOUND::StopSound(sndNightVisionOn);
+	HUD_SOUND::StopSound(sndNightVisionOff);
+	HUD_SOUND::StopSound(sndNightVisionIdle);
 
 	//m_NightVisionChargeTime		= m_NightVisionRechargeTime;
 }

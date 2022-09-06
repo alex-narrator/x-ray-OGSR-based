@@ -69,8 +69,8 @@ CTorch::~CTorch(void)
 	light_render.destroy	();
 	light_omni.destroy	();
 	glow_render.destroy		();
-	HUD_SOUND::DestroySound	(SndTorchOn);
-	HUD_SOUND::DestroySound	(SndTorchOff);
+	HUD_SOUND::DestroySound	(sndTorchOn);
+	HUD_SOUND::DestroySound	(sndTorchOff);
 }
 
 inline bool CTorch::can_use_dynamic_lights	()
@@ -96,9 +96,9 @@ void CTorch::Load(LPCSTR section)
 	light_trace_bone = pSettings->r_string(section, "light_trace_bone");
 
 	if (pSettings->line_exist(section, "snd_torch_on"))
-		HUD_SOUND::LoadSound(section, "snd_torch_on", SndTorchOn, SOUND_TYPE_ITEM_USING);
+		HUD_SOUND::LoadSound(section, "snd_torch_on", sndTorchOn, SOUND_TYPE_ITEM_USING);
 	if (pSettings->line_exist(section, "snd_torch_off"))
-		HUD_SOUND::LoadSound(section, "snd_torch_off", SndTorchOff, SOUND_TYPE_ITEM_USING);
+		HUD_SOUND::LoadSound(section, "snd_torch_off", sndTorchOff, SOUND_TYPE_ITEM_USING);
 }
 
 void CTorch::Switch()
@@ -137,9 +137,9 @@ void CTorch::Switch	(bool turn_on)
 		bool bPlaySoundFirstPerson = (pA == Level().CurrentViewEntity());
 
 		if(m_switched_on && !was_switched_on)
-			HUD_SOUND::PlaySound(SndTorchOn, pA->Position(), pA, bPlaySoundFirstPerson);
+			HUD_SOUND::PlaySound(sndTorchOn, pA->Position(), pA, bPlaySoundFirstPerson);
 		else if(!m_switched_on && was_switched_on)
-			HUD_SOUND::PlaySound(SndTorchOff, pA->Position(), pA, bPlaySoundFirstPerson);
+			HUD_SOUND::PlaySound(sndTorchOff, pA->Position(), pA, bPlaySoundFirstPerson);
 	}
 }
 
@@ -189,8 +189,8 @@ void CTorch::OnH_B_Independent	(bool just_before_destroy)
 
 	Switch						(false);
 
-	HUD_SOUND::StopSound		(SndTorchOn);
-	HUD_SOUND::StopSound		(SndTorchOff);
+	HUD_SOUND::StopSound		(sndTorchOn);
+	HUD_SOUND::StopSound		(sndTorchOff);
 }
 
 void CTorch::UpdateCL() 

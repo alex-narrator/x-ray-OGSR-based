@@ -143,6 +143,7 @@ void CWeaponBM16::PlayAnimIdle()
 			xr_strconcat(guns_aim_anm, "anm_idle_aim_start_", std::to_string(m_magazine.size()).c_str());
 			if (AnimationExist(guns_aim_anm)) {
 				PlayHUDMotion(guns_aim_anm, true, GetState());
+				PlaySound(sndAimStart, get_LastFP());
 				return;
 			}
 		}
@@ -152,6 +153,7 @@ void CWeaponBM16::PlayAnimIdle()
 			xr_strconcat(guns_aim_anm_full, guns_aim_anm, "_", std::to_string(m_magazine.size()).c_str());
 			if (AnimationExist(guns_aim_anm_full)) {
 				PlayHUDMotion(guns_aim_anm_full, true, GetState());
+				PlaySound(sndAimEnd, get_LastFP());
 				return;
 			}
 		}

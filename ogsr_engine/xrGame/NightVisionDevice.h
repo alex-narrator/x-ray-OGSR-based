@@ -31,10 +31,10 @@ public:
 protected:
 			bool					m_bNightVisionOn{};
 
-			HUD_SOUND				SndNightVisionOn;
-			HUD_SOUND				SndNightVisionOff;
-			HUD_SOUND				SndNightVisionIdle;
-			HUD_SOUND				SndNightVisionBroken;
+			HUD_SOUND				sndNightVisionOn;
+			HUD_SOUND				sndNightVisionOff;
+			HUD_SOUND				sndNightVisionIdle;
+			HUD_SOUND				sndNightVisionBroken;
 
 			shared_str				m_NightVisionSect{};
 

@@ -31,13 +31,14 @@ protected:
 	HUD_SOUND		sndShutter;
 	HUD_SOUND		sndZoomIn;
 	HUD_SOUND		sndZoomOut;
-	HUD_SOUND		SndNightVisionOn;
-	HUD_SOUND		SndNightVisionOff;
-	HUD_SOUND		SndNightVisionIdle;
-	HUD_SOUND		SndNightVisionBroken;
+	HUD_SOUND		sndNightVisionOn;
+	HUD_SOUND		sndNightVisionOff;
+	HUD_SOUND		sndNightVisionIdle;
+	HUD_SOUND		sndNightVisionBroken;
 
-	HUD_SOUND		SndLaserSwitch;
-	HUD_SOUND		SndFlashlightSwitch;
+	HUD_SOUND		sndLaserSwitch;
+	HUD_SOUND		sndFlashlightSwitch;
+	HUD_SOUND		sndAimStart, sndAimEnd;
 
 	//звук текущего выстрела
 	HUD_SOUND*		m_pSndShotCurrent;

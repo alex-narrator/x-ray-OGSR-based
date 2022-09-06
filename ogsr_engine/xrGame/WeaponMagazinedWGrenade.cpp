@@ -702,6 +702,7 @@ void CWeaponMagazinedWGrenade::PlayAnimIdle()
 				xr_strconcat(guns_aim_anm, "anm_idle_aim_start", m_bGrenadeMode ? "_g" : "_w_gl");
 				if (AnimationExist(guns_aim_anm)) {
 					PlayHUDMotion(guns_aim_anm, true, GetState());
+					PlaySound(sndAimStart, get_LastFP());
 					return;
 				}
 			}
@@ -729,6 +730,7 @@ void CWeaponMagazinedWGrenade::PlayAnimIdle()
 				xr_strconcat(guns_aim_anm, "anm_idle_aim_end", m_bGrenadeMode ? "_g" : "_w_gl");
 				if (AnimationExist(guns_aim_anm)) {
 					PlayHUDMotion(guns_aim_anm, true, GetState());
+					PlaySound(sndAimEnd, get_LastFP());
 					return;
 				}
 			}

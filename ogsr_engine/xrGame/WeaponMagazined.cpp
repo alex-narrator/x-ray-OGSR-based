@@ -78,13 +78,16 @@ CWeaponMagazined::~CWeaponMagazined()
 	HUD_SOUND::DestroySound(sndZoomIn);
 	HUD_SOUND::DestroySound(sndZoomOut);
 	//
-	HUD_SOUND::DestroySound(SndNightVisionOn);
-	HUD_SOUND::DestroySound(SndNightVisionOff);
-	HUD_SOUND::DestroySound(SndNightVisionIdle);
-	HUD_SOUND::DestroySound(SndNightVisionBroken);
+	HUD_SOUND::DestroySound(sndNightVisionOn);
+	HUD_SOUND::DestroySound(sndNightVisionOff);
+	HUD_SOUND::DestroySound(sndNightVisionIdle);
+	HUD_SOUND::DestroySound(sndNightVisionBroken);
 	//
-	HUD_SOUND::DestroySound(SndLaserSwitch);
-	HUD_SOUND::DestroySound(SndFlashlightSwitch);
+	HUD_SOUND::DestroySound(sndLaserSwitch);
+	HUD_SOUND::DestroySound(sndFlashlightSwitch);
+	//
+	HUD_SOUND::DestroySound(sndAimStart);
+	HUD_SOUND::DestroySound(sndAimEnd);
 	//
 	if (m_binoc_vision)
 		xr_delete(m_binoc_vision);
@@ -110,14 +113,17 @@ void CWeaponMagazined::StopHUDSounds		()
 	HUD_SOUND::StopSound(sndZoomIn);
 	HUD_SOUND::StopSound(sndZoomOut);
 	//
-	HUD_SOUND::StopSound(SndNightVisionOn);
-	HUD_SOUND::StopSound(SndNightVisionOff);
-	HUD_SOUND::StopSound(SndNightVisionIdle);
-	HUD_SOUND::StopSound(SndNightVisionBroken);
+	HUD_SOUND::StopSound(sndNightVisionOn);
+	HUD_SOUND::StopSound(sndNightVisionOff);
+	HUD_SOUND::StopSound(sndNightVisionIdle);
+	HUD_SOUND::StopSound(sndNightVisionBroken);
 	//
-	HUD_SOUND::StopSound(SndLaserSwitch);
-	HUD_SOUND::StopSound(SndFlashlightSwitch);
-
+	HUD_SOUND::StopSound(sndLaserSwitch);
+	HUD_SOUND::StopSound(sndFlashlightSwitch);
+	//
+	HUD_SOUND::StopSound(sndAimStart);
+	HUD_SOUND::StopSound(sndAimEnd);
+	//
 	inherited::StopHUDSounds();
 }
 
@@ -211,9 +217,13 @@ void CWeaponMagazined::Load	(LPCSTR section)
 		HUD_SOUND::LoadSound( section, "snd_fire_modes", sndFireModes, m_eSoundEmptyClick );
 	if ( pSettings->line_exist( section, "snd_zoom_change" ) )
 		HUD_SOUND::LoadSound( section, "snd_zoom_change", sndZoomChange, m_eSoundEmptyClick );
-
 	//
 	HUD_SOUND::LoadSound(section, !!pSettings->line_exist(section, "snd_shutter") ? "snd_shutter" : "snd_draw", sndShutter, m_eSoundShutter);
+	//
+	if (pSettings->line_exist(section, "snd_aim_start"))
+		HUD_SOUND::LoadSound(section, "snd_aim_start", sndAimStart, m_eSoundShow);
+	if (pSettings->line_exist(section, "snd_aim_end"))
+		HUD_SOUND::LoadSound(section, "snd_aim_end", sndAimEnd, m_eSoundHide);
 	
 	m_pSndShotCurrent = &sndShot;
 		
@@ -610,10 +620,13 @@ void CWeaponMagazined::UpdateSounds	()
 	if (sndFireModes.playing	())	sndFireModes.set_position	(get_LastFP());
 	if (sndZoomChange.playing	())	sndZoomChange.set_position	(get_LastFP());
 	//
-	if (sndShutter.playing		()) sndShutter.set_position			(get_LastFP());
+	if (sndShutter.playing		()) sndShutter.set_position		(get_LastFP());
 	//
-	if (sndZoomIn.playing		()) sndZoomChange.set_position		(get_LastFP());
-	if (sndZoomOut.playing		()) sndZoomChange.set_position		(get_LastFP());
+	if (sndZoomIn.playing		()) sndZoomChange.set_position	(get_LastFP());
+	if (sndZoomOut.playing		()) sndZoomChange.set_position	(get_LastFP());
+	//
+	if (sndAimStart.playing		()) sndAimStart.set_position	(get_LastFP());
+	if (sndAimEnd.playing		()) sndAimEnd.set_position		(get_LastFP());
 }
 
 void CWeaponMagazined::state_Fire	(float dt)
@@ -1438,19 +1451,19 @@ void CWeaponMagazined::LoadZoomParams(LPCSTR section)
 	m_bNightVisionEnabled = !!READ_IF_EXISTS(pSettings, r_bool, section, "night_vision", false);
 	if (m_bNightVisionEnabled)
 	{
-		HUD_SOUND::StopSound(SndNightVisionOn);
-		HUD_SOUND::StopSound(SndNightVisionOff);
-		HUD_SOUND::StopSound(SndNightVisionIdle);
-		HUD_SOUND::StopSound(SndNightVisionBroken);
+		HUD_SOUND::StopSound(sndNightVisionOn);
+		HUD_SOUND::StopSound(sndNightVisionOff);
+		HUD_SOUND::StopSound(sndNightVisionIdle);
+		HUD_SOUND::StopSound(sndNightVisionBroken);
 
 		if (pSettings->line_exist(section, "snd_night_vision_on"))
-			HUD_SOUND::LoadSound(section, "snd_night_vision_on", SndNightVisionOn, SOUND_TYPE_ITEM_USING);
+			HUD_SOUND::LoadSound(section, "snd_night_vision_on", sndNightVisionOn, SOUND_TYPE_ITEM_USING);
 		if (pSettings->line_exist(section, "snd_night_vision_off"))
-			HUD_SOUND::LoadSound(section, "snd_night_vision_off", SndNightVisionOff, SOUND_TYPE_ITEM_USING);
+			HUD_SOUND::LoadSound(section, "snd_night_vision_off", sndNightVisionOff, SOUND_TYPE_ITEM_USING);
 		if (pSettings->line_exist(section, "snd_night_vision_idle"))
-			HUD_SOUND::LoadSound(section, "snd_night_vision_idle", SndNightVisionIdle, SOUND_TYPE_ITEM_USING);
+			HUD_SOUND::LoadSound(section, "snd_night_vision_idle", sndNightVisionIdle, SOUND_TYPE_ITEM_USING);
 		if (pSettings->line_exist(section, "snd_night_vision_broken"))
-			HUD_SOUND::LoadSound(section, "snd_night_vision_broken", SndNightVisionBroken, SOUND_TYPE_ITEM_USING);
+			HUD_SOUND::LoadSound(section, "snd_night_vision_broken", sndNightVisionBroken, SOUND_TYPE_ITEM_USING);
 
 		m_NightVisionSect = READ_IF_EXISTS(pSettings, r_string, section, "night_vision_effector", nullptr);
 	}
@@ -1541,9 +1554,9 @@ void CWeaponMagazined::LoadLaserParams(LPCSTR section) {
 	laser_light_render->set_cone(deg2rad(READ_IF_EXISTS(pSettings, r_float, m_light_section, "spot_angle", 1.f)));
 	laser_light_render->set_texture(READ_IF_EXISTS(pSettings, r_string, m_light_section, "spot_texture", nullptr));
 
-	HUD_SOUND::StopSound(SndLaserSwitch);
+	HUD_SOUND::StopSound(sndLaserSwitch);
 	if (pSettings->line_exist(section, "snd_laser_switch"))
-		HUD_SOUND::LoadSound(section, "snd_laser_switch", SndLaserSwitch, SOUND_TYPE_ITEM_USING);
+		HUD_SOUND::LoadSound(section, "snd_laser_switch", sndLaserSwitch, SOUND_TYPE_ITEM_USING);
 }
 
 void CWeaponMagazined::LoadFlashlightParams(LPCSTR section) {
@@ -1597,9 +1610,9 @@ void CWeaponMagazined::LoadFlashlightParams(LPCSTR section) {
 	flashlight_glow->set_color(clr);
 	flashlight_glow->set_radius(READ_IF_EXISTS(pSettings, r_float, m_light_section, "glow_radius", 0.3f));
 
-	HUD_SOUND::StopSound(SndFlashlightSwitch);
+	HUD_SOUND::StopSound(sndFlashlightSwitch);
 	if (pSettings->line_exist(section, "snd_flashlight_switch"))
-		HUD_SOUND::LoadSound(section, "snd_flashlight_switch", SndFlashlightSwitch, SOUND_TYPE_ITEM_USING);
+		HUD_SOUND::LoadSound(section, "snd_flashlight_switch", sndFlashlightSwitch, SOUND_TYPE_ITEM_USING);
 }
 
 //виртуальные функции для проигрывания анимации HUD
@@ -1654,6 +1667,7 @@ void CWeaponMagazined::PlayAnimAim()
 	if (IsRotatingToZoom()) {
 		if (AnimationExist("anm_idle_aim_start")) {
 			PlayHUDMotion("anm_idle_aim_start", true, GetState());
+			PlaySound(sndAimStart, get_LastFP());
 			return;
 		}
 	}
@@ -1679,6 +1693,7 @@ void CWeaponMagazined::PlayAnimIdle()
 		if (IsRotatingFromZoom()) {
 			if (AnimationExist("anm_idle_aim_end")) {
 				PlayHUDMotion("anm_idle_aim_end", true, GetState());
+				PlaySound(sndAimEnd, get_LastFP());
 				return;
 			}
 		}
@@ -2080,8 +2095,8 @@ void CWeaponMagazined::SwitchNightVision(bool vision_on, bool switch_sound)
 			{
 				AddEffector(pA, effNightvisionScope, m_NightVisionSect);
 				if (switch_sound)
-					HUD_SOUND::PlaySound(SndNightVisionOn, pA->Position(), pA, bPlaySoundFirstPerson);
-				HUD_SOUND::PlaySound(SndNightVisionIdle, pA->Position(), pA, bPlaySoundFirstPerson, true);
+					HUD_SOUND::PlaySound(sndNightVisionOn, pA->Position(), pA, bPlaySoundFirstPerson);
+				HUD_SOUND::PlaySound(sndNightVisionIdle, pA->Position(), pA, bPlaySoundFirstPerson, true);
 			}
 		}
 	}
@@ -2090,8 +2105,8 @@ void CWeaponMagazined::SwitchNightVision(bool vision_on, bool switch_sound)
 		if (pp) {
 			pp->Stop(1.0f);
 			if (switch_sound)
-				HUD_SOUND::PlaySound(SndNightVisionOff, pA->Position(), pA, bPlaySoundFirstPerson);
-			HUD_SOUND::StopSound(SndNightVisionIdle);
+				HUD_SOUND::PlaySound(sndNightVisionOff, pA->Position(), pA, bPlaySoundFirstPerson);
+			HUD_SOUND::StopSound(sndNightVisionIdle);
 		}
 	}
 }
@@ -2319,7 +2334,7 @@ void CWeaponMagazined::SwitchLaser(bool on) {
 		return;
 
 	m_bIsLaserOn = on;
-	PlaySound(SndLaserSwitch, get_LastFP());
+	PlaySound(sndLaserSwitch, get_LastFP());
 
 	if (!m_bIsLaserOn) {
 		laser_light_render->set_active(false);
@@ -2331,7 +2346,7 @@ void  CWeaponMagazined::SwitchFlashlight(bool on) {
 		return;
 
 	m_bIsFlashlightOn = on;
-	PlaySound(SndFlashlightSwitch, get_LastFP());
+	PlaySound(sndFlashlightSwitch, get_LastFP());
 
 	if (!m_bIsFlashlightOn) {
 		flashlight_render->set_active(false);
