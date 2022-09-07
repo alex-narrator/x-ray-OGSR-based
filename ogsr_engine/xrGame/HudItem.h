@@ -79,6 +79,7 @@ protected: //чтоб нельзя было вызвать на прямую
 	u32				m_startedMotionState;
 	u8				m_started_rnd_anim_idx;
 	bool			m_bStopAtEndAnimIsRunning;
+	bool			BobbingEnable{};
 
 	u32				m_dwStateTime;
 public:
@@ -212,6 +213,7 @@ public:
 			bool	is_limping;
 			bool	m_bZoomMode;
 
+			float	m_fAmplitudeController;
 			float	m_fAmplitudeRun;
 			float	m_fAmplitudeWalk;
 			float	m_fAmplitudeLimp;

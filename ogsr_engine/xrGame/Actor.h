@@ -121,7 +121,8 @@ public:
 #ifdef DEBUG
 	virtual void						OnRender			();
 #endif
-
+	// Имеется ли воздействие пси-ауры на ГГ (тряска рук)
+			bool						PsyAuraAffect{};
 
 	/////////////////////////////////////////////////////////////////
 	// Inventory Owner 
