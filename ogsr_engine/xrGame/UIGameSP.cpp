@@ -70,8 +70,10 @@ void CUIGameSP::SetClGame (game_cl_GameState* g)
 	R_ASSERT							(m_game);
 }
 
-void hud_adjust_mode_keyb(int dik);
-void hud_draw_adjust_mode();
+extern bool attach_adjust_mode_keyb(int dik);
+extern void attach_draw_adjust_mode();
+extern void hud_adjust_mode_keyb(int dik);
+extern void hud_draw_adjust_mode();
 
 bool CUIGameSP::IR_OnKeyboardPress(int dik) 
 {
@@ -84,6 +86,8 @@ bool CUIGameSP::IR_OnKeyboardPress(int dik)
 	if( pActor && !pActor->g_Alive() )		return false;
 
 	hud_adjust_mode_keyb(dik);
+	if (attach_adjust_mode_keyb(dik))
+		return true;
 
 	if (!pActor->HasPDAWorkable() && get_binded_action(dik) != kINVENTORY) return false;
 
@@ -144,6 +148,7 @@ void CUIGameSP::Render()
 {
 	inherited::Render();
 	hud_draw_adjust_mode();
+	attach_draw_adjust_mode();
 }
 
 void CUIGameSP::StartTalk()

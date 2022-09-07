@@ -2428,3 +2428,37 @@ bool CWeapon::IsLaserOn() const {
 bool CWeapon::IsFlashlightOn() const {
 	return m_bIsFlashlightOn;
 }
+
+void CWeapon::SaveAttachableParams()
+{
+	const char* sect_name = cNameSect().c_str();
+	string_path buff;
+	FS.update_path(buff, "$logs$", make_string("_world\\%s.ltx", sect_name).c_str());
+
+	CInifile pHudCfg(buff, FALSE, FALSE, TRUE);
+
+	sprintf_s(buff, "%f,%f,%f", m_Offset.c.x, m_Offset.c.y, m_Offset.c.z);
+	pHudCfg.w_string(sect_name, "position", buff);
+
+	Fvector ypr;
+	m_Offset.getHPB(ypr.x, ypr.y, ypr.z);
+	ypr.mul(180.f / PI);
+	sprintf_s(buff, "%f,%f,%f", ypr.x, ypr.y, ypr.z);
+	pHudCfg.w_string(sect_name, "orientation", buff);
+
+	if (pSettings->line_exist(sect_name, "strap_position") && pSettings->line_exist(sect_name, "strap_orientation"))
+	{
+		sprintf_s(buff, "%f,%f,%f", m_StrapOffset.c.x, m_StrapOffset.c.y, m_StrapOffset.c.z);
+		pHudCfg.w_string(sect_name, "strap_position", buff);
+		m_StrapOffset.getHPB(ypr.x, ypr.y, ypr.z);
+		ypr.mul(180.f / PI);
+		sprintf_s(buff, "%f,%f,%f", ypr.x, ypr.y, ypr.z);
+		pHudCfg.w_string(sect_name, "strap_orientation", buff);
+	}
+
+	Msg("--[%s] data saved to [%s]", __FUNCTION__, pHudCfg.fname());
+}
+
+void CWeapon::ParseCurrentItem(CGameFont* F) {
+	F->OutNext("WEAPON IN STRAPPED MODE: [%d]", m_strapped_mode);
+}
