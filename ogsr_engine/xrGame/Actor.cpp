@@ -97,7 +97,7 @@ static Fbox		bbCrouchBox;
 static Fvector	vFootCenter;
 static Fvector	vFootExt;
 
-Flags32 psActorFlags = { AF_3D_SCOPES | AF_KEYPRESS_ON_START | AF_CAM_COLLISION };
+Flags32 psActorFlags = { AF_3D_SCOPES | AF_KEYPRESS_ON_START | AF_CAM_COLLISION | AF_AI_VOLUMETRIC_LIGHTS };
 
 static bool updated;
 
@@ -944,38 +944,35 @@ void CActor::shedule_Update	(u32 DT)
 {
 	setSVU(OnServer());
 
-	if (IsFocused())
+	BOOL bHudView = HUDview();
+	if (bHudView)
 	{
-		BOOL bHudView = HUDview();
-		if (bHudView)
+		CInventoryItem* pInvItem = inventory().ActiveItem();
+		if (pInvItem)
 		{
-			CInventoryItem* pInvItem = inventory().ActiveItem();
-			if (pInvItem)
+			CHudItem* pHudItem = smart_cast<CHudItem*>(pInvItem);
+			if (pHudItem)
 			{
-				CHudItem* pHudItem = smart_cast<CHudItem*>(pInvItem);
-				if (pHudItem)
+				if (pHudItem->IsHidden())
 				{
-					if (pHudItem->IsHidden())
-					{
-						g_player_hud->detach_item(pHudItem);
-					}
-					else
-					{
-						g_player_hud->attach_item(pHudItem);
-					}
+					g_player_hud->detach_item(pHudItem);
 				}
-			}
-			else
-			{
-				g_player_hud->detach_item_idx(0);
-				// Msg("---No active item in inventory(), item 0 detached.");
+				else
+				{
+					g_player_hud->attach_item(pHudItem);
+				}
 			}
 		}
 		else
 		{
-			g_player_hud->detach_all_items();
-			// Msg("---No hud view found, all items detached.");
+			g_player_hud->detach_item_idx(0);
+			// Msg("---No active item in inventory(), item 0 detached.");
 		}
+	}
+	else
+	{
+		g_player_hud->detach_all_items();
+		// Msg("---No hud view found, all items detached.");
 	}
 
 	//обновление инвентаря

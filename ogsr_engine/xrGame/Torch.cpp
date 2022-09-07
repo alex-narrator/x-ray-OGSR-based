@@ -73,18 +73,6 @@ CTorch::~CTorch(void)
 	HUD_SOUND::DestroySound	(sndTorchOff);
 }
 
-inline bool CTorch::can_use_dynamic_lights	()
-{
-	if (!H_Parent())
-		return				(true);
-
-	CInventoryOwner			*owner = smart_cast<CInventoryOwner*>(H_Parent());
-	if (!owner)
-		return				(true);
-
-	return					(owner->can_use_dynamic_lights());
-}
-
 void CTorch::Load(LPCSTR section) 
 {
 	inherited::Load			(section);
@@ -115,13 +103,10 @@ void CTorch::Switch	(bool turn_on)
 
 	bool was_switched_on = m_switched_on;
 
-	m_switched_on			= turn_on;
-	if (can_use_dynamic_lights())
-	{
-		light_render->set_active(turn_on);
-		light_omni->set_active(turn_on);
-	}
-	glow_render->set_active					(turn_on);
+	m_switched_on				= turn_on;
+	light_render->set_active	(turn_on);
+	light_omni->set_active		(turn_on);
+	glow_render->set_active		(turn_on);
 
 	if (*light_trace_bone) 
 	{
@@ -199,6 +184,13 @@ void CTorch::UpdateCL()
 	
 	if (!m_switched_on)			return;
 
+	if (useVolumetric) {
+		if (smart_cast<CActor*>(H_Parent()))
+			light_render->set_volumetric(useVolumetricForActor);
+		else
+			light_render->set_volumetric(psActorFlags.test(AF_AI_VOLUMETRIC_LIGHTS));
+	}
+
 	CBoneInstance			&BI = smart_cast<IKinematics*>(Visual())->LL_GetBoneInstance(guid_bone);
 	Fmatrix					M;
 
@@ -274,18 +266,15 @@ void CTorch::UpdateCL()
 		}// if(actor)
 		else 
 		{
-			if (can_use_dynamic_lights()) 
-			{
-				light_render->set_position	(M.c);
-				light_render->set_rotation	(M.k,M.i);
+			light_render->set_position	(M.c);
+			light_render->set_rotation	(M.k,M.i);
 
-				Fvector offset				= M.c; 
-				offset.mad					(M.i,OMNI_OFFSET.x);
-				offset.mad					(M.j,OMNI_OFFSET.y);
-				offset.mad					(M.k,OMNI_OFFSET.z);
-				light_omni->set_position	(M.c);
-				light_omni->set_rotation	(M.k,M.i);
-			}//if (can_use_dynamic_lights()) 
+			Fvector offset				= M.c; 
+			offset.mad					(M.i,OMNI_OFFSET.x);
+			offset.mad					(M.j,OMNI_OFFSET.y);
+			offset.mad					(M.k,OMNI_OFFSET.z);
+			light_omni->set_position	(M.c);
+			light_omni->set_rotation	(M.k,M.i);
 
 			glow_render->set_position	(M.c);
 			glow_render->set_direction	(M.k);
@@ -330,12 +319,9 @@ void CTorch::UpdateCL()
 	Fcolor					fclr;
 	fclr.set( (float)color_get_B( clr ) / 255.f, (float)color_get_G( clr ) / 255.f, (float)color_get_R( clr ) / 255.f, 1.f );
 	fclr.mul_rgb( fBrightness );
-	if (can_use_dynamic_lights())
-	{
-		light_render->set_color	(fclr);
-		light_omni->set_color	(fclr);
-	}
-	glow_render->set_color		(fclr);
+	light_render->set_color	(fclr);
+	light_omni->set_color	(fclr);
+	glow_render->set_color	(fclr);
 }
 
 
