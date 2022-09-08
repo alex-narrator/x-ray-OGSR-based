@@ -1078,7 +1078,6 @@ void CHudItem::CWeaponBobbing::Update(Fmatrix& m)
 		{
 			A = m_fAmplitudeController * k;
 			ST = m_fSpeedRun * 10 * fTime * k;
-			Msg("ControllerCondition = true");
 		}
 		else if (isActorAccelerated(dwMState, m_bZoomMode))
 		{
