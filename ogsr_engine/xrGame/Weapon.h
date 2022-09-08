@@ -208,13 +208,7 @@ public:
 	u8		GetAddonsState						()		const		{return m_flagsAddOnState;};
 	void	SetAddonsState						(u8 st)	{m_flagsAddOnState=st;}
 
-                                                                               //названия секций подключаемых аддонов
-    //shared_str		m_sScopeName;
-    //std::vector<shared_str> m_allScopeNames;
-    //shared_str		m_sSilencerName;
-    //shared_str		m_sGrenadeLauncherName;
-
-	std::vector<shared_str> m_sWpn_scope_bones;
+ 	std::vector<shared_str> m_sWpn_scope_bones;
 	shared_str m_sWpn_silencer_bone;
 	shared_str m_sWpn_launcher_bone;
 	shared_str m_sWpn_laser_bone;
@@ -308,7 +302,7 @@ public:
 		if (pA && pA->active_cam() == eacLookAt)
 			return false;
 
-		return (m_bHideCrosshairInZoom || ZoomTexture()) && !psActorFlags.test(AF_CROSSHAIR_DBG);
+		return m_bHideCrosshairInZoom || ZoomTexture();
 	}
 
 	virtual void			OnZoomChanged		() {}
