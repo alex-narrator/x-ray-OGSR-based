@@ -94,7 +94,7 @@ constexpr xr_token qmsaa_token[] = {
 	{ 0,							0												}
 };
 
-u32			ps_r3_msaa_atest		=	0;			//	=	0;
+u32			ps_r3_msaa_atest		=	2;			//	=	0;
 constexpr xr_token qmsaa__atest_token[] = {
 	{ "st_opt_off",					0												},
 	{ "st_opt_atest_msaa_dx10_0",	1												},
@@ -178,7 +178,7 @@ Flags32		ps_r2_ls_flags				= { R2FLAG_SUN
 	| R2FLAG_EXP_MT_CALC | R3FLAG_DYN_WET_SURF
 	| R3FLAG_VOLUMETRIC_SMOKE
 	//| R3FLAG_MSAA 
-	//| R3FLAG_MSAA_OPT
+	| R3FLAG_MSAA_OPT
 	| R3FLAG_GBUFFER_OPT
 	|R2FLAG_DETAIL_BUMP
 	|R2FLAG_DOF
@@ -271,7 +271,6 @@ float ps_r2_visor_refl_radius = 0.4f;
 
 #if RENDER==R_R4
 float ps_ext_SSLR_L = 1.f;
-float ps_ext_SSLR_blur = 0.f;
 #endif
 
 int			ps_r__detail_radius = 49;
@@ -888,7 +887,6 @@ void		xrRender_initconsole	()
 #if RENDER==R_R4
 	CMD3(CCC_Mask, "r_sslr_enable", &ps_r2_ls_flags_ext, R2FLAGEXT_SSLR);
 	CMD4(CCC_Float, "r_sslr_l", &ps_ext_SSLR_L, .1f, 10.f);
-	CMD4(CCC_Float, "r_sslr_blur", &ps_ext_SSLR_blur, 0.0f, 5.f);
 #endif
 	CMD3(CCC_Mask,		"r_terrain_parallax",	&ps_r2_ls_flags_ext,		R2FLAGEXT_TERRAIN_PARALLAX);
 
@@ -1009,9 +1007,8 @@ void		xrRender_initconsole	()
 	//CMD3(CCC_Mask,		"r3_msaa_hybrid",				&ps_r2_ls_flags,			R3FLAG_MSAA_HYBRID);
 	//CMD3(CCC_Mask,		"r3_msaa_opt",					&ps_r2_ls_flags,			R3FLAG_MSAA_OPT);
 	CMD3(CCC_Mask,		"r3_gbuffer_opt",				&ps_r2_ls_flags,			R3FLAG_GBUFFER_OPT);
-	CMD3(CCC_Mask,		"r3_use_dx10_1",				&ps_r2_ls_flags,			(u32)R3FLAG_USE_DX10_1);
-	//CMD3(CCC_Mask,		"r3_msaa_alphatest",			&ps_r2_ls_flags,			(u32)R3FLAG_MSAA_ALPHATEST);
-	CMD3(CCC_Token,		"r3_msaa_alphatest",			&ps_r3_msaa_atest,			qmsaa__atest_token);
+	//CMD3(CCC_Mask,		"r3_use_dx10_1",				&ps_r2_ls_flags,			(u32)R3FLAG_USE_DX10_1);
+	//CMD3(CCC_Token,		"r3_msaa_alphatest",			&ps_r3_msaa_atest,			qmsaa__atest_token);
 	CMD3(CCC_Token,		"r3_minmax_sm",					&ps_r3_minmax_sm,			qminmax_sm_token);
 
 	CMD4(CCC_detail_radius, "r__detail_radius", &ps_r__detail_radius, 49, 300);

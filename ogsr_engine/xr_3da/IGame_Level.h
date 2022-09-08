@@ -72,7 +72,6 @@ public:	// deferred sound events
 		Feel::Sound*			dest	;
 		ref_sound_data_ptr		source	;
 		float					power	;
-		Fvector position;
 	};
 	xr_vector<_esound_delegate>	snd_Events;
 public:
@@ -105,6 +104,7 @@ public:
 	
 	void						SoundEvent_Register		( ref_sound_data_ptr S, float range );
 	void						SoundEvent_Dispatch		( );
+	void						SoundEvent_OnDestDestroy(Feel::Sound*);
 
 	// Loader interface
 	//ref_shader					LL_CreateShader			(int S, int T, int M, int C);
