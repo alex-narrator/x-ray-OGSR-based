@@ -1,6 +1,10 @@
 #include "stdafx.h"
 #include "UIStatic.h"
 
+void CUIStatic__set_color_a(CUIStatic* self, u8 alpha) {
+	self->SetColor(subst_alpha(self->GetColor(), alpha));
+}
+
 using namespace luabind;
 
 #pragma optimize("s",on)
@@ -15,11 +19,12 @@ void CUIStatic::script_register(lua_State *L)
 		.def("SetTextST",			(void (CUIStatic::*)(LPCSTR)) (&CUIStatic::SetTextST) )
 		.def("GetText",				&CUIStatic::GetText)
 
-		.def("SetTextX",				&CUIStatic::SetTextX)
-		.def("SetTextY",				&CUIStatic::SetTextY)
-		.def("GetTextX",				&CUIStatic::GetTextX)
-		.def("GetTextY",				&CUIStatic::GetTextY)
+		.def("SetTextX",			&CUIStatic::SetTextX)
+		.def("SetTextY",			&CUIStatic::SetTextY)
+		.def("GetTextX",			&CUIStatic::GetTextX)
+		.def("GetTextY",			&CUIStatic::GetTextY)
 		
+		.def("SetColorA",			&CUIStatic__set_color_a)
 		.def("SetColor",			&CUIStatic::SetColor)
 		.def("GetColor",			&CUIStatic::GetColor)
 		.def("SetTextColor",		&CUIStatic::SetTextColor_script)
