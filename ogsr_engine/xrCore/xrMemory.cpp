@@ -1,19 +1,19 @@
 #include "stdafx.h"
 #include <psapi.h>
 #include "xrsharedmem.h"
+
+#ifndef _DEBUG
+#define USE_MIMALLOC
+#endif
+
+#ifdef USE_MIMALLOC
+#include "..\mimalloc\include\mimalloc-override.h"
+#pragma comment( lib, "mimalloc-static" )
+#endif
+
 #ifdef USE_MEMORY_VALIDATOR
 #include "xrMemoryDebug.h"
 #endif
-
-
-// Additional 16 bytes of memory almost like in original xr_aligned_offset_malloc
-// But for DEBUG we don't need this if we want to find memory problems
-//#ifdef DEBUG
-static constexpr size_t reserved = 0;
-//#else
-//static constexpr size_t reserved = 16;
-//#endif
-
 
 xrMemory Memory;
 
@@ -42,7 +42,7 @@ void xrMemory::mem_compact() {
 void* xrMemory::mem_alloc( size_t size ) {
   stat_calls++;
 
-  void* ptr = malloc( size + reserved );
+  void* ptr = malloc( size );
 #ifdef USE_MEMORY_VALIDATOR
   RegisterPointer( ptr );
 #endif
@@ -64,7 +64,7 @@ void* xrMemory::mem_realloc( void* P, size_t size ) {
 #ifdef USE_MEMORY_VALIDATOR
   UnregisterPointer( P );
 #endif
-  void* ptr = realloc( P, size + reserved );
+  void* ptr = realloc( P, size );
 #ifdef USE_MEMORY_VALIDATOR
   RegisterPointer( ptr );
 #endif
@@ -140,12 +140,3 @@ size_t mem_usage_impl( u32* pBlocksUsed, u32* pBlocksFree ) {
 u32 xrMemory::mem_usage( u32* pBlocksUsed, u32* pBlocksFree ) {
   return u32( mem_usage_impl( pBlocksUsed, pBlocksFree ) );
 }
-
-
-[[nodiscard]] void* operator new(size_t size) { return Memory.mem_alloc(size); }
-void operator delete(void* p) noexcept { xr_free(p); }
-void operator delete(void* p, size_t) noexcept { xr_free(p); }
-
-[[nodiscard]] void* operator new[](size_t size) { return Memory.mem_alloc(size); }
-void operator delete[](void* p) noexcept { xr_free(p); }
-void operator delete[](void* p, size_t) noexcept { xr_free(p); }
