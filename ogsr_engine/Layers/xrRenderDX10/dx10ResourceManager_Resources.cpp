@@ -130,62 +130,57 @@ void		CResourceManager::_DeletePass			(const SPass* P)
 }
 
 //--------------------------------------------------------------------------------------------------------------
-SVS*	CResourceManager::_CreateVS		(LPCSTR _name)
+SVS* CResourceManager::_CreateVS(LPCSTR _name)
 {
 	string_path			name;
-	xr_strcpy				(name,_name);
-	if (0 == ::Render->m_skinning)	xr_strcat(name,"_0");
-	if (1 == ::Render->m_skinning)	xr_strcat(name,"_1");
-	if (2 == ::Render->m_skinning)	xr_strcat(name,"_2");
-	if (3 == ::Render->m_skinning)	xr_strcat(name,"_3");
-	if (4 == ::Render->m_skinning)	xr_strcat(name,"_4");
-	LPSTR N				= LPSTR		(name);
-	map_VS::iterator I	= m_vs.find	(N);
-	if (I!=m_vs.end())	return I->second;
+	xr_strcpy(name, _name);
+	if (0 == ::Render->m_skinning)	xr_strcat(name, "_0");
+	if (1 == ::Render->m_skinning)	xr_strcat(name, "_1");
+	if (2 == ::Render->m_skinning)	xr_strcat(name, "_2");
+	if (3 == ::Render->m_skinning)	xr_strcat(name, "_3");
+	if (4 == ::Render->m_skinning)	xr_strcat(name, "_4");
+	LPSTR N = LPSTR(name);
+	map_VS::iterator I = m_vs.find(N);
+	if (I != m_vs.end())	return I->second;
 	else
 	{
-		SVS*	_vs					= xr_new<SVS>	();
-		_vs->dwFlags				|= xr_resource_flagged::RF_REGISTERED;
-		m_vs.insert					(mk_pair(_vs->set_name(name),_vs));
+		SVS* _vs = xr_new<SVS>();
+		_vs->dwFlags |= xr_resource_flagged::RF_REGISTERED;
+		m_vs.insert(mk_pair(_vs->set_name(name), _vs));
 		//_vs->vs				= NULL;
 		//_vs->signature		= NULL;
-		if (0==stricmp(_name,"null"))	{
+		if (0 == stricmp(_name, "null")) {
 			return _vs;
 		}
-
 		string_path					shName;
 		{
-			const char*	pchr = strchr(_name, '(');
-			ptrdiff_t	size = pchr?pchr-_name:xr_strlen(_name);
+			const char* pchr = strchr(_name, '(');
+			ptrdiff_t	size = pchr ? pchr - _name : xr_strlen(_name);
 			strncpy_s(shName, _name, size);
 			shName[size] = 0;
 		}
-
 		string_path					cname;
-		strconcat					(sizeof(cname),cname,::Render->getShaderPath(),/*_name*/shName,".vs");
-		FS.update_path				(cname,	"$game_shaders$", cname);
+		strconcat(sizeof(cname), cname, ::Render->getShaderPath(),/*_name*/shName, ".vs");
+		FS.update_path(cname, "$game_shaders$", cname);
 		//		LPCSTR						target		= NULL;
-
 		// duplicate and zero-terminate
 		IReader* file = FS.r_open(cname);
 		R_ASSERT2(file, cname);
 
-		u32	const size			= file->length();
-		char* const data		= (LPSTR)_alloca(size + 1);
-		CopyMemory				( data, file->pointer(), size );
-		data[size]				= 0;
-		FS.r_close				( file );
+		const std::string_view strbuf{ reinterpret_cast<const char*>(file->pointer()), static_cast<size_t>(file->length()) };
 
 		// Select target
-		LPCSTR						c_target	= "vs_2_0";
-		LPCSTR						c_entry		= "main";
-		if (HW.Caps.geometry_major>=2)	c_target="vs_2_0";
-		else 							c_target="vs_1_1";
+		LPCSTR						c_target = "vs_2_0";
+		LPCSTR						c_entry = "main";
+		if (HW.Caps.geometry_major >= 2)	c_target = "vs_2_0";
+		else 							c_target = "vs_1_1";
 
-		if (strstr(data, "main_vs_1_1"))	{ c_target = "vs_1_1"; c_entry = "main_vs_1_1";	}
-		if (strstr(data, "main_vs_2_0"))	{ c_target = "vs_2_0"; c_entry = "main_vs_2_0";	}
+		if (strbuf.find("main_vs_2_0") != decltype(strbuf)::npos) { c_target = "vs_2_0"; c_entry = "main_vs_2_0"; }
+		else if (strbuf.find("main_vs_1_1") != decltype(strbuf)::npos) { c_target = "vs_1_1"; c_entry = "main_vs_1_1"; }
 
-		HRESULT	const _hr		= ::Render->shader_compile(name,(DWORD const*)data,size, c_entry, c_target, D3D10_SHADER_PACK_MATRIX_ROW_MAJOR, (void*&)_vs );
+		HRESULT	const _hr = ::Render->shader_compile(name, reinterpret_cast<DWORD const*>(strbuf.data()), static_cast<UINT>(strbuf.size()), c_entry, c_target, D3D10_SHADER_PACK_MATRIX_ROW_MAJOR, (void*&)_vs);
+
+		FS.r_close(file);
 
 		VERIFY(SUCCEEDED(_hr));
 
@@ -193,7 +188,6 @@ SVS*	CResourceManager::_CreateVS		(LPCSTR _name)
 			!FAILED(_hr),
 			make_string("Your video card doesn't meet game requirements.\n\nTry to lower game settings.")
 		);
-
 		return					_vs;
 	}
 }
@@ -224,70 +218,64 @@ void	CResourceManager::_DeleteVS			(const SVS* vs)
 }
 
 //--------------------------------------------------------------------------------------------------------------
-SPS*	CResourceManager::_CreatePS			(LPCSTR _name)
+SPS* CResourceManager::_CreatePS(LPCSTR _name)
 {
 	string_path			name;
-	xr_strcpy				(name,_name);
-	if (0 == ::Render->m_MSAASample)	xr_strcat(name,"_0");
-	if (1 == ::Render->m_MSAASample)	xr_strcat(name,"_1");
-	if (2 == ::Render->m_MSAASample)	xr_strcat(name,"_2");
-	if (3 == ::Render->m_MSAASample)	xr_strcat(name,"_3");
-	if (4 == ::Render->m_MSAASample)	xr_strcat(name,"_4");
-	if (5 == ::Render->m_MSAASample)	xr_strcat(name,"_5");
-	if (6 == ::Render->m_MSAASample)	xr_strcat(name,"_6");
-	if (7 == ::Render->m_MSAASample)	xr_strcat(name,"_7");
-	LPSTR N				= LPSTR(name);
-	map_PS::iterator I	= m_ps.find	(N);
-	if (I!=m_ps.end())	return		I->second;
+	xr_strcpy(name, _name);
+	if (0 == ::Render->m_MSAASample)	xr_strcat(name, "_0");
+	if (1 == ::Render->m_MSAASample)	xr_strcat(name, "_1");
+	if (2 == ::Render->m_MSAASample)	xr_strcat(name, "_2");
+	if (3 == ::Render->m_MSAASample)	xr_strcat(name, "_3");
+	if (4 == ::Render->m_MSAASample)	xr_strcat(name, "_4");
+	if (5 == ::Render->m_MSAASample)	xr_strcat(name, "_5");
+	if (6 == ::Render->m_MSAASample)	xr_strcat(name, "_6");
+	if (7 == ::Render->m_MSAASample)	xr_strcat(name, "_7");
+	LPSTR N = LPSTR(name);
+	map_PS::iterator I = m_ps.find(N);
+	if (I != m_ps.end())	return		I->second;
 	else
 	{
-		SPS*	_ps					=	xr_new<SPS>	();
-		_ps->dwFlags				|=	xr_resource_flagged::RF_REGISTERED;
-		m_ps.insert					(mk_pair(_ps->set_name(name),_ps));
-		if (0==stricmp(_name,"null"))	{
-			_ps->ps				= NULL;
+		SPS* _ps = xr_new<SPS>();
+		_ps->dwFlags |= xr_resource_flagged::RF_REGISTERED;
+		m_ps.insert(mk_pair(_ps->set_name(name), _ps));
+		if (0 == stricmp(_name, "null")) {
+			_ps->ps = NULL;
 			return _ps;
 		}
-
 		string_path					shName;
-		const char*	pchr = strchr(_name, '(');
-		ptrdiff_t	strSize = pchr?pchr-_name:xr_strlen(_name);
-		strncpy_s(shName, _name, strSize );
+		const char* pchr = strchr(_name, '(');
+		ptrdiff_t	strSize = pchr ? pchr - _name : xr_strlen(_name);
+		strncpy_s(shName, _name, strSize);
 		shName[strSize] = 0;
-
 		// Open file
 		string_path					cname;
-		strconcat					(sizeof(cname), cname,::Render->getShaderPath(),/*_name*/shName,".ps");
-		FS.update_path				(cname,	"$game_shaders$", cname);
-
+		strconcat(sizeof(cname), cname, ::Render->getShaderPath(),/*_name*/shName, ".ps");
+		FS.update_path(cname, "$game_shaders$", cname);
 		// duplicate and zero-terminate
 		IReader* file = FS.r_open(cname);
 		R_ASSERT2(file, cname);
 
-		u32	const size			= file->length();
-		char* const data		= (LPSTR)_alloca(size + 1);
-		CopyMemory				( data, file->pointer(), size );
-		data[size]				= 0;
-		FS.r_close				( file );
+		const std::string_view strbuf{ reinterpret_cast<const char*>(file->pointer()), static_cast<size_t>(file->length()) };
 
 		// Select target
-		LPCSTR						c_target	= "ps_2_0";
-		LPCSTR						c_entry		= "main";
-		if (strstr(data,"main_ps_1_1"))			{ c_target = "ps_1_1"; c_entry = "main_ps_1_1";	}
-		if (strstr(data,"main_ps_1_2"))			{ c_target = "ps_1_2"; c_entry = "main_ps_1_2";	}
-		if (strstr(data,"main_ps_1_3"))			{ c_target = "ps_1_3"; c_entry = "main_ps_1_3";	}
-		if (strstr(data,"main_ps_1_4"))			{ c_target = "ps_1_4"; c_entry = "main_ps_1_4";	}
-		if (strstr(data,"main_ps_2_0"))			{ c_target = "ps_2_0"; c_entry = "main_ps_2_0";	}
+		LPCSTR						c_target = "ps_2_0";
+		LPCSTR						c_entry = "main";
+		if (strbuf.find("main_ps_2_0") != decltype(strbuf)::npos) { c_target = "ps_2_0"; c_entry = "main_ps_2_0"; }
+		else if (strbuf.find("main_ps_1_4") != decltype(strbuf)::npos) { c_target = "ps_1_4"; c_entry = "main_ps_1_4"; }
+		else if (strbuf.find("main_ps_1_3") != decltype(strbuf)::npos) { c_target = "ps_1_3"; c_entry = "main_ps_1_3"; }
+		else if (strbuf.find("main_ps_1_2") != decltype(strbuf)::npos) { c_target = "ps_1_2"; c_entry = "main_ps_1_2"; }
+		else if (strbuf.find("main_ps_1_1") != decltype(strbuf)::npos) { c_target = "ps_1_1"; c_entry = "main_ps_1_1"; }
 
-		HRESULT	const _hr		= ::Render->shader_compile(name,(DWORD const*)data,size, c_entry, c_target, D3D10_SHADER_PACK_MATRIX_ROW_MAJOR, (void*&)_ps );
-		
+		HRESULT	const _hr = ::Render->shader_compile(name, reinterpret_cast<DWORD const*>(strbuf.data()), static_cast<UINT>(strbuf.size()), c_entry, c_target, D3D10_SHADER_PACK_MATRIX_ROW_MAJOR, (void*&)_ps);
+
+		FS.r_close(file);
+
 		VERIFY(SUCCEEDED(_hr));
 
 		R_ASSERT(
 			!FAILED(_hr),
 			make_string("Your video card doesn't meet game requirements.\n\nTry to lower game settings.")
-			);
-
+		);
 		return			_ps;
 	}
 }
