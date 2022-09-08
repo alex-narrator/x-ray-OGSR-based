@@ -743,7 +743,7 @@ void CWeaponMagazinedWGrenade::PlayAnimIdle()
 				{
 					act_state = 1;
 				}
-				else if (!HudBobbingAllowed())
+				else if (AnmIdleMovingAllowed())
 				{
 					if (State & mcAnyMove)
 					{
