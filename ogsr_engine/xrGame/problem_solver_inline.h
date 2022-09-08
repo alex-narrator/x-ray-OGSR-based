@@ -48,11 +48,13 @@ CProblemSolverAbstract::~CProblemSolver					()
 TEMPLATE_SPECIALIZATION
 IC	void CProblemSolverAbstract::clear					()
 {
-	while (!m_operators.empty())
-		remove_operator		(m_operators.back().m_operator_id);
+	for (auto& it : m_operators)
+		delete_data(it.m_operator);
+	m_operators.clear_and_free();
 
-	while (!m_evaluators.empty())
-		remove_evaluator	((*(m_evaluators.end() - 1)).first);
+	for (auto& pair : m_evaluators)
+		delete_data(pair.second);
+	m_evaluators.clear();
 }
 
 TEMPLATE_SPECIALIZATION
@@ -123,18 +125,14 @@ IC	void CProblemSolverAbstract::validate_properties	(const CState &conditions) c
 #endif
 
 TEMPLATE_SPECIALIZATION
-IC	void CProblemSolverAbstract::remove_operator		(const _edge_type &operator_id)
+IC	void CProblemSolverAbstract::remove_operator(const _edge_type& operator_id)
 {
-	auto I = std::lower_bound(m_operators.begin(), m_operators.end(),operator_id);
-	THROW						(m_operators.end() != I);
-	try {
-		delete_data				((*I).m_operator);
+	auto I = std::lower_bound(m_operators.begin(), m_operators.end(), operator_id);
+	if (m_operators.end() != I) {
+		delete_data((*I).m_operator);
+		m_operators.erase(I);
 	}
-	catch(...) {
-		(*I).m_operator			= 0;
-	}
-	m_actuality					= false;
-	m_operators.erase			(I);
+	m_actuality = false;
 }
 
 TEMPLATE_SPECIALIZATION
@@ -171,18 +169,14 @@ IC	void CProblemSolverAbstract::add_evaluator				(const _condition_type &conditi
 }
 
 TEMPLATE_SPECIALIZATION
-IC	void CProblemSolverAbstract::remove_evaluator			(const _condition_type &condition_id)
+IC	void CProblemSolverAbstract::remove_evaluator(const _condition_type& condition_id)
 {
 	auto I = m_evaluators.find(condition_id);
-	THROW						(I != m_evaluators.end());
-	try {
-		delete_data				((*I).second);
+	if (I != m_evaluators.end()) {
+		delete_data((*I).second);
+		m_evaluators.erase(I);
 	}
-	catch(...) {
-		(*I).second				= 0;
-	}
-	m_evaluators.erase			(I);
-	m_actuality					= false;
+	m_actuality = false;
 }
 
 
