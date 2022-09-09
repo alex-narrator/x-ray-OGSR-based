@@ -509,11 +509,11 @@ static void ProcessLTX(LPCSTR tgt_name, LPCSTR params, BOOL bFast)
 	// free
 	for (char* it : list)
 		xr_free(it);
-	list.clear_and_free();
+	list.clear();
 
 	for (char* it : fl_list)
 		xr_free(it);
-	fl_list.clear_and_free();
+	fl_list.clear();
 
 	exclude_exts.clear();
 }

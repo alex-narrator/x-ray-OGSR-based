@@ -99,7 +99,7 @@ void CPda::UpdateActiveContacts	()
           }
 	}
 
-	m_active_contacts.clear_not_free();
+	m_active_contacts.clear();
 	xr_vector<CObject*>::iterator it= feel_touch.begin();
 	for(;it!=feel_touch.end();++it){
 		CEntityAlive* pEA = smart_cast<CEntityAlive*>(*it);

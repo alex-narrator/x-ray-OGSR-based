@@ -15,7 +15,7 @@ void CUIArtefactPanel::InitFromXML	(CUIXml& xml, LPCSTR path, int index)
 void CUIArtefactPanel::InitIcons(const TIItemContainer& items)
 {
 	m_si.SetShader(InventoryUtilities::GetEquipmentIconsShader());
-	m_vRects.clear_and_free();
+	m_vRects.clear();
 	
 	for(const auto& _itm : items)
 	{
