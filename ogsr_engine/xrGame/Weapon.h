@@ -208,20 +208,20 @@ public:
 	u8		GetAddonsState						()		const		{return m_flagsAddOnState;};
 	void	SetAddonsState						(u8 st)	{m_flagsAddOnState=st;}
 
- 	std::vector<shared_str> m_sWpn_scope_bones;
+	xr_vector<shared_str> m_sWpn_scope_bones;
 	shared_str m_sWpn_silencer_bone;
 	shared_str m_sWpn_launcher_bone;
 	shared_str m_sWpn_laser_bone;
 	shared_str m_sWpn_flashlight_bone;
-	std::vector<shared_str> m_sHud_wpn_scope_bones;
+	xr_vector<shared_str> m_sHud_wpn_scope_bones;
 	shared_str m_sHud_wpn_silencer_bone;
 	shared_str m_sHud_wpn_launcher_bone;
 	shared_str m_sHud_wpn_laser_bone;
 	shared_str m_sHud_wpn_flashlight_bone;
 
 private:
-	std::vector<shared_str> hidden_bones;
-	std::vector<shared_str> hud_hidden_bones;
+	xr_vector<shared_str> hidden_bones;
+	xr_vector<shared_str> hud_hidden_bones;
 
 protected:
 	//состояние подключенных аддонов

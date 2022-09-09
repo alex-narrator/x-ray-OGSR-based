@@ -377,7 +377,7 @@ void CUICellItem::ColorizeItems( std::initializer_list<CUIDragDropListEx*> args 
     }
   }
 
-  std::vector<shared_str> ColorizeSects;
+  xr_vector<shared_str> ColorizeSects;
 
   auto WpnMagScanner = [&ColorizeSects](CInventoryItem* inventoryitem) {
 	  ColorizeSects.clear();
