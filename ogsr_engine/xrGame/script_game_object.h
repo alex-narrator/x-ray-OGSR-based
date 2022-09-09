@@ -236,6 +236,7 @@ public:
 			LPCSTR				WhoHitSectionName	();
 
 			void				ChangeTeam			(u8 team, u8 squad, u8 group);
+			void				SetNpcPosition		(Fvector pos);
 
 	// CAI_Stalker
 			CScriptGameObject	*GetCurrentWeapon	() const;
