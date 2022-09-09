@@ -13,6 +13,7 @@
 #include "tss.h"
 #include "blenders\blender.h"
 #include "blenders\blender_recorder.h"
+#include <execution>
 
 //	Already defined in Texture.cpp
 void fix_texture_name(LPSTR fn);
@@ -337,38 +338,17 @@ void CResourceManager::Delete(const Shader* S)
 void CResourceManager::DeferredUpload()
 {
 	if (!RDEVICE.b_is_Ready) return;
-	for (map_TextureIt t=m_textures.begin(); t!=m_textures.end(); t++)
-	{
-		t->second->Load();
-	}
-}
-/*
-void	CResourceManager::DeferredUnload	()
-{
-	if (!RDEVICE.b_is_Ready)				return;
-	for (map_TextureIt t=m_textures.begin(); t!=m_textures.end(); t++)
-		t->second->Unload();
-}
-*/
-#ifdef _EDITOR
-void	CResourceManager::ED_UpdateTextures(AStringVec* names)
-{
-	// 1. Unload
-	if (names){
-		for (u32 nid=0; nid<names->size(); nid++)
-		{
-			map_TextureIt I = m_textures.find	((*names)[nid].c_str());
-			if (I!=m_textures.end())	I->second->Unload();
-		}
-	}else{
-		for (map_TextureIt t=m_textures.begin(); t!=m_textures.end(); t++)
-			t->second->Unload();
-	}
+	Msg("CResourceManager::DeferredUpload [%s] -> START, size = [%u]", ps_r2_ls_flags_ext.test(R2FLAGEXT_MT_TEXLOAD) ? "MT" : "NO MT", m_textures.size());
 
-	// 2. Load
-	// DeferredUpload	();
+	// Теперь многопоточная загрузка текстур даёт очень существенный прирост скорости, проверено.
+	if (ps_r2_ls_flags_ext.test(R2FLAGEXT_MT_TEXLOAD))
+		std::for_each(std::execution::par_unseq, m_textures.begin(), m_textures.end(), [](auto& pair) { pair.second->Load(); });
+	else
+		for (auto& pair : m_textures)
+			pair.second->Load();
+
+	Msg("CResourceManager::DeferredUpload -> END");
 }
-#endif
 
 void	CResourceManager::_GetMemoryUsage(u32& m_base, u32& c_base, u32& m_lmaps, u32& c_lmaps)
 {

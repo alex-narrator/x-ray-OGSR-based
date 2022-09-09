@@ -889,6 +889,7 @@ void		xrRender_initconsole	()
 	CMD4(CCC_Float, "r_sslr_l", &ps_ext_SSLR_L, .1f, 10.f);
 #endif
 	CMD3(CCC_Mask,		"r_terrain_parallax",	&ps_r2_ls_flags_ext,		R2FLAGEXT_TERRAIN_PARALLAX);
+	CMD3(CCC_Mask,		"r_mt_texload",			&ps_r2_ls_flags_ext,		R2FLAGEXT_MT_TEXLOAD);
 
 	CMD3(CCC_Mask,		"r2_sun",				&ps_r2_ls_flags,			R2FLAG_SUN		);
 	CMD3(CCC_Mask,		"r2_sun_details",		&ps_r2_ls_flags,			R2FLAG_SUN_DETAILS);

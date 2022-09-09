@@ -763,7 +763,7 @@
 		<text>Разрешение карт теней - r__smap_size</text>
 	</string>
 	<string id="video_settings_name_60">
-		<text>Многопоточная загрузка текстур - rs_mt_texload</text>
+		<text>Многопоточная загрузка текстур - r_mt_texload</text>
 	</string>
 	<string id="video_settings_name_61">
 		<text>Угол обзора - fov</text>

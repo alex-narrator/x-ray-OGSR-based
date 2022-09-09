@@ -435,6 +435,10 @@
 		<text>Для применения опции требуется перезапуск игрьі</text>
 	</string>	
 	
+	<string id="ui_mm_mt_texload">
+		<text>Многопоточная загрузка текстур</text>
+	</string>
+	
 	<string id="game_object_throw_drop">
 	    <text>Отбросить [$$ACTION_USE$$]\n Отпустить [$$ACTION_ADDITIONAL_ACTION$$]+[$$ACTION_USE$$]</text>
     </string>
