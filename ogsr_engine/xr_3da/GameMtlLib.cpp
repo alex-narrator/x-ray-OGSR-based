@@ -74,24 +74,23 @@ void CGameMtlLibrary::Load()
     R_ASSERT			(materials.empty());
 
 	IReader*	F		= FS.r_open(name);
-    IReader& fs			= *F;
 
-    R_ASSERT(fs.find_chunk(GAMEMTLS_CHUNK_VERSION));
-    u16 version			= fs.r_u16();
+    R_ASSERT(F->find_chunk(GAMEMTLS_CHUNK_VERSION));
+    u16 version			= F->r_u16();
     if (GAMEMTL_CURRENT_VERSION!=version){
         Log				("CGameMtlLibrary: invalid version. Library can't load.");
 		FS.r_close		(F);
     	return;
     }
 
-    R_ASSERT(fs.find_chunk(GAMEMTLS_CHUNK_AUTOINC));
-    material_index		= fs.r_u32();
-    material_pair_index	= fs.r_u32();
+    R_ASSERT(F->find_chunk(GAMEMTLS_CHUNK_AUTOINC));
+    material_index		= F->r_u32();
+    material_pair_index	= F->r_u32();
 
     materials.clear		();
     material_pairs.clear();
 
-    IReader* OBJ 		= fs.open_chunk(GAMEMTLS_CHUNK_MTLS);
+    IReader* OBJ 		= F->open_chunk(GAMEMTLS_CHUNK_MTLS);
     if (OBJ) {
         u32				count;
         for (IReader* O = OBJ->open_chunk_iterator(count); O; O = OBJ->open_chunk_iterator(count,O)) {
@@ -102,7 +101,7 @@ void CGameMtlLibrary::Load()
         OBJ->close		();
     }
 
-    OBJ 				= fs.open_chunk(GAMEMTLS_CHUNK_MTLS_PAIR);
+    OBJ 				= F->open_chunk(GAMEMTLS_CHUNK_MTLS_PAIR);
     if (OBJ){
         u32				count;
         for (IReader* O = OBJ->open_chunk_iterator(count); O; O = OBJ->open_chunk_iterator(count,O)) {

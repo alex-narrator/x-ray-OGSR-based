@@ -34,24 +34,15 @@ void CPartition::load(IKinematics* V, LPCSTR model_name)
 		string64			buff;
 		xr_sprintf			(buff,sizeof(buff), "part_%d", i);
 		
-		auto& S = ini->r_section(buff);
-		auto it	= S.Data.begin();
-		auto it_e = S.Data.end();
-		if(S.Data.size())
-		{
+		const auto& S = ini->r_section(buff);
+		if (!S.Data.empty())
 			P[i].bones.clear();
-		}
-		for(;it!=it_e; ++it)
-		{
-			const CInifile::Item& I = *it;
-			if(I.first==part_name)
-			{
-				P[i].Name = I.second;
-			}else
-			{
-				u32 bid = V->LL_BoneID(I.first.c_str());
-				P[i].bones.push_back(bid);
-			}
+
+		for (const auto& [k, v] : S.Data){
+			if (k == part_name)
+				P[i].Name = v;
+			else
+				P[i].bones.push_back(V->LL_BoneID(k));
 		}
 		
 	}

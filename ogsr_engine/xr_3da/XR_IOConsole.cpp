@@ -458,9 +458,9 @@ void CConsole::Execute		(LPCSTR cmd)
 }
 void CConsole::ExecuteScript(LPCSTR N)
 {
-	string128		cmd;
-	strconcat		(sizeof(cmd),cmd,"cfg_load ",N);
-	Execute			(cmd);
+	string_path cmd;
+	xr_strconcat(cmd, "cfg_load ", N);
+	Execute(cmd);
 }
 
 
