@@ -7,7 +7,7 @@
 #include "../xrRender/blenders/blender_recorder.h"
 
 #include "../xrRender/dxRenderDeviceRender.h"
-
+#include <format>
 
 class	adopt_dx10options
 {

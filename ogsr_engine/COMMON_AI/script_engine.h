@@ -20,8 +20,7 @@ protected:
 
 private:
 	string_unordered_map<shared_str, bool> no_files;
-//not shure is no_files.find(file_name) != no_files.end() will return correct value, but we have support of .contains only in C++23
-	inline bool no_file_exists(const char* file_name) const { return /*no_files.contains(file_name)*/ no_files.find(file_name) != no_files.end(); }
+	inline bool no_file_exists(const char* file_name) const { return no_files.contains(file_name); }
 	inline void add_no_file(const char* file_name) { no_files.emplace(file_name, true); }
 
 public:
