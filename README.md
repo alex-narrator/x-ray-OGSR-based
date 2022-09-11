@@ -13,9 +13,9 @@
 
 **Як зібрати рушій:**
 
--Встановити Visual Studio 2019, достатньо наступної конфігурації:
+-Встановити актуальну версію Visual Studio 2022, достатньо базової конфігурації для розробки класичних додатків С++:
 
-![image](https://user-images.githubusercontent.com/23098597/176319912-3e7c7279-d498-4879-827a-e429c8c2648e.png)
+![image](https://user-images.githubusercontent.com/23098597/189554406-9a324d3b-17be-4d74-80c1-9f5332682605.png)
 
 -Відкрити файл Engine.sln
 
