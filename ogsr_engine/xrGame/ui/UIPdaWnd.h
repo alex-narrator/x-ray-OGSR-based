@@ -39,6 +39,9 @@ protected:
 	CUIStatic*				UIMainPdaFrame;
 	CUIStatic*				m_updatedSectionImage;
 	CUIStatic*				m_oldSectionImage;
+	CUIStatic*				m_currentPower;
+	CUIStatic*				m_currentPowerLow;
+	CUIStatic*				m_NoPower;
 
 	// Текущий активный диалог
 	CUIWindow*				m_pActiveDialog;
@@ -47,13 +50,13 @@ protected:
 public:
 	EPdaTabs				m_pActiveSection;
 	// Поддиалоги PDA
-	CUIMapWnd*				UIMapWnd;
-	CUIPdaContactsWnd*		UIPdaContactsWnd;
-	CUIEncyclopediaWnd*		UIEncyclopediaWnd;
-	CUIDiaryWnd*			UIDiaryWnd;
-	CUIActorInfoWnd*		UIActorInfo;
-	CUIStalkersRankingWnd*	UIStalkersRanking;
-	CUIEventsWnd*			UIEventsWnd;
+	CUIMapWnd*				UIMapWnd{};
+	CUIPdaContactsWnd*		UIPdaContactsWnd{};
+	CUIEncyclopediaWnd*		UIEncyclopediaWnd{};
+	CUIDiaryWnd*			UIDiaryWnd{};
+	CUIActorInfoWnd*		UIActorInfo{};
+	CUIStalkersRankingWnd*	UIStalkersRanking{};
+	CUIEventsWnd*			UIEventsWnd{};
 	virtual void			Reset				();
 public:
 							CUIPdaWnd			();

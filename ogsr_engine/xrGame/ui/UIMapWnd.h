@@ -38,19 +38,19 @@ public:
 				};
 	Flags32						m_flags;
 private:
-	float						m_currentZoom;
-	CUIGlobalMap*				m_GlobalMap;
-	GameMaps					m_GameMaps;
+	float						m_currentZoom{1.f};
+	CUIGlobalMap*				m_GlobalMap{};
+	GameMaps					m_GameMaps{};
 	
-	CUIFrameWindow*				m_UIMainFrame;
-	CUIScrollBar*				m_UIMainScrollV;
-	CUIScrollBar*				m_UIMainScrollH;
-	CUIWindow*					m_UILevelFrame;
-	CMapActionPlanner*			m_ActionPlanner;
-	CUIFrameLineWnd*			UIMainMapHeader;
-	CUI3tButton*				m_ToolBar[eMaxBtn];
-	CUIMapHint*					m_hint;
-	CUIStatic*					m_text_hint;
+	CUIFrameWindow*				m_UIMainFrame{};
+	CUIScrollBar*				m_UIMainScrollV{};
+	CUIScrollBar*				m_UIMainScrollH{};
+	CUIWindow*					m_UILevelFrame{};
+	CMapActionPlanner*			m_ActionPlanner{};
+	CUIFrameLineWnd*			UIMainMapHeader{};
+	CUI3tButton*				m_ToolBar[eMaxBtn]{};
+	CUIMapHint*					m_hint{};
+	CUIStatic*					m_text_hint{};
 
 	void OnScrollV				(CUIWindow*, void*);
 	void OnScrollH				(CUIWindow*, void*);
@@ -69,8 +69,8 @@ public:
 	//-qweasdd
 	void 						ActivatePropertiesBox(CUIWindow* w);
 
-	CUICustomMap*				m_tgtMap;
-	Fvector2					m_tgtCenter;
+	CUICustomMap*				m_tgtMap{};
+	Fvector2					m_tgtCenter{};
 								CUIMapWnd				();
 	virtual						~CUIMapWnd				();
 
@@ -96,9 +96,9 @@ public:
 	void						SetTargetMap			(const shared_str& name, const Fvector2& pos, bool bZoomIn = false);
 	void						SetTargetMap			(const shared_str& name, bool bZoomIn = false);
 
-	CUIPropertiesBox*			m_UIPropertiesBox;
-	CUIPdaSpot*					m_UserSpotWnd;
-	CMapLocation*				m_cur_location;
+	CUIPropertiesBox*			m_UIPropertiesBox{};
+	CUIPdaSpot*					m_UserSpotWnd{};
+	CMapLocation*				m_cur_location{};
 	void						ShowSettingsWindow(u16 id, Fvector position, shared_str levelName);
 
 	Frect						ActiveMapRect			()		{Frect r; m_UILevelFrame->GetAbsoluteRect(r); return r;};

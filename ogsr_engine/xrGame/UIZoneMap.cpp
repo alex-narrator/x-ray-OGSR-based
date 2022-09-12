@@ -3,7 +3,6 @@
 
 #include "hudmanager.h"
 
-
 #include "InfoPortion.h"
 #include "Pda.h"
 
@@ -17,15 +16,13 @@
 
 #include "ui/UIMap.h"
 #include "ui/UIXmlInit.h"
+
+#include "ui/UIInventoryUtilities.h"
 //////////////////////////////////////////////////////////////////////////
 
-CUIZoneMap::CUIZoneMap()
-{}
+CUIZoneMap::CUIZoneMap(){}
 
-CUIZoneMap::~CUIZoneMap()
-{
-	
-}
+CUIZoneMap::~CUIZoneMap(){}
 
 void CUIZoneMap::Init()
 {
@@ -38,13 +35,23 @@ void CUIZoneMap::Init()
 	CUIXmlInit xml_init;
 	xml_init.InitStatic			(uiXml, "minimap:background", 0, &m_background);
 
-		xml_init.InitStatic			(uiXml, "minimap:background:dist_text", 0, &m_pointerDistanceText);
-		m_background.AttachChild	(&m_pointerDistanceText);
+	xml_init.InitStatic			(uiXml, "minimap:background:dist_text", 0, &m_pointerDistanceText);
+	m_background.AttachChild	(&m_pointerDistanceText);
 
-	xml_init.InitStatic(uiXml, "minimap:level_frame", 0, &m_clipFrame);
+	xml_init.InitStatic			(uiXml, "minimap:level_frame", 0, &m_clipFrame);
 
-	xml_init.InitStatic(uiXml, "minimap:center", 0, &m_center);
-	
+	xml_init.InitStatic			(uiXml, "minimap:center", 0, &m_center);
+
+	xml_init.InitStatic			(uiXml, "minimap:background:no_power", 0, &m_NoPower);
+	m_background.AttachChild	(&m_NoPower);
+	m_NoPower.SetVisible		(false);
+
+	xml_init.InitStatic			(uiXml, "minimap:background:current_time", 0, &m_CurrentTime);
+	m_background.AttachChild	(&m_CurrentTime);
+	xml_init.InitStatic			(uiXml, "minimap:background:current_power", 0, &m_CurrentPower);
+	m_background.AttachChild	(&m_CurrentPower);
+	xml_init.InitStatic			(uiXml, "minimap:background:current_power_low", 0, &m_CurrentPowerLow);
+	m_background.AttachChild	(&m_CurrentPowerLow);
 	
 	m_activeMap						= xr_new<CUIMiniMap>();
 	m_clipFrame.AttachChild			(m_activeMap);
@@ -62,8 +69,30 @@ void CUIZoneMap::Init()
 
 void CUIZoneMap::Render()
 {
+	bool pda_workable = Actor()->HasPDAWorkable();
+	
+	m_NoPower.SetVisible(!pda_workable);
+
+	if (!pda_workable) {
+		m_background.Draw();
+		m_CurrentPower.SetVisible(false);
+		m_CurrentPowerLow.SetVisible(false);
+		m_CurrentTime.SetText("");
+		return;
+	}
 	m_clipFrame.Draw();
 	m_background.Draw();
+	//
+	string16 tmp{};
+	auto act_pda = Actor()->GetPDA();
+	bool pwr_low = act_pda->IsPowerLow();
+	sprintf_s(tmp, "%.f%s", act_pda->GetPowerLevel() * 100.f, "%");
+	m_CurrentPower.SetText(tmp);
+	m_CurrentPower.SetVisible(!pwr_low);
+	m_CurrentPowerLow.SetText(tmp);
+	m_CurrentPowerLow.SetVisible(pwr_low);
+	m_CurrentTime.SetText(InventoryUtilities::GetGameTimeAsString(InventoryUtilities::etpTimeToMinutes).c_str());
+	//
 	m_compass.Draw();
 }
 
@@ -77,24 +106,23 @@ void CUIZoneMap::UpdateRadar		(Fvector pos)
 {
 	m_clipFrame.Update();
 	m_background.Update();
+
 	m_activeMap->SetActivePoint( pos );
 
-		if(m_activeMap->GetPointerDistance()>0.5f){
-			string64	str;
-			sprintf_s		(str,"%.1f m.",m_activeMap->GetPointerDistance());
-			m_pointerDistanceText.SetText(str);
-		}else{
-			m_pointerDistanceText.SetText("");
-		}
+	if(m_activeMap->GetPointerDistance()>0.5f && Actor()->HasPDAWorkable()){
+		string64	str;
+		sprintf_s		(str,"%.1fm",m_activeMap->GetPointerDistance());
+		m_pointerDistanceText.SetText(str);
+	}else{
+		m_pointerDistanceText.SetText("");
+	}
 }
 
-bool CUIZoneMap::ZoomIn()
-{
+bool CUIZoneMap::ZoomIn(){
 	return true;
 }
 
-bool CUIZoneMap::ZoomOut()
-{
+bool CUIZoneMap::ZoomOut(){
 	return true;
 }
 
@@ -103,7 +131,7 @@ void CUIZoneMap::SetupCurrentMap()
 	CInifile* pLtx				= pGameIni;
 
 	if(!pLtx->section_exist(Level().name()))
-		pLtx							= Level().pLevel;
+		pLtx = Level().pLevel;
 
 	// dsh: очередной костыль. Если не создавать новый CUIMiniMap, то после
 	// перехода с локации, на которой нет текстуры миникарты, на локацию,
@@ -122,7 +150,7 @@ void CUIZoneMap::SetupCurrentMap()
 	m_clipFrame.GetAbsoluteRect		(r);
 	m_activeMap->SetClipRect		(r);
 	
-	Fvector2						wnd_size;
+	Fvector2						wnd_size{};
 	float zoom_factor				= float(m_clipFrame.GetWndRect().width())/100.0f;
 	wnd_size.x						= m_activeMap->BoundRect().width()*zoom_factor;
 	wnd_size.y						= m_activeMap->BoundRect().height()*zoom_factor;

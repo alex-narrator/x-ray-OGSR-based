@@ -32,6 +32,8 @@ bool CPowerBattery::Useful() const{
 void CPowerBattery::Charge(CInventoryItem* item) {
 	if (!item->CanBeCharged() || !m_uChargeCount) return;
 	item->Recharge();
+	if (!item->IsPowerOn())
+		item->Switch(true);
 	--m_uChargeCount;
 	if (!Useful())
 		DestroyObject();

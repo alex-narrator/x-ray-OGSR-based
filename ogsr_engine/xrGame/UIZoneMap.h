@@ -10,14 +10,18 @@ class CUICustomMap;
 
 class CUIZoneMap
 {
-	CUICustomMap*				m_activeMap;
-	float						m_fScale;
+	CUICustomMap*				m_activeMap{};
+	float						m_fScale{};
 
 	CUIStatic					m_background;
 	CUIStatic					m_center;
 	CUIStatic					m_compass;
 	CUIStatic					m_clipFrame;
 	CUIStatic					m_pointerDistanceText;
+	CUIStatic					m_NoPower;
+	CUIStatic					m_CurrentTime;
+	CUIStatic					m_CurrentPower;
+	CUIStatic					m_CurrentPowerLow;
 
 public:
 								CUIZoneMap		();

@@ -33,17 +33,8 @@ const	int			HSCROLLBAR_STEP				= 20; // В пикселях
 static bool			MAP_FLY_MODE				= true;
 
 
-CUIMapWnd::CUIMapWnd()
-{
-	m_tgtMap				= NULL;
-	m_GlobalMap				= NULL;
-	m_flags.zero			();
-	m_currentZoom			= 1.0f;
-	m_hint					= NULL;
-	m_text_hint				= NULL;
-
-	m_UserSpotWnd = nullptr;
-	m_cur_location = nullptr;
+CUIMapWnd::CUIMapWnd(){
+	m_flags.zero();
 }
 
 CUIMapWnd::~CUIMapWnd()
@@ -343,9 +334,7 @@ bool CUIMapWnd::OnKeyboardHold(int dik)
 		case DIK_LEFT:
 		case DIK_RIGHT:
 			{
-				Fvector2 pos_delta; pos_delta.set(0.0f, 0.0f);
-
-
+				Fvector2 pos_delta{};
 				if(dik==DIK_UP)					pos_delta.y	+= 1.0f;
 				if(dik==DIK_DOWN)				pos_delta.y	-= 1.0f;
 				if(dik==DIK_LEFT)				pos_delta.x	+= 1.0f;
@@ -367,13 +356,13 @@ bool CUIMapWnd::OnKeyboard				(int dik, EUIMessages keyboard_action)
 		case DIK_NUMPADMINUS:
 			{
 				SetZoom(GetZoom()/1.5f);
-				ResetActionPlanner				();
+				ResetActionPlanner();
 				return true;
 			}break;
 		case DIK_NUMPADPLUS:
 			{
 				SetZoom(GetZoom()*1.5f);
-				ResetActionPlanner				();
+				ResetActionPlanner();
 				return true;
 			}break;
 	}
@@ -396,38 +385,6 @@ bool CUIMapWnd::OnMouse(float x, float y, EUIMessages mouse_action)
 				return							true;
 			}
 		break;
-/*
-		case WINDOW_LBUTTON_DOWN:
-			if (	((mouse_action==WINDOW_LBUTTON_DOWN)&&(m_flags.is_any(lmZoomIn+lmZoomOut))) || 
-					(mouse_action==WINDOW_MOUSE_WHEEL_DOWN) ||
-					(mouse_action==WINDOW_MOUSE_WHEEL_UP)	
-				)
-			{
-				CUIGlobalMap* gm				= GlobalMap();
-				if(m_flags.test(lmZoomIn))		SetZoom(GetZoom()*1.5f);
-				else							SetZoom(GetZoom()/1.5f);
-				m_tgtCenter						= cursor_pos;
-				Fvector2 _p;					gm->GetAbsolutePos(_p);
-				m_tgtCenter.sub					(_p);
-				m_tgtCenter.div					(gm->GetCurrentZoom());
-				ResetActionPlanner				();
-				m_hint->SetOwner				(NULL);
-				return							true;
-			}
-		break;
-
-		case WINDOW_MOUSE_WHEEL_UP:
-			m_UIMainScrollV->TryScrollDec		();
-			m_hint->SetOwner					(NULL);
-			return								true;
-		break;
-
-		case WINDOW_MOUSE_WHEEL_DOWN:
-			m_UIMainScrollV->TryScrollInc		();
-			m_hint->SetOwner					(NULL);
-			return								true;
-		break;
-*/
 		}	
 	};
 
@@ -607,7 +564,7 @@ void CUIMapWnd::OnToolZoomOutClicked(CUIWindow* w, void*)
 
 void CUIMapWnd::ValidateToolBar			()
 {
-	CUI3tButton* btn	= NULL;
+	CUI3tButton* btn	= nullptr;
 	btn					= m_ToolBar[eZoomIn];
 	if(btn)
 		btn->SetCheck	(!!m_flags.test(lmZoomIn));
@@ -622,9 +579,9 @@ void CUIMapWnd::OnToolActorClicked		(CUIWindow*, void*)
 {
 	if (GlobalMap()->Locked())			return;
 
-	Fvector v					= Level().CurrentEntity()->Position();
-	Fvector2 v2;
-	v2.set						(v.x,v.z);
+	Fvector v	{ Level().CurrentEntity()->Position() };
+	Fvector2 v2	{ v.x,v.z };
+	//v2.set						(v.x,v.z);
 
 	CUICustomMap* lm			= NULL;
 	u16	idx						= GetIdxByName			(Level().name());

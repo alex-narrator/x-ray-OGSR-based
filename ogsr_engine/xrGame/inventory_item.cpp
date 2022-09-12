@@ -201,6 +201,7 @@ void CInventoryItem::Load(LPCSTR section)
 	}
 
 	m_fTTLOnPowerConsumption	= READ_IF_EXISTS(pSettings, r_float, section, "ttl_on_power", 0.f);
+	m_fPowerLowThreshold		= READ_IF_EXISTS(pSettings, r_float, section, "power_low_threshold", 0.1f);
 }
 
 

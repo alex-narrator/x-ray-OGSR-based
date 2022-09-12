@@ -69,6 +69,7 @@
 #include "location_manager.h"
 #include "PHCapture.h"
 #include "CustomDetector.h"
+#include "../xrGame/ai/monsters/basemonster/base_monster.h"
 
 // Tip for action for object we're looking at
 constexpr const char* m_sCarCharacterUseAction			= "car_character_use";
@@ -1166,7 +1167,7 @@ void CActor::shedule_Update	(u32 DT)
 		}
 		else if (pEntityAlive)
 		{
-			if (m_pPersonWeLookingAt && pEntityAlive->g_Alive())
+			if (m_pPersonWeLookingAt && pEntityAlive->g_Alive() && !smart_cast<CBaseMonster*>(m_pPersonWeLookingAt))
 			{
 				m_sDefaultObjAction = m_sCharacterUseAction;
 			}
@@ -1208,13 +1209,13 @@ void CActor::shedule_Update	(u32 DT)
 	}
 	else
 	{
-		inventory().m_pTarget	= NULL;
-		m_pPersonWeLookingAt	= NULL;
+		inventory().m_pTarget	= nullptr;
+		m_pPersonWeLookingAt	= nullptr;
 		m_sDefaultObjAction		= nullptr;
-		m_pUsableObject			= NULL;
-		m_pObjectWeLookingAt	= NULL;
-		m_pVehicleWeLookingAt	= NULL;
-		m_pInvBoxWeLookingAt	= NULL;
+		m_pUsableObject			= nullptr;
+		m_pObjectWeLookingAt	= nullptr;
+		m_pVehicleWeLookingAt	= nullptr;
+		m_pInvBoxWeLookingAt	= nullptr;
 	}
 
 //	UpdateSleep									();

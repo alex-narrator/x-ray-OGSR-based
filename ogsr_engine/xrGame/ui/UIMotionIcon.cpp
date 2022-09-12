@@ -131,26 +131,24 @@ void CUIMotionIcon::Update()
 	//
 	CActor* m_pActor = smart_cast<CActor*>(Level().CurrentViewEntity());
 
-	SetNoise((s16)(0xffff & iFloor(m_pActor->m_snd_noise * 100.0f)));
+	bool has_pda_online = m_pActor->HasPDAWorkable();
+
+	SetNoise(has_pda_online ? (s16)(0xffff & iFloor(m_pActor->m_snd_noise * 100.0f)) : 0.f);
 	SetPower(m_pActor->conditions().GetPower() * 100.0f);
 	//
-
-	if (!psHUD_Flags.test(HUD_USE_LUMINOSITY)) //использование освещённости вместо заметности на худовой шкале
-	{
-		if (m_bchanged)
-		{
+	if (!has_pda_online) {
+		SetLuminosity(0.f);
+	}else if (!psHUD_Flags.test(HUD_USE_LUMINOSITY)) {
+		if (m_bchanged){
 			m_bchanged = false;
-			if (m_npc_visibility.size())
-			{
+			if (m_npc_visibility.size()){
 				std::sort(m_npc_visibility.begin(), m_npc_visibility.end());
 				SetLuminosity(m_npc_visibility.back().value);
 			}
 			else
 				SetLuminosity(m_luminosity_progress.GetRange_min());
 		}
-	}
-	else //ранее этот код был в UIMainIngameWnd, использовался в мультиплеере
-	{
+	}else{ //ранее этот код был в UIMainIngameWnd, использовался в мультиплеере
 		float		luminocity = smart_cast<CGameObject*>(Level().CurrentEntity())->ROS()->get_luminocity();
 		float		power = log(luminocity > .001f ? luminocity : .001f);
 		luminocity = exp(power);

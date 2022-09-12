@@ -316,6 +316,7 @@ public:
 			void					ChangePowerLevel	(float);
 			void					SetPowerLevel		(float);
 	virtual float					GetPowerLevel		() const { return m_fPowerLevel; };
+	virtual bool					IsPowerLow			() const { return m_fPowerLevel <= m_fPowerLowThreshold; };
 
 	virtual	void					Switch			(bool);
 	virtual	void					Switch			();
@@ -331,6 +332,7 @@ protected:
 
 	float							m_fTTLOnPowerConsumption{};
 	float							m_fPowerLevel;
+	float							m_fPowerLowThreshold;
 	float							m_fPowerConsumingUpdateTime;
 };
 

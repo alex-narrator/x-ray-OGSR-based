@@ -52,27 +52,27 @@ public:
 	void				DrawItemInSlot(const PIItem itm, CUIStatic* m_QuickSlot_Icon, Fvector2 m_QuickSlot_Icon_Size);
 protected:
 	//
-	Fvector2 m_QuickSlot_0_Icon_Size;
-	Fvector2 m_QuickSlot_1_Icon_Size;
-	Fvector2 m_QuickSlot_2_Icon_Size;
-	Fvector2 m_QuickSlot_3_Icon_Size;
+	Fvector2 m_QuickSlot_0_Icon_Size{};
+	Fvector2 m_QuickSlot_1_Icon_Size{};
+	Fvector2 m_QuickSlot_2_Icon_Size{};
+	Fvector2 m_QuickSlot_3_Icon_Size{};
 	//
-	CUIStatic* m_QuickSlot_0_Icon;
-	CUIStatic* m_QuickSlot_1_Icon;
-	CUIStatic* m_QuickSlot_2_Icon;
-	CUIStatic* m_QuickSlot_3_Icon;
+	CUIStatic* m_QuickSlot_0_Icon{};
+	CUIStatic* m_QuickSlot_1_Icon{};
+	CUIStatic* m_QuickSlot_2_Icon{};
+	CUIStatic* m_QuickSlot_3_Icon{};
 	//
-	CUIStatic* m_CountItemQuickSlot_0_Text;
-	CUIStatic* m_CountItemQuickSlot_1_Text;
-	CUIStatic* m_CountItemQuickSlot_2_Text;
-	CUIStatic* m_CountItemQuickSlot_3_Text;
+	CUIStatic* m_CountItemQuickSlot_0_Text{};
+	CUIStatic* m_CountItemQuickSlot_1_Text{};
+	CUIStatic* m_CountItemQuickSlot_2_Text{};
+	CUIStatic* m_CountItemQuickSlot_3_Text{};
 	//
-	CUIStatic* m_UseQuickSlot_0_Text;
-	CUIStatic* m_UseQuickSlot_1_Text;
-	CUIStatic* m_UseQuickSlot_2_Text;
-	CUIStatic* m_UseQuickSlot_3_Text;
+	CUIStatic* m_UseQuickSlot_0_Text{};
+	CUIStatic* m_UseQuickSlot_1_Text{};
+	CUIStatic* m_UseQuickSlot_2_Text{};
+	CUIStatic* m_UseQuickSlot_3_Text{};
 	//
-	CUIStatic* m_QuickSlotPanelBackground;
+	CUIStatic* m_QuickSlotPanelBackground{};
 };
 
 class CUIMainIngameWnd: public CUIWindow  
@@ -106,7 +106,7 @@ protected:
 	CUIStatic			UIWeaponBack;
 	CUIStatic			UIWeaponSignAmmo;
 	CUIStatic			UIWeaponIcon;
-	Frect				UIWeaponIcon_rect;
+	Frect				UIWeaponIcon_rect{};
 public:
 	CUIStatic*			GetPDAOnline					() { return &UIPdaOnline; };
 	CUIZoneMap*			GetUIZoneMap					() { return UIZoneMap; }

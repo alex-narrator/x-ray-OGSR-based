@@ -101,12 +101,9 @@ static bool SetupGameIcon(CUIMainIngameWnd::EWarningIcons icon, u32 cl, float wi
 
 CUIMainIngameWnd::CUIMainIngameWnd()
 {
-	m_pActor						= NULL;
-	//m_pWeapon					= NULL;
-	//m_pGrenade					= NULL;
-	//m_pItem						= NULL;
+	m_pActor						= nullptr;
 	UIZoneMap						= xr_new<CUIZoneMap>();
-	m_pPickUpItem					= NULL;
+	m_pPickUpItem					= nullptr;
 	m_artefactPanel					= xr_new<CUIArtefactPanel>();
 	m_quickSlotPanel				= xr_new<CUIQuickSlotPanel>();
 
@@ -312,7 +309,8 @@ void CUIMainIngameWnd::Draw()
 
 	CUIWindow::Draw();
 
-	if (IsHUDElementAllowed(ePDA)) UIZoneMap->Render();
+	if (IsHUDElementAllowed(ePDA)) 
+		UIZoneMap->Render();
 
 	RenderQuickInfos();
 }
@@ -411,7 +409,6 @@ void CUIMainIngameWnd::Update()
 			float value = 0;
 			switch (i)
 			{
-				//radiation
 			case ewiRadiation:
 				if (IsHUDElementAllowed(eDetector))
 					value = cond->GetRadiation();
@@ -513,7 +510,7 @@ void CUIMainIngameWnd::Update()
 	m_quickSlotPanel->Show(show_panels);
 	m_artefactPanel->Show(show_panels); //отрисовка панели артефактов
 
-	UpdateFlashingIcons(); //обновляем состояние мигающих иконок - UI_LOCK_PDA_WITHOUT_PDA_IN_SLOT
+	UpdateFlashingIcons(); //обновляем состояние мигающих иконок
 
 	CUIWindow::Update				();
 }
@@ -888,7 +885,7 @@ bool CUIMainIngameWnd::IsHUDElementAllowed(EHUDElement element)
 	{
 	case ePDA: //ПДА
 	{
-		return allow_devices_hud && m_pActor->HasPDAWorkable();
+		return allow_devices_hud && m_pActor->GetPDA();
 	}break;
 	case eDetector: //Детектор (иконка радиационного заражения)
 	{
@@ -986,21 +983,12 @@ void CUIMainIngameWnd::script_register(lua_State *L)
 
 using namespace InventoryUtilities;
 
-CUIQuickSlotPanel::CUIQuickSlotPanel()
-{
-	m_QuickSlot_0_Icon_Size.set(0.0f, 0.0f);
-	m_QuickSlot_1_Icon_Size.set(0.0f, 0.0f);
-	m_QuickSlot_2_Icon_Size.set(0.0f, 0.0f);
-	m_QuickSlot_3_Icon_Size.set(0.0f, 0.0f);
-}
+CUIQuickSlotPanel::CUIQuickSlotPanel(){}
 
-CUIQuickSlotPanel::~CUIQuickSlotPanel()
-{
-}
+CUIQuickSlotPanel::~CUIQuickSlotPanel(){}
 
 void CUIQuickSlotPanel::Init()
 {
-
 	CUIXml uiXml;
 	bool xml_result = uiXml.Init(CONFIG_PATH, UI_PATH, "quick_slot_wnd.xml");
 	R_ASSERT2(xml_result, "xml file not found 'quick_slot_wnd.xml'");

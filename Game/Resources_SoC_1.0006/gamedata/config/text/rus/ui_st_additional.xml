@@ -651,4 +651,8 @@
 	<string id="st_press_any_key">
 		<text>Нажмите любую клавишу для перехода к игре</text>
 	</string>
+	
+	<string id="ui_st_no_power">
+		<text>battery low</text>
+	</string>
 </string_table>

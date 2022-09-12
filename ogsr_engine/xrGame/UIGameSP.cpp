@@ -89,7 +89,7 @@ bool CUIGameSP::IR_OnKeyboardPress(int dik)
 	if (attach_adjust_mode_keyb(dik))
 		return true;
 
-	if (!pActor->HasPDAWorkable() && get_binded_action(dik) != kINVENTORY) return false;
+	if (!pActor->GetPDA() && get_binded_action(dik) != kINVENTORY) return false;
 
 	switch ( get_binded_action(dik) )
 	{

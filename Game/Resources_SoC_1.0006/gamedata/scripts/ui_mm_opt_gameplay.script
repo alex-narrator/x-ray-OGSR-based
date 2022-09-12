@@ -21,6 +21,7 @@ local gameplay_opt_params = {
 	{ "tips", 						"check", "gameplay_settings_name_tips", 						"gameplay_settings_desc_tips"						},
 	{ "crosshair", 					"check", "gameplay_settings_name_crosshair", 					"gameplay_settings_desc_crosshair"					},
 	{ "dyn_crosshair", 				"check", "gameplay_settings_name_dyn_crosshair", 				"gameplay_settings_desc_dyn_crosshair"				},
+	{ "dist", 						"check", "gameplay_settings_name_crosshair_dist", 				"gameplay_settings_desc_crosshair_dist"				},
 	{ "build_crosshair", 			"check", "gameplay_settings_name_build_crosshair", 				"gameplay_settings_desc_build_crosshair"			},
 	{ "show_weapon", 				"check", "gameplay_settings_name_show_weapon", 					"gameplay_settings_desc_show_weapon"				},
 	

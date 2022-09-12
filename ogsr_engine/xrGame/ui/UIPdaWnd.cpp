@@ -29,27 +29,16 @@
 #include "../actor.h"
 #include "UIPdaSpot.h"
 
-#define		PDA_XML					"pda.xml"
+constexpr auto PDA_XML = "pda.xml";
 u32			g_pda_info_state		= 0;
 
 void RearrangeTabButtons(CUITabControl* pTab, xr_vector<Fvector2>& vec_sign_places);
 
-CUIPdaWnd::CUIPdaWnd()
-{
-	UIMapWnd				= NULL;
-	UIPdaContactsWnd		= NULL;
-	UIEncyclopediaWnd		= NULL;
-	UIDiaryWnd				= NULL;
-	UIActorInfo				= NULL;
-	UIStalkersRanking		= NULL;
-	UIEventsWnd				= NULL;
-	m_updatedSectionImage	= NULL;
-	m_oldSectionImage		= NULL;
-	Init					();
+CUIPdaWnd::CUIPdaWnd(){
+	Init();
 }
 
-CUIPdaWnd::~CUIPdaWnd()
-{
+CUIPdaWnd::~CUIPdaWnd(){
 	delete_data		(UIMapWnd);
 	delete_data		(UIPdaContactsWnd);
 	delete_data		(UIEncyclopediaWnd);
@@ -93,33 +82,45 @@ void CUIPdaWnd::Init()
 	UIMainPdaFrame->AttachChild(UITimerBackground);
 	xml_init.InitFrameLine	(uiXml, "timer_frame_line", 0, UITimerBackground);
 
+	// Power level background
+	m_currentPower			= xr_new<CUIStatic>(); m_currentPower->SetAutoDelete(true);
+	UIMainPdaFrame->AttachChild(m_currentPower);
+	xml_init.InitStatic		(uiXml, "power_level", 0, m_currentPower);
+	// Power level low background
+	m_currentPowerLow		= xr_new<CUIStatic>(); m_currentPowerLow->SetAutoDelete(true);
+	UIMainPdaFrame->AttachChild(m_currentPowerLow);
+	xml_init.InitStatic		(uiXml, "power_level_low", 0, m_currentPowerLow);
+	// No power background
+	m_NoPower				= xr_new<CUIStatic>(); m_NoPower->SetAutoDelete(true);
+	UIMainPdaFrame->AttachChild(m_NoPower);
+	xml_init.InitStatic		(uiXml, "no_power", 0, m_NoPower);
+
 	// Oкно карты
 	UIMapWnd				= xr_new<CUIMapWnd>();
 	UIMapWnd->Init			("pda_map.xml","map_wnd");
 
-		// Oкно коммуникaции
-		UIPdaContactsWnd		= xr_new<CUIPdaContactsWnd>();
-		UIPdaContactsWnd->Init	();
+	// Oкно коммуникaции
+	UIPdaContactsWnd		= xr_new<CUIPdaContactsWnd>();
+	UIPdaContactsWnd->Init	();
 
+	// Oкно новостей
+	UIDiaryWnd				= xr_new<CUIDiaryWnd>();
+	UIDiaryWnd->Init		();
 
-		// Oкно новостей
-		UIDiaryWnd				= xr_new<CUIDiaryWnd>();
-		UIDiaryWnd->Init		();
+	// Окно энциклопедии
+	UIEncyclopediaWnd		= xr_new<CUIEncyclopediaWnd>();
+	UIEncyclopediaWnd->Init	();
 
-		// Окно энциклопедии
-		UIEncyclopediaWnd		= xr_new<CUIEncyclopediaWnd>();
-		UIEncyclopediaWnd->Init	();
+	// Окно статистики о актере
+	UIActorInfo				= xr_new<CUIActorInfoWnd>();
+	UIActorInfo->Init		();
 
-		// Окно статистики о актере
-		UIActorInfo				= xr_new<CUIActorInfoWnd>();
-		UIActorInfo->Init		();
+	// Окно рейтинга сталкеров
+	UIStalkersRanking		= xr_new<CUIStalkersRankingWnd>();
+	UIStalkersRanking->Init	();
 
-		// Окно рейтинга сталкеров
-		UIStalkersRanking		= xr_new<CUIStalkersRankingWnd>();
-		UIStalkersRanking->Init	();
-
-		UIEventsWnd				= xr_new<CUIEventsWnd>();
-		UIEventsWnd->Init		();
+	UIEventsWnd				= xr_new<CUIEventsWnd>();
+	UIEventsWnd->Init		();
 	// Tab control
 	UITabControl				= xr_new<CUITabControl>(); UITabControl->SetAutoDelete(true);
 	UIMainPdaFrame->AttachChild	(UITabControl);
@@ -143,8 +144,7 @@ void CUIPdaWnd::SendMessage(CUIWindow* pWnd, s16 msg, void* pData)
 		if (TAB_CHANGED == msg){
 			SetActiveSubdialog	((EPdaTabs)UITabControl->GetActiveIndex());
 		}
-	}else 
-	{
+	}else {
 		R_ASSERT(m_pActiveDialog);
 		m_pActiveDialog->SendMessage(pWnd, msg, pData);
 	}
@@ -177,11 +177,10 @@ void CUIPdaWnd::UpdateDateTime()
 {
 	static shared_str prevStrTime = " ";
 	xr_string strTime = *InventoryUtilities::GetGameTimeAsString(InventoryUtilities::etpTimeToMinutes);
-				strTime += " ";
-				strTime += *InventoryUtilities::GetGameDateAsString(InventoryUtilities::edpDateToDay);
+	strTime += " ";
+	strTime += *InventoryUtilities::GetGameDateAsString(InventoryUtilities::edpDateToDay);
 
-	if (xr_strcmp(strTime.c_str(), prevStrTime))
-	{
+	if (xr_strcmp(strTime.c_str(), prevStrTime)){
 		UITimerBackground->UITitleText.SetText(strTime.c_str());
 		prevStrTime = strTime.c_str();
 	}
@@ -189,12 +188,11 @@ void CUIPdaWnd::UpdateDateTime()
 
 void CUIPdaWnd::Update()
 {
-	inherited::Update		();
-	UpdateDateTime			();
+	inherited::Update();
+	UpdateDateTime();
 
 	// Real Wolf: если предмет убрали, когда окно было открыто, то закрываем его. 07.08.2014.
-	bool pda_workable = Actor()->HasPDAWorkable();
-	if (!pda_workable && IsShown())
+	if (!Actor()->GetPDA() && IsShown())
 		GetHolder()->StartStopMenu(this, true);
 }
 
@@ -258,7 +256,25 @@ void CUIPdaWnd::SetActiveSubdialog(EPdaTabs section)
 void CUIPdaWnd::Draw()
 {
 	inherited::Draw									();
-	DrawUpdatedSections								();
+	/*DrawUpdatedSections								();*/
+
+	bool pda_workable = Actor()->HasPDAWorkable();
+	for (const auto& child_wnd : UIMainPdaFrame->GetChildWndList()) {
+		child_wnd->SetVisible(pda_workable);
+	}
+	m_NoPower->SetVisible(!pda_workable);
+	if (!pda_workable) return;
+
+	DrawUpdatedSections();
+
+	string16 tmp{};
+	auto act_pda = Actor()->GetPDA();
+	bool pwr_low = act_pda->IsPowerLow();
+	sprintf_s(tmp, "%.f%s", act_pda->GetPowerLevel() * 100.f, "%");
+	m_currentPower->SetText(tmp);
+	m_currentPower->SetVisible(!pwr_low);
+	m_currentPowerLow->SetText(tmp);
+	m_currentPowerLow->SetVisible(pwr_low);
 }
 
 void CUIPdaWnd::PdaContentsChanged( pda_section::part type, bool flash )
@@ -382,10 +398,8 @@ void RearrangeTabButtons(CUITabControl* pTab, xr_vector<Fvector2>& vec_sign_plac
 	float	btn_text_len		= 0.0f;
 	CUIStatic* st				= NULL;
 
-	for(;it!=it_e;++it,++idx)
-	{
-		if(idx!=0)
-		{
+	for(;it!=it_e;++it,++idx){
+		if(idx!=0){
 			st = xr_new<CUIStatic>(); st->SetAutoDelete(true);pTab->AttachChild(st);
 			st->SetFont((*it)->GetFont());
 			st->SetTextColor	(color_rgba(90,90,90,255));

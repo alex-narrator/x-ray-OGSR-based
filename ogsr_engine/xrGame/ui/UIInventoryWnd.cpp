@@ -369,13 +369,11 @@ void CUIInventoryWnd::Update()
 		// update money
 		string64						sMoney;
 		sprintf_s						(sMoney,"%d %s", _money, CStringTable().translate("ui_st_money_regional").c_str());
-		UIMoneyWnd.SetText				(Actor()->HasPDAWorkable() ? sMoney : CStringTable().translate("ui_st_pda_account_unavailable").c_str());
+		UIMoneyWnd.SetText				(Actor()->HasPDAWorkable() ? sMoney : "");
 
-		if (m_b_need_update_stats)
-		{
+		if (m_b_need_update_stats){
 			// update outfit parameters
 			UIOutfitInfo.Update();
-
 			m_b_need_update_stats = false;
 		}
 
