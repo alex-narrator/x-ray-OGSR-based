@@ -1783,7 +1783,6 @@ bool CActor::is_actor_moving() {
 	return mstate_real & mcAnyAction ? true : false;
 }
 
-
 void CActor::RepackAmmo() {
   xr_vector<CWeaponAmmo*> _ammo;
   // заполняем массив неполными пачками

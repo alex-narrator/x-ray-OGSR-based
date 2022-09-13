@@ -71,17 +71,17 @@ protected: //чтоб нельзя было вызвать на прямую
 	};
 
 	// Motion data
-	const CMotionDef* m_current_motion_def;
+	const CMotionDef* m_current_motion_def{};
 	shared_str		m_current_motion;
 	u32				m_dwMotionCurrTm;
 	u32				m_dwMotionStartTm;
 	u32				m_dwMotionEndTm;
 	u32				m_startedMotionState;
-	u8				m_started_rnd_anim_idx;
-	bool			m_bStopAtEndAnimIsRunning;
+	u8				m_started_rnd_anim_idx{ u8(-1) };
+	bool			m_bStopAtEndAnimIsRunning{};
 	bool			BobbingEnable{};
 
-	u32				m_dwStateTime;
+	u32				m_dwStateTime{};
 public:
 	virtual void	Load				(LPCSTR section);
 	virtual CHudItem*cast_hud_item		()	 { return this; }
@@ -174,7 +174,7 @@ protected:
 	u32						dwXF_Frame;
 
 protected:
-	u32						m_animation_slot;
+	u32						m_animation_slot{ u32(-1) };
 
 public:
 	IC		u32				animation_slot			()	{	return m_animation_slot;}
@@ -202,29 +202,29 @@ public:
 			void CheckState();
 
 		private:
-			CHudItem* parent_hud_item;
-			float	fTime;
-			Fvector	vAngleAmplitude;
-			float	fYAmplitude;
-			float	fSpeed;
+			CHudItem* parent_hud_item{};
+			float	fTime{};
+			Fvector	vAngleAmplitude{};
+			float	fYAmplitude{};
+			float	fSpeed{};
 
-			u32		dwMState;
-			float	fReminderFactor;
-			bool	is_limping;
-			bool	m_bZoomMode;
+			u32		dwMState{};
+			float	fReminderFactor{};
+			bool	is_limping{};
+			bool	m_bZoomMode{};
 
-			float	m_fAmplitudeController;
-			float	m_fAmplitudeRun;
-			float	m_fAmplitudeWalk;
-			float	m_fAmplitudeLimp;
+			float	m_fAmplitudeController{};
+			float	m_fAmplitudeRun{};
+			float	m_fAmplitudeWalk{};
+			float	m_fAmplitudeLimp{};
 
-			float	m_fSpeedRun;
-			float	m_fSpeedWalk;
-			float	m_fSpeedLimp;
+			float	m_fSpeedRun{};
+			float	m_fSpeedWalk{};
+			float	m_fSpeedLimp{};
 
-			float	m_fCrouchFactor;
-			float	m_fZoomFactor;
-			float	m_fScopeZoomFactor;
+			float	m_fCrouchFactor{};
+			float	m_fZoomFactor{};
+			float	m_fScopeZoomFactor{};
 		};
 		std::unique_ptr<CWeaponBobbing> m_bobbing;
 

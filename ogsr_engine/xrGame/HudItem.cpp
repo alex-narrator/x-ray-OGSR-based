@@ -24,16 +24,10 @@ ENGINE_API extern float psHUD_FOV_def;
 CHudItem::CHudItem()
 {
 	m_huditem_flags.zero();
-	m_animation_slot	= u32(-1);
 	RenderHud			(TRUE);
 	EnableHudInertion	(TRUE);
 	AllowHudInertion	(TRUE);
 	m_bobbing = std::make_unique<CWeaponBobbing>(this);
-
-	m_bStopAtEndAnimIsRunning	= false;
-	m_current_motion_def		= nullptr;
-	m_started_rnd_anim_idx		= u8(-1);
-	m_dwStateTime				= 0;
 }
 
 DLL_Pure *CHudItem::_construct	()
@@ -73,28 +67,28 @@ void CHudItem::Load(LPCSTR section)
 		// Координаты офсетов для сдвига худа нашел в интернетах :)
 		static constexpr std::array<std::tuple<float, float, Fvector, Fvector, float, float>, _CollisionWeaponTypesCount_> CollisionParamsBase
 		{ { //Min, Max dist, offset, rotate, HudFov, HudFov Aim
-			{0.25f, 0.95f, { -0.0615f,-0.4380f,0.1235f }, { -0.9219f,-0.0972f,0.2525f }, 0.5f, 0.25f}, //Общие для всех оружий
-			{0.25f, 0.70f, { -0.1000f,-0.5537f,0.0350f }, { -1.0630f,0.1751f,-0.0600f }, 0.5f, 0.20f}, //Пистолеты
-			{0.30f, 1.30f, { -0.0615f,-0.4380f,0.1235f }, { -0.9219f,-0.0972f,0.2525f }, 0.5f, 0.25f}, //СВД и прочие длинные снайперки
-			{0.35f, 1.85f, { -0.0399f,0.0929f,-0.0589f }, { 0.3908f,0.0488f,-0.0193f }, 0.5f, 0.25f}, //РПГ
-			{0.25f, 0.80f, { 0.0015f,-0.5655f,0.1240f }, { -1.0319f,0.0678f,0.0700f }, 0.5f, 0.25f}, //РГ-6
-			{0.25f, 0.80f, { -0.0406f,-0.4191f,0.1718f }, { -0.8981f,-0.1101f,0.4420f }, 0.5f, 0.25f}, //Гроза
-			{0.25f, 0.80f, { -0.0335f,-0.4618f,0.1098f }, { -0.9119f,-0.0973f,0.4143f }, 0.5f, 0.25f}, //ФН2000
-			{0.25f, 0.60f, { -0.0650f,-0.5170f,0.0465f }, { -1.0405f,0.1051f,-0.0350f }, 0.5f, 0.25f}, //БМ-16
-			{0.30f, 0.50f, { -0.0025f,-0.4045f,-0.1415f }, { -0.7900f,0.0100f,0.f }, 0.5f, 0.25f}, //Болт
-			{0.25f, 0.65f, { 0.0120f,-0.4780f,-0.1150f }, { -0.6250f,-0.0725f,-0.1950f }, 0.5f, 1.f}, //Детектор
-			{0.30f, 0.50f, { -0.0025f,-0.4045f,-0.1415f }, { -0.7900f,0.0100f,0.f }, 0.5f, 0.25f}, //Нож, гранаты и прочее
-			{0.25f, 0.70f,  { 0.f,0.f,0.f }, { 0.f,0.f,0.f }, 0.5f, 0.4f}, //Бинокль
+			{0.25f, 0.95f, { -0.0615f,-0.4380f,0.1235f }, { -0.9219f,-0.0972f,0.2525f }, 0.5f, 0.25f},	//Общие для всех оружий
+			{0.25f, 0.70f, { -0.1000f,-0.5537f,0.0350f }, { -1.0630f,0.1751f,-0.0600f }, 0.5f, 0.20f},	//Пистолеты
+			{0.30f, 1.30f, { -0.0615f,-0.4380f,0.1235f }, { -0.9219f,-0.0972f,0.2525f }, 0.5f, 0.25f},	//СВД и прочие длинные снайперки
+			{0.35f, 1.85f, { -0.0399f,0.0929f,-0.0589f }, { 0.3908f,0.0488f,-0.0193f }, 0.5f, 0.25f},	//РПГ
+			{0.25f, 0.80f, { 0.0015f,-0.5655f,0.1240f }, { -1.0319f,0.0678f,0.0700f }, 0.5f, 0.25f},	//РГ-6
+			{0.25f, 0.80f, { -0.0406f,-0.4191f,0.1718f }, { -0.8981f,-0.1101f,0.4420f }, 0.5f, 0.25f},	//Гроза
+			{0.25f, 0.80f, { -0.0335f,-0.4618f,0.1098f }, { -0.9119f,-0.0973f,0.4143f }, 0.5f, 0.25f},	//ФН2000
+			{0.25f, 0.60f, { -0.0650f,-0.5170f,0.0465f }, { -1.0405f,0.1051f,-0.0350f }, 0.5f, 0.25f},	//БМ-16
+			{0.30f, 0.50f, { -0.0025f,-0.4045f,-0.1415f }, { -0.7900f,0.0100f,0.f }, 0.5f, 0.25f},		//Болт
+			{0.25f, 0.65f, { 0.0120f,-0.4780f,-0.1150f }, { -0.6250f,-0.0725f,-0.1950f }, 0.5f, 1.f},	//Детектор
+			{0.30f, 0.50f, { -0.0025f,-0.4045f,-0.1415f }, { -0.7900f,0.0100f,0.f }, 0.5f, 0.25f},		//Нож, гранаты и прочее
+			{0.25f, 0.70f,  { 0.f,0.f,0.f }, { 0.f,0.f,0.f }, 0.5f, 0.4f},								//Бинокль
 		} };
 		const size_t type = GetWeaponTypeForCollision();
 		const auto& CollisionParams = CollisionParamsBase.at(type);
 
 		// Параметры изменения коллизии когда игрок стоит вплотную к стене
-		m_nearwall_hud_offset_speed		= READ_IF_EXISTS(pSettings, r_float,	section, "nearwall_hud_offset_speed", 1.5f); // Скорость поднятия\опускания ствола
-		m_nearwall_dist_min				= READ_IF_EXISTS(pSettings, r_float,	section, "nearwall_dist_min", std::get<0>(CollisionParams)); //Максимальное расстояние, на которое камера ГГ может упереться к стене
-		m_nearwall_dist_max				= READ_IF_EXISTS(pSettings, r_float,	section, "nearwall_dist_max", std::get<1>(CollisionParams)); //Расстояние, ближе которого начинаем поднимать ствол
-		m_nearwall_target_hud_offset	= READ_IF_EXISTS(pSettings, r_fvector3, section, "nearwall_target_hud_offset", std::get<2>(CollisionParams)); //Максимальный оффсет худа
-		m_nearwall_target_hud_rotate	= READ_IF_EXISTS(pSettings, r_fvector3, section, "nearwall_target_hud_rotate", std::get<3>(CollisionParams)); //Максимальный поворот худа
+		m_nearwall_hud_offset_speed		= READ_IF_EXISTS(pSettings, r_float,	section, "nearwall_hud_offset_speed", 1.5f);							// Скорость поднятия\опускания ствола
+		m_nearwall_dist_min				= READ_IF_EXISTS(pSettings, r_float,	section, "nearwall_dist_min", std::get<0>(CollisionParams));			//Максимальное расстояние, на которое камера ГГ может упереться к стене
+		m_nearwall_dist_max				= READ_IF_EXISTS(pSettings, r_float,	section, "nearwall_dist_max", std::get<1>(CollisionParams));			//Расстояние, ближе которого начинаем поднимать ствол
+		m_nearwall_target_hud_offset	= READ_IF_EXISTS(pSettings, r_fvector3, section, "nearwall_target_hud_offset", std::get<2>(CollisionParams));	//Максимальный оффсет худа
+		m_nearwall_target_hud_rotate	= READ_IF_EXISTS(pSettings, r_fvector3, section, "nearwall_target_hud_rotate", std::get<3>(CollisionParams));	//Максимальный поворот худа
 		m_nearwall_target_hud_fov		= READ_IF_EXISTS(pSettings, r_float,	section, "nearwall_target_hud_fov", std::get<4>(CollisionParams));
 		m_nearwall_target_aim_hud_fov	= READ_IF_EXISTS(pSettings, r_float,	section, "nearwall_target_aim_hud_fov", std::get<5>(CollisionParams));
 		m_nearwall_speed_mod			= READ_IF_EXISTS(pSettings, r_float,	section, "nearwall_speed_mod", 10.f);
@@ -142,15 +136,15 @@ void CHudItem::Load(LPCSTR section)
 	constexpr float TENDTO_SPEED		= 5.f;		// Скорость нормализации положения ствола
 	constexpr float TENDTO_SPEED_AIM	= 8.f;		// (Для прицеливания)
 
-	inertion_data.m_pitch_offset_r	= READ_IF_EXISTS(pSettings, r_float, hud_sect, "pitch_offset_right", PITCH_OFFSET_R);
-	inertion_data.m_pitch_offset_n	= READ_IF_EXISTS(pSettings, r_float, hud_sect, "pitch_offset_up", PITCH_OFFSET_N);
-	inertion_data.m_pitch_offset_d	= READ_IF_EXISTS(pSettings, r_float, hud_sect, "pitch_offset_forward", PITCH_OFFSET_D);
-	inertion_data.m_pitch_low_limit = READ_IF_EXISTS(pSettings, r_float, hud_sect, "pitch_offset_up_low_limit", PITCH_LOW_LIMIT);
+	inertion_data.m_pitch_offset_r	= READ_IF_EXISTS(pSettings, r_float, hud_sect, "pitch_offset_right",				PITCH_OFFSET_R);
+	inertion_data.m_pitch_offset_n	= READ_IF_EXISTS(pSettings, r_float, hud_sect, "pitch_offset_up",					PITCH_OFFSET_N);
+	inertion_data.m_pitch_offset_d	= READ_IF_EXISTS(pSettings, r_float, hud_sect, "pitch_offset_forward",				PITCH_OFFSET_D);
+	inertion_data.m_pitch_low_limit = READ_IF_EXISTS(pSettings, r_float, hud_sect, "pitch_offset_up_low_limit",			PITCH_LOW_LIMIT);
 
-	inertion_data.m_origin_offset		= READ_IF_EXISTS(pSettings, r_float, hud_sect, "inertion_origin_offset", ORIGIN_OFFSET);
-	inertion_data.m_origin_offset_aim	= READ_IF_EXISTS(pSettings, r_float, hud_sect, "inertion_zoom_origin_offset", ORIGIN_OFFSET_AIM);
-	inertion_data.m_tendto_speed		= READ_IF_EXISTS(pSettings, r_float, hud_sect, "inertion_tendto_speed", TENDTO_SPEED);
-	inertion_data.m_tendto_speed_aim	= READ_IF_EXISTS(pSettings, r_float, hud_sect, "inertion_zoom_tendto_speed", TENDTO_SPEED_AIM);
+	inertion_data.m_origin_offset		= READ_IF_EXISTS(pSettings, r_float, hud_sect, "inertion_origin_offset",		ORIGIN_OFFSET);
+	inertion_data.m_origin_offset_aim	= READ_IF_EXISTS(pSettings, r_float, hud_sect, "inertion_zoom_origin_offset",	ORIGIN_OFFSET_AIM);
+	inertion_data.m_tendto_speed		= READ_IF_EXISTS(pSettings, r_float, hud_sect, "inertion_tendto_speed",			TENDTO_SPEED);
+	inertion_data.m_tendto_speed_aim	= READ_IF_EXISTS(pSettings, r_float, hud_sect, "inertion_zoom_tendto_speed",	TENDTO_SPEED_AIM);
 	//--#SM+# End--
 }
 
@@ -294,7 +288,7 @@ void CHudItem::UpdateCL()
 			}
 		}
 	}
-	AllowHudBobbing((Core.Features.test(xrCore::Feature::wpn_bobbing) && allow_bobbing) || Actor()->PsyAuraAffect);
+	AllowHudBobbing((Core.Features.test(xrCore::Feature::wpn_bobbing) && allow_bobbing && !Actor()->IsHardHold()) || Actor()->PsyAuraAffect);
 	if (GetHUDmode())
 		Actor()->TryToBlockSprint(IsPending());
 }
@@ -397,12 +391,12 @@ u32 CHudItem::PlayHUDMotion_noCB(const shared_str& motion_name, const bool bMixI
 
 void CHudItem::StopCurrentAnimWithoutCallback()
 {
-	m_dwMotionStartTm = 0;
-	m_dwMotionEndTm = 0;
-	m_dwMotionCurrTm = 0;
-	m_bStopAtEndAnimIsRunning = false;
-	m_current_motion_def = nullptr;
-	m_dwStateTime = 0;
+	m_dwMotionStartTm			= 0;
+	m_dwMotionEndTm				= 0;
+	m_dwMotionCurrTm			= 0;
+	m_bStopAtEndAnimIsRunning	= false;
+	m_current_motion_def		= nullptr;
+	m_dwStateTime				= 0;
 }
 
 BOOL CHudItem::GetHUDmode()
@@ -717,18 +711,18 @@ void CHudItem::UpdateCollision(Fmatrix& trans) {
 
 void CHudItem::UpdateInertion(Fmatrix& trans)
 {
-	if (HudInertionEnabled() && HudInertionAllowed())
+	if (HudInertionEnabled() && HudInertionAllowed() && !Actor()->IsHardHold())
 	{
 		Fmatrix xform;
 		Fvector& origin = trans.c;
 		xform = trans;
 
 		// calc difference
-		Fvector diff_dir;
+		Fvector diff_dir{};
 		diff_dir.sub(xform.k, inert_st_last_dir);
 
 		// clamp by PI_DIV_2
-		Fvector last;
+		Fvector last{};
 		last.normalize_safe(inert_st_last_dir);
 		const float dot = last.dotproduct(xform.k);
 		if (dot < EPS)
@@ -1082,10 +1076,6 @@ constexpr const char* BOBBING_SECT = "wpn_bobbing_effector";
 constexpr float SPEED_REMINDER = 5.f;
 CHudItem::CWeaponBobbing::CWeaponBobbing(CHudItem* parent) : parent_hud_item(parent)
 {
-	fTime = 0.f;
-	fReminderFactor = 0.f;
-	is_limping = false;
-
 	m_fAmplitudeController	= READ_IF_EXISTS(pSettings, r_float, BOBBING_SECT, "controller_amplitude",	0.002f);
 	m_fAmplitudeRun			= READ_IF_EXISTS(pSettings, r_float, BOBBING_SECT, "run_amplitude",			0.0075f);
 	m_fAmplitudeWalk		= READ_IF_EXISTS(pSettings, r_float, BOBBING_SECT, "walk_amplitude",		0.005f);
@@ -1131,8 +1121,8 @@ void CHudItem::CWeaponBobbing::Update(Fmatrix& m)
 
 	if (!fsimilar(fReminderFactor, 0))
 	{
-		Fvector dangle;
-		Fmatrix R, mR;
+		Fvector dangle{};
+		Fmatrix R{}, mR{};
 		float k = (dwMState & ACTOR_DEFS::mcCrouch) ? m_fCrouchFactor : 1.f;
 		float k2 = k;
 
