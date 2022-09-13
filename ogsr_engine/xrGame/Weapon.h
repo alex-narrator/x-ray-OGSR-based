@@ -66,8 +66,6 @@ public:
 	virtual void			OnH_A_Independent	();
 	virtual void			OnEvent				(NET_Packet& P, u16 type);// {inherited::OnEvent(P,type);}
 
-	virtual	void			Hit					(SHit* pHDS);
-
 	virtual void			reinit				();
 	virtual void			reload				(LPCSTR section);
 	virtual void			create_physic_shell	();
@@ -149,8 +147,8 @@ public:
 	u8 idle_state();
 protected:
 	bool					m_bTriStateReload{};
-	u8						m_sub_state;
-	u8						m_idle_state;
+	u8						m_sub_state{};
+	u8						m_idle_state{};
 	// Weapon fires now
 	bool					bWorking2;
 	// a misfire happens, you'll need to rearm weapon
@@ -247,19 +245,19 @@ protected:
 	//разрешение регулирования приближения. Real Wolf.
 	bool			m_bScopeDynamicZoom{};
 	//run-time zoom factor
-	float			m_fRTZoomFactor;
-	float			m_fMinScopeZoomFactor;
-	u32				m_uZoomStepCount;
+	float			m_fRTZoomFactor{ 1.f };
+	float			m_fMinScopeZoomFactor{ 1.f };
+	u32				m_uZoomStepCount{ 3 };
 	//разрешение режима приближения
 	bool			m_bZoomEnabled;
 	//текущий фактор приближения
-	float			m_fZoomFactor;
+	float			m_fZoomFactor{1.f};
 	//текстура для снайперского прицела, в режиме приближения
 	CUIStaticItem* m_UIScope{};
 	//коэффициент увеличения прицеливания
 	float			m_fIronSightZoomFactor;
 	//коэффициент увеличения прицела
-	float			m_fScopeZoomFactor;
+	float			m_fScopeZoomFactor{ 1.f };
 	//когда режим приближения включен
 	bool			m_bZoomMode;
 	//коэффициент увеличения во втором вьюпорте при зуме
@@ -424,7 +422,7 @@ protected:
 	//увеличение изношености при выстреле
 	float					conditionDecreasePerShot;
 	float					conditionDecreasePerShotOnHit;
-	float					conditionDecreasePerShotSilencer;
+	float					conditionDecreasePerShotSilencer{ 1.f };
 	//увеличение изношености при выстреле из подствольника
 	float					conditionDecreasePerShotGL;
 	//увеличение изношености при выстреле с глушителем для самого глушителя
@@ -490,11 +488,11 @@ public:
 	//  [8/3/2005]
 	virtual float			GetCondDecPerShotOnHit() const { return conditionDecreasePerShotOnHit; };
 protected:
-	int						iAmmoElapsed;		// ammo in magazine, currently
-	int						iMagazineSize;		// size (in bullets) of magazine
+	int						iAmmoElapsed{ -1 };		// ammo in magazine, currently
+	int						iMagazineSize{ -1 };		// size (in bullets) of magazine
 
 	//для подсчета в GetAmmoCurrent
-	mutable int				iAmmoCurrent;
+	mutable int				iAmmoCurrent{ -1 };
 	mutable u32				m_dwAmmoCurrentCalcFrame{};	//кадр на котором просчитали кол-во патронов
 
 	virtual bool			IsNecessaryItem	    (const shared_str& item_sect);
@@ -509,11 +507,11 @@ public:
 	u32						m_ammoType{};
 	BOOL					m_bHasTracers;
 	u8						m_u8TracerColorID;
-	u32						m_set_next_ammoType_on_reload;
+	u32						m_set_next_ammoType_on_reload{ u32(-1) };
 	// Multitype ammo support
 	xr_vector<CCartridge>	m_magazine;
 	CCartridge				m_DefaultCartridge;
-	float					m_fCurrentCartirdgeDisp;
+	float					m_fCurrentCartirdgeDisp{ 1.f };
 
 		bool				unlimited_ammo				();
 	IC	bool				can_be_strapped				() const {return m_can_be_strapped;};
@@ -523,8 +521,8 @@ public:
 
 
 protected:
-	u32						m_ef_main_weapon_type;
-	u32						m_ef_weapon_type;
+	u32						m_ef_main_weapon_type{ u32(-1) };
+	u32						m_ef_weapon_type{ u32(-1) };
 
 public:
 	virtual u32				ef_main_weapon_type	() const;

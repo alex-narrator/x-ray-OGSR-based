@@ -51,37 +51,10 @@ CWeapon::CWeapon(LPCSTR name)
 {
 	SetState				(eHidden);
 	SetNextState			(eHidden);
-	m_sub_state				= eSubstateReloadBegin;
-	m_idle_state			= eIdle;
 	SetDefaults				();
 
 	m_Offset.identity		();
 	m_StrapOffset.identity	();
-
-	iAmmoCurrent			= -1;
-
-	iAmmoElapsed			= -1;
-	iMagazineSize			= -1;
-
-	m_fZoomFactor			= 1.f;
-
-	//
-	m_fScopeZoomFactor		= 1.f;
-	m_fMinScopeZoomFactor	= 1.f;
-	m_uZoomStepCount		= 3;
-	m_fRTZoomFactor			= 1.f;
-	//
-
-	m_fCurrentCartirdgeDisp = 1.f;
-
-	m_StrapOffset.identity	();
-
-	m_ef_main_weapon_type	= u32(-1);
-	m_ef_weapon_type		= u32(-1);
-
-	m_set_next_ammoType_on_reload = u32(-1);
-
-	conditionDecreasePerShotSilencer = 1.f;
 }
 
 CWeapon::~CWeapon		()
@@ -99,19 +72,6 @@ CWeapon::~CWeapon		()
 	delete_data(m_lasers);
 	delete_data(m_flashlights);
 }
-
-//void CWeapon::Hit(float P, Fvector &dir,	
-//		    CObject* who, s16 element,
-//		    Fvector position_in_object_space, 
-//		    float impulse, 
-//		    ALife::EHitType hit_type)
-void CWeapon::Hit					(SHit* pHDS)
-{
-//	inherited::Hit(P, dir, who, element, position_in_object_space,impulse,hit_type);
-	inherited::Hit(pHDS);
-}
-
-
 
 void CWeapon::UpdateXForm	()
 {
@@ -228,7 +188,7 @@ void CWeapon::ForceUpdateFireParticles()
 		Fvector p, d;
 		smart_cast<CEntity*>(H_Parent())->g_fireParams(this, p, d);
 
-		Fmatrix _pxf;
+		Fmatrix _pxf{};
 		_pxf.k = d;
 		_pxf.i.crossproduct(Fvector().set(0.0f, 1.0f, 0.0f), _pxf.k);
 		_pxf.j.crossproduct(_pxf.k, _pxf.i);
@@ -468,10 +428,10 @@ void CWeapon::Load		(LPCSTR section)
 	}
 	else
 		m_sWpn_scope_bones.push_back(wpn_scope_def_bone);
-	m_sWpn_silencer_bone = READ_IF_EXISTS(pSettings, r_string, section, "silencer_bone", wpn_silencer_def_bone);
-	m_sWpn_launcher_bone = READ_IF_EXISTS(pSettings, r_string, section, "launcher_bone", wpn_launcher_def_bone_shoc);
-	m_sWpn_laser_bone = READ_IF_EXISTS(pSettings, r_string, section, "laser_ray_bones", "");
-	m_sWpn_flashlight_bone = READ_IF_EXISTS(pSettings, r_string, section, "torch_cone_bones", "");
+	m_sWpn_silencer_bone	= READ_IF_EXISTS(pSettings, r_string, section, "silencer_bone", wpn_silencer_def_bone);
+	m_sWpn_launcher_bone	= READ_IF_EXISTS(pSettings, r_string, section, "launcher_bone", wpn_launcher_def_bone_shoc);
+	m_sWpn_laser_bone		= READ_IF_EXISTS(pSettings, r_string, section, "laser_ray_bones", "");
+	m_sWpn_flashlight_bone	= READ_IF_EXISTS(pSettings, r_string, section, "torch_cone_bones", "");
 
 	if (pSettings->line_exist(section, "hidden_bones"))
 	{

@@ -419,9 +419,6 @@ class_<CScriptGameObject> script_register_game_object2(class_<CScriptGameObject>
 			// для CEatableItem
 		.def("zero_effects",			&CScriptGameObject::ZeroEffects)
 		//.def("set_radiation_influence", &CScriptGameObject::SetRadiationInfluence)
-			// для актора - иммунитеты
-		.def("set_additional_radiation_protection", &CScriptGameObject::SetDrugRadProtection)
-		.def("set_additional_telepatic_protection", &CScriptGameObject::SetDrugPsyProtection)
 
 		// KD
 

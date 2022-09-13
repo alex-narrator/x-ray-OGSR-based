@@ -720,86 +720,63 @@ private:
 
 			xr_map<EGameActions, bool> m_blocked_actions; // Вектор с заблокированными действиями. Real Wolf. 14.10.2014.
 public:
-	virtual bool				register_schedule				() const {return false;}
-			IC u32 get_state() const
-			{
-				return this->mstate_real;
-			}
-
-			IC void set_state(u32 state)
-			{
-				mstate_real = state;
-			}
-
-			IC u32 get_state_wishful() const
-			{
-				return this->mstate_wishful;
-			}
-
-			IC void set_state_wishful(u32 state)
-			{
-				mstate_wishful = state;
-			}
+	virtual bool	register_schedule		() const {return false;}
+		IC	u32		get_state				() const {return this->mstate_real;}
+		IC	void	set_state				(u32 state) {mstate_real = state;}
+		IC	u32		get_state_wishful		() const{return this->mstate_wishful;}
+		IC	void	set_state_wishful		(u32 state) {mstate_wishful = state;}
 
 			// Real Wolf. Start. 14.10.2014
-			void block_action(EGameActions cmd);
-			void unblock_action(EGameActions cmd);
+			void	block_action			(EGameActions cmd);
+			void	unblock_action			(EGameActions cmd);
 			// Real Wolf. End. 14.10.2014
 
-			bool is_actor_normal();
-			bool is_actor_crouch();
-			bool is_actor_creep();
-			bool is_actor_climb();
-			bool is_actor_walking();
-			bool is_actor_running();
-			bool is_actor_sprinting();
-			bool is_actor_crouching();
-			bool is_actor_creeping();
-			bool is_actor_climbing();
-			bool is_actor_moving();
+			bool	is_actor_normal			();
+			bool	is_actor_crouch			();
+			bool	is_actor_creep			();
+			bool	is_actor_climb			();
+			bool	is_actor_walking		();
+			bool	is_actor_running		();
+			bool	is_actor_sprinting		();
+			bool	is_actor_crouching		();
+			bool	is_actor_creeping		();
+			bool	is_actor_climbing		();
+			bool	is_actor_moving			();
 			
-			void RepackAmmo();
+			void	RepackAmmo				();
 
-			bool IsDetectorActive() const;
-private:
-	// иммунитеты от препаратов, применяемые для ослабления хита
-	float m_fDrugPsyProtectionCoeff{ 1.f };
-	float m_fDrugRadProtectionCoeff{ 1.f };
+			bool	IsDetectorActive		() const;
 
-public:
-	IC void	SetDrugRadProtection(float _prot) { m_fDrugRadProtectionCoeff = _prot; };
-	IC void	SetDrugPsyProtection(float _prot) { m_fDrugPsyProtectionCoeff = _prot; };
+			float	m_fThrowImpulse;	//сила с которой актор отбрасывает предмет
+			float	m_fKickImpulse;		//сила с которой актор пинает предмет
+			float	m_fHoldingDistance; //расстояние перед актором на котором находится удерживаемый предмет
+			void	ActorThrow				();
+			void	ActorKick				();
+			void	ActorQuickThrowGrenade	();
+			void	ActorQuickKnifeStab		();
+			//множитель для управления интенсивностью эффектора качания в прицеливании
+			float	GetZoomEffectorK		();
+			void	SetHardHold				(bool val) { m_bIsHardHold = val; };
+			bool	IsHardHold				() { return m_bIsHardHold || is_actor_creep(); };
 
-	float   m_fThrowImpulse;	//сила с которой актор отбрасывает предмет
-	float	m_fKickImpulse;		//сила с которой актор пинает предмет
-	float	m_fHoldingDistance; //расстояние перед актором на котором находится удерживаемый предмет
-	void	ActorThrow				();
-	void	ActorKick				();
-	void	ActorQuickThrowGrenade	();
-	void	ActorQuickKnifeStab		();
-	//множитель для управления интенсивностью эффектора качания в прицеливании
-	float	GetZoomEffectorK		();
-	void	SetHardHold				(bool val) { m_bIsHardHold = val; };
-	bool	IsHardHold				() { return m_bIsHardHold || is_actor_creep(); };
+			void	TryToBlockSprint		(bool block);
+			//визначаємо чи треба передати хіт до рюкзака та його вмісту
+			bool	IsHitToBackPack			(SHit* pHDS);
 
-	void	TryToBlockSprint		(bool block);
-	//визначаємо чи треба передати хіт до рюкзака та його вмісту
-	bool	IsHitToBackPack			(SHit* pHDS);
+			bool	HasDetectorWorkable		();
+			bool	HasPDAWorkable			();
 
-	bool	HasDetectorWorkable		();
-	bool	HasPDAWorkable			();
+			bool	IsRuckAmmoPlacement		() { return m_bRuckAmmoPlacement; };
+			void	SetRuckAmmoPlacement	(bool set_ruck) { m_bRuckAmmoPlacement = set_ruck; };
 
-	bool	IsRuckAmmoPlacement		() { return m_bRuckAmmoPlacement; };
-	void	SetRuckAmmoPlacement	(bool set_ruck) { m_bRuckAmmoPlacement = set_ruck; };
+			void	DrawHUDMasks			();
+			void	UpdateVisorEfects		();
 
-	void	DrawHUDMasks			();
-	void	UpdateVisorEfects		();
-
-	virtual bool IsVolumeUnlimited	() const { return false; };
+	virtual bool	IsVolumeUnlimited		() const { return false; };
 
 protected:
-	bool	m_bIsHardHold{};
-	bool	m_bRuckAmmoPlacement{};
+			bool	m_bIsHardHold{};
+			bool	m_bRuckAmmoPlacement{};
 
 public:
 	enum ActorRestoreParams {
@@ -815,8 +792,8 @@ public:
 		eRestoreParamMax,
 	};
 
-	float GetRestoreParam			(ActorRestoreParams param);
-	float GetTotalArtefactsEffect	(u32 i);
+			float	GetRestoreParam			(ActorRestoreParams param);
+			float	GetTotalArtefactsEffect	(u32 i);
 protected:
 	svector<float, ActorRestoreParams::eRestoreParamMax> m_ActorRestoreParam;
 };

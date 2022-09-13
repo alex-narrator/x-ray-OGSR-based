@@ -183,7 +183,7 @@ void CBulletManager::FireShotmark (SBullet* bullet, const Fvector& vDir, const F
 		particle_dir.invert	();
 
 		//на текущем актере отметок не ставим
-		if ( !smart_cast<CActor*>( R.O ) && mtl_pair && !mtl_pair->m_pCollideMarks->empty() && ShowMark )
+		if ( (!smart_cast<CActor*>(R.O) || psActorFlags.test(AF_BLOODMARKS_ON_DYNAMIC)) && mtl_pair && !mtl_pair->m_pCollideMarks->empty() && ShowMark)
 		{
 			//добавить отметку на материале
 			Fvector p;

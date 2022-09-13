@@ -635,35 +635,6 @@ void CScriptGameObject::ZeroEffects()
 	}
 	item->ZeroAllEffects();
 }
-//void CScriptGameObject::SetRadiationInfluence(float rad)
-//{
-//	CEatableItem						*item = smart_cast<CEatableItem*>(&object());
-//	if (!item) {
-//		ai().script_engine().script_log(ScriptStorage::eLuaMessageTypeError, "CEatableItem : cannot access class member ZeroEffects!");
-//		return;
-//	}
-//	item->SetRadiation(rad);
-//}
-
-void CScriptGameObject::SetDrugRadProtection(float _prot)
-{
-	CActor						*k = smart_cast<CActor*>(&object());
-	if (!k) {
-		ai().script_engine().script_log(ScriptStorage::eLuaMessageTypeError, "CActor : cannot access class member SetDrugRadProtection!");
-		return;
-	}
-	k->SetDrugRadProtection(_prot);
-}
-
-void CScriptGameObject::SetDrugPsyProtection(float _prot)
-{
-	CActor						*k = smart_cast<CActor*>(&object());
-	if (!k) {
-		ai().script_engine().script_log(ScriptStorage::eLuaMessageTypeError, "CActor : cannot access class member SetDrugPsyProtection!");
-		return;
-	}
-	k->SetDrugPsyProtection(_prot);
-}
 
 u32 CScriptGameObject::GetHudItemState() {
 	CHudItem *k = smart_cast<CHudItem*>( &object() );

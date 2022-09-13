@@ -728,10 +728,6 @@ public:
 
 			// для CEatableItem, используются в реализации радиопротектора
 			void				ZeroEffects();
-			//void				SetRadiationInfluence(float _rad);
-			// для актора - иммунитеты
-			void				SetDrugRadProtection(float _prot);
-			void				SetDrugPsyProtection(float _prot);
 
 			// functions for CInventoryItem class
 			void				SetIIFlags						(Flags16);

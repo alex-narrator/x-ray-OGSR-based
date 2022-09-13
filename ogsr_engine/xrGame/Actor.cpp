@@ -439,12 +439,6 @@ void	CActor::Hit							(SHit* pHDS)
 	bool bPlaySound = true;
 	if (!g_Alive()) bPlaySound = false;
 
-	if (HDS.hit_type == ALife::eHitTypeRadiation)
-		HDS.power *= m_fDrugRadProtectionCoeff;
-
-	if (HDS.hit_type == ALife::eHitTypeTelepatic)
-		HDS.power *= m_fDrugPsyProtectionCoeff;
-
 	if(	!sndHit[HDS.hit_type].empty()			&& 
 		(ALife::eHitTypeTelepatic != HDS.hit_type))
 	{

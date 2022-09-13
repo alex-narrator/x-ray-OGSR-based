@@ -439,6 +439,18 @@
 		<text>Многопоточная загрузка текстур</text>
 	</string>
 	
+	<string id="ui_mm_bloodmarks_on_dynamics">
+		<text>Бладмарки на динамічних об'ектах та ГГ</text>
+	</string>
+	<string id="video_settings_name_bloodmarks_on_dynamics">
+		<text>Бладмарки на динамічних об'ектах та ГГ - g_bloodmarks_on_dynamics</text>
+	</string>
+	<string id="video_settings_desc_bloodmarks_on_dynamics">
+		<text>Вмикає відображення плям крові на динамічних об'єктах (уламки ящиків та інше) а також на самій моделі головного героя.
+		У деяких випадках може суттєво зменшити FPS</text>
+	</string>	
+	
+	
 	<string id="game_object_throw_drop">
 	    <text>Отбросить [$$ACTION_USE$$]\n Отпустить [$$ACTION_ADDITIONAL_ACTION$$]+[$$ACTION_USE$$]</text>
     </string>

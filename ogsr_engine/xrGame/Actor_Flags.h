@@ -27,6 +27,7 @@ enum{
 		AF_NO_AUTO_RELOAD			= 1<<23,
 		AF_KNIFE_TO_CUT_PART		= 1<<24,
 		AF_AI_VOLUMETRIC_LIGHTS		= 1<<25,
+		AF_BLOODMARKS_ON_DYNAMIC	= 1<<26,
 };
 
 enum {

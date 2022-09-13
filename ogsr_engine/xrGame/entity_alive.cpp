@@ -20,9 +20,10 @@
 #include "game_object_space.h"
 #include "material_manager.h"
 #include "game_base_space.h"
+#include "Actor_Flags.h"
 
-#define SMALL_ENTITY_RADIUS		0.6f
-#define BLOOD_MARKS_SECT		"bloody_marks"
+constexpr auto SMALL_ENTITY_RADIUS	= 0.6f;
+constexpr auto BLOOD_MARKS_SECT		= "bloody_marks";
 
 //отметки крови на стенах 
 FactoryPtr<IWallMarkArray>* CEntityAlive::m_pBloodMarksVector = nullptr;
@@ -53,17 +54,8 @@ STR_VECTOR* CEntityAlive::m_pFireParticlesVector = NULL;
 /////////////////////////////////////////////
 CEntityAlive::CEntityAlive()
 {
-	
 	monster_community		= xr_new<MONSTER_COMMUNITY>	();
-
-	m_ef_weapon_type		= u32(-1);
-	m_ef_detector_type		= u32(-1);
-	b_eating				= false;
-	m_use_timeout			= 5000;
 	m_used_time				= Device.dwTimeGlobal;
-	m_squad_index			= u8(-1);
-
-	m_material_manager		= 0;
 }
 
 CEntityAlive::~CEntityAlive()
@@ -386,12 +378,12 @@ void CEntityAlive::PlaceBloodWallmark(const Fvector& dir, const Fvector& start_p
 		return;
 
 	//вычислить точку попадания
-	Fvector end_point;
+	Fvector end_point{};
 	end_point.set(0,0,0);
 	end_point.mad(start_pos, dir, result.range);
 
-	if(result.O) { // Dynamic object
-/*
+	if(result.O && psActorFlags.test(AF_BLOODMARKS_ON_DYNAMIC)) { // Dynamic object
+
 		const auto pK = smart_cast<IKinematics*>(result.O->Visual());
 		if (!pK)
 			return;
@@ -401,17 +393,14 @@ void CEntityAlive::PlaceBloodWallmark(const Fvector& dir, const Fvector& start_p
 
 		if (pMaterial->Flags.is(SGameMtl::flBloodmark))
 			::Render->add_SkeletonWallmark(&result.O->renderable.xform, pK, pwallmarks_vector, end_point, dir, wallmark_size);
-*/
-	}
-	else { //если кровь долетела до статического объекта
+
+	} else { //если кровь долетела до статического объекта
 		auto pTri = Level().ObjectSpace.GetStaticTris()+result.element;
 		auto pMaterial = GMLib.GetMaterialByIdx(pTri->material);
 
-		if(pMaterial->Flags.is(SGameMtl::flBloodmark))
-		{
+		if(pMaterial->Flags.is(SGameMtl::flBloodmark)){
 			//вычислить нормаль к пораженной поверхности
 			auto pVerts	= Level().ObjectSpace.GetStaticVerts();
-
 			//добавить отметку на материале
 			::Render->add_StaticWallmark(pwallmarks_vector, end_point, wallmark_size, pTri, pVerts);
 		}

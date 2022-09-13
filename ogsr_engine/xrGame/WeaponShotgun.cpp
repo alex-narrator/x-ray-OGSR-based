@@ -25,7 +25,6 @@ CWeaponShotgun::~CWeaponShotgun(void)
 	HUD_SOUND::DestroySound(m_sndOpen);
 	HUD_SOUND::DestroySound(m_sndAddCartridge);
 	HUD_SOUND::DestroySound(m_sndClose);
-
 }
 
 void CWeaponShotgun::net_Destroy()
