@@ -34,30 +34,6 @@ CWeaponMagazined::CWeaponMagazined(LPCSTR name, ESoundTypes eSoundType) : CWeapo
 	m_eSoundReload		= ESoundTypes(SOUND_TYPE_WEAPON_RECHARGING | eSoundType);
 	//
 	m_eSoundShutter		= ESoundTypes(SOUND_TYPE_WEAPON_RECHARGING | eSoundType);
-
-	m_pSndShotCurrent = NULL;
-	m_sSilencerFlameParticles = m_sSilencerSmokeParticles = NULL;
-
-	m_bFireSingleShot = false;
-	m_iShotNum = 0;
-	m_iQueueSize = WEAPON_ININITE_QUEUE;
-	m_bLockType = false;
-
-	m_binoc_vision				= nullptr;
-	m_bVision					= false;
-	binoc_vision_sect			= nullptr;
-	m_bNightVisionEnabled		= false;
-	m_bNightVisionSwitchedOn	= true;
-	m_bNightVisionOn			= false;
-	//
-	m_bHasChamber				= true;
-	m_LastLoadedMagType			= 0;
-	m_bIsMagazineAttached		= true;
-	//
-	m_fAttachedSilencerCondition		= 1.f;
-	m_fAttachedScopeCondition			= 1.f;
-	m_fAttachedGrenadeLauncherCondition = 1.f;
-	//
 }
 
 CWeaponMagazined::~CWeaponMagazined()
@@ -738,10 +714,6 @@ void CWeaponMagazined::SetDefaults	()
 
 void CWeaponMagazined::OnShot		()
 {
-	// Если актор бежит - останавливаем его
-	if (ParentIsActor())
-		Actor()->set_state_wishful(Actor()->get_state_wishful() & (~mcSprint));
-
 	// Sound
 	PlaySound( *m_pSndShotCurrent, get_LastFP(), true );
 

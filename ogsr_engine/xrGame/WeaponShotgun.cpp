@@ -379,15 +379,12 @@ bool CWeaponShotgun::HaveCartridgeInInventory( u8 cnt ) {
 
   m_pAmmo = smart_cast<CWeaponAmmo*>(m_pCurrentInventory->GetAmmoByLimit(*m_ammoTypes[m_ammoType], ParentIsActor(), false));
 
-  if (!m_pAmmo)
-  {
-	  for (u32 i = 0; i < m_ammoTypes.size(); ++i)
-	  {
+  if (!m_pAmmo){
+	  for (u32 i = 0; i < m_ammoTypes.size(); ++i){
 		  //проверить патроны всех подходящих типов
 		  m_pAmmo = smart_cast<CWeaponAmmo*>(m_pCurrentInventory->GetAmmoByLimit(*m_ammoTypes[i], ParentIsActor(), false));
 
-		  if (m_pAmmo)
-		  {
+		  if (m_pAmmo){
 			  m_ammoType = i;
 			  break;
 		  }
@@ -400,11 +397,9 @@ bool CWeaponShotgun::HaveCartridgeInInventory( u8 cnt ) {
 
 u8 CWeaponShotgun::AddCartridge		(u8 cnt)
 {
-	if (IsMisfire())
-	{
+	if (IsMisfire()){
 		bMisfire = false;
-		if (smart_cast<CActor*>(this->H_Parent()) && (Level().CurrentViewEntity() == H_Parent()))
-		{
+		if (smart_cast<CActor*>(this->H_Parent()) && (Level().CurrentViewEntity() == H_Parent())){
 			HUD().GetUI()->AddInfoMessage("item_state", "gun_not_jammed");
 		}
 	}
@@ -423,10 +418,8 @@ u8 CWeaponShotgun::AddCartridge		(u8 cnt)
 		m_DefaultCartridge.Load(*m_ammoTypes[m_ammoType], u8(m_ammoType));
 
 	CCartridge l_cartridge = m_DefaultCartridge;
-	while(cnt && m_magazine.size() < (u32)iMagazineSize)// && m_pAmmo->Get(l_cartridge)) 
-	{
-		if (!unlimited_ammo())
-		{
+	while(cnt && m_magazine.size() < (u32)iMagazineSize){
+		if (!unlimited_ammo()){
 			if (!m_pAmmo->Get(l_cartridge)) break; //-V595
 		}
 		--cnt;

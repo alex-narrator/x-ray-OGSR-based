@@ -586,7 +586,7 @@ public:
 	virtual	void						destroy_anim_mov_ctrl						();
 
 private:
-	bool	m_can_select_items;
+			bool						m_can_select_items;
 
 public:
 	IC		const u32					&throw_time_interval						() const;

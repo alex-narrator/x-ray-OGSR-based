@@ -8,7 +8,7 @@ class ENGINE_API CMotionDef;
 
 //размер очереди считается бесконечность
 //заканчиваем стрельбу, только, если кончились патроны
-#define WEAPON_ININITE_QUEUE -1
+constexpr auto WEAPON_ININITE_QUEUE = -1;
 
 class CBinocularsVision;
 
@@ -24,7 +24,7 @@ protected:
 	HUD_SOUND		sndShot;
 	HUD_SOUND		sndEmptyClick;
 	HUD_SOUND		sndReload, sndReloadPartly;
-	bool sndReloadPartlyExist{};
+	bool			sndReloadPartlyExist{};
 	HUD_SOUND		sndFireModes;
 	HUD_SOUND		sndZoomChange;
 	//
@@ -41,13 +41,13 @@ protected:
 	HUD_SOUND		sndAimStart, sndAimEnd;
 
 	//звук текущего выстрела
-	HUD_SOUND*		m_pSndShotCurrent;
+	HUD_SOUND*		m_pSndShotCurrent{};
 
 	virtual void	StopHUDSounds		();
 
 	//дополнительная информация о глушителе
-	LPCSTR			m_sSilencerFlameParticles;
-	LPCSTR			m_sSilencerSmokeParticles;
+	LPCSTR			m_sSilencerFlameParticles{};
+	LPCSTR			m_sSilencerSmokeParticles{};
 	HUD_SOUND		sndSilencerShot;
 
 	ESoundTypes		m_eSoundShow;
@@ -59,7 +59,7 @@ protected:
 
 	// General
 	//кадр момента пересчета UpdateSounds
-	u32				dwUpdateSounds_Frame;
+	u32				dwUpdateSounds_Frame{};
 protected:
 	virtual void	OnMagazineEmpty	();
 
@@ -104,9 +104,9 @@ public:
 	
 
 	virtual	void	UpdateCL		();
-	virtual BOOL	net_Spawn(CSE_Abstract* DC);
+	virtual BOOL	net_Spawn		(CSE_Abstract* DC);
 	virtual void	net_Destroy		();
-	virtual void net_Export( CSE_Abstract* E );
+	virtual void	net_Export		( CSE_Abstract* E );
 
 	virtual void	OnH_A_Chield		();
 
@@ -137,47 +137,47 @@ public:
 
 protected:
 	//максимальный размер очереди, которой можно стрельнуть
-	int				m_iQueueSize;
+	int				m_iQueueSize = WEAPON_ININITE_QUEUE;
 	//количество реально выстреляных патронов
-	int				m_iShotNum;
+	int				m_iShotNum{};
 	//  [7/20/2005]
 	//после какого патрона, при непрерывной стрельбе, начинается отдача (сделано из-зи Абакана)
-	int				m_iShootEffectorStart;
-	Fvector			m_vStartPos, m_vStartDir;
+	int				m_iShootEffectorStart{};
+	Fvector			m_vStartPos{}, m_vStartDir{};
 	//  [7/20/2005]
 	//флаг того, что мы остановились после того как выстреляли
 	//ровно столько патронов, сколько было задано в m_iQueueSize
-	bool			m_bStopedAfterQueueFired;
+	bool			m_bStopedAfterQueueFired{};
 	//флаг того, что хотя бы один выстрел мы должны сделать
 	//(даже если очень быстро нажали на курок и вызвалось FireEnd)
-	bool			m_bFireSingleShot;
+	bool			m_bFireSingleShot{};
 	//режимы стрельбы
-	bool			m_bHasDifferentFireModes;
+	bool			m_bHasDifferentFireModes{};
 	xr_vector<int>	m_aFireModes;
-	int				m_iCurFireMode;
+	int				m_iCurFireMode{};
 	string16		m_sCurFireMode;
-	int				m_iPrefferedFireMode;
-	u32 m_fire_zoomout_time = u32(-1);
+	int				m_iPrefferedFireMode{ -1 };
+	u32				m_fire_zoomout_time = u32(-1);
 
 	//скорострельность привилегированного режима стрельбы
-	float			fTimeToFirePreffered;
+	float			fTimeToFirePreffered{};
 	//у оружия есть патронник
-	bool			m_bHasChamber;
+	bool			m_bHasChamber{ true };
 	//последний заряженный тип магазина
-	u32				m_LastLoadedMagType;
+	u32				m_LastLoadedMagType{};
 	//присоединён ли магазин
-	bool			m_bIsMagazineAttached;
+	bool			m_bIsMagazineAttached{ true };
 
 	//переменная блокирует использование
 	//только разных типов патронов
-	bool m_bLockType;
+	bool			m_bLockType{};
 
-	const char* m_str_count_tmpl;
+	const char*		m_str_count_tmpl{};
 
 	// режим выделения рамкой противников
 protected:
-	bool					m_bVision;
-	CBinocularsVision*		m_binoc_vision;
+	bool					m_bVision{};
+	CBinocularsVision*		m_binoc_vision{};
 
 	//////////////////////////////////////////////
 	// режим приближения
@@ -205,7 +205,7 @@ protected:
 	virtual void	PlayAnimIdle		();
 
 private:
-	string64 guns_aim_anm;
+	string64 guns_aim_anm{};
 protected:
 	const char* GetAnimAimName();
 
@@ -216,11 +216,11 @@ protected:
 	virtual	int		ShotsFired			() { return m_iShotNum; }
 	virtual float	GetWeaponDeterioration	();
 	//для хранения состояния присоединённого прицела
-	float			m_fAttachedScopeCondition;
+	float			m_fAttachedScopeCondition{ 1.f };
 	//для хранения состояния присоединённого гранатомёта
-	float			m_fAttachedGrenadeLauncherCondition;
+	float			m_fAttachedGrenadeLauncherCondition{ 1.f };
 	//для хранения состояния присоединённого глушителя
-	float			m_fAttachedSilencerCondition;
+	float			m_fAttachedSilencerCondition{ 1.f };
 	//износ самого глушителя при стрельбе
 	virtual float	GetSilencerDeterioration();
 	virtual void	DeteriorateSilencerAttachable(float);
@@ -233,8 +233,8 @@ public:
 	// Real Wolf.20.01.15
 	virtual					bool TryToGetAmmo(u32);
 	//
-	LPCSTR					m_NightVisionSect;
-	bool					m_bNightVisionOn;
+	LPCSTR					m_NightVisionSect{};
+	bool					m_bNightVisionOn{};
 	void					SwitchNightVision(bool, bool);
 	void					UpdateSwitchNightVision();
 	void					SwitchNightVision();
@@ -269,11 +269,11 @@ public:
 	virtual void	LoadLaserParams		(LPCSTR section);
 	virtual void	LoadFlashlightParams(LPCSTR section);
 	//
-	LPCSTR			binoc_vision_sect;
+	LPCSTR			binoc_vision_sect{};
 	//
-	virtual void	ChangeAttachedSilencerCondition(float);
-	virtual void	ChangeAttachedScopeCondition(float);
-	virtual void	ChangeAttachedGrenadeLauncherCondition(float);
+	virtual void	ChangeAttachedSilencerCondition			(float);
+	virtual void	ChangeAttachedScopeCondition			(float);
+	virtual void	ChangeAttachedGrenadeLauncherCondition	(float);
 
 	virtual bool	IsSilencerBroken();
 	virtual bool	IsScopeBroken();
@@ -289,7 +289,7 @@ public:
 	virtual void	SwitchFlashlight		(bool on);
 protected:
 	bool			m_bNightVisionEnabled{};
-	bool			m_bNightVisionSwitchedOn{};
+	bool			m_bNightVisionSwitchedOn{ true };
 	//передёргивание затвора
 	virtual void	OnShutter();
 	virtual void	switch2_Shutter();

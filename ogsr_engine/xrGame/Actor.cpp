@@ -88,8 +88,8 @@ const u32		patch_frames	= 50;
 const float		respawn_delay	= 1.f;
 const float		respawn_auto	= 7.f;
 
-static float IReceived = 0;
-static float ICoincidenced = 0;
+static float	IReceived		= 0;
+static float	ICoincidenced	= 0;
 
 
 //skeleton
@@ -100,7 +100,7 @@ static Fvector	vFootExt;
 
 Flags32 psActorFlags = { AF_3D_SCOPES | AF_KEYPRESS_ON_START | AF_CAM_COLLISION | AF_AI_VOLUMETRIC_LIGHTS };
 
-static bool updated;
+static bool updated{};
 
 CActor::CActor() : CEntityAlive(),current_ik_cam_shift(0)
 {
@@ -127,43 +127,6 @@ CActor::CActor() : CEntityAlive(),current_ik_cam_shift(0)
 	cameras[eacFreeLook]	= xr_new<CCameraLook>					(this);
 	cameras[eacFreeLook]->Load("actor_free_cam");
 
-	cam_active				= eacFirstEye;
-	fPrevCamPos				= 0.0f;
-	vPrevCamDir.set			(0.f,0.f,1.f);
-	fCurAVelocity			= 0.0f;
-	// эффекторы
-	pCamBobbing				= 0;
-	m_pSleepEffector		= NULL;
-	m_pSleepEffectorPP		= NULL;
-
-
-	r_torso.yaw				= 0;
-	r_torso.pitch			= 0;
-	r_torso.roll			= 0;
-	r_torso_tgt_roll		= 0;
-	r_model_yaw				= 0;
-	r_model_yaw_delta		= 0;
-	r_model_yaw_dest		= 0;
-
-	b_DropActivated			= 0;
-	f_DropPower				= 0.f;
-
-	m_fRunFactor			= 2.f;
-	m_fCrouchFactor			= 0.2f;
-	m_fClimbFactor			= 1.f;
-	m_fCamHeightFactor		= 0.87f;
-
-	m_fFallTime				=	s_fFallTime;
-	m_bAnimTorsoPlayed		=	false;
-
-	m_pPhysicsShell			=	NULL;
-
-
-
-	m_holder				=	NULL;
-	m_holderID				=	u16(-1);
-
-
 #ifdef DEBUG
 	Device.seqRender.Add	(this,REG_PRIORITY_LOW);
 #endif
@@ -171,44 +134,17 @@ CActor::CActor() : CEntityAlive(),current_ik_cam_shift(0)
 	//разрешить использование пояса в inventory
 	inventory().SetBeltUseful(true);
 
-	m_pPersonWeLookingAt	= NULL;
-	m_pVehicleWeLookingAt	= NULL;
-	m_pObjectWeLookingAt	= NULL;
-	m_bPickupMode			= false;
-
-	pStatGraph				= NULL;
-
-	m_pActorEffector		= NULL;
-
-	m_bZoomAimingMode		= false;
-
-	m_sDefaultObjAction		= nullptr;
-
-	m_fSprintFactor			= 4.f;
-
-	m_pUsableObject			= NULL;
-
-
 	m_anims					= xr_new<SActorMotions>();
 	m_vehicle_anims			= xr_new<SActorVehicleAnims>();
-	m_entity_condition		= NULL;
-	m_iLastHitterID			= u16(-1);
-	m_iLastHittingWeaponID	= u16(-1);
-	m_game_task_manager		= NULL;
-	m_statistic_manager		= NULL;
 	//-----------------------------------------------------------------------------------
 	m_memory				= xr_new<CActorMemory>(this);
-	m_bOutBorder			= false;
-	hit_probability			= 1.f;
-	m_feel_touch_characters = 0;
 	//-----------------------------------------------------------------------------------
 
 	m_location_manager		= xr_new<CLocationManager>(this);
 
-	m_fDrugPsyProtectionCoeff	= 1.f;
-	m_fDrugRadProtectionCoeff	= 1.f;
-	
-	updated = false;
+	m_fFallTime				= s_fFallTime;
+
+	updated					= false;
 
 	m_ActorRestoreParam.clear();
 	m_ActorRestoreParam.resize(eRestoreParamMax);
@@ -718,12 +654,12 @@ void CActor::Die(CObject* who)
 	mstate_wishful	&=		~mcAnyMove;
 	mstate_real		&=		~mcAnyMove;
 
-		::Sound->play_at_pos	(sndDie[Random.randI(SND_DIE_COUNT)],this,Position());
+	::Sound->play_at_pos	(sndDie[Random.randI(SND_DIE_COUNT)],this,Position());
 
-		m_HeavyBreathSnd.stop	();
-		m_BloodSnd.stop			();		
+	m_HeavyBreathSnd.stop	();
+	m_BloodSnd.stop			();		
 
-	start_tutorial		("game_over");
+	start_tutorial			("game_over");
 	xr_delete				(m_sndShockEffector);
 }
 
@@ -1130,21 +1066,21 @@ void CActor::shedule_Update	(u32 DT)
 	}
 	
 	//если в режиме HUD, то сама модель актера не рисуется
-	if( !character_physics_support()->IsRemoved() && !m_holder )
-										setVisible				(!HUDview	());
+	if(!character_physics_support()->IsRemoved() && !m_holder)
+		setVisible(!HUDview());
 	//что актер видит перед собой
 	collide::rq_result& RQ = HUD().GetCurrentRayQuery();
 	
 
 	if( !input_external_handler_installed() && !m_holder && RQ.O && RQ.range<inventory().GetTakeDist() )
 	{
-		m_pObjectWeLookingAt  = smart_cast<CGameObject*>(RQ.O);
+		m_pObjectWeLookingAt  = smart_cast<CGameObject*>		(RQ.O);
 		m_pUsableObject	      = smart_cast<CUsableScriptObject*>(RQ.O);
-		m_pInvBoxWeLookingAt  = smart_cast<IInventoryBox*>(RQ.O);
-		inventory().m_pTarget = smart_cast<PIItem>(RQ.O);
-		m_pPersonWeLookingAt  = smart_cast<CInventoryOwner*>(RQ.O);
-		m_pVehicleWeLookingAt = smart_cast<CHolderCustom*>(RQ.O);
-		auto pEntityAlive     = smart_cast<CEntityAlive*>(RQ.O);
+		m_pInvBoxWeLookingAt  = smart_cast<IInventoryBox*>		(RQ.O);
+		inventory().m_pTarget = smart_cast<PIItem>				(RQ.O);
+		m_pPersonWeLookingAt  = smart_cast<CInventoryOwner*>	(RQ.O);
+		m_pVehicleWeLookingAt = smart_cast<CHolderCustom*>		(RQ.O);
+		auto pEntityAlive     = smart_cast<CEntityAlive*>		(RQ.O);
 		auto ph_shell_holder  = smart_cast<CPhysicsShellHolder*>(RQ.O);
 
 		auto capture = character_physics_support()->movement()->PHCapture();
@@ -1153,7 +1089,7 @@ void CActor::shedule_Update	(u32 DT)
 
 		bool b_free_hands = inventory().IsFreeHands();
 
-		if (HUD().GetUI()->MainInputReceiver() || m_holder/* || character_physics_support()->movement()->PHCapture()*/)
+		if (HUD().GetUI()->MainInputReceiver() || m_holder)
 		{
 			m_sDefaultObjAction = nullptr;
 		}
@@ -1925,47 +1861,32 @@ float CActor::GetZoomEffectorK()
 	return k;
 }
 
-void CActor::TryToBlockSprint(bool bReason)
+void CActor::TryToBlockSprint(bool block)
 {
-	if (psActorFlags.is(AF_WPN_ACTIONS_RESET_SPRINT) && bReason && mstate_wishful & mcSprint)
+	if (psActorFlags.is(AF_WPN_ACTIONS_RESET_SPRINT) && block && mstate_wishful & mcSprint)
 		mstate_wishful &= ~mcSprint;
 }
 
-bool CActor::IsHitToBackPack(SHit* pHDS)
-{
-	if (pHDS->type() == ALife::eHitTypeRadiation)
-	{
+bool CActor::IsHitToBackPack(SHit* pHDS){
+	if (pHDS->type() == ALife::eHitTypeRadiation) {
 		Msg("! RADIATION HITTED FOR BACKPACK");
 		return true;
 	}
-
-	bool result = false;
-
-	bool calculate_direction = true;
+	bool calculate_direction{ true };
 	//якщо хіт вогнепальний або поріз то має значення кістка попадання
-	if (pHDS->type() == ALife::eHitTypeFireWound || pHDS->type() == ALife::eHitTypeWound || pHDS->type() == ALife::eHitTypeWound_2)
-		calculate_direction = (pHDS->bone() == m_spine || pHDS->bone() == m_spine1 || pHDS->bone() == m_spine2);
-
-	if (calculate_direction)
-	{
-		// convert impulse into local coordinate system
-		Fmatrix					mInvXForm;
-		mInvXForm.invert(XFORM());
-		Fvector					vLocalDir;
-		mInvXForm.transform_dir(vLocalDir, pHDS->direction());
-		vLocalDir.invert();
-
-		Fvector a = { 0, 0, 1 };
-		float res = a.dotproduct(vLocalDir);
-
-		if (res < -0.707)	//якщо хіт був завданий сзаду
-			result = true;
-
-		if (result) Msg("! BACK HITTED FOR BACKPACK, res [%.3f]", res);
-		Msg("res [%.3f]", res);
+	if (pHDS->type() == ALife::eHitTypeFireWound ||
+		pHDS->type() == ALife::eHitTypeWound ||
+		pHDS->type() == ALife::eHitTypeWound_2) {
+		calculate_direction = (
+			pHDS->bone() == m_spine ||
+			pHDS->bone() == m_spine1 ||
+			pHDS->bone() == m_spine2
+			);
 	}
-
-	return result;
+	if (calculate_direction && is_from_behind(pHDS->direction())) {
+		return true;
+	}
+	return false;
 }
 
 #include "SimpleDetectorSHOC.h"

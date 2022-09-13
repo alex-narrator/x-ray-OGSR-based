@@ -101,13 +101,20 @@ public:
 	virtual void			OnEvent				( NET_Packet& P, u16 type		);
 
 	virtual BOOL			IsVisibleForHUD		()	{return g_Alive();	}
-	virtual void g_fireParams(CHudItem*, Fvector&, Fvector&, const bool for_cursor = false) {}
+	virtual void			g_fireParams		(CHudItem*, Fvector&, Fvector&, const bool for_cursor = false) {}
 
 	//time of entity death
 	u32						m_level_death_time;
 	ALife::_TIME_ID			m_game_death_time;
 
 			void			set_death_time		();
+
+			bool			find_in_parents		(const u16 bone_to_find, const u16 from_bone, IKinematics& ca);
+			bool			is_bone_head		(IKinematics& K, u16 bone);
+			bool			is_backstab_bone	(IKinematics& K, u16 bone);
+			bool			is_backstab			(IKinematics& K, SHit* pHDS);
+			bool			is_from_behind		(const Fvector& direction);
+			bool			b_disable_death_sound{};
 
 private:
 	ALife::_OBJECT_ID		m_killer_id;

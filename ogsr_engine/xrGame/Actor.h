@@ -155,8 +155,8 @@ public:
 	void PushNewsData( GAME_NEWS_DATA& news_data );
 	u32  NewsToShow() { return m_news_to_show; };
 protected:
-	CGameTaskManager*				m_game_task_manager;
-	CActorStatisticMgr*				m_statistic_manager;
+	CGameTaskManager*				m_game_task_manager{};
+	CActorStatisticMgr*				m_statistic_manager{};
 public:
 	void StartTalk(CInventoryOwner* talk_partner, bool = true) override;
 	virtual	void RunTalkDialog		(CInventoryOwner* talk_partner);
@@ -231,8 +231,8 @@ protected:
 protected:
 	// Death
 	float					hit_slowmo{};
-	float					hit_probability;
-	bool m_hit_slowmo_jump;
+	float					hit_probability{ 1.f };
+	bool					m_hit_slowmo_jump;
 
 	// media
 	SndShockEffector*		m_sndShockEffector;
@@ -243,20 +243,20 @@ protected:
 	float					m_fLandingTime;
 	float					m_fJumpTime;
 	float					m_fFallTime;
-	float					m_fCamHeightFactor;
+	float					m_fCamHeightFactor{ 0.87f };
 
 	// Dropping
-	BOOL					b_DropActivated;
-	float					f_DropPower;
+	BOOL					b_DropActivated{};
+	float					f_DropPower{};
 
 	//random seed для Zoom mode
 	s32						m_ZoomRndSeed;
 	//random seed для Weapon Effector Shot
 	s32						m_ShotRndSeed;
 
-	bool					m_bOutBorder;
+	bool					m_bOutBorder{};
 	//сохраняет счетчик объектов в feel_touch, для которых необходимо обновлять размер колижена с актером 
-	u32						m_feel_touch_characters;
+	u32						m_feel_touch_characters{};
 	//разрешения на удаление трупа актера 
 	//после того как контролирующий его игрок зареспавнился заново. 
 	//устанавливается в game
@@ -278,8 +278,8 @@ public:
 
 	virtual bool			can_attach				(const CInventoryItem *inventory_item) const;
 protected:
-	CHolderCustom*			m_holder;
-	u16						m_holderID;
+	CHolderCustom*			m_holder{};
+	u16						m_holderID{ u16(-1) };
 	bool					use_Holder				(CHolderCustom* holder);
 
 	bool					use_Vehicle				(CHolderCustom* object);
@@ -291,19 +291,19 @@ protected:
 	// actor model & animations
 	/////////////////////////////////////////////////////////
 protected:
-	BOOL					m_bAnimTorsoPlayed;
+	BOOL					m_bAnimTorsoPlayed{};
 	static void				AnimTorsoPlayCallBack(CBlend* B);
 
 	// Rotation
-	SRotation				r_torso;
-	float					r_torso_tgt_roll;
+	SRotation				r_torso{};
+	float					r_torso_tgt_roll{};
 	//положение торса без воздействия эффекта отдачи оружия
 	SRotation				unaffected_r_torso;
 
 	//ориентация модели
-	float					r_model_yaw_dest;
-	float					r_model_yaw;			// orientation of model
-	float					r_model_yaw_delta;		// effect on multiple "strafe"+"something"
+	float					r_model_yaw_dest{};
+	float					r_model_yaw{};			// orientation of model
+	float					r_model_yaw_delta{};	// effect on multiple "strafe"+"something"
 
 
 public:
@@ -364,22 +364,22 @@ protected:
 
 	// Cameras
 	CCameraBase*			cameras[eacMaxCam];
-	EActorCameras			cam_active;
-	float					fPrevCamPos;
+	EActorCameras			cam_active{};
+	float					fPrevCamPos{};
 	float					current_ik_cam_shift;
-	Fvector					vPrevCamDir;
-	float					fCurAVelocity;
-	CEffectorBobbing*		pCamBobbing;
+	Fvector					vPrevCamDir{ 0.f,0.f,1.f };
+	float					fCurAVelocity{};
+	CEffectorBobbing*		pCamBobbing{};
 
 //	void					LoadShootingEffector	(LPCSTR section);
 //	SShootingEffector*		m_pShootingEffector;
 
 	void					LoadSleepEffector		(LPCSTR section);
-	SSleepEffector*			m_pSleepEffector;
-	CSleepEffectorPP*		m_pSleepEffectorPP;
+	SSleepEffector*			m_pSleepEffector{};
+	CSleepEffectorPP*		m_pSleepEffectorPP{};
 
 	//менеджер эффекторов, есть у каждого актрера
-	CActorCameraManager*	m_pActorEffector;
+	CActorCameraManager*	m_pActorEffector{};
 	static float			f_Ladder_cam_limit;
 	////////////////////////////////////////////
 	// для взаимодействия с другими персонажами 
@@ -401,18 +401,18 @@ protected:
 //.	void					DestroyFollowerInternal();//hack
 //.	CActorFollowerMngr&		Followers	();
 //.	CActorFollowerMngr*		m_followers;
-	CUsableScriptObject*	m_pUsableObject;
+	CUsableScriptObject*	m_pUsableObject{};
 	// Person we're looking at
-	CInventoryOwner*		m_pPersonWeLookingAt;
-	CHolderCustom*			m_pVehicleWeLookingAt;
-	CGameObject*			m_pObjectWeLookingAt;
-	IInventoryBox*			m_pInvBoxWeLookingAt;
+	CInventoryOwner*		m_pPersonWeLookingAt{};
+	CHolderCustom*			m_pVehicleWeLookingAt{};
+	CGameObject*			m_pObjectWeLookingAt{};
+	IInventoryBox*			m_pInvBoxWeLookingAt{};
 
 	// Tip for action for object we're looking at
-	const char*				m_sDefaultObjAction;
+	const char*				m_sDefaultObjAction{};
 
 	//режим подбирания предметов
-	bool					m_bPickupMode;
+	bool					m_bPickupMode{};
 	//расстояние подсветки предметов
 	float					m_fPickupInfoRadius;
 
@@ -468,12 +468,12 @@ protected:
 
 	float					m_fWalkAccel;
 	float					m_fJumpSpeed;
-	float					m_fRunFactor;
+	float					m_fRunFactor{ 2.f };
 	float					m_fRunBackFactor;
 	float					m_fWalkBackFactor;
-	float					m_fCrouchFactor;
-	float					m_fClimbFactor;
-	float					m_fSprintFactor;
+	float					m_fCrouchFactor{ 0.2f };
+	float					m_fClimbFactor{ 1.f };
+	float					m_fSprintFactor{ 4.f };
 
 	float					m_fWalk_StrafeFactor;
 	float					m_fRun_StrafeFactor;
@@ -504,7 +504,7 @@ public:
 
 protected:
 	//если актер целится в прицел
-	bool								m_bZoomAimingMode;
+	bool								m_bZoomAimingMode{};
 
 	//настройки аккуратности стрельбы
 	//базовая дисперсия (когда игрок стоит на месте)
@@ -623,7 +623,7 @@ private:
 	/////////////////////////////////////////
 	// DEBUG INFO
 protected:
-		CStatGraph				*pStatGraph;
+		CStatGraph				*pStatGraph{};
 
 		shared_str				m_DefaultVisualOutfit;
 
@@ -644,7 +644,7 @@ public:
 		virtual CTorch*					GetTorch	() const;
 		virtual CNightVisionDevice*		GetNightVisionDevice() const;
 private:
-	CActorCondition				*m_entity_condition;
+		CActorCondition					*m_entity_condition{};
 
 protected:
 	virtual	CEntityConditionSimple	*create_entity_condition	(CEntityConditionSimple* ec);
@@ -657,8 +657,8 @@ public:
 	virtual bool				use_center_to_aim			() const;
 
 protected:
-	u16							m_iLastHitterID;
-	u16							m_iLastHittingWeaponID;
+	u16							m_iLastHitterID{ u16(-1) };
+	u16							m_iLastHittingWeaponID{ u16(-1) };
 	s16							m_s16LastHittedElement;
 	Fvector						m_vLastHitDir;
 	Fvector						m_vLastHitPos;
@@ -763,8 +763,8 @@ public:
 			bool IsDetectorActive() const;
 private:
 	// иммунитеты от препаратов, применяемые для ослабления хита
-	float m_fDrugPsyProtectionCoeff;
-	float m_fDrugRadProtectionCoeff;
+	float m_fDrugPsyProtectionCoeff{ 1.f };
+	float m_fDrugRadProtectionCoeff{ 1.f };
 
 public:
 	IC void	SetDrugRadProtection(float _prot) { m_fDrugRadProtectionCoeff = _prot; };
@@ -778,24 +778,24 @@ public:
 	void	ActorQuickThrowGrenade	();
 	void	ActorQuickKnifeStab		();
 	//множитель для управления интенсивностью эффектора качания в прицеливании
-	float	GetZoomEffectorK();
-	void	SetHardHold(bool val) { m_bIsHardHold = val; };
-	bool	IsHardHold() { return m_bIsHardHold || is_actor_creep(); };
+	float	GetZoomEffectorK		();
+	void	SetHardHold				(bool val) { m_bIsHardHold = val; };
+	bool	IsHardHold				() { return m_bIsHardHold || is_actor_creep(); };
 
-	void	TryToBlockSprint(bool bReason);
+	void	TryToBlockSprint		(bool block);
 	//визначаємо чи треба передати хіт до рюкзака та його вмісту
-	bool	IsHitToBackPack(SHit* pHDS);
+	bool	IsHitToBackPack			(SHit* pHDS);
 
-	bool	HasDetectorWorkable();
-	bool	HasPDAWorkable();
+	bool	HasDetectorWorkable		();
+	bool	HasPDAWorkable			();
 
 	bool	IsRuckAmmoPlacement		() { return m_bRuckAmmoPlacement; };
 	void	SetRuckAmmoPlacement	(bool set_ruck) { m_bRuckAmmoPlacement = set_ruck; };
 
-	void	DrawHUDMasks		();
-	void	UpdateVisorEfects	();
+	void	DrawHUDMasks			();
+	void	UpdateVisorEfects		();
 
-	virtual bool IsVolumeUnlimited() const { return false; };
+	virtual bool IsVolumeUnlimited	() const { return false; };
 
 protected:
 	bool	m_bIsHardHold{};

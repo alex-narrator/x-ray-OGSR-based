@@ -131,7 +131,7 @@ void CAI_Stalker::script_register(lua_State *L)
 				luabind::value("action_danger_planner",						StalkerDecisionSpace::eWorldOperatorDangerPlanner),
 				luabind::value("action_post_combat_wait",					StalkerDecisionSpace::eWorldOperatorPostCombatWait),
 				luabind::value("action_script",								StalkerDecisionSpace::eWorldOperatorScript),
-				luabind::value( "action_hide_from_grenade", StalkerDecisionSpace::eWorldOperatorHideFromGrenade )
+				luabind::value( "action_hide_from_grenade",					StalkerDecisionSpace::eWorldOperatorHideFromGrenade )
 			]
 
 			.enum_("sounds")

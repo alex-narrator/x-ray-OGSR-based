@@ -1,0 +1,9 @@
+version: 1.0.{build}
+image: Visual Studio 2022
+build:
+  verbosity: minimal
+artifacts:
+- path: bin_x64
+  name: bin_x64
+- path: Game\Resources_SoC_1.0006\gamedata
+  name: gamedata

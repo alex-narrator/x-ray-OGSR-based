@@ -20,24 +20,25 @@ void CBackpack::Hit(SHit* pHDS){
 	Msg("pHDS before hit: [%.2f]", pHDS->power);
 	inherited::Hit(pHDS);
 	Msg("pHDS after hit: [%.2f]", pHDS->power);
-	bool hit_random_item =
-		(pHDS->type() == ALife::eHitTypeFireWound ||
+	bool hit_random_item = (
+		pHDS->type() == ALife::eHitTypeFireWound ||
 			pHDS->type() == ALife::eHitTypeWound ||
-			pHDS->type() == ALife::eHitTypeWound_2);
+			pHDS->type() == ALife::eHitTypeWound_2
+		);
 	HitItemsInBackPack(pHDS, hit_random_item);
 }
 
 void CBackpack::HitItemsInBackPack(SHit* pHDS, bool hit_random_item){
 	auto& inv = m_pCurrentInventory;
 	if (inv){
-		CActor* pActor = smart_cast<CActor*> (inv->GetOwner());
+		auto pActor = smart_cast<CActor*> (inv->GetOwner());
 		if (pActor && pActor->GetBackpack() == this && pActor->IsHitToBackPack(pHDS)){
 			Msg("pHDS power: [%.2f]", pHDS->power);
 			pHDS->power *= (1.0f - GetHitTypeProtection(pHDS->type()));
 			Msg("new_hit power: [%.2f]", pHDS->power);
 
-			auto ruck = inv->m_ruck;
-			u32 random_item = NULL;
+			TIItemContainer ruck = inv->m_ruck;
+			u32 random_item{};
 
 			for (const auto& item : ruck){
 				if (hit_random_item)
