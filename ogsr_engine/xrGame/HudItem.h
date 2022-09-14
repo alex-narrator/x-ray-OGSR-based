@@ -268,17 +268,35 @@ private:
 	void UpdateCollision(Fmatrix& trans);
 	bool CollisionAllowed() const;
 	bool m_nearwall_on{};
-	float m_nearwall_target_hud_fov{}, m_nearwall_target_aim_hud_fov{};
-	float m_nearwall_dist_max{}, m_nearwall_dist_min{};
+	float 
+		m_nearwall_target_hud_fov{}, 
+		m_nearwall_target_aim_hud_fov{};
+	float 
+		m_nearwall_dist_max{}, 
+		m_nearwall_dist_min{};
 	float m_nearwall_last_hud_fov{};
-	float m_nearwall_speed_mod{}, m_nearwall_hud_offset_speed{};
-	Fvector m_nearwall_target_hud_offset{}, m_nearwall_target_hud_rotate{};
+	float 
+		m_nearwall_speed_mod{}, 
+		m_nearwall_hud_offset_speed{};
+	Fvector 
+		m_nearwall_target_hud_offset{}, 
+		m_nearwall_target_hud_rotate{};
 	float saved_rq_range{};
-	Fvector m_nearwall_last_pos{}, m_nearwall_last_rot{};
+	Fvector 
+		m_nearwall_last_pos{}, 
+		m_nearwall_last_rot{};
 	u32 m_nearwall_last_call{};
 
-	float m_fLR_MovingFactor{}, m_fLookout_MovingFactor{}, m_fJump_MovingFactor{};
-	Fvector m_strafe_offset[3][2]{}, m_lookout_offset[3][2]{}, m_jump_offset[3][2]{};
+	float 
+		m_fLR_MovingFactor{}, 
+		m_fLookout_MovingFactor{}, 
+		m_fJump_MovingFactor{}, 
+		m_fFB_MovingFactor{};
+	Fvector 
+		m_strafe_offset[3][2]{}, 
+		m_lookout_offset[3][2]{}, 
+		m_jump_offset[3][2]{},
+		m_longitude_offset[3][2];
 
 	float m_base_fov{};
 	bool allow_bobbing{ true };

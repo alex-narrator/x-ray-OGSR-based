@@ -731,17 +731,17 @@ public:
 			void	unblock_action			(EGameActions cmd);
 			// Real Wolf. End. 14.10.2014
 
-			bool	is_actor_normal			();
-			bool	is_actor_crouch			();
-			bool	is_actor_creep			();
-			bool	is_actor_climb			();
-			bool	is_actor_walking		();
-			bool	is_actor_running		();
-			bool	is_actor_sprinting		();
-			bool	is_actor_crouching		();
-			bool	is_actor_creeping		();
-			bool	is_actor_climbing		();
-			bool	is_actor_moving			();
+			bool	is_actor_normal			() const;
+			bool	is_actor_crouch			() const;
+			bool	is_actor_creep			() const;
+			bool	is_actor_climb			() const;
+			bool	is_actor_walking		() const;
+			bool	is_actor_running		() const;
+			bool	is_actor_sprinting		() const;
+			bool	is_actor_crouching		() const;
+			bool	is_actor_creeping		() const;
+			bool	is_actor_climbing		() const;
+			bool	is_actor_moving			() const;
 			
 			void	RepackAmmo				();
 
@@ -757,7 +757,7 @@ public:
 			//множитель для управления интенсивностью эффектора качания в прицеливании
 			float	GetZoomEffectorK		();
 			void	SetHardHold				(bool val) { m_bIsHardHold = val; };
-			bool	IsHardHold				() { return m_bIsHardHold || is_actor_creep(); };
+			bool	IsHardHold				() const { return m_bIsHardHold || is_actor_creep(); };
 
 			void	TryToBlockSprint		(bool block);
 			//визначаємо чи треба передати хіт до рюкзака та його вмісту
