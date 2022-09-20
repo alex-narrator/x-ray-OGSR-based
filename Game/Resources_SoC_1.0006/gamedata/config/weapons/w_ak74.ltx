@@ -148,7 +148,7 @@ silencer_status				= 2;0							; 1 - permanent
 grenade_launcher_status		= 2							; 2 - attachable
 
 zoom_enabled				= true						; (on,off)zoom mode (right mouse button)
-scope_zoom_factor	    	= 50						; fov for zoom mode
+scope_zoom_factor	    	= 4						; fov for zoom mode
 
 scope_name 					= wpn_addon_scope, wpn_addon_scope_susat, wpn_addon_scope_pso			; section name for the attachable scope
 scope_x 					= 42						; offset in inventory icon
@@ -201,74 +201,81 @@ silencer_light_time 		= 0.2
 ;-----------------------------------------------------------------------------
  
 [wpn_ak74_hud]
-allow_inertion				= true
+zoom_hide_crosshair        = true
+attach_place_idx        = 0
+item_visual                = dynamics\weapons\wpn_ak74\wpn_ak74_hud.ogf
 
-;similar to corresponding params in weapon section but for 1st person view
+hands_position				= -0.120500,-0.180999,0.132501
+hands_orientation			= -2.599998,0.000000,-2.549999
 
-shell_point					= -0.065000,0.000000,-0.045000
-shell_dir			     	= 0.0, 1.0, 0.0
+hands_position_16x9 = -0.119500,-0.199000,0.091000
+hands_orientation_16x9 = -0.670000,0.900001,-4.199999
 
-fire_point               	= 0.09,0.020,-0.06
-fire_point2              	= 0.30, 0.00, 0.05
-fire_bone               	= wpn_body
+item_position				= 0.004111,0.008527,-0.005906
+item_orientation			= -15.488927,-3.320898,367.220154
 
-orientation             	= 0, 0, 0		
-position                	= 0, 0, 0
-visual                  	= weapons\ak74\wpn_ak74_hud.ogf
+shell_point                = 0.017,0.054,0.17
+shell_dir               = 0.0, 1.0, 0.0
+shell_bone                = wpn_body
 
-grenade_bone            	= wpn_grenade	; name of the bone in the model for grenade launcher
+fire_point			= 0,0.042,0.684
+fire_bone                            = wpn_body
+fire_point2                        = 0.0,-0.011,0.553
+fire_bone2                = wpn_body
 
-; animation names
+anm_show						= ak74_draw
+anm_hide                = ak74_holster
+anm_idle                = ak74_idle
+anm_idle_sprint         = ak74_idle_sprint
+anm_idle_moving         = ak74_idle_moving
+anm_shots               = ak74_shoot
+anm_reload              = ak74_reload
+anm_idle_aim            = ak74_idle_aim
 
-anim_idle					= idle
-anim_idle_aim				= idle_aim
-anim_reload					= reload
-anim_draw					= draw_wo_gl
-anim_holster				= holster_wo_gl
-anim_shoot					= shoot
-			
-; animation names
-; attached grenade launcher [GRENADE fire mode]
-anim_idle_g					= idle_grenade
-anim_idle_g_aim				= idle_g_aim
-anim_reload_g				= reload_grenade
-anim_shoot_g				= shoot_grenade
-anim_switch_grenade_on		= switch_grenade
-anim_switch_grenade_off		= switch_grenade_off
-anim_draw_g					= draw_grenade_mode
-anim_holster_g				= holster_grenade_mode
+anm_switch              = ak74_switch_off           ;abakan_switch_off
+anm_switch_g            = ak74_switch_on           ;abakan_switch_on
+anm_bore                = ak74_idle_bore
 
-; attached grenade launcher [NORMAL fire mode]
-anim_idle_gl				= idle_w_gl
-anim_idle_gl_aim			= idle_w_gl_aim
-anim_reload_gl				= reload_w_gl
-anim_draw_gl				= draw_w_gl
-anim_holster_gl				= holster_w_gl
-anim_shoot_gl				= shoot_w_gl
-anim_idle_sprint			= idle_sprint
+anm_hide_w_gl           = ak74_holster_w_gl
+anm_show_w_gl           = ak74_draw_w_gl
+anm_idle_w_gl           = ak74_idle_w_gl
+anm_shots_w_gl          = ak74_shoot_w_gl
+anm_reload_w_gl         = ak74_reload_w_gl
+anm_idle_w_gl_aim       = ak74_idle_aim_w_gl
+anm_idle_sprint_w_gl    = ak74_idle_sprint_w_gl
+anm_idle_moving_w_gl    = ak74_idle_moving_w_gl
+anm_bore_w_gl           = ak74_idle_bore_w_gl
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;HUD offset in zoom mode (to all)
-;(use CONSOLE: hud_adjust_mode 0,1,2, then keys WSADQE and P to show current value in console)
+anm_show_g              = ak74_draw_w_gl							;abakan_draw_grenade
+anm_hide_g              = ak74_holster_w_gl						;abakan_holster_grenade
+anm_idle_g              = ak74_idle_w_gl							;abakan_idle_grenade
+anm_reload_g            = ak74_reload_grenade
+anm_idle_g_aim          = ak74_idle_aim_w_gl						;abakan_idle_grenade
+anm_shots_g             = ak74_shoot_grenade
+anm_idle_sprint_g       = ak74_idle_sprint_w_gl					;abakan_idle_sprint_grenade
+anm_idle_moving_g       = ak74_idle_moving_w_gl					;abakan_idle_moving_grenade
+anm_bore_g              = ak74_idle_bore_w_gl
 
-zoom_offset			= -0.112400,0.016800,-0.115000
-zoom_rotate_x		= 0.000200
-zoom_rotate_y		= 0.017500
+anm_reload_partly				= ak74_reload
+anm_reload_partly_stop_k 		= 0.5
 
-zoom_hide_crosshair	= true						;to hide crosshair in zoom 
+anm_reload_w_gl_partly = ak74_reload
+anm_reload_w_gl_partly_stop_k 		= 0.5
 
 
-; same as above, but for attached grenade launcher for
-; in NORMAL shoot mode
 
-grenade_normal_zoom_offset			= -0.112500,0.014000,0.000000
-grenade_normal_zoom_rotate_x		= -0.000900
-grenade_normal_zoom_rotate_y		= 0.017200
+aim_hud_offset_pos				= -0.101000,0.035300,0.029000
+aim_hud_offset_rot				= -0.032500,-0.032500,0.020000
 
-; same as above, but for attached grenade launcher for
-; in GRENADE mode
+aim_hud_offset_pos_16x9 = -0.101900,0.034500,0.029000
+aim_hud_offset_rot_16x9 = -0.012500,0.001000,-0.007500
 
-grenade_zoom_offset			= -0.039600,-0.433100,0.000000
-grenade_zoom_rotate_x		= -0.538700
-grenade_zoom_rotate_y		= -0.033800
+gl_hud_offset_pos               = 0,0,0;-0.053000,-0.059000,0.000000
+gl_hud_offset_rot               = 0,0,0;-0.145000,0.000000,0.000000
+
+gl_hud_offset_pos_16x9 = -0.088301,0.015100,0.000000
+gl_hud_offset_rot_16x9	 = -0.079000,0.013500,0.000000
+
+lean_hud_offset_pos        = 0,0,0
+lean_hud_offset_rot        = 0,0,0
 

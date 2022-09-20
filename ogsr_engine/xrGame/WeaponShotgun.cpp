@@ -372,6 +372,15 @@ void CWeaponShotgun::PlayAnimCloseWeapon()
 	PlayHUDMotion({ "anim_close_weapon", "anm_close" }, false, GetState());
 }
 
+void CWeaponShotgun::PlayAnimShutter()
+{
+	VERIFY(GetState() == eShutter);
+	if (AnimationExist("anim_shutter"))
+		PlayHUDMotion("anim_shutter", true, GetState());
+	else
+		PlayHUDMotion({ "anm_shots" }, true, GetState());
+}
+
 bool CWeaponShotgun::HaveCartridgeInInventory( u8 cnt ) {
   if ( unlimited_ammo() ) return true;
   if ( !m_pCurrentInventory ) return false;

@@ -138,12 +138,12 @@ ph_mass						= 5
 ;cost						= 2100
 
 ;addons
-scope_status				= 1
-silencer_status				= 0;2
-grenade_launcher_status		= 0;2
+scope_status				= 2
+silencer_status				= 2
+grenade_launcher_status		= 2
 
 zoom_enabled				= true
-scope_zoom_factor			= 30		;SUSAT 2X
+scope_zoom_factor			= 2		;SUSAT 2X
 scope_texture				= wpn\wpn_crosshair_l85
 
 scope_name 					= wpn_addon_scope
@@ -180,64 +180,78 @@ silencer_light_var_range	= 0.5
 silencer_light_time 		= 0.2
 
  
-[wpn_l85_hud]
+[wpn_l85_hud]:hud_base
+zoom_hide_crosshair		= true
+attach_place_idx			= 0
+item_visual					= dynamics\weapons\wpn_l85\wpn_l85_hud.ogf
 
-shell_point     	   	 	= 0.15, 0.0, -0.05
-shell_dir			     	= 0.0, 1.0, 0.0
+hands_position				= -0.076000,-0.167000,0.237499
+hands_orientation			= -2.449999,2.899998,-3.149999
+hands_position_16x9 = -0.080000,-0.176500,0.244999
+hands_orientation_16x9 = -1.270000,1.870000,-4.449999
 
-fire_point			= -0.050000,0.080000,-0.080000
-fire_point2              	= -0.010000,-0.010000,0.010000
-fire_bone               	= wpn_body
-orientation             	= 0, 0, 0
-position                	= 0, 0, 0
-visual                  	= weapons\l85\wpn_l85_hud.ogf
+item_position				= 0.002926,0.000089,0.001182
+item_orientation			= 1.598515,-1.348796,363.621826
 
-grenade_bone            	= grenade
+shell_point					= 0.02,0.06,-0.119
+shell_dir               = 0.0, 1.0, 0.0
+shell_bone					= wpn_body
 
-anim_idle				= idle
-anim_idle_aim			= idle
-anim_reload				= reload
-anim_draw				= draw
-anim_holster			= holster
-anim_shoot				= shoot
-anim_idle_sprint			= idle_sprint
-			
-;анимации с подключенным подствольником
-;(режим стрельбы из подствольника)
-anim_idle_g					= idle_grenade
-anim_idle_g_aim				= idle_grenade
-anim_reload_g				= reload_grenade
-anim_shoot_g				= shoot_grenade
-anim_switch_grenade_on		= switch_gl_on
-anim_switch_grenade_off		= switch_gl_off
-anim_draw_g					= draw_grenade
-anim_holster_g				= holster_grenade
-;(режим обычной стрельбы)			  
-anim_idle_gl				= idle_with_gl
-anim_idle_gl_aim			= idle_with_gl
-anim_reload_gl				= reload_with_gl
-anim_draw_gl				= draw_with_gl
-anim_holster_gl				= holster_with_gl
-anim_shoot_gl				= shoot_with_gl
+fire_point		= 0,0.054,0.469
+fire_bone      	      = wpn_body
+fire_point2					= 0.0,-0.029,0.525
+fire_bone2					= wpn_body
 
-;смещения HUD для режима приближения
-zoom_offset					= -0.112500,0.015800,0.000000
-zoom_rotate_x				= 0.000400
-zoom_rotate_y				= 0.017200
-;прячем перекрестие прицела в зуме
-zoom_hide_crosshair	= true
+anm_show             	= l85_draw
+anm_hide             	= l85_holster
+anm_idle             	= l85_idle
+anm_idle_sprint         = l85_idle_sprint
+anm_idle_moving 	= l85_idle_moving
+anm_shots               = l85_shoot
+anm_reload              = l85_reload
+anm_idle_aim           	= l85_idle_aim
 
-;тоже самое, но для прицепленого подствольника
-;режим обычной стрельбы
-zoom_offset			= -0.062500,-0.016000,0.000000
-zoom_rotate_x		= -0.000900
-zoom_rotate_y		= 0.017200
+anm_switch              = l85_switch_off
+anm_switch_g            = l85_switch_on
+anm_bore						= l85_idle_bore
 
-;режим подствольника
-grenade_zoom_offset			= -0.120800,-0.174100,0.000000
-grenade_zoom_rotate_x		= -0.223700
-grenade_zoom_rotate_y		= 0.002200
+anm_hide_w_gl           = l85_holster_w_gl
+anm_show_w_gl           = l85_draw_w_gl
+anm_idle_w_gl           = l85_idle_w_gl
+anm_shots_w_gl          = l85_shoot_w_gl
+anm_reload_w_gl         = l85_reload_w_gl
+anm_idle_w_gl_aim       = l85_idle_w_gl_aim
+anm_idle_sprint_w_gl		= l85_idle_sprint_w_gl
+anm_idle_moving_w_gl		= l85_idle_moving_w_gl
+anm_bore_w_gl				= l85_idle_bore_w_gl
 
-grenade_normal_zoom_offset		= -0.112500,0.014000,0.000000
-grenade_normal_zoom_rotate_x	= -0.000900
-grenade_normal_zoom_rotate_y	= 0.017200
+anm_show_g         		= l85_draw_grenade
+anm_hide_g       		  	= l85_holster_grenade
+anm_idle_g         		= l85_idle_grenade
+anm_reload_g       		= l85_reload_grenade
+anm_idle_g_aim     		= l85_idle_grenade
+anm_shots_g        		= l85_shoot_grenade
+anm_idle_sprint_g			= l85_idle_sprint_grenade
+anm_idle_moving_g			= l85_idle_moving_grenade
+anm_bore_g					= l85_idle_bore_grenade
+
+anm_reload_partly				= l85_reload
+anm_reload_partly_stop_k 		= 0.5
+anm_reload_w_gl_partly				= l85_reload
+anm_reload_w_gl_partly_stop_k 		= 0.5
+
+aim_hud_offset_pos		= -0.102000,0.019500,-0.148000
+aim_hud_offset_rot		= 0.010000,0.002500,-0.010000
+
+aim_hud_offset_pos_16x9 = -0.087800,0.049200,-0.187701
+aim_hud_offset_rot_16x9 = -0.010000,0.018000,-0.020500
+
+
+gl_hud_offset_pos			= 0,0,0;-0.053000,-0.059000,0.000000
+gl_hud_offset_rot			= 0,0,0;-0.145000,0.000000,0.000000
+
+gl_hud_offset_pos_16x9 = 0.000000,0.062800,-0.092401
+gl_hud_offset_rot_16x9	 = -0.092000,-0.039000,0.000000
+
+lean_hud_offset_pos		= 0,0,0
+lean_hud_offset_rot		= 0,0,0

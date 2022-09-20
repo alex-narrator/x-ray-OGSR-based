@@ -177,7 +177,7 @@ laser_x 					= 65						; offset in inventory icon
 laser_y 					= -18
 
 laserdot_attach_bone 			= wpn_body 
-laserdot_attach_offset 			= -0.232999,0.001000,0.062000
+laserdot_attach_offset = -0.015100,0.062800,0.081099
 laserdot_world_attach_offset 	= 0.0, 0.1, 0.05
 
 flashlight_name  				= wpn_addon_flashlight		; section name for the attachable silencer
@@ -185,43 +185,70 @@ flashlight_x 					= 65						; offset in inventory icon
 flashlight_y 					= -18
 
 torch_light_bone 				= wpn_body
-torch_attach_offset 			= 0.047000,0.001000,0.083000
+torch_attach_offset = 0.000000,0.045000,0.347589
 torch_world_attach_offset 		= 0.0, 0.05, 0.25
 torch_omni_attach_offset 		= 0.0, 0.0, 0.0
 torch_omni_world_attach_offset 	= 0.0, 0.0, 0.0
 
 
-[wpn_pm_hud]
-shell_point			= -0.330000,-0.010000,0.050000
-fire_point			= -0.370000,0.000000,0.057000
-fire_bone                	= wpn_body
-orientation              	= 0,0,0
-position                 	= 0,0,0
-visual                   	= weapons\pm\wpn_pm_hud.ogf
+[wpn_pm_hud]:hud_base
+zoom_hide_crosshair			= true
 
-anim_holster				= holster
-anim_idle					= idle
-anim_empty					= empty
-anim_reload					= reload_full
-anim_reload_empty			= reload
-anim_reload_partly			= reload_full
-anim_reload_partly_stop_k 	= 0.7
-anim_draw					= draw
-anim_draw_stop_k 			= 0.1
-anim_draw_empty				= draw_empty
-anim_draw_empty_stop_k 		= 0.1
-anim_shoot					= shoot1
-anim_shot_last				= shoot_last
-anim_close					= close
-anim_idle_aim				= idle_aim
-anim_idle_sprint			= idle_sprint
-anim_shutter 				= draw
-anim_reload_single 			= draw
+hands_position				= -0.021000,-0.160000,0.002500
+hands_orientation			= -0.500000,1.000000,1.149999
+hands_position_16x9 = 0.033000,-0.189500,0.039000
+hands_orientation_16x9 = -0.510000,0.910001,2.849998
 
-;смещения HUD для режима приближения
-zoom_offset			= -0.163600,0.066800,-0.060000
-zoom_rotate_x		= 0.003800
-zoom_rotate_y		= -0.000500
+item_position				= 0.000481,-0.000050,-0.004011
+item_orientation			= 1.239378,-0.134046,-2.052052
 
-zoom_hide_crosshair	= true						;to hide crosshair in zoom 
+item_visual             	= dynamics\weapons\wpn_pm\wpn_pm_hud.ogf
+attach_place_idx				= 0
 
+shell_point						= 0.013,0.046,0.463
+shell_bone              	= wpn_body
+
+fire_point					= 0,0.045,0.142
+fire_bone               	= wpn_body
+
+anm_show						= pm_draw
+anm_show_empty					= pm_draw, pm_opened
+
+anm_hide             			= pm_holster
+anm_hide_empty             		= pm_holster
+
+anm_idle             			= pm_idle
+anm_idle_empty             		= pm_idle, pm_opened
+
+anm_shots						= pm_shoot
+anm_shot_l						= pm_shoot, pm_open
+
+anm_idle_aim					= pm_idle_aim
+anm_idle_aim_empty				= pm_idle_aim, pm_opened
+
+anm_reload						= pm_reload
+anm_reload_empty				= pm_reload, pm_close
+
+anm_reload_partly				= pm_reload
+anm_reload_partly_stop_k 		= 0.4
+
+anm_idle_moving 				= pm_idle_moving
+anm_idle_moving_empty 			= pm_idle_moving, pm_opened
+
+anm_idle_sprint					= pm_idle_sprint
+anm_idle_sprint_empty			= pm_idle_sprint, pm_opened
+
+anm_bore						= pm_idle_bore
+anm_bore_empty					= pm_idle_bore, pm_opened
+
+aim_hud_offset_pos				= -0.106000,0.036500,0.000000
+aim_hud_offset_rot				= -0.002500,0.005000,-0.035000
+
+gl_hud_offset_pos				= 0,0,0
+gl_hud_offset_rot				= 0,0,0
+
+lean_hud_offset_pos			= 0,0,0
+lean_hud_offset_rot			= 0,0,0
+
+aim_hud_offset_pos_16x9 = -0.165400,0.070600,-0.100501
+aim_hud_offset_rot_16x9 = 0.001500,0.005500,0.006000

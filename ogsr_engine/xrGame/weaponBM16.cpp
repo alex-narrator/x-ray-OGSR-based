@@ -184,3 +184,17 @@ void CWeaponBM16::PlayAnimIdle()
 		}
 	}
 }
+
+void CWeaponBM16::PlayAnimShutter()
+{
+	VERIFY(GetState() == eShutter);
+	if (AnimationExist("anim_shutter"))
+		PlayHUDMotion("anim_shutter", true, GetState(), true);
+	else
+		switch (m_magazine.size())
+		{
+		case 0: PlayHUDMotion({ "anim_draw_0", "anim_draw", "anm_show_0" }, true, GetState()); break;
+		case 1: PlayHUDMotion({ "anim_draw_1", "anim_draw", "anm_show_1" }, true, GetState()); break;
+		case 2: PlayHUDMotion({ "anim_draw_2", "anim_draw", "anm_show_2" }, true, GetState()); break;
+		}
+}

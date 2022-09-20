@@ -74,15 +74,31 @@ actor_properties			= on
 
 single_handed			    = false
 
-[artefact_hud]
-orientation             	= 0, 0, 0		
-position                	= 0, 0, 0
-visual                  	= weapons\artefact\wpn_artefact_hud.ogf
-anim_idle					= idle
-anim_idle_sprint			= idle_sprint
-anim_hide					= holster
-anim_show					= draw
-anim_activate				= activate
+[artefact_hud]:hud_base
+item_visual                  	= dynamics\artefacts\artefact_electra_blue_hud
+attach_place_idx		= 0
+
+hands_position          	= 0,0,0
+hands_orientation       	= 0,0,0
+hands_position_16x9 = 0.000000,0.000000,0.000000
+hands_orientation_16x9 = -1.639999,-12.980202,0.000000
+
+item_position			= 0,0,0
+item_orientation		= 0,0,0
+aim_hud_offset_pos		= 0,0,0
+aim_hud_offset_rot		= 0,0,0
+
+gl_hud_offset_pos		= 0,0,0
+gl_hud_offset_rot		= 0,0,0
+
+lean_hud_offset_pos		= 0,0,0
+lean_hud_offset_rot		= 0,0,0
+
+anm_idle			= dev_artefact_idle
+anm_idle_sprint			= dev_artefact_idle
+anm_hide			= dev_artefact_holster
+anm_show			= dev_artefact_draw
+anm_activate			= dev_artefact_use
 
 ; Артефакты для аномалии "Комариная плешь"
 [af_medusa]:af_base

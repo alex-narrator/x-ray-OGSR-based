@@ -139,8 +139,8 @@ ph_mass			 		= 5
 ;cost			 		= 2100
 
 ;addons
-scope_status			= 0;2
-silencer_status			= 0;2
+scope_status			= 2
+silencer_status			= 2
 grenade_launcher_status	= 1
 
 zoom_enabled			= true
@@ -180,56 +180,81 @@ silencer_light_var_range	= 0.5
 silencer_light_time 		= 0.2
 
  
-[wpn_groza_hud]
-allow_inertion			= true
+[wpn_groza_hud]:hud_base
+zoom_hide_crosshair	= true
+attach_place_idx	= 0
+item_visual					= dynamics\weapons\wpn_groza\wpn_groza_hud.ogf
 
-shell_point             = -0.25, 0.0, 0.05
-;shell_point		 	= -0.15, -0.03, 0.05
-shell_dir		 		= 0.0, 1.0, 0.0
-
-fire_point			= -0.020000,0.000000,0.060000
-fire_bone               = wpn_body
-orientation             = 0, 0, 0
-position                = 0, 0, 0
-visual                  = weapons\groza\wpn_groza_hud.ogf
-
-grenade_bone    = grenade_0
-
-anim_idle		= idle
-anim_idle_aim	= idle
-anim_reload		= reload
-anim_draw		= draw
-anim_holster	= holster
-anim_shoot		= shoot
-anim_idle_sprint			= idle_sprint
-
-anim_idle_g				= idle_g
-anim_reload_g			= reload_g
-anim_shoot_g			= shoot_g
-anim_switch_grenade_on	= switch_g
-anim_switch_grenade_off	= switch
-anim_draw_g				= draw
-anim_holster_g			= holster
-
-anim_idle_gl			= idle
-anim_reload_gl			= reload
-anim_draw_gl			= draw
-anim_holster_gl			= holster
-anim_shoot_gl			= shoot
-anim_idle_aim	        = idle_aim
-anim_idle_g_aim         = idle_g_aim
-anim_idle_gl_aim        = idle_aim
+hands_position				= -0.057500,-0.182500,0.254500
+hands_orientation			= -0.650000,0.599990,1.749998
 
 
-;смещения HUD для режима приближения
-zoom_offset			= -0.169200,-0.033200,-0.045000
-zoom_rotate_x		= 0.011600
-zoom_rotate_y		= 0.036900
+hands_position_16x9 = -0.033000,-0.188499,0.209999
+hands_orientation_16x9 = -0.560000,-0.239999,0.299999
+
+item_position				= -0.006247,0.007542,-0.008760
+item_orientation			= -15.517174,-2.455023,362.066071
 
 
-;тоже самое, но для подствольника
-grenade_zoom_offset			= -0.161200,-0.538399,0.000000
-grenade_zoom_rotate_x		= -0.650698
-grenade_zoom_rotate_y		= 0.035000
+shell_point					= 0.025,0.063,-0.109
+shell_dir               = 0.0, 1.0, 0.0
+shell_bone					= wpn_body
 
-zoom_hide_crosshair	= true						;to hide crosshair in zoom 
+
+fire_point		= 0,0.047,0.349
+fire_bone      	      = wpn_body
+fire_point2					= 0.0,0.003,0.321
+fire_bone2					= wpn_body
+
+anm_show             	= groza_draw
+anm_hide             	= groza_holster
+anm_idle             	= groza_idle
+anm_idle_sprint         = groza_idle_sprint
+anm_idle_moving 			= groza_idle_moving
+anm_shots               = groza_shoot
+anm_reload              = groza_reload
+anm_idle_aim           	= groza_idle_aim
+
+anm_switch              = groza_switch_off
+anm_switch_g            = groza_switch_on
+anm_bore						= groza_idle_bore
+
+anm_show_w_gl           = groza_draw
+anm_hide_w_gl           = groza_holster
+anm_idle_w_gl           = groza_idle
+anm_shots_w_gl          = groza_shoot
+anm_reload_w_gl         = groza_reload
+anm_idle_w_gl_aim       = groza_idle_aim
+anm_idle_sprint_w_gl		= groza_idle_sprint
+anm_idle_moving_w_gl		= groza_idle_moving
+anm_bore_w_gl				= groza_idle_bore
+
+anm_show_g         		= groza_draw_grenade
+anm_hide_g         		= groza_holster_grenade
+anm_idle_g          		= groza_idle_grenade
+anm_reload_g       		= groza_reload_grenade
+anm_idle_g_aim      		= groza_idle_aim_grenade
+anm_shots_g         		= groza_shoot_grenade
+anm_idle_sprint_g			= groza_idle_sprint_grenade
+anm_idle_moving_g			= groza_idle_moving_grenade
+anm_bore_g				= groza_idle_grenade
+
+anm_reload_partly				= groza_reload
+anm_reload_partly_stop_k 		= 0.5
+anm_reload_w_gl_partly				= groza_reload
+anm_reload_w_gl_partly_stop_k 		= 0.5
+
+
+aim_hud_offset_pos				= -0.095000,-0.028500,-0.014000
+aim_hud_offset_rot				= -0.020000,0.002500,0.007500
+aim_hud_offset_pos_16x9 = -0.115700,-0.015900,0.126500
+aim_hud_offset_rot_16x9 = -0.022500,0.004500,-0.022500
+
+gl_hud_offset_pos				= -0.029500,-0.048500,0.000000
+gl_hud_offset_rot				= -0.065000,-0.077500,0.007500
+
+gl_hud_offset_pos_16x9 = -0.054500,-0.034500,0.000000
+gl_hud_offset_rot_16x9	 = -0.042000,-0.077000,-0.020000
+
+lean_hud_offset_pos	= 0,0,0
+lean_hud_offset_rot	= 0,0,0

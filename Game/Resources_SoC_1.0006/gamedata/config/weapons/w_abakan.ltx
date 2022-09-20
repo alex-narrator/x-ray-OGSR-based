@@ -145,8 +145,8 @@ ph_mass						= 5							; physic mass (kg)
 
 ;addons
 scope_status				= 2							; 0 - no addon
-silencer_status				= 0;2							; 1 - permanent
-grenade_launcher_status		= 0;2							; 2 - attachable
+silencer_status				= 2							; 1 - permanent
+grenade_launcher_status		= 2							; 2 - attachable
 
 zoom_enabled				= true						; (on,off)zoom mode (right mouse button)
 scope_zoom_factor	    	= 50						; fov for zoom mode
@@ -192,73 +192,80 @@ silencer_light_time 		= 0.2
 ;-----------------------------------------------------------------------------
  
 [wpn_abakan_hud]
-allow_inertion				= true
+zoom_hide_crosshair        = true
+attach_place_idx        = 0
+item_visual                = dynamics\weapons\wpn_abakan\wpn_abakan_hud.ogf
 
-;similar to corresponding params in weapon section but for 1st person view
-
-shell_point					= 0.105000,-0.022000,-0.049000
-shell_dir			     	= 0.0, 1.0, 0.0
-
-fire_point					= 0.290000,0.001000,-0.047000
-fire_point2              	= 0.30, 0.00, 0.05
-fire_bone               	= wpn_body
-
-orientation             	= 0, 0, 0		
-position                	= 0, 0, 0
-visual                  	= weapons\abakan\wpn_abakan_hud.ogf
-
-grenade_bone            	= wpn_grenade	; name of the bone in the model for grenade launcher
-
-; animation names
-
-anim_idle					= idle
-anim_idle_aim				= idle_aim
-anim_reload					= reload
-anim_draw					= draw
-anim_holster				= holster
-anim_shoot					= shoot
-			
-; animation names
-; attached grenade launcher [GRENADE fire mode]
-anim_idle_g					= idle_grenade
-anim_idle_g_aim				= idle_grenade_aim
-anim_reload_g				= grenade_reload
-anim_shoot_g				= grenade_shoot
-anim_switch_grenade_on		= grenade_on
-anim_switch_grenade_off		= grenade_off
-anim_draw_g					= grenade_draw
-anim_holster_g				= grenade_holster
-
-; attached grenade launcher [NORMAL fire mode]
-anim_idle_gl				= idle_w_gl
-anim_idle_gl_aim			= idle_w_gl_aim
-anim_reload_gl				= reload_w_gl
-anim_draw_gl				= draw_w_gl
-anim_holster_gl				= holster_w_gl
-anim_shoot_gl				= shoot_w_gl
-anim_idle_sprint			= idle_sprint
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;HUD offset in zoom mode (to all)
-;(use CONSOLE: hud_adjust_mode 0,1,2, then keys WSADQE and P to show current value in console)
-
-zoom_offset			= -0.110800,0.042200,-0.028000
-zoom_rotate_x		= 0.015900
-zoom_rotate_y		= 0.017500
-
-zoom_hide_crosshair	= true						;to hide crosshair in zoom 
+hands_position				= -0.073500,-0.146000,0.192000
+hands_orientation			= -2.799999,0.600000,3.099998
 
 
-; same as above, but for attached grenade launcher for
-; in NORMAL shoot mode
+hands_position_16x9 = -0.077900,-0.149500,0.131500
+hands_orientation_16x9 = -0.190002,0.960000,2.849998
 
-grenade_normal_zoom_offset			= -0.110600,0.045800,-0.009000
-grenade_normal_zoom_rotate_x		= 0.021000
-grenade_normal_zoom_rotate_y		= 0.017500
+item_position				= 0.002869,0.003757,-0.006812
+item_orientation			= -16.124039,-3.597800,1.014648
 
-; same as above, but for attached grenade launcher for
-; in GRENADE mode
+shell_point                = 0.019,0.073,0.234
+shell_dir               = 0.0, 1.0, 0.0
+shell_bone                = wpn_body
 
-grenade_zoom_offset			= -0.074600,-0.086200,-0.010000
-grenade_zoom_rotate_x		= -0.080000
-grenade_zoom_rotate_y		= -0.018500
+fire_point			= 0,0.049,0.716
+fire_bone                            = wpn_body
+fire_point2			= 0.0,-0.027,0.603
+fire_bone2                = wpn_body
+
+anm_show                     = abakan_draw
+anm_hide                     = abakan_holster
+anm_idle                     = abakan_idle
+anm_idle_sprint         = abakan_idle_sprint
+anm_idle_moving                         = abakan_idle_moving
+anm_shots               = abakan_shoot
+anm_reload              = abakan_reload
+anm_idle_aim                   = abakan_idle_aim
+
+anm_switch              = abakan_switch_off ;abakan_switch_off
+anm_switch_g            = abakan_switch_on ;abakan_switch_on
+anm_bore                                                = abakan_idle_bore
+
+anm_hide_w_gl           = abakan_holster_w_gl
+anm_show_w_gl           = abakan_draw_w_gl
+anm_idle_w_gl           = abakan_idle_w_gl
+anm_shots_w_gl          = abakan_shoot_w_gl
+anm_reload_w_gl         = abakan_reload_w_gl
+anm_idle_w_gl_aim       = abakan_idle_aim_w_gl
+anm_idle_sprint_w_gl                = abakan_idle_sprint_w_gl
+anm_idle_moving_w_gl                = abakan_idle_moving_w_gl
+anm_bore_w_gl                                = abakan_idle_bore_w_gl
+
+anm_show_g                         = abakan_draw_w_gl											;abakan_draw_grenade
+anm_hide_g                         = abakan_holster_w_gl										;abakan_holster_grenade
+anm_idle_g                         = abakan_idle_w_gl											;abakan_idle_grenade
+anm_reload_g                       = abakan_reload_grenade
+anm_idle_g_aim                     = abakan_idle_aim_w_gl									;abakan_idle_grenade
+anm_shots_g                        = abakan_shoot_grenade
+anm_idle_sprint_g                        = abakan_idle_sprint_w_gl						;abakan_idle_sprint_grenade
+anm_idle_moving_g                        = abakan_idle_moving_w_gl						;abakan_idle_moving_grenade
+anm_bore_g                                        = abakan_idle_bore_w_gl           ;abakan_idle_bore_grenade
+
+anm_reload_partly				= abakan_reload
+anm_reload_partly_stop_k 		= 0.5
+
+anm_reload_w_gl_partly 			= abakan_reload
+anm_reload_w_gl_partly_stop_k 	= 0.5
+
+
+aim_hud_offset_pos				= -0.083500,0.039000,-0.066000
+aim_hud_offset_rot				= -0.005000,-0.045000,0.002500
+
+aim_hud_offset_pos_16x9 = -0.087200,0.046900,-0.012800
+aim_hud_offset_rot_16x9 = 0.007000,-0.000000,0.006000
+
+gl_hud_offset_pos       	= 0,0,0;-0.053000,-0.059000,0.000000
+gl_hud_offset_rot       	= 0,0,0;-0.145000,0.000000,0.000000
+
+gl_hud_offset_pos_16x9 = 0.001500,0.073801,0.000000
+gl_hud_offset_rot_16x9	 = -0.028000,-0.070500,0.000000
+
+lean_hud_offset_pos        = 0,0,0
+lean_hud_offset_rot        = 0,0,0

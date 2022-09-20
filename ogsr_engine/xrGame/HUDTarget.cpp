@@ -131,7 +131,7 @@ void CHUDTarget::Render()
 	// Render cursor
 	u32 C				= C_DEFAULT;
 	
-	Fvector				p2;
+	Fvector				p2{};
 	p2.mad				(p1,dir,RQ.range);
 	Fvector4			pt;
 	Device.mFullTransform.transform(pt, p2);
@@ -154,7 +154,7 @@ void CHUDTarget::Render()
 			PIItem			l_pI	= smart_cast<PIItem>		(RQ.O);
 
 			CInventoryOwner* our_inv_owner		= smart_cast<CInventoryOwner*>(pCurEnt);
-			if (/*psHUD_Flags.test(HUD_INFO_MONSTER) &&*/ E && E->g_Alive() && E->cast_base_monster())
+			if (E && E->g_Alive() && E->cast_base_monster())
 			{
 				int relation = MONSTER_COMMUNITY::relation(pCurEnt->monster_community->index(), E->monster_community->index());
 
@@ -196,7 +196,7 @@ void CHUDTarget::Render()
 				{
 					if (fuzzyShowInfo>0.5f){
 						F->SetColor	(subst_alpha(C,u8(iFloor(255.f*(fuzzyShowInfo-0.5f)*2.f))));
-						F->OutNext	("%s",l_pI->Name/*Complex*/());
+						F->OutNext	("%s",l_pI->Name());
 					}
 					fuzzyShowInfo += SHOW_INFO_SPEED*Device.fTimeDelta;
 				}
@@ -209,7 +209,7 @@ void CHUDTarget::Render()
 	if (auto Wpn = smart_cast<CWeapon*>(Actor->inventory().ActiveItem()); Wpn && Wpn->IsLaserOn() && !psActorFlags.test(AF_CROSSHAIR_DBG))
 		return;
 
-	Fvector2 scr_size;
+	Fvector2 scr_size{};
 	scr_size.set(float(Device.dwWidth), float(Device.dwHeight));
 	float size_x = scr_size.x * di_size;
 	float size_y = scr_size.y * di_size;

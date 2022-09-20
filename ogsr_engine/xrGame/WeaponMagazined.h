@@ -293,6 +293,5 @@ protected:
 	//передёргивание затвора
 	virtual void	OnShutter();
 	virtual void	switch2_Shutter();
-	//передёргивание затвора
 	virtual void	PlayAnimShutter();
 };

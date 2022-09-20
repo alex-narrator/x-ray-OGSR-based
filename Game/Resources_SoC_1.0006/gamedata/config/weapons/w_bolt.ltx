@@ -46,23 +46,33 @@ throw_point			= 0,0.4,0.5
 throw_dir			= 0,0,1
 
 
-[bolt_hud]
-fire_point          = 0.05, 0.0, 0.1
-fire_bone           = bolt_0
+[bolt_hud]:hud_base
+fire_point				= 0,0,0
+fire_bone				= wpn_body
 
-orientation         = 0,0,0
-position            = 0,0,0
-visual              = weapons\bolt\wpn_bolt_hud.ogf
+attach_place_idx		= 0
+item_visual				= dynamics\devices\dev_bolt\dev_bolt_hud
 
-throw_point			= 0,0.4,0.3
-throw_dir			= 0,0,0
+hands_position				= -0.021000,-0.160000,0.002500
+hands_orientation			= -0.500000,1.000000,1.149999
+hands_position_16x9				= 0.033000,-0.189500,0.039000
+hands_orientation_16x9			= 2.349998,2.749999,2.849998
 
-anim_show			= draw
-anim_hide			= holster_0
-anim_idle			= idle_0
-anim_playing		= idle_01
-anim_sprint			= idle_sprint
-anim_throw_begin	= attack_0_begin
-anim_throw_idle		= attack_0_idle
-anim_throw_act		= attack_0_act	
-anim_throw_end		= attack_0_end
+
+item_position			= 0 , 0 ,0
+item_orientation		= 0 , 0 ,0
+
+anm_hide				= dev_bolt_holster
+anm_show				= dev_bolt_draw
+anm_idle				= dev_bolt_idle
+anm_bore				= dev_bolt_idle_bore
+anm_idle_moving	 		= dev_bolt_idle_moving
+anm_idle_sprint	 		= dev_bolt_idle_sprint
+
+anm_throw_begin			= dev_bolt_shoot_start
+anm_throw_idle			= dev_bolt_shoot_idle
+anm_throw				= dev_bolt_shoot_end
+
+
+throw_point				= 0.0,0.4,0.3
+throw_dir				= 0,0,1

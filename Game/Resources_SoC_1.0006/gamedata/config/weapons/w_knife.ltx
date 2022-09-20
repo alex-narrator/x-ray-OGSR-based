@@ -111,22 +111,48 @@ snd_shoot					= weapons\knife_1
 
 weapon_remove_time			= 5000	;время уничтожения оружия (с учетом TimeFactor) для мультиплеера
 
-[wpn_knife_hud]
-shell_point					= 0.0, 0.0, 0.0
-fire_point          		= 0.05, 0.0, 0.1
-fire_bone           		= wpn_knife_0
+[wpn_knife_hud]:hud_base
+zoom_hide_crosshair			= true
 
-orientation         		= 0,0,0
-position            		= 0,0,0
-visual              		= weapons\knife\wpn_knife_hud.ogf
+hands_position				= -0.021000,-0.160000,0.002500
+hands_orientation			= -0.500000,1.000000,1.149999
+hands_position_16x9				= 0.033000,-0.189500,0.039000
+hands_orientation_16x9			= 2.349998,2.749999,2.849998
 
-anim_idle					= idle
-anim_draw					= draw
-anim_draw_stop_k 			= 0.2
-anim_hide					= hide
-anim_hide_stop_k 			= 0.5
-anim_shoot1_start			= shoot1_start
-anim_shoot2_start			= shoot2_start
-anim_shoot1_end				= shoot1_end
-anim_shoot2_end				= shoot2_end
-anim_idle_sprint			= idle_sprint
+
+item_position				= 0.003164,-0.002989,0.000906
+item_orientation			= 175.276352,-184.681427,-545.486328
+
+item_visual             	= dynamics\weapons\wpn_knife\wpn_knife_hud.ogf
+attach_place_idx				= 0
+
+shell_point						= 0,0,0
+shell_bone              	= wpn_body
+
+fire_point						= 0.004500,0.062500,-0.178499
+fire_bone               	= knife
+
+
+anm_show			= knife_draw
+anm_show_stop_k = 0.7
+anm_show_empty			= knife_draw
+anm_hide             		= knife_holster
+anm_idle             		= knife_idle
+anm_idle_aim			= knife_idle
+anm_attack			= knife_kick_1
+anm_attack_e			= knife_kick_end1	;--remove me
+anm_attack2			= knife_kick_2
+anm_attack2_e			= knife_kick_end2 	;--remove me
+anm_idle_moving 		= knife_idle_moving
+anm_idle_sprint			= knife_idle_sprint
+anm_bore			= knife_idle_bore
+
+aim_hud_offset_pos			= -0.077000,0.022000,0.000000
+aim_hud_offset_rot			= 0.000000,0.005000,-0.015000
+
+
+gl_hud_offset_pos				= 0,0,0
+gl_hud_offset_rot				= 0,0,0
+
+lean_hud_offset_pos			= 0,0,0
+lean_hud_offset_rot			= 0,0,0

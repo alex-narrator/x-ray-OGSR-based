@@ -182,26 +182,45 @@ snd_silncer_shot			= weapons\w_ak74_shot1
 
 
 [wpn_mp5_hud]
+zoom_hide_crosshair     = true
+attach_place_idx        = 0
+item_visual             = dynamics\weapons\wpn_mp5\wpn_mp5_hud.ogf
 
-shell_point          	= 0.00, 0.00, 0.00
-shell_dir		 		=    0.0, 0.0, 0.0
+hands_position				= -0.106500,-0.162000,0.113001
+hands_orientation			= -6.700007,-0.800001,-5.400002
+hands_position_16x9 = -0.096500,-0.174100,0.145900
+hands_orientation_16x9 = -4.640014,0.760000,-6.000006
 
-fire_point				= 0.010000,0.080000,0.210000
+item_position				= 0.014173,-0.001619,-0.004513
+item_orientation			= 4.899572,0.078592,366.138245
+
+shell_point             = 0.021,0.099,0.286
+shell_dir               = 0.0, 1.0, 0.0
+shell_bone              = wpn_body
+
+fire_point				= 0,0.068,0.439
 fire_bone               = wpn_body
-orientation             = 0, 0, 0
-position                = 0, 0, 0
-visual                  = weapons\mp5\wpn_mp5_hud.ogf
+fire_point2			= -0.030000,0.074500,-0.037000
+fire_bone2                = wpn_body
 
-anim_idle			= idle
-anim_idle_aim		= idle_aim
-anim_reload			= reload
-anim_draw			= draw
-anim_holster		= holster
-anim_shoot			= shoot
-anim_idle_sprint			= idle_sprint
+anm_show                     = mp5_draw
+anm_hide                     = mp5_holster
+anm_idle                     = mp5_idle
+anm_idle_sprint         = mp5_idle_sprint
+anm_idle_moving         = mp5_idle_moving
+anm_shots               = mp5_shoot
+anm_reload              = mp5_reload
+anm_idle_aim            = mp5_idle_aim
+anm_bore                = mp5_idle_bore
 
-;смещения HUD для режима приближения
-zoom_offset			= -0.103000,0.007100,-0.065100
-zoom_rotate_x		= -0.012800
-zoom_rotate_y		= 0.000400
+anm_reload_partly				= mp5_reload
+anm_reload_partly_stop_k 		= 0.5
 
+aim_hud_offset_pos				= -0.080500,0.002500,-0.018000
+aim_hud_offset_rot				= -0.035000,-0.032500,0.010000
+
+aim_hud_offset_pos_16x9 = -0.093000,0.018900,-0.073401
+aim_hud_offset_rot_16x9 = -0.004000,0.004000,0.010500
+
+lean_hud_offset_pos        = 0,0,0
+lean_hud_offset_rot        = 0,0,0

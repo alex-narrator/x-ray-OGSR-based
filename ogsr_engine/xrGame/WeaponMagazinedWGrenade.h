@@ -26,10 +26,6 @@ public:
 	
 	virtual void	OnH_B_Independent	(bool just_before_destroy);
 
-	virtual void	save				(NET_Packet &output_packet);
-	virtual void	load				(IReader &input_packet);
-
-
 	virtual bool	Attach(PIItem pIItem, bool b_send_event);
 	virtual bool	Detach(const char* item_section_name, bool b_spawn_item, float item_condition = 1.f);
 	virtual bool	CanAttach(PIItem pIItem);

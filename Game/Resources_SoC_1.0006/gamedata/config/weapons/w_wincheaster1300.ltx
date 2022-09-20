@@ -141,32 +141,45 @@ snd_open_weapon				= weapons\w1300_open		;
 snd_add_cartridge			= weapons\w1300_load		;was gen_grenload
 snd_close_weapon			= weapons\w1300_close		;
  
-[wpn_winchester1300_hud]
-shell_point		 			= 0.0, 0.0, 0.0
-fire_point      			= 0.000000,0.125000,0.315000
-fire_point2				    = 0.000000,0.125000,0.315000
-fire_bone                	= wpn_body
-orientation              	= 0, 0, 0
-position                 	= 0, 0, 0
-visual                   	= weapons\winchester1300\wpn_winchester1300_hud.ogf
+[wpn_winchester1300_hud]:hud_base
 
-anim_idle					= idle
-anim_reload					= draw
-anim_draw					= draw
-anim_holster				= holster
-anim_shoot					= shoot
-anim_shoot_both 			= shoot
-anim_idle_aim				= idle_aim
-anim_idle_sprint			= idle_sprint
+shell_point			= 0.02,0.072,0.228
+shell_dir                     	= 0.0, 1.0, 0.0
+shell_bone			= wpn_body
 
 
-anim_open_weapon			= reload1
-anim_add_cartridge			= reload2
-anim_close_weapon			= reload3
+fire_point		= 0, 0.075, 0.937
+fire_bone			= wpn_body
 
-;смещения HUD для режима приближения
-zoom_offset			= -0.120200,0.049100,-0.002000
-zoom_rotate_x		= 0.063400
-zoom_rotate_y		= 0.000500
-;время поворота HUD (сек)
-;zoom_rotate_time			= 0.7
+
+attach_place_idx		= 0
+item_visual                   	= dynamics\weapons\wpn_winchester1300\wpn_winchester1300_hud
+
+hands_position				= -0.119500,-0.120500,0.185001
+hands_orientation			= 1.050001,1.700001,3.449997
+
+hands_position_16x9 = -0.153500,-0.077299,0.187499
+hands_orientation_16x9 = 0.470000,0.420001,3.449998
+
+item_position				= 0.003519,0.010573,-0.003368
+item_orientation			= 0.045015,1.047468,0.056850
+
+aim_hud_offset_pos				= -0.110000,0.093500,0.000000
+aim_hud_offset_rot				= 0.042500,0.012500,-0.02500
+
+aim_hud_offset_pos_16x9 = -0.076100,0.046499,-0.037800
+aim_hud_offset_rot_16x9 = 0.017500,0.002000,-0.016500
+
+anm_show			= winchester1300_draw
+anm_hide			= winchester1300_holster
+anm_idle			= winchester1300_idle
+anm_idle_aim			= winchester1300_idle_aim
+anm_idle_moving			= winchester1300_idle_moving
+anm_idle_sprint			= winchester1300_idle_sprint
+anm_bore			= winchester1300_idle_bore
+
+anm_shots			= winchester1300_shoot
+
+anm_open			= winchester1300_reload_start
+anm_add_cartridge		= winchester1300_reload
+anm_close			= winchester1300_reload_end

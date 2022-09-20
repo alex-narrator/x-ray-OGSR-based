@@ -566,8 +566,6 @@ bool CWeaponMagazinedWGrenade::Attach(PIItem pIItem, bool b_send_event)
 		m_cur_glauncher = (u8)std::distance(m_glaunchers.begin(), it);
 		m_flagsAddOnState |= CSE_ALifeItemWeapon::eWeaponAddonGrenadeLauncher;
 
-		CRocketLauncher::m_fLaunchSpeed = pGrenadeLauncher->GetGrenadeVel();
-
 		m_fAttachedGrenadeLauncherCondition = pIItem->GetCondition();
 
  		//уничтожить подствольник из инвентаря
@@ -616,15 +614,11 @@ bool CWeaponMagazinedWGrenade::Detach(const char* item_section_name, bool b_spaw
 void CWeaponMagazinedWGrenade::InitAddons()
 {	
 	inherited::InitAddons();
-
-	if(GrenadeLauncherAttachable())
-	{
-		if(IsGrenadeLauncherAttached())
-		{
-			CRocketLauncher::m_fLaunchSpeed = pSettings->r_float(GetGrenadeLauncherName(),"grenade_vel");
-		}
+	if (IsGrenadeLauncherAttached()) {
+		shared_str param_sect = GrenadeLauncherAttachable() ? GetGrenadeLauncherName() : cNameSect();
+		CRocketLauncher::m_fLaunchSpeed = pSettings->r_float(param_sect, "grenade_vel");
+		conditionDecreasePerShotGL = READ_IF_EXISTS(pSettings, r_float, param_sect, "condition_shot_dec_gl", 0.0f);
 	}
-
 	callback(GameObject::eOnAddonInit)(2);
 }
 
@@ -841,18 +835,6 @@ void CWeaponMagazinedWGrenade::UpdateGrenadeVisibility(bool visibility)
 	HudItemData()->set_bone_visible(grenade_bone_name, visibility, TRUE);
 }
 
-void CWeaponMagazinedWGrenade::save(NET_Packet &output_packet)
-{
-	inherited::save(output_packet);
-	//Msg( "~~[%s][%s] saved: m_bGrenadeMode: [%d], m_magazine2.size(): [%u], m_ammoType2: [%u]", __FUNCTION__, this->Name(), m_bGrenadeMode, m_magazine2.size(), m_ammoType2 );
-}
-
-void CWeaponMagazinedWGrenade::load(IReader &input_packet)
-{
-	inherited::load(input_packet);
-	//Msg( "~~[%s][%s] loaded: m_bGrenadeMode: [%d], iAmmoElapsed2: [%d], m_ammoType2: [%u]", __FUNCTION__, this->Name(), m_bGrenadeMode, iAmmoElapsed2, m_ammoType2 );
-}
-
 void CWeaponMagazinedWGrenade::net_Export( CSE_Abstract* E ) {
   inherited::net_Export( E );
   CSE_ALifeItemWeaponMagazinedWGL* gl = smart_cast<CSE_ALifeItemWeaponMagazinedWGL*>( E );
@@ -878,9 +860,6 @@ float CWeaponMagazinedWGrenade::GetWeaponDeterioration()
 	if (!m_bGrenadeMode)
 		return inherited::GetWeaponDeterioration();
 
-	shared_str section = GrenadeLauncherAttachable() ? GetGrenadeLauncherName() : cNameSect();
-	conditionDecreasePerShotGL = READ_IF_EXISTS(pSettings, r_float, section, "condition_shot_dec_gl", 0.0f);
-
 	return conditionDecreasePerShotGL;
 }
 //
@@ -901,13 +880,13 @@ void CWeaponMagazinedWGrenade::PlayAnimShutter()
 		if (AnimationExist("anim_shutter_g"))
 			PlayHUDMotion("anim_shutter_g", true, GetState());
 		else
-			PlayHUDMotion({ "anim_draw", "anm_show" }, true, GetState());
+			PlayHUDMotion({ "anim_draw", "anm_show_g" }, true, GetState());
 	}else{
 		if (IsGrenadeLauncherAttached()){
-			if (AnimationExist("anim_shutter_gl"))
-				PlayHUDMotion("anim_shutter_gl", true, GetState());
+			if (AnimationExist("anim_shutter_w_gl"))
+				PlayHUDMotion("anim_shutter_w_gl", true, GetState());
 			else
-				PlayHUDMotion({ "anim_draw", "anm_show" }, true, GetState());
+				PlayHUDMotion({ "anim_draw", "anm_show_w_gl" }, true, GetState());
 		}else
 			inherited::PlayAnimShutter();
 	}

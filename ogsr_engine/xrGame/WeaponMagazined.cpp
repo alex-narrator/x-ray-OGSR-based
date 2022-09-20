@@ -591,7 +591,7 @@ void CWeaponMagazined::UpdateSounds	()
 	if (sndShot.playing			()) sndShot.set_position		(get_LastFP());
 	if (sndSilencerShot.playing ()) sndSilencerShot.set_position(get_LastFP());
 	if (sndReload.playing		()) sndReload.set_position		(get_LastFP());
-	if (sndReloadPartly.playing())  sndReloadPartly.set_position(get_LastFP());
+	if (sndReloadPartly.playing	()) sndReloadPartly.set_position(get_LastFP());
 	if (sndEmptyClick.playing	())	sndEmptyClick.set_position	(get_LastFP());
 	if (sndFireModes.playing	())	sndFireModes.set_position	(get_LastFP());
 	if (sndZoomChange.playing	())	sndZoomChange.set_position	(get_LastFP());
@@ -609,7 +609,7 @@ void CWeaponMagazined::state_Fire	(float dt)
 {
 	VERIFY(fTimeToFire>0.f);
 
-	Fvector					p1, d; 
+	Fvector					p1{}, d{};
 	p1.set(get_LastFP());
 	d.set(get_LastFD());
 
@@ -757,7 +757,10 @@ void CWeaponMagazined::OnAnimationEnd(u32 state)
 		case eShowing:	SwitchState(eIdle);		break;	// End of Show
 		case eIdle:		switch2_Idle();			break;  // Keep showing idle
 		//
-		case eShutter:	ShutterAction();	SwitchState(eIdle);	break;	// End of Shutter animation
+		case eShutter:	
+			ShutterAction();	
+			SwitchState(eIdle);	
+			break;	// End of Shutter animation
 	}
 }
 
@@ -1499,7 +1502,7 @@ void CWeaponMagazined::ApplySilencerKoeffs	()
 
 void CWeaponMagazined::LoadLaserParams(LPCSTR section) {
 	shared_str wpn_sect = cNameSect();
-	laserdot_attach_bone			= READ_IF_EXISTS(pSettings, r_string, wpn_sect, "laserdot_attach_bone", "");
+	laserdot_attach_bone			= READ_IF_EXISTS(pSettings, r_string, wpn_sect, "laserdot_attach_bone", "wpn_body");
 	Fvector fvec_def{};
 	laserdot_attach_offset			= READ_IF_EXISTS(pSettings, r_fvector3, wpn_sect, "laserdot_attach_offset",			fvec_def);
 	laserdot_world_attach_offset	= READ_IF_EXISTS(pSettings, r_fvector3, wpn_sect, "laserdot_world_attach_offset",	fvec_def);
@@ -1529,9 +1532,9 @@ void CWeaponMagazined::LoadLaserParams(LPCSTR section) {
 
 void CWeaponMagazined::LoadFlashlightParams(LPCSTR section) {
 	shared_str wpn_sect = cNameSect();
-	flashlight_attach_bone				= READ_IF_EXISTS(pSettings, r_string, wpn_sect, "torch_light_bone", "");
+	flashlight_attach_bone				= READ_IF_EXISTS(pSettings, r_string, wpn_sect, "torch_light_bone", "wpn_body");
 	Fvector fvec_def{};
-	flashlight_attach_offset			= READ_IF_EXISTS(pSettings, r_fvector3, wpn_sect, "torch_attach_offset",				fvec_def);
+	flashlight_attach_offset			= READ_IF_EXISTS(pSettings, r_fvector3, wpn_sect, "torch_attach_offset",			fvec_def);
 	flashlight_omni_attach_offset		= READ_IF_EXISTS(pSettings, r_fvector3, wpn_sect, "torch_omni_attach_offset",		fvec_def);
 	flashlight_world_attach_offset		= READ_IF_EXISTS(pSettings, r_fvector3, wpn_sect, "torch_world_attach_offset",		fvec_def);
 	flashlight_omni_world_attach_offset = READ_IF_EXISTS(pSettings, r_fvector3, wpn_sect, "torch_omni_world_attach_offset",	fvec_def);

@@ -193,40 +193,46 @@ silencer_light_time 		= 0.2
 ;-----------------------------------------------------------------------------
  
 [wpn_ak74u_hud]
+zoom_hide_crosshair        = true
+attach_place_idx        = 0
+item_visual                = dynamics\weapons\wpn_ak74u\wpn_ak74u_hud.ogf
+
+hands_position				= -0.115000,-0.195999,0.145000
+hands_orientation			= -2.649998,0.400000,-4.099998
+
+hands_position_16x9 = -0.106500,-0.196000,0.092500
+hands_orientation_16x9 = -0.670000,0.890000,-2.550000
+
+item_position				= 0.004111,0.008527,-0.005906
+item_orientation			= -15.488927,-3.320898,367.220154
+
+shell_point                = 0.018,0.06,0.188
+shell_dir               = 0.0, 1.0, 0.0
+shell_bone                = wpn_body
+
+fire_point			= 0,0.048,0.466
+fire_bone                            = wpn_body
+fire_point2                        = 0.0,-0.011,0.553
+fire_bone2                = wpn_body
+
+anm_show						= ak74u_draw
+anm_hide                = ak74u_holster
+anm_idle                = ak74u_idle
+anm_idle_sprint         = ak74u_idle_sprint
+anm_idle_moving         = ak74u_idle_moving
+anm_shots               = ak74u_shoot
+anm_reload              = ak74u_reload
+anm_idle_aim            = ak74u_idle_aim
+anm_bore                = ak74u_idle_bore
+anm_reload_partly				= ak74u_reload
+anm_reload_partly_stop_k 		= 0.5
 
 
-;similar to corresponding params in weapon section but for 1st person view
+aim_hud_offset_pos				= -0.104000,0.003000,-0.018000
+aim_hud_offset_rot				= -0.047500,-0.030000,0.002500
 
-shell_point     	   	 	= 0.15, 0.0, -0.05
-shell_dir			     	= 0.0, 1.0, 0.0
+aim_hud_offset_pos_16x9 = -0.121600,0.014900,0.029000
+aim_hud_offset_rot_16x9 = -0.034500,0.004000,0.020000
 
-fire_point			= 0.090000,0.000000,-0.060000
-fire_point2              	= 0.30, 0.00, 0.05
-fire_bone               	= wpn_body
-
-orientation             	= 0, 0, 0		
-position                	= 0, 0, 0
-visual                  	= weapons\ak-74u\wpn_ak74u_hud.ogf
-
-;grenade_bone            	= wpn_grenade	; name of the bone in the model for grenade launcher
-
-; animation names
-
-anim_idle					= idle
-anim_idle_aim				= idle_aim
-anim_reload					= reload
-anim_draw					= draw
-anim_holster				= holster
-anim_shoot					= shoot
-anim_idle_sprint			= idle_sprint
-			
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;HUD offset in zoom mode (to all)
-;(use CONSOLE: hud_adjust_mode 0,1,2, then keys WSADQE and P to show current value in console)
-
-zoom_offset			= -0.137700,0.033800,-0.115100
-zoom_rotate_x		= -0.005000
-zoom_rotate_y		= 0.017900
-
-
-zoom_hide_crosshair	= true						;to hide crosshair in zoom 
+lean_hud_offset_pos        = 0,0,0
+lean_hud_offset_rot        = 0,0,0

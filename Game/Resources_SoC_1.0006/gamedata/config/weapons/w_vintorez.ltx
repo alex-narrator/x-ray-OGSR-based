@@ -123,7 +123,7 @@ ph_mass			         	= 4
 ;cost			         	= 5000
 
 ;addons
-scope_status				= 1
+scope_status				= 2
 silencer_status				= 1
 grenade_launcher_status		= 0
 zoom_enabled				= true
@@ -131,7 +131,11 @@ zoom_enabled				= true
 scope_texture				= wpn\wpn_crosshair
 
 zoom_enabled				= true
-scope_zoom_factor	    	= 15		;ПСО-1 4X
+scope_zoom_factor	    	= 4		;ПСО-1 4X
+
+scope_name 					= wpn_addon_scope ; section name for the attachable scope
+scope_x 					= 42						; offset in inventory icon
+scope_y 					= 3
 
 ;звуки
 snd_draw					= weapons\generic_draw
@@ -148,27 +152,54 @@ snd_reload_grenade			= weapons\gen_grenload
 
 
 
-[wpn_vintorez_hud]
+[wpn_vintorez_hud]:hud_base
+zoom_hide_crosshair	= true
+attach_place_idx	= 0
+item_visual		= dynamics\weapons\wpn_vintorez\wpn_vintorez_hud.ogf
 
-shell_point          		= -0.15, -0.02, 0.05
-shell_dir			 		= 0.0, 1.0, 0.0
+
+hands_position				= -0.053000,-0.196500,0.250499
+hands_orientation			= 0.300000,1.849999,-0.000001
+
+hands_position_16x9 = -0.047500,-0.203500,0.194999
+hands_orientation_16x9 = 0.760000,1.130000,-2.500000
+
+aim_hud_offset_pos	= -0.112000,0.029500,-0.118000
+aim_hud_offset_rot	= 0.010000,0.002500,-0.010000
+
+aim_hud_offset_pos_16x9 = -0.112200,0.060350,-0.050400
+aim_hud_offset_rot_16x9 = -0.000000,0.004500,-0.023000
+
+item_position				= 0.007119,0.019630,0.009658
+item_orientation			= -15.646272,-3.230760,364.546112
+
+shell_point					= 0.023,0.042,0.129
+shell_dir               = 0.0, 1.0, 0.0
+shell_bone					= wpn_body
+
+fire_point		= 0,0.037,0.626
+fire_bone      	      = wpn_body
+fire_point2					= -0.014000,0.010000,-0.037000
+fire_bone2					= wpn_body
+
+anm_show             	= vintorez_draw
+anm_hide             	= vintorez_holster
+anm_idle             	= vintorez_idle
+anm_idle_sprint         = vintorez_idle_sprint
+anm_idle_moving 			= vintorez_idle_moving
+anm_shots               = vintorez_shoot
+anm_reload              = vintorez_reload
+anm_idle_aim           	= vintorez_idle_aim
+
+anm_bore						= vintorez_idle_bore
+
+anm_reload_partly				= vintorez_reload
+anm_reload_partly_stop_k 		= 0.5
 
 
-fire_point               	= 0.320000,0.040000,0.070000
-fire_bone                	= wpn_body
-orientation              	= 0, 0, 0
-position                 	= 0, 0, 0
-visual                   	= weapons\vintorez\wpn_vintorez_hud.ogf
 
-anim_idle		= idle
-anim_idle_aim	= idle
-anim_reload		= reload
-anim_draw		= draw
-anim_holster	= holster
-anim_shoot		= shoot
-anim_idle_sprint			= idle_sprint
+gl_hud_offset_pos	= -0.053000,-0.059000,0.000000
+gl_hud_offset_rot	= -0.145000,0.000000,0.000000
 
-;смещения HUD для режима приближения
-zoom_offset					= -0.130000,0.000000,0.000000
-zoom_rotate_x				= 0.000000
-zoom_rotate_y				= 0.000000
+lean_hud_offset_pos	= 0,0,0
+lean_hud_offset_rot	= 0,0,0

@@ -88,7 +88,9 @@ void CActor::IR_OnKeyboardPress(int cmd){
 	switch(cmd){
 	case kJUMP:		
 		{
-			mstate_wishful |= mcJump;
+		if (mstate_wishful & mcLookout)
+			mstate_wishful &= ~mcLookout;
+		mstate_wishful |= mcJump;
 			{
 //				NET_Packet	P;
 //				u_EventGen(P, GE_ACTOR_JUMPING, ID());

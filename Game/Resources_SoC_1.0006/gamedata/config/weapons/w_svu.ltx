@@ -123,7 +123,7 @@ ph_mass			 		= 3
 ;cost			 		= 900
 
 ;addons
-scope_status			= 1
+scope_status			= 2
 silencer_status			= 0
 grenade_launcher_status	= 0
 zoom_enabled			= true
@@ -131,6 +131,10 @@ zoom_enabled			= true
 scope_texture			= wpn\wpn_crosshair
 zoom_enabled			= true
 scope_zoom_factor	    = 4		;ПСО-1 4X
+
+scope_name 					= wpn_addon_scope ; section name for the attachable scope
+scope_x 					= 42						; offset in inventory icon
+scope_y 					= 3
 
 ;звуки
 snd_draw				= weapons\svu_draw
@@ -142,28 +146,49 @@ snd_close				= weapons\generic_close
 
 ;snd_silncer_shot			= weapons\w_ak74_shot1
  
-[wpn_svu_hud]
+[wpn_svu_hud]:hud_base
+zoom_hide_crosshair		= true
+attach_place_idx		= 0
+item_visual             = dynamics\weapons\wpn_svu\wpn_svu_hud
 
-shell_point          	= -0.15, -0.02, 0.05
-shell_dir		 		= 0.0, 1.0, 0.0
 
-fire_point			= -0.070000,-0.050000,0.080000
+hands_position				= -0.044500,-0.209998,0.273998
+hands_orientation			= 1.800001,-0.600001,0.200002
+
+hands_position_16x9 = 0.005000,-0.227498,0.332498
+hands_orientation_16x9 = -0.089999,-2.349996,-0.250000
+
+item_position			= 0,0,0
+item_orientation		= 0,0,0
+
+shell_point				= 0.025,0.05,0.124
+shell_dir               = 0.0, 1.0, 0.0
+shell_bone				= wpn_body
+
+fire_point              = 0.0,0.043,0.495
 fire_bone               = wpn_body
-orientation             = 0, 0, 0
-position                = 0, 0, 0
-visual                  = weapons\svu\wpn_svu_hud.ogf
 
-anim_holster			= holster
-anim_idle				= idle
-anim_idle_aim			= idle
-anim_reload				= reload
-anim_draw				= draw
-anim_holster			= holster
-anim_shoot				= shoot
+aim_hud_offset_pos				= -0.071000,0.031999,-0.103000
+aim_hud_offset_rot				= -0.002500,0.020000,0.000000
 
-;смещения HUD для режима приближения
-zoom_offset				= -0.070000,0.000000,0.000000
-zoom_rotate_x			= 0.020000
-zoom_rotate_y			= -0.040000
+aim_hud_offset_pos_16x9 = -0.160500,0.086901,-0.202901
+aim_hud_offset_rot_16x9 = 0.008500,0.005500,0.000000
 
+gl_hud_offset_pos		= 0,0,0
+gl_hud_offset_rot			= 0,0,0
 
+lean_hud_offset_pos		= 0,0,0
+lean_hud_offset_rot		= 0,0,0
+
+anm_show						= svu_draw
+anm_hide             	= svu_holster
+anm_shots					= svu_shoot
+anm_reload					= svu_reload
+anm_bore						= svu_idle_bore
+anm_idle             	= svu_idle
+anm_idle_aim				= svu_idle_aim
+anm_idle_moving 			= svu_idle_moving
+anm_idle_sprint			= svu_idle_moving
+
+anm_reload_partly				= svu_reload
+anm_reload_partly_stop_k 		= 0.5
