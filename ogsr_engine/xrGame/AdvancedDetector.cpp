@@ -55,7 +55,7 @@ void CAdvancedDetector::UpdateAf()
     clamp(fRelPow, 0.f, 1.f);
 
     // direction
-    Fvector dir_to_artefact;
+    Fvector dir_to_artefact{};
     dir_to_artefact.sub(pCurrentAf->Position(), Device.vCameraPosition);
     dir_to_artefact.normalize();
     float _ang_af = dir_to_artefact.getH();

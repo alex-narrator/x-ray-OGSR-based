@@ -66,9 +66,12 @@
 	<string id="kb_additional_action">
 		<text>Дополнительное действие</text>
 	</string>
-	<string id="kb_artefact">
+	<string id="kb_weapon7">
 		<text>Артефакт</text>
 	</string>	
+	<string id="kb_weapon8">
+		<text>Детектор</text>
+	</string>
 	<string id="kb_use_quick_slot_0">
 		<text>Карман 1</text>
 	</string>

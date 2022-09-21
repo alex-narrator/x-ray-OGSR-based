@@ -165,7 +165,7 @@ void CUIArtefactDetectorElite::Draw()
     Fvector2 rp;
     m_wrk_area->GetAbsolutePos(rp);
 
-    Fmatrix M, Mc;
+    Fmatrix M{}, Mc{};
     float h, p;
     Device.vCameraDirection.getHP(h, p);
     Mc.setHPB(h, 0, 0);
@@ -188,7 +188,7 @@ void CUIArtefactDetectorElite::Draw()
         pt3d.x += wrk_sz.x / 2.0f;
         pt3d.z -= wrk_sz.y;
 
-        Fvector2 pos;
+        Fvector2 pos{};
         pos.set(pt3d.x, -pt3d.z);
         pos.sub(rp);
         if (1 /* r.in(pos)*/)

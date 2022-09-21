@@ -12,9 +12,7 @@
 #include "actorcondition.h"
 #include "ActorEffector.h"
 
-ZONE_INFO_SHOC::ZONE_INFO_SHOC()
-{
-	pParticle = NULL;
+ZONE_INFO_SHOC::ZONE_INFO_SHOC(){
 }
 
 ZONE_INFO_SHOC::~ZONE_INFO_SHOC()
@@ -23,10 +21,7 @@ ZONE_INFO_SHOC::~ZONE_INFO_SHOC()
 		CParticlesObject::Destroy(pParticle);
 }
 
-CCustomDetectorSHOC::CCustomDetectorSHOC(void)
-{
-	m_bWorking = false;
-	radiation_snd_time = 0;
+CCustomDetectorSHOC::CCustomDetectorSHOC(void){
 }
 
 CCustomDetectorSHOC::~CCustomDetectorSHOC(void)
@@ -34,7 +29,6 @@ CCustomDetectorSHOC::~CCustomDetectorSHOC(void)
 	ZONE_TYPE_MAP_IT it;
 	for (it = m_ZoneTypeMap.begin(); m_ZoneTypeMap.end() != it; ++it)
 		HUD_SOUND::DestroySound(it->second.detect_snds);
-	//		it->second.detect_snd.destroy();
 
 	m_ZoneInfoMap.clear();
 }
@@ -106,9 +100,8 @@ void CCustomDetectorSHOC::shedule_Update(u32 dt)
 
 	Position().set(H_Parent()->Position());
 
-	if (H_Parent() && H_Parent() == Level().CurrentViewEntity())
-	{
-		Fvector					P;
+	if (H_Parent() && H_Parent() == Level().CurrentViewEntity()){
+		Fvector P{};
 		P.set(H_Parent()->Position());
 		feel_touch_update(P, m_fRadius);
 		UpdateNightVisionMode();
@@ -118,11 +111,9 @@ void CCustomDetectorSHOC::shedule_Update(u32 dt)
 void CCustomDetectorSHOC::StopAllSounds()
 {
 	ZONE_TYPE_MAP_IT it;
-	for (it = m_ZoneTypeMap.begin(); m_ZoneTypeMap.end() != it; ++it)
-	{
+	for (it = m_ZoneTypeMap.begin(); m_ZoneTypeMap.end() != it; ++it){
 		ZONE_TYPE_SHOC& zone_type = (*it).second;
 		HUD_SOUND::StopSound(zone_type.detect_snds);
-		//		zone_type.detect_snd.stop();
 	}
 }
 

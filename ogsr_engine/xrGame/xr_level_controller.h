@@ -36,6 +36,7 @@ enum	EGameActions
 	kWPN_4,
 	kWPN_5,
 	kWPN_6,
+	kWPN_7, //artefact
 	kWPN_8, //kDETECTOR
 	kLASER_ON,
 	kWPN_NEXT,
@@ -100,8 +101,6 @@ enum	EGameActions
 	
 	kQUICK_SAVE,
 	kQUICK_LOAD,
-
-	kARTEFACT,
 
 	kQUICK_THROW_GRENADE,
 	kQUICK_KNIFE_STAB,

@@ -44,6 +44,7 @@ xr_vector<_action> actions = {
 	DEF_ACTION("wpn_4",				kWPN_4)
 	DEF_ACTION("wpn_5",				kWPN_5)
 	DEF_ACTION("wpn_6",				kWPN_6)
+	DEF_ACTION("wpn_7",				kWPN_7)
 	DEF_ACTION("wpn_8",				kWPN_8)
 	DEF_ACTION("laser_on",			kLASER_ON)
 	DEF_ACTION("wpn_next",			kWPN_NEXT)
@@ -108,8 +109,6 @@ xr_vector<_action> actions = {
 
 	DEF_ACTION("quick_save",			kQUICK_SAVE)
 	DEF_ACTION("quick_load",			kQUICK_LOAD)
-
-	DEF_ACTION("artefact",				kARTEFACT)
 
 	DEF_ACTION("quick_throw_grenade",	kQUICK_THROW_GRENADE)
 	DEF_ACTION("quick_knife_stab",		kQUICK_KNIFE_STAB)

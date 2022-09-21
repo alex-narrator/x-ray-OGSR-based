@@ -21,11 +21,11 @@ struct ZONE_TYPE_SHOC
 //описание зоны, обнаруженной детектором
 struct ZONE_INFO_SHOC
 {
-	u32								snd_time;
+	u32	snd_time{};
 	//текущая частота работы датчика
-	float							cur_freq;
+	float cur_freq{};
 	//particle for night-vision mode
-	CParticlesObject* pParticle;
+	CParticlesObject* pParticle{};
 
 	ZONE_INFO_SHOC();
 	~ZONE_INFO_SHOC();
@@ -68,13 +68,13 @@ protected:
 	void AddRemoveMapSpot(CCustomZone* pZone, bool bAdd);
 	void UpdateNightVisionMode();
 
-	bool m_bWorking;
+	bool m_bWorking{};
 
-	float m_fRadius;
+	float m_fRadius{};
 
 	//если хозяин текущий актер
-	CActor* m_pCurrentActor;
-	CInventoryOwner* m_pCurrentInvOwner;
+	CActor* m_pCurrentActor{};
+	CInventoryOwner* m_pCurrentInvOwner{};
 
 	//информация об онаруживаемых зонах
 	DEFINE_MAP(CLASS_ID, ZONE_TYPE_SHOC, ZONE_TYPE_MAP, ZONE_TYPE_MAP_IT);
@@ -84,14 +84,14 @@ protected:
 	DEFINE_MAP(CCustomZone*, ZONE_INFO_SHOC, ZONE_INFO_MAP, ZONE_INFO_MAP_IT);
 	ZONE_INFO_MAP m_ZoneInfoMap;
 
-	shared_str						m_nightvision_particle;
+	shared_str	m_nightvision_particle{};
 
-	bool m_detect_actor_radiation;
-	u32  radiation_snd_time;
+	bool m_detect_actor_radiation{};
+	u32  radiation_snd_time{};
 	void update_actor_radiation();
 
 protected:
-	u32					m_ef_detector_type;
+	u32					m_ef_detector_type{};
 
 public:
 	virtual u32			ef_detector_type() const;
