@@ -32,6 +32,6 @@ public:
     virtual void shedule_Update(u32 dt) override;
     virtual LPCSTR ui_xml_tag() const override { return "scientific"; }
 protected:
-    virtual void UpfateWork() override;
+    virtual void UpdateWork() override;
     CZoneList m_zones;
 };

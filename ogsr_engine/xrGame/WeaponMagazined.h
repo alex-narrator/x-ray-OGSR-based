@@ -294,4 +294,5 @@ protected:
 	virtual void	OnShutter();
 	virtual void	switch2_Shutter();
 	virtual void	PlayAnimShutter();
+	virtual void	PlayAnimFiremodes();
 };

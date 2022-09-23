@@ -106,6 +106,7 @@ strap_position         		= -0.28,-0.20,0.25			; position (offset) and orientatio
 strap_orientation      		= -15,-189,110				; (3rd person view in degrees)
 strap_bone0					= bip01_spine2
 strap_bone1					= bip01_spine1
+scope_bone = scope
 
 ;startup_ammo             	= 90
 visual                   	= weapons\rpg_7\wpn_rpg_7.ogf
@@ -125,14 +126,15 @@ ph_mass			 			= 1
 ;cost			 			= 350
 
 ;addons
-scope_status				= 0
+scope_status				= 2
 silencer_status				= 0
 grenade_launcher_status		= 0
 
-scope_texture				= wpn\wpn_crosshair_rpg
-
 zoom_enabled				= true
-scope_zoom_factor			= 2		;œ—Œ-1 2X
+
+scope_name 					= wpn_addon_scope_pgo_7v ; section name for the attachable scope
+scope_x 					= 42						; offset in inventory icon
+scope_y 					= 3
 
 ;Á‚ÛÍË
 snd_draw					= weapons\generic_draw
@@ -162,6 +164,7 @@ item_visual                   		= dynamics\weapons\wpn_rpg7\wpn_rpg7_hud
 
 fire_point				= -0.020000,0.200500,0.145003
 fire_bone               = wpn_body
+scope_bone 				= wpn_scope
 
 
 hands_position						= 0.020500,-0.206999,0.261999

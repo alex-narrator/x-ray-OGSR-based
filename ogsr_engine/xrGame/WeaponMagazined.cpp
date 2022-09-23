@@ -70,7 +70,7 @@ CWeaponMagazined::~CWeaponMagazined()
 }
 
 
-void CWeaponMagazined::StopHUDSounds		()
+void CWeaponMagazined::StopHUDSounds()
 {
 	HUD_SOUND::StopSound(sndShow);
 	HUD_SOUND::StopSound(sndHide);
@@ -189,8 +189,7 @@ void CWeaponMagazined::Load	(LPCSTR section)
 		sndReloadPartlyExist = true;
 	}
 	
-	if ( pSettings->line_exist( section, "snd_fire_modes" ) )
-		HUD_SOUND::LoadSound( section, "snd_fire_modes", sndFireModes, m_eSoundEmptyClick );
+	HUD_SOUND::LoadSound( section, !!pSettings->line_exist(section, "snd_fire_modes") ? "snd_fire_modes" : "snd_empty", sndFireModes, m_eSoundEmptyClick );
 	if ( pSettings->line_exist( section, "snd_zoom_change" ) )
 		HUD_SOUND::LoadSound( section, "snd_zoom_change", sndZoomChange, m_eSoundEmptyClick );
 	//
@@ -1771,7 +1770,7 @@ void	CWeaponMagazined::OnNextFireMode		()
 	if (!m_bHasDifferentFireModes) return;
 	m_iCurFireMode = (m_iCurFireMode+1+m_aFireModes.size()) % m_aFireModes.size();
 	SetQueueSize(GetCurrentFireMode());
-	PlaySound( sndFireModes, get_LastFP() );
+	PlayAnimFiremodes();
 };
 
 void	CWeaponMagazined::OnPrevFireMode		()
@@ -1779,7 +1778,7 @@ void	CWeaponMagazined::OnPrevFireMode		()
 	if (!m_bHasDifferentFireModes) return;
 	m_iCurFireMode = (m_iCurFireMode-1+m_aFireModes.size()) % m_aFireModes.size();
 	SetQueueSize(GetCurrentFireMode());	
-	PlaySound( sndFireModes, get_LastFP() );
+	PlayAnimFiremodes();
 };
 
 void	CWeaponMagazined::OnH_A_Chield		()
@@ -1999,7 +1998,8 @@ void CWeaponMagazined::OnShutter()
 //
 void CWeaponMagazined::switch2_Shutter()
 {
-	PlaySound(sndShutter, get_LastFP());
+	if (IsZoomed())
+		OnZoomOut();
 	PlayAnimShutter();
 	SetPending(TRUE);
 }
@@ -2011,6 +2011,15 @@ void CWeaponMagazined::PlayAnimShutter()
 		PlayHUDMotion("anim_shutter", true, GetState());
 	else
 		PlayHUDMotion({ "anim_draw", "anm_show" }, true, GetState());
+	PlaySound(sndShutter, get_LastFP());
+}
+
+void CWeaponMagazined::PlayAnimFiremodes()
+{
+	if (AnimationExist("anm_fire_modes")) {
+		PlayHUDMotion("anm_fire_modes", true, GetState());
+	}
+	PlaySound(sndFireModes, get_LastFP());
 }
 //
 void CWeaponMagazined::ShutterAction() //передёргивание затвора

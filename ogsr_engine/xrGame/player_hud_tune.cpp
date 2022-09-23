@@ -87,7 +87,7 @@ static void calc_cam_diff_pos(const Fmatrix& item_transform, const Fvector& diff
 	Fvector res1;
 	cam_m.transform_dir(res1, diff);
 
-	Fmatrix item_transform_i;
+	Fmatrix item_transform_i{};
 	item_transform_i.invert(item_transform);
 	item_transform_i.transform_dir(res, res1);
 }
@@ -225,7 +225,7 @@ void player_hud::tune(const Ivector& _values) {
 		if (g_bHudAdjustMode == HUD_POS) {
 			if (values.x)	diff.x = (values.x > 0) ? g_bHudAdjustDeltaPos : -g_bHudAdjustDeltaPos;
 			if (values.y)	diff.y = (values.y < 0) ? g_bHudAdjustDeltaPos : -g_bHudAdjustDeltaPos;
-			if (values.z)	diff.z = (values.z < 0) ? g_bHudAdjustDeltaPos : -g_bHudAdjustDeltaPos;
+			if (values.z)	diff.z = (values.z > 0) ? g_bHudAdjustDeltaPos : -g_bHudAdjustDeltaPos;
 
 			pos_.add(diff);
 		}

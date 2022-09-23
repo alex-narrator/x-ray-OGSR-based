@@ -174,7 +174,7 @@ protected:
     void TurnDetectorInternal(bool b);
     //void UpdateNightVisionMode(bool b_off);
     void UpdateVisibility();
-    virtual void UpfateWork();
+    virtual void UpdateWork();
     virtual void UpdateAf() {}
     virtual void CreateUI() {}
 

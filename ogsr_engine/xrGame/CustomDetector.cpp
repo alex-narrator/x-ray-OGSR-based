@@ -225,7 +225,7 @@ void CCustomDetector::shedule_Update(u32 dt)
 
 bool CCustomDetector::IsWorking() const { return m_bWorking && H_Parent() && H_Parent() == Level().CurrentViewEntity(); }
 
-void CCustomDetector::UpfateWork()
+void CCustomDetector::UpdateWork()
 {
     UpdateAf();
     m_ui->update();
@@ -282,7 +282,7 @@ void CCustomDetector::UpdateCL()
     UpdateVisibility();
     if (!IsWorking())
         return;
-    UpfateWork();
+    UpdateWork();
 }
 
 void CCustomDetector::OnH_A_Chield() { inherited::OnH_A_Chield(); }
