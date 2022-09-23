@@ -60,6 +60,7 @@ CWeapon::CWeapon(LPCSTR name)
 CWeapon::~CWeapon		()
 {
 	xr_delete	(m_UIScope);
+	xr_delete	(m_UIScopeSecond);
 
 	laser_light_render.destroy();
 	flashlight_render.destroy();
@@ -1160,6 +1161,17 @@ bool CWeapon::Action(s32 cmd, u32 flags)
 			else
 				return false;
 		}
+		case kWPN_FUNC:
+		{
+			if (Level().IR_GetKeyState(get_action_dik(kADDITIONAL_ACTION))) {
+				if (HasScopeSecond() && (flags & CMD_START)) {
+					m_bScopeSecondMode = !m_bScopeSecondMode;
+					if (IsZoomed())
+						OnZoomOut();
+					return true;
+				}
+			}
+		}
 	}
 	return false;
 }
@@ -1626,7 +1638,7 @@ float CWeapon::CurrentZoomFactor()
 		}
 		else
 		{
-			res = m_fScopeZoomFactor;
+			res = IsSecondScopeMode() ? m_fScopeZoomFactorSecond : m_fScopeZoomFactor;
 			//			Msg("m_fScopeZoomFactor res = [%.2f]", res);
 		}
 	}
@@ -1637,6 +1649,14 @@ float CWeapon::CurrentZoomFactor()
 	}
 
 	return res;
+}
+
+bool CWeapon::HasScopeSecond() const {
+	return IsScopeAttached() && !IsGrenadeMode() && m_bHasScopeSecond;
+}
+
+bool CWeapon::IsSecondScopeMode() const {
+	return IsScopeAttached() && !IsGrenadeMode() && m_bScopeSecondMode;
 }
 
 void CWeapon::OnZoomIn()
@@ -1688,13 +1708,13 @@ void CWeapon::OnZoomOut()
 }
 
 bool CWeapon::UseScopeTexture() {
-	return !SecondVPEnabled() && m_UIScope; // только если есть текстура прицела - для простого создания коллиматоров
+	return !SecondVPEnabled() && (m_UIScope || IsSecondScopeMode() && m_UIScopeSecond); // только если есть текстура прицела - для простого создания коллиматоров
 }
 
 CUIStaticItem* CWeapon::ZoomTexture()
 {
 	if (UseScopeTexture())
-		return m_UIScope;
+		return IsSecondScopeMode() ? m_UIScopeSecond : m_UIScope;
 	else
 		return NULL;
 }
@@ -1867,6 +1887,9 @@ u8 CWeapon::GetCurrentHudOffsetIdx() const
 	{
 		const bool has_gl = GrenadeLauncherAttachable() && IsGrenadeLauncherAttached();
 		const bool has_scope = ScopeAttachable() && IsScopeAttached();
+
+		if(IsSecondScopeMode())
+			return hud_item_measures::m_hands_offset_type_aim_second;
 
 		if (IsGrenadeMode())
 		{

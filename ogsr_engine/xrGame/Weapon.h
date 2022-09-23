@@ -254,10 +254,13 @@ protected:
 	float			m_fZoomFactor{1.f};
 	//текстура для снайперского прицела, в режиме приближения
 	CUIStaticItem* m_UIScope{};
+	//текстура для другого приціла, у режимі прицілювання
+	CUIStaticItem* m_UIScopeSecond{};
 	//коэффициент увеличения прицеливания
 	float			m_fIronSightZoomFactor;
 	//коэффициент увеличения прицела
 	float			m_fScopeZoomFactor{ 1.f };
+	float			m_fScopeZoomFactorSecond{ 1.f };
 	//когда режим приближения включен
 	bool			m_bZoomMode;
 	//коэффициент увеличения во втором вьюпорте при зуме
@@ -272,6 +275,9 @@ protected:
 	float			m_fZoomHudFov;
 	//Целевой HUD FOV для линзы
 	float			m_fSecondVPHudFov;
+
+	bool			m_bHasScopeSecond{};
+	bool			m_bScopeSecondMode{};
 
 	bool m_bUseScopeZoom			= false;
 	bool m_bUseScopeGrenadeZoom		= false;
@@ -319,6 +325,9 @@ public:
 	virtual bool			IsScopeDynamicZoom		() const { return m_bScopeDynamicZoom; };
 	virtual float			GetScopeZoomFactor		() const { return m_fScopeZoomFactor; };
 	virtual float			GetMinScopeZoomFactor	() const { return m_fMinScopeZoomFactor; };
+
+	virtual bool			HasScopeSecond			() const;
+	virtual bool			IsSecondScopeMode		() const;
 
 public:
 	IC		LPCSTR			strap_bone0			() const {return m_strap_bone0;}
