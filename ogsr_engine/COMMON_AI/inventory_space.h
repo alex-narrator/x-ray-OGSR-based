@@ -3,29 +3,32 @@
 constexpr auto CMD_START			= (1<<0);
 constexpr auto CMD_STOP				= (1<<1);
 
-constexpr auto NO_ACTIVE_SLOT		= 0xff;
-
-constexpr auto KNIFE_SLOT			= 0;
-constexpr auto ON_SHOULDER_SLOT		= 1;
-constexpr auto ON_BACK_SLOT			= 2;
-constexpr auto GRENADE_SLOT			= 3;
-constexpr auto HOLSTER_SLOT			= 4;
-constexpr auto BOLT_SLOT			= 5;
-constexpr auto OUTFIT_SLOT			= 6;
-constexpr auto PDA_SLOT				= 7;
-constexpr auto DETECTOR_SLOT		= 8;
-constexpr auto ON_HEAD_SLOT			= 9;
-constexpr auto ARTEFACT_SLOT		= 10;
-constexpr auto HELMET_SLOT			= 11;
-//quick slots
-constexpr auto QUICK_SLOT_0			= 12;
-constexpr auto QUICK_SLOT_1			= 13;
-constexpr auto QUICK_SLOT_2			= 14;
-constexpr auto QUICK_SLOT_3			= 15;
-//equipment
-constexpr auto WARBELT_SLOT			= 16;
-constexpr auto BACKPACK_SLOT		= 17;
-constexpr auto SLOTS_TOTAL			= 18;
+enum : u32
+{
+	KNIFE_SLOT,
+	ON_SHOULDER_SLOT,
+	ON_BACK_SLOT,
+	GRENADE_SLOT,
+	HOLSTER_SLOT,
+	BOLT_SLOT,
+	OUTFIT_SLOT,
+	PDA_SLOT,
+	DETECTOR_SLOT,
+	ON_HEAD_SLOT,
+	ARTEFACT_SLOT,
+	HELMET_SLOT,
+	//quick slots
+	QUICK_SLOT_0,
+	QUICK_SLOT_1,
+	QUICK_SLOT_2,
+	QUICK_SLOT_3,
+	//equipment
+	WARBELT_SLOT,
+	BACKPACK_SLOT,
+	//
+    SLOTS_TOTAL,
+    NO_ACTIVE_SLOT = 255
+};
 
 constexpr auto RUCK_HEIGHT			= 280;
 constexpr auto RUCK_WIDTH			= 7;

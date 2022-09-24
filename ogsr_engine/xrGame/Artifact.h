@@ -5,6 +5,7 @@
 #include "PHObject.h"
 #include "script_export_space.h"
 #include "patrol_path.h"
+#include "hudsound.h"
 
 struct SArtefactActivation;
 
@@ -34,7 +35,7 @@ private:
 	typedef			CHudItemObject	inherited;
 public:
 									CArtefact						();
-	virtual ~CArtefact() = default;
+	virtual							~CArtefact						();
 
 	virtual void					Load							(LPCSTR section);
 	
@@ -63,21 +64,25 @@ public:
 protected:
 	virtual void					UpdateCLChild						()		{};
 
-	u16								m_CarringBoneID;
-	shared_str						m_sParticlesName;
+	u16								m_CarringBoneID{};
+	shared_str						m_sParticlesName{};
+
+	HUD_SOUND						sndShow;
+	HUD_SOUND						sndHide;
+	HUD_SOUND						sndActivate;
 protected:
-	SArtefactActivation*			m_activationObj;
+	SArtefactActivation*			m_activationObj{};
 	//////////////////////////////////////////////////////////////////////////
 	//	Lights
 	//////////////////////////////////////////////////////////////////////////
 	//флаг, что подсветка может быть включена
-	bool							m_bLightsEnabled;
+	bool							m_bLightsEnabled{};
 	//подсветка во время полета и работы двигателя
-	ref_light						m_pTrailLight;
-	Fcolor							m_TrailLightColor;
-	float							m_fTrailLightRange;
+	ref_light						m_pTrailLight{};
+	Fcolor							m_TrailLightColor{};
+	float							m_fTrailLightRange{};
 
-	SArtefactDetectorsSupport* m_detectorObj{};
+	SArtefactDetectorsSupport*		m_detectorObj{};
 	u8 m_af_rank{};
 
 protected:
@@ -92,11 +97,11 @@ public:
 	virtual void					PhDataUpdate						(dReal step);
 	virtual void					PhTune								(dReal step)	{};
 
-	bool							m_bCanSpawnZone;
+	bool							m_bCanSpawnZone{};
 	//
-	float							m_fRandomKMin;
-	float							m_fRandomKMax;
-	float							m_fRandomK;
+	float							m_fRandomKMin{ 1.f };
+	float							m_fRandomKMax{ 1.f };
+	float							m_fRandomK{ 1.f };
 	float							GetRandomKoef() { return m_fRandomK; };
 
 	virtual float					GetHitTypeProtection(ALife::EHitType hit_type);
@@ -125,8 +130,8 @@ public:
 
 	// optimization FAST/SLOW mode
 public:						
-	u32						o_render_frame				;
-	BOOL					o_fastmode					;
+	u32						o_render_frame{};
+	BOOL					o_fastmode{};
 	IC void					o_switch_2_fast				()	{
 		if (o_fastmode)		return	;
 		o_fastmode			= TRUE	;

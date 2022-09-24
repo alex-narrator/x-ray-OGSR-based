@@ -94,8 +94,10 @@ protected:
 
 	//звук анимации "играния"
 	HUD_SOUND				sndPlaying;
+	HUD_SOUND				sndShow;
+	HUD_SOUND				sndHide;
 
-	bool					m_throwMotionMarksAvailable;
+	bool					m_throwMotionMarksAvailable{};
 protected:
 			void			setup_throw_params		();
 public:

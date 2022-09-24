@@ -64,7 +64,6 @@ protected:
 								eInvDropItem,
 								eInvAttachAddon,
 								eInvDetachAddon,
-								eInvItemUse,
 								eInvMagLoad,
 								eInvMagUnload,
 								eInvSndMax};

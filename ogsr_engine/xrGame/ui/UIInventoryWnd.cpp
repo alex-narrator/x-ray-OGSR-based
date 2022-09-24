@@ -32,8 +32,8 @@ using namespace InventoryUtilities;
 #include "UIOutfitSlot.h"
 #include "UI3tButton.h"
 
-#define				INVENTORY_ITEM_XML		"inventory_item.xml"
-#define				INVENTORY_XML			"inventory_new.xml"
+constexpr auto INVENTORY_ITEM_XML	= "inventory_item.xml";
+constexpr auto INVENTORY_XML		= "inventory_new.xml";
 
 
 
@@ -260,7 +260,6 @@ void CUIInventoryWnd::Init()
 	::Sound->create						(sounds[eInvDropItem],		uiXml.Read("snd_drop_item",		0,	NULL),st_Effect,sg_SourceType);
 	::Sound->create						(sounds[eInvAttachAddon],	uiXml.Read("snd_attach_addon",	0,	NULL),st_Effect,sg_SourceType);
 	::Sound->create						(sounds[eInvDetachAddon],	uiXml.Read("snd_detach_addon",	0,	NULL),st_Effect,sg_SourceType);
-	::Sound->create						(sounds[eInvItemUse],		uiXml.Read("snd_item_use",		0,	NULL),st_Effect,sg_SourceType);
 	::Sound->create						(sounds[eInvMagLoad],		uiXml.Read("snd_mag_load",		0,	NULL),st_Effect,sg_SourceType);
 	::Sound->create						(sounds[eInvMagUnload],		uiXml.Read("snd_mag_unload",	0,	NULL),st_Effect,sg_SourceType);
 

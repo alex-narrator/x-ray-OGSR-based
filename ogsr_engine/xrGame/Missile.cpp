@@ -15,6 +15,7 @@
 #include "characterphysicssupport.h"
 #include "inventory.h"
 #include "..\xr_3da\IGame_Persistent.h"
+#include "ai_sounds.h"
 #ifdef DEBUG
 #	include "phdebug.h"
 #endif
@@ -40,22 +41,20 @@ void create_force_progress()
 }
 
 
-CMissile::CMissile(void)
-{
-	m_dwStateTime = 0;
-	m_throwMotionMarksAvailable = false;
+CMissile::CMissile(void){
 }
 
-CMissile::~CMissile(void) 
-{
+CMissile::~CMissile(void) {
 	HUD_SOUND::DestroySound(sndPlaying);
+	HUD_SOUND::DestroySound(sndShow);
+	HUD_SOUND::DestroySound(sndHide);
 }
 
 void CMissile::reinit		()
 {
 	inherited::reinit	();
 	m_throw				= false;
-	m_constpower = false;
+	m_constpower		= false;
 	m_fThrowForce		= 0;
 	m_dwDestroyTime		= 0xffffffff;
 	SetPending			(FALSE);
@@ -81,6 +80,12 @@ void CMissile::Load(LPCSTR section)
 
 	if (pSettings->line_exist(section,"snd_playing"))
 		HUD_SOUND::LoadSound(section,"snd_playing",sndPlaying);
+	if (pSettings->line_exist(section, "snd_draw")) {
+		HUD_SOUND::LoadSound(section, "snd_draw", sndShow, SOUND_TYPE_ITEM_TAKING);
+	}
+	if (pSettings->line_exist(section, "snd_holster")) {
+		HUD_SOUND::LoadSound(section, "snd_holster", sndHide, SOUND_TYPE_ITEM_HIDING);
+	}
 
 	m_ef_weapon_type	= READ_IF_EXISTS(pSettings,r_u32,section,"ef_weapon_type",u32(-1));
 }
@@ -244,6 +249,7 @@ void CMissile::State(u32 state, u32 oldState)
 	{
 		SetPending(TRUE);
 		PlayHUDMotion({ "anim_show", "anm_show" }, false, GetState(), false);
+		HUD_SOUND::PlaySound(sndShow, Fvector{}, H_Parent(), true, false);
 	}
 	break;
 	case eIdle:
@@ -260,6 +266,7 @@ void CMissile::State(u32 state, u32 oldState)
 			{
 				SetPending(TRUE);
 				PlayHUDMotion({ "anim_hide", "anm_hide" }, true, GetState(), false);
+				HUD_SOUND::PlaySound(sndHide, Fvector{}, H_Parent(), true, false);
 			}
 		}
 	}

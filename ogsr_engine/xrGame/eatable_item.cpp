@@ -59,6 +59,9 @@ void CEatableItem::Load(LPCSTR section)
 	m_fSelfRadiationInfluence	= READ_IF_EXISTS(pSettings, r_float, section, "eat_radiation_self", 0.1f);
 
 	m_sUseMenuTip				= READ_IF_EXISTS(pSettings, r_string, section, "menu_use_tip", "st_use");
+	
+	if (pSettings->line_exist(section, "use_sound"))
+		sndUse.create(pSettings->r_string(section, "use_sound"), st_Effect, sg_SourceType);
 }
 
 BOOL CEatableItem::net_Spawn				(CSE_Abstract* DC)
@@ -125,6 +128,12 @@ void CEatableItem::UseBy (CEntityAlive* entity_alive)
 		ApplyInfluence(ItemInfluence(i), entity_alive, GetItemInfluence(ItemInfluence(i)));
 	}
 	
+	if (pSettings->line_exist(object().cNameSect(), "use_sound")) {
+		if (sndUse._feedback())
+			sndUse.stop();
+		sndUse.play_at_pos(entity_alive, entity_alive->Position(), false);
+	}
+
 	//уменьшить количество порций
 	if(m_iPortionsNum > 0)
 		--(m_iPortionsNum);

@@ -17,8 +17,9 @@
 #include "actor.h"
 #include "patrol_path_storage.h"
 #include "hudmanager.h"
+#include "ai_sounds.h"
 
-#define	FASTMODE_DISTANCE (50.f)	//distance to camera from sphere, when zone switches to fast update sequence
+constexpr auto FASTMODE_DISTANCE = 50.f;	//distance to camera from sphere, when zone switches to fast update sequence;
 
 #define CHOOSE_MAX(x,inst_x,y,inst_y,z,inst_z)\
 	if(x>y)\
@@ -33,7 +34,7 @@ struct SArtefactActivation{
 	struct SStateDef{
 		float		m_time;
 		shared_str	m_snd;
-		Fcolor		m_light_color;
+		Fcolor		m_light_color{};
 		float		m_light_range{};
 		shared_str	m_particle;
 		shared_str	m_animation;
@@ -64,15 +65,15 @@ struct SArtefactActivation{
 };
 
 
-CArtefact::CArtefact() 
-{
+CArtefact::CArtefact() {
 	shedule.t_min				= 20;
 	shedule.t_max				= 50;
-	m_sParticlesName			= nullptr;
-	m_pTrailLight				= nullptr;
-	m_activationObj				= nullptr;
+}
 
-	m_fRandomK					= 1.f;
+CArtefact::~CArtefact(){
+	HUD_SOUND::DestroySound(sndShow);
+	HUD_SOUND::DestroySound(sndHide);
+	HUD_SOUND::DestroySound(sndActivate);
 }
 
 
@@ -93,6 +94,16 @@ void CArtefact::Load(LPCSTR section)
 
 	m_bCanSpawnZone = !!pSettings->line_exist("artefact_spawn_zones", section);
 	m_af_rank = READ_IF_EXISTS(pSettings, r_u8, section, "af_rank", 0);
+
+	if (pSettings->line_exist(section, "snd_draw")) {
+		HUD_SOUND::LoadSound(section, "snd_draw", sndShow, SOUND_TYPE_ITEM_TAKING);
+	}
+	if (pSettings->line_exist(section, "snd_holster")) {
+		HUD_SOUND::LoadSound(section, "snd_holster", sndHide, SOUND_TYPE_ITEM_HIDING);
+	}
+	if (pSettings->line_exist(section, "snd_activate")) {
+		HUD_SOUND::LoadSound(section, "snd_activate", sndActivate, SOUND_TYPE_ITEM_USING);
+	}
 }
 
 BOOL CArtefact::net_Spawn(CSE_Abstract* DC) 
@@ -372,15 +383,19 @@ void CArtefact::OnStateSwitch(u32 S, u32 oldState)
 	case eShowing: 
 	{ 
 		PlayHUDMotion({ "anim_show", "anm_show" }, false, S);
+		HUD_SOUND::PlaySound(sndShow, Fvector{}, H_Parent(), true, false);
 	} break;
 	case eHiding:
 	{
-		if (oldState != eHiding)
+		if (oldState != eHiding) {
 			PlayHUDMotion({ "anim_hide", "anm_hide" }, false, S);
+			HUD_SOUND::PlaySound(sndHide, Fvector{}, H_Parent(), true, false);
+		}
 	} break;
 	case eActivating:
 	{
 		PlayHUDMotion({ "anim_activate", "anm_activate" }, false, S);
+		HUD_SOUND::PlaySound(sndActivate, Fvector{}, H_Parent(), true, false);
 	} break;
 	case eIdle:
 	{ 

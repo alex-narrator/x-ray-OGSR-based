@@ -47,6 +47,7 @@ protected:
 	u32						GetOnePortionCost	();
 
 	LPCSTR					m_sUseMenuTip{};
+	ref_sound				sndUse;
 
 public:
 	int						GetStartPortionsNum	() const { return m_iStartPortionsNum; };

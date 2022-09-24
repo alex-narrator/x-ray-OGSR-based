@@ -120,7 +120,6 @@ protected:
 		eInvProperties,
 		eInvDropItem,
 		eInvDetachAddon,
-		eInvItemUse,
 		eInvMagLoad,
 		eInvMagUnload,
 		eInvMoveItem,

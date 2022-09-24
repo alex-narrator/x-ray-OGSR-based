@@ -21,9 +21,9 @@
 void CUIInventoryWnd::EatItem(PIItem itm)
 {
 	SetCurrentItem		(nullptr);
+	m_b_need_reinit		= true;
 	if(!itm->Useful())	return;
 	GetInventory()->Eat	(itm);
-	PlaySnd				(eInvItemUse);
 }
 
 void CUIInventoryWnd::ActivatePropertiesBox()
@@ -246,31 +246,29 @@ void CUIInventoryWnd::ProcessPropertiesBoxClicked	()
 	{
 		switch(UIPropertiesBox.GetClickedItem()->GetTAG())
 		{
-
-                case INVENTORY_TO_SLOT_ACTION: {
-                  auto item  = CurrentIItem();
-				  // Явно указали слот в меню
-				  void* d = UIPropertiesBox.GetClickedItem()->GetData();
-				  if (d) {
-					  auto slot = (u8)(__int64)d;
-					  item->SetSlot(slot);
-					  if (ToSlot(CurrentItem(), true))
-						  return;
-				  }
-				  // Пытаемся найти свободный слот из списка разрешенных.
-				  // Если его нету, то принудительно займет первый слот,
-				  // указанный в списке.
-                  auto slots = item->GetSlots();
-                  for ( u8 i = 0; i < (u8)slots.size(); ++i ) {
-                    item->SetSlot( slots[ i ] );
-                    if ( ToSlot( CurrentItem(), false ) )
-                      return;
-                  }
-                  item->SetSlot( slots.size() ? slots[ 0 ]: NO_ACTIVE_SLOT );
-                  ToSlot( CurrentItem(), true );
-                  break;
-                }
-
+		case INVENTORY_TO_SLOT_ACTION: 
+			{
+				auto item  = CurrentIItem();
+				// Явно указали слот в меню
+				void* d = UIPropertiesBox.GetClickedItem()->GetData();
+				if (d) {
+				auto slot = (u8)(__int64)d;
+				item->SetSlot(slot);
+				if (ToSlot(CurrentItem(), true))
+					return;
+				}
+				// Пытаемся найти свободный слот из списка разрешенных.
+				// Если его нету, то принудительно займет первый слот,
+				// указанный в списке.
+				auto slots = item->GetSlots();
+				for ( u8 i = 0; i < (u8)slots.size(); ++i ) {
+					item->SetSlot( slots[ i ] );
+				if ( ToSlot( CurrentItem(), false ) )
+					return;
+				}
+		        item->SetSlot( slots.size() ? slots[ 0 ]: NO_ACTIVE_SLOT );
+		        ToSlot( CurrentItem(), true );
+	        }break;
 		case INVENTORY_TO_BELT_ACTION:	
 			ToBelt(CurrentItem(),false);
 			break;

@@ -2270,8 +2270,7 @@ int	CWeapon::GetScopeX()
 	int res = pSettings->r_s32(cNameSect(), "scope_x");
 
 	string1024 scope_sect_x;
-	const char* scope_sect = m_scopes[m_cur_scope].c_str();
-	strconcat(sizeof(scope_sect_x), scope_sect_x, scope_sect, "_x");
+	sprintf(scope_sect_x, "%s_x", m_scopes[m_cur_scope].c_str());
 
 	if (pSettings->line_exist(cNameSect(), scope_sect_x))
 		res = pSettings->r_s32(cNameSect(), scope_sect_x);
@@ -2283,8 +2282,7 @@ int	CWeapon::GetScopeY()
 	int res = pSettings->r_s32(cNameSect(), "scope_y");
 
 	string1024 scope_sect_y;
-	const char* scope_sect = m_scopes[m_cur_scope].c_str();
-	strconcat(sizeof(scope_sect_y), scope_sect_y, scope_sect, "_y");
+	sprintf(scope_sect_y, "%s_y", m_scopes[m_cur_scope].c_str());
 
 	if (pSettings->line_exist(cNameSect(), scope_sect_y))
 		res = pSettings->r_s32(cNameSect(), scope_sect_y);
@@ -2297,8 +2295,7 @@ int	CWeapon::GetSilencerX()
 	int res = pSettings->r_s32(cNameSect(), "silencer_x");
 
 	string1024 silencer_sect_x;
-	const char* silencer_sect = m_silencers[m_cur_silencer].c_str();
-	strconcat(sizeof(silencer_sect_x), silencer_sect_x, silencer_sect, "_x");
+	sprintf(silencer_sect_x, "%s_x", m_silencers[m_cur_silencer].c_str());
 
 	if (pSettings->line_exist(cNameSect(), silencer_sect_x))
 		res = pSettings->r_s32(cNameSect(), silencer_sect_x);
@@ -2310,8 +2307,7 @@ int	CWeapon::GetSilencerY()
 	int res = pSettings->r_s32(cNameSect(), "silencer_y");
 
 	string1024 silencer_sect_y;
-	const char* silencer_sect = m_silencers[m_cur_silencer].c_str();
-	strconcat(sizeof(silencer_sect_y), silencer_sect_y, silencer_sect, "_y");
+	sprintf(silencer_sect_y, "%s_y", m_silencers[m_cur_silencer].c_str());
 
 	if (pSettings->line_exist(cNameSect(), silencer_sect_y))
 		res = pSettings->r_s32(cNameSect(), silencer_sect_y);
@@ -2324,8 +2320,7 @@ int	CWeapon::GetGrenadeLauncherX()
 	int res = pSettings->r_s32(cNameSect(), "grenade_launcher_x");
 
 	string1024 glauncher_sect_x;
-	const char* glauncher_sect = m_glaunchers[m_cur_glauncher].c_str();
-	strconcat(sizeof(glauncher_sect_x), glauncher_sect_x, glauncher_sect, "_x");
+	sprintf(glauncher_sect_x, "%s_x", m_glaunchers[m_cur_glauncher].c_str());
 
 	if (pSettings->line_exist(cNameSect(), glauncher_sect_x))
 		res = pSettings->r_s32(cNameSect(), glauncher_sect_x);
@@ -2337,8 +2332,7 @@ int	CWeapon::GetGrenadeLauncherY()
 	int res = pSettings->r_s32(cNameSect(), "grenade_launcher_y");
 
 	string1024 glauncher_sect_y;
-	const char* glauncher_sect = m_glaunchers[m_cur_glauncher].c_str();
-	strconcat(sizeof(glauncher_sect_y), glauncher_sect_y, glauncher_sect, "_y");
+	sprintf(glauncher_sect_y, "%s_y", m_glaunchers[m_cur_glauncher].c_str());
 
 	if (pSettings->line_exist(cNameSect(), glauncher_sect_y))
 		res = pSettings->r_s32(cNameSect(), glauncher_sect_y);
@@ -2351,8 +2345,7 @@ int	CWeapon::GetLaserX()
 	int res = pSettings->r_s32(cNameSect(), "laser_x");
 
 	string1024 laser_sect_x;
-	const char* laser_sect = m_lasers[m_cur_laser].c_str();
-	strconcat(sizeof(laser_sect_x), laser_sect_x, laser_sect, "_x");
+	sprintf(laser_sect_x, "%s_x", m_lasers[m_cur_laser].c_str());
 
 	if (pSettings->line_exist(cNameSect(), laser_sect_x))
 		res = pSettings->r_s32(cNameSect(), laser_sect_x);
@@ -2364,8 +2357,7 @@ int	CWeapon::GetLaserY()
 	int res = pSettings->r_s32(cNameSect(), "laser_y");
 
 	string1024 laser_sect_y;
-	const char* laser_sect = m_lasers[m_cur_laser].c_str();
-	strconcat(sizeof(laser_sect_y), laser_sect_y, laser_sect, "_y");
+	sprintf(laser_sect_y, "%s_x", m_lasers[m_cur_laser].c_str());
 
 	if (pSettings->line_exist(cNameSect(), laser_sect_y))
 		res = pSettings->r_s32(cNameSect(), laser_sect_y);
@@ -2378,8 +2370,7 @@ int	CWeapon::GetFlashlightX()
 	int res = pSettings->r_s32(cNameSect(), "flashlight_x");
 
 	string1024 flashlight_sect_x;
-	const char* flashlight_sect = m_flashlights[m_cur_flashlight].c_str();
-	strconcat(sizeof(flashlight_sect_x), flashlight_sect_x, flashlight_sect, "_x");
+	sprintf(flashlight_sect_x, "%s_x", m_flashlights[m_cur_flashlight].c_str());
 
 	if (pSettings->line_exist(cNameSect(), flashlight_sect_x))
 		res = pSettings->r_s32(cNameSect(), flashlight_sect_x);
@@ -2391,8 +2382,7 @@ int	CWeapon::GetFlashlightY()
 	int res = pSettings->r_s32(cNameSect(), "flashlight_y");
 
 	string1024 flashlight_sect_y;
-	const char* flashlight_sect = m_flashlights[m_cur_flashlight].c_str();
-	strconcat(sizeof(flashlight_sect_y), flashlight_sect_y, flashlight_sect, "_y");
+	sprintf(flashlight_sect_y, "%s_y", m_flashlights[m_cur_flashlight].c_str());
 
 	if (pSettings->line_exist(cNameSect(), flashlight_sect_y))
 		res = pSettings->r_s32(cNameSect(), flashlight_sect_y);

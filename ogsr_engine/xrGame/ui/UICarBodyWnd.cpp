@@ -171,7 +171,6 @@ void CUICarBodyWnd::Init()
 		::Sound->create		(sounds[eInvProperties],	uiXml.Read("snd_properties",	0, NULL), st_Effect, sg_SourceType);
 		::Sound->create		(sounds[eInvDropItem],		uiXml.Read("snd_drop_item",		0, NULL), st_Effect, sg_SourceType);
 		::Sound->create		(sounds[eInvDetachAddon],	uiXml.Read("snd_detach_addon",	0, NULL), st_Effect, sg_SourceType);
-		::Sound->create		(sounds[eInvItemUse],		uiXml.Read("snd_item_use",		0, NULL), st_Effect, sg_SourceType);
 		::Sound->create		(sounds[eInvMagLoad],		uiXml.Read("snd_mag_load",		0, NULL), st_Effect, sg_SourceType);
 		::Sound->create		(sounds[eInvMagUnload],		uiXml.Read("snd_mag_unload",	0, NULL), st_Effect, sg_SourceType);
 		::Sound->create		(sounds[eInvMoveItem],		uiXml.Read("snd_move_item",		0, NULL), st_Effect, sg_SourceType);
@@ -863,11 +862,7 @@ void CUICarBodyWnd::EatItem()
 {
 	CActor *pActor				= smart_cast<CActor*>(Level().CurrentEntity());
 	if(!pActor)					return;
-
 	m_pActorInventoryOwner->inventory().Eat(CurrentIItem(), m_pActorInventoryOwner);
-
-	PlaySnd(eInvItemUse);
-
 	SetCurrentItem(NULL);
 }
 

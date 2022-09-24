@@ -637,7 +637,6 @@ bool CInventory::Action(s32 cmd, u32 flags)
 	case kWPN_4:
 	case kWPN_5:
 	case kWPN_6:
-	case kWPN_7:
        {
 			if(flags&CMD_START)
 			{
@@ -647,6 +646,18 @@ bool CInventory::Action(s32 cmd, u32 flags)
 					b_send_event = Activate(cmd - kWPN_1, eKeyAction);
 			}
 		}break;
+	case kWPN_7:
+	{
+		if (flags & CMD_START)
+		{
+			if ((int)m_iActiveSlot == ARTEFACT_SLOT &&
+				m_slots[m_iActiveSlot].m_pIItem){
+				b_send_event = Activate(NO_ACTIVE_SLOT);
+			}else {
+				b_send_event = Activate(ARTEFACT_SLOT, eKeyAction);
+			}
+		}
+	}break;
 	case kUSE_QUICK_SLOT_0:
 	case kUSE_QUICK_SLOT_1:
 	case kUSE_QUICK_SLOT_2:

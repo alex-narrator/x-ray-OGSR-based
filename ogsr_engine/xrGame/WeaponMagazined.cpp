@@ -156,10 +156,8 @@ BOOL CWeaponMagazined::net_Spawn(CSE_Abstract* DC)
 	//
 	if (HasDetachableMagazine() && IsMagazineAttached())
 	{
-		int chamber_ammo = HasChamber() ? 1 : 0;	//учтём дополнительный патрон в патроннике
-		shared_str ammoSect = m_ammoTypes[m_ammoType];
-		int mag_size = AmmoTypeIsMagazine(m_ammoType) ? (int)pSettings->r_s32(ammoSect, "box_size") : 0;
-		iMagazineSize = mag_size + chamber_ammo;
+		int mag_size = AmmoTypeIsMagazine(m_ammoType) ? (int)pSettings->r_s32(m_ammoTypes[m_ammoType], "box_size") : 0;
+		iMagazineSize = mag_size + HasChamber(); //учтём дополнительный патрон в патроннике
 	}
 	//
 	return bRes;
@@ -173,7 +171,7 @@ void CWeaponMagazined::Load	(LPCSTR section)
 	HUD_SOUND::LoadSound(section,"snd_draw"		, sndShow		, m_eSoundShow		);
 	HUD_SOUND::LoadSound(section,"snd_holster"	, sndHide		, m_eSoundHide		);
 	HUD_SOUND::LoadSound(section,"snd_shoot"	, sndShot		, m_eSoundShot		);
-	HUD_SOUND::LoadSound(section,"snd_empty"	, sndEmptyClick	, m_eSoundEmptyClick	);
+	HUD_SOUND::LoadSound(section,"snd_empty"	, sndEmptyClick	, m_eSoundEmptyClick);
 
 	if (pSettings->line_exist(section, "snd_reload_empty"))
 		HUD_SOUND::LoadSound(section, "snd_reload_empty", sndReload, m_eSoundReload);
@@ -359,12 +357,8 @@ void CWeaponMagazined::OnMagazineEmpty()
 	inherited::OnMagazineEmpty();
 }
 
-void CWeaponMagazined::UnloadMagazine(bool spawn_ammo)
-{
-	//if (unlimited_ammo()) return;
-
-	int chamber_ammo = HasChamber() ? 1 : 0;	//учтём дополнительный патрон в патроннике
-	UnloadAmmo(iAmmoElapsed - chamber_ammo, spawn_ammo, !!GetMagazineEmptySect());
+void CWeaponMagazined::UnloadMagazine(bool spawn_ammo){
+	UnloadAmmo(iAmmoElapsed - HasChamber(), spawn_ammo, !!GetMagazineEmptySect());
 }
 
 void CWeaponMagazined::ReloadMagazine()
@@ -430,11 +424,9 @@ void CWeaponMagazined::ReloadMagazine()
 	if (HasDetachableMagazine() && !unlimited_ammo())
 	{
 		bool b_attaching_magazine = AmmoTypeIsMagazine(m_ammoType);
-
-		int chamber_ammo = HasChamber() ? 1 : 0;	//учтём дополнительный патрон в патроннике
 		int mag_size = b_attaching_magazine ? m_pAmmo->m_boxSize : 0;
 
-		iMagazineSize = mag_size + chamber_ammo;
+		iMagazineSize = mag_size + HasChamber();
 		m_LastLoadedMagType = b_attaching_magazine ? m_ammoType : 0;
 		m_bIsMagazineAttached = b_attaching_magazine;
 	}
@@ -1773,9 +1765,7 @@ void CWeaponMagazined::UnloadAmmo(int unload_count, bool spawn_ammo, bool detach
 {
 	if (detach_magazine && !unlimited_ammo())
 	{
-		int chamber_ammo = HasChamber() ? 1 : 0;	//учтём дополнительный патрон в патроннике
-
-		if (iAmmoElapsed <= chamber_ammo && spawn_ammo)	//spawn mag empty
+		if (iAmmoElapsed <= (int)HasChamber() && spawn_ammo)	//spawn mag empty
 			SpawnAmmo(0, GetMagazineEmptySect());
 
 		iMagazineSize = 1;
@@ -2160,8 +2150,7 @@ LPCSTR	CWeaponMagazined::GetCurrentMagazine_ShortName()
 {
 	if (!IsMagazineAttached()) return ("");
 	LPCSTR mag_short_name = pSettings->r_string(m_ammoTypes[m_LastLoadedMagType], "inv_name_short");
-	int chamber_ammo = HasChamber() ? 1 : 0;	//учтём дополнительный патрон в патроннике
-	if (iAmmoElapsed <= chamber_ammo)
+	if (iAmmoElapsed <= (int)HasChamber())
 		mag_short_name = pSettings->r_string(GetMagazineEmptySect(), "inv_name_short");
 	return CStringTable().translate(mag_short_name).c_str();
 }
