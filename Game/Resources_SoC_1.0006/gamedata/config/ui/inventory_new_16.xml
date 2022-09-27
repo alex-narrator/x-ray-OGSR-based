@@ -94,6 +94,39 @@
             cell_width = "30" cell_height="30" rows_num="2" cols_num="4"
             custom_placement="0"/>
 
+	<knife_key_static x="0" y="0" width="0" height="0">
+		<text x="0" y="0" font="letterica16" r="231" g="153" b="22">ui_use_slot_0</text>
+	</knife_key_static>
+	<shoulder_key_static x="0" y="0" width="0" height="0">
+		<text x="0" y="0" font="letterica16" r="231" g="153" b="22">ui_use_slot_1</text>
+	</shoulder_key_static>
+	<back_key_static x="0" y="0" width="0" height="0">
+		<text x="0" y="0" font="letterica16" r="231" g="153" b="22">ui_use_slot_2</text>
+	</back_key_static>
+	<grenade_key_static x="0" y="0" width="0" height="0">
+		<text x="0" y="0" font="letterica16" r="231" g="153" b="22">ui_use_slot_3</text>
+	</grenade_key_static>	
+	<holster_key_static x="0" y="0" width="0" height="0">
+		<text x="0" y="0" font="letterica16" r="231" g="153" b="22">ui_use_slot_4</text>
+	</holster_key_static>
+	<artefact_key_static x="0" y="0" width="0" height="0">
+		<text x="0" y="0" font="letterica16" r="231" g="153" b="22">ui_use_slot_10</text>
+	</artefact_key_static>
+	<detector_key_static x="0" y="0" width="0" height="0">
+		<text x="0" y="0" font="letterica16" r="231" g="153" b="22">ui_use_slot_11</text>
+	</detector_key_static>
+	<quickslot_0_key_static x="0" y="0" width="0" height="0">
+		<text x="0" y="0" font="letterica16" r="231" g="153" b="22">ui_use_slot_12</text>
+	</quickslot_0_key_static>	
+	<quickslot_1_key_static x="0" y="0" width="0" height="0">
+		<text x="0" y="0" font="letterica16" r="231" g="153" b="22">ui_use_slot_13</text>
+	</quickslot_1_key_static>
+	<quickslot_2_key_static x="0" y="0" width="0" height="0">
+		<text x="0" y="0" font="letterica16" r="231" g="153" b="22">ui_use_slot_14</text>
+	</quickslot_2_key_static>
+	<quickslot_3_key_static x="0" y="0" width="0" height="0">
+		<text x="0" y="0" font="letterica16" r="231" g="153" b="22">ui_use_slot_15</text>
+	</quickslot_3_key_static>		
 
 	<bottom_static x="0" y="736" width="1024" height="32" stretch="1">
 		<texture>ui\ui_bottom_background</texture>
@@ -327,8 +360,8 @@
 		<snd_attach_addon>interface\inv_attach_addon</snd_attach_addon>
 		<snd_detach_addon>interface\inv_detach_addon</snd_detach_addon>
 		<snd_item_use>interface\inv_slot</snd_item_use>
-		<snd_mag_load>interface\inv_properties</snd_mag_load>
-		<snd_mag_unload>interface\inv_properties</snd_mag_unload>
+		<snd_mag_load>interface\wm_load</snd_mag_load>
+		<snd_mag_unload>interface\wm_load</snd_mag_unload>
 	</action_sounds>
 	
 	<condition_progess_bar x="3" y="1" width="29" height="4" horz="1" min="0" max="100" pos="1">

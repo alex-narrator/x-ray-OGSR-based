@@ -211,8 +211,8 @@ public:
 
 	virtual float		GetArtefactsProtection	(float, ALife::EHitType);
 
-	virtual void		UpdateArtefactPanel		();
-	virtual void		UpdateQuickSlotPanel	();
+	virtual void		UpdateArtefactPanel	();
+	virtual void		UpdateQuickSlotPanel();
 protected:
 	//звук тяжелого дыхания
 	ref_sound			m_HeavyBreathSnd;

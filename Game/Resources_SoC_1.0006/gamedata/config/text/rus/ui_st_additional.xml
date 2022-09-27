@@ -59,6 +59,40 @@
 	<string id="ui_quick_slot_use_str_3">
 		<text>[$$ACTION_USE_QUICK_SLOT_3$$]</text>
 	</string>
+
+	<string id="ui_use_slot_0">
+		<text>[$$ACTION_WPN_1$$]</text>
+	</string>
+	<string id="ui_use_slot_1">
+		<text>[$$ACTION_WPN_2$$]</text>
+	</string>
+	<string id="ui_use_slot_2">
+		<text>[$$ACTION_WPN_3$$]</text>
+	</string>
+	<string id="ui_use_slot_3">
+		<text>[$$ACTION_WPN_4$$]</text>
+	</string>
+	<string id="ui_use_slot_4">
+		<text>[$$ACTION_WPN_5$$]</text>
+	</string>	
+	<string id="ui_use_slot_10">
+		<text>[$$ACTION_WPN_7$$]</text>
+	</string>
+	<string id="ui_use_slot_11">
+		<text>[$$ACTION_WPN_8$$]</text>
+	</string>
+	<string id="ui_use_slot_12">
+		<text>[$$ACTION_USE_QUICK_SLOT_0$$]</text>
+	</string>
+	<string id="ui_use_slot_13">
+		<text>[$$ACTION_USE_QUICK_SLOT_1$$]</text>
+	</string>
+	<string id="ui_use_slot_14">
+		<text>[$$ACTION_USE_QUICK_SLOT_2$$]</text>
+	</string>	
+	<string id="ui_use_slot_15">
+		<text>[$$ACTION_USE_QUICK_SLOT_3$$]</text>
+	</string>
 	
 	<string id="kb_kick">
 		<text>Пинок</text>

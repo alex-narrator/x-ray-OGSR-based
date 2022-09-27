@@ -40,15 +40,15 @@ void CEatableItem::Load(LPCSTR section)
 {
 	inherited::Load(section);
 
-	m_ItemInfluence[eHealthInfluence]		= READ_IF_EXISTS	(pSettings,r_float,section,"eat_health",		0.0f);//pSettings->r_float(section, "eat_health");
-	m_ItemInfluence[ePowerInfluence]		= READ_IF_EXISTS	(pSettings,r_float,section,"eat_power",			0.0f);//pSettings->r_float(section, "eat_power");
+	m_ItemInfluence[eHealthInfluence]		= READ_IF_EXISTS	(pSettings,r_float,section,"eat_health",		0.0f);
+	m_ItemInfluence[ePowerInfluence]		= READ_IF_EXISTS	(pSettings,r_float,section,"eat_power",			0.0f);
 	m_ItemInfluence[eMaxPowerInfluence]		= READ_IF_EXISTS	(pSettings,r_float,section,"eat_max_power",		0.0f);
-	m_ItemInfluence[eSatietyInfluence]		= READ_IF_EXISTS	(pSettings,r_float,section,"eat_satiety",		0.0f);//pSettings->r_float(section, "eat_satiety");
-	m_ItemInfluence[eRadiationInfluence]	= READ_IF_EXISTS	(pSettings,r_float,section,"eat_radiation",		0.0f);//pSettings->r_float(section, "eat_radiation");
+	m_ItemInfluence[eSatietyInfluence]		= READ_IF_EXISTS	(pSettings,r_float,section,"eat_satiety",		0.0f);
+	m_ItemInfluence[eRadiationInfluence]	= READ_IF_EXISTS	(pSettings,r_float,section,"eat_radiation",		0.0f);
 	m_ItemInfluence[ePsyHealthInfluence]	= READ_IF_EXISTS	(pSettings,r_float,section,"eat_psyhealth",		0.0f);
 	m_ItemInfluence[eAlcoholInfluence]		= READ_IF_EXISTS	(pSettings,r_float,section,"eat_alcohol",		0.0f);
 	m_ItemInfluence[eThirstInfluence]		= READ_IF_EXISTS	(pSettings,r_float,section,"eat_thirst",		0.0f);
-	m_ItemInfluence[eWoundsHealPerc]		= READ_IF_EXISTS	(pSettings,r_float,section,"wounds_heal_perc",	0.0f);//pSettings->r_float(section, "wounds_heal_perc");
+	m_ItemInfluence[eWoundsHealPerc]		= READ_IF_EXISTS	(pSettings,r_float,section,"wounds_heal_perc",	0.0f);
 	clamp						(m_ItemInfluence[eWoundsHealPerc], 0.f, 1.f);
 	
 	m_iStartPortionsNum			= READ_IF_EXISTS	(pSettings, r_s32, section, "eat_portions_num", 1);

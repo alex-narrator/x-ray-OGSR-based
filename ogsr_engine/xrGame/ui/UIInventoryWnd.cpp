@@ -228,6 +228,51 @@ void CUIInventoryWnd::Init()
 	m_slots_array[QUICK_SLOT_2]			= m_pUIQuickList_2;
 	m_slots_array[QUICK_SLOT_3]			= m_pUIQuickList_3;
 
+	//slot keys statisc
+	m_pKnifeKey = xr_new<CUIStatic>();
+	m_pUIKnifeList->AttachChild			(m_pKnifeKey);
+	xml_init.InitStatic					(uiXml, "knife_key_static", 0, m_pKnifeKey);
+
+	m_pOnShoulderKey = xr_new<CUIStatic>();
+	m_pUIOnShoulderList->AttachChild	(m_pOnShoulderKey);
+	xml_init.InitStatic					(uiXml, "shoulder_key_static", 0, m_pOnShoulderKey);
+
+	m_pOnBackKey = xr_new<CUIStatic>();
+	m_pUIOnBackList->AttachChild		(m_pOnBackKey);
+	xml_init.InitStatic					(uiXml, "back_key_static", 0, m_pOnBackKey);
+
+	m_pHolsterKey = xr_new<CUIStatic>();
+	m_pUIHolsterList->AttachChild		(m_pHolsterKey);
+	xml_init.InitStatic					(uiXml, "holster_key_static", 0, m_pHolsterKey);
+
+	m_pGrenadeKey = xr_new<CUIStatic>();
+	m_pUIGrenadeList->AttachChild		(m_pGrenadeKey);
+	xml_init.InitStatic					(uiXml, "grenade_key_static", 0, m_pGrenadeKey);
+
+	m_pArtefactKey = xr_new<CUIStatic>();
+	m_pUIArtefactList->AttachChild		(m_pArtefactKey);
+	xml_init.InitStatic					(uiXml, "artefact_key_static", 0, m_pArtefactKey);
+
+	m_pDetectorKey = xr_new<CUIStatic>();
+	m_pUIDetectorList->AttachChild		(m_pDetectorKey);
+	xml_init.InitStatic					(uiXml, "detector_key_static", 0, m_pDetectorKey);
+
+	m_pQuick_0_Key = xr_new<CUIStatic>();
+	m_pUIQuickList_0->AttachChild		(m_pQuick_0_Key);
+	xml_init.InitStatic					(uiXml, "quickslot_0_key_static", 0, m_pQuick_0_Key);
+
+	m_pQuick_1_Key = xr_new<CUIStatic>();
+	m_pUIQuickList_1->AttachChild		(m_pQuick_1_Key);
+	xml_init.InitStatic					(uiXml, "quickslot_1_key_static", 0, m_pQuick_1_Key);
+	
+	m_pQuick_2_Key = xr_new<CUIStatic>();
+	m_pUIQuickList_2->AttachChild		(m_pQuick_2_Key);
+	xml_init.InitStatic					(uiXml, "quickslot_2_key_static", 0, m_pQuick_2_Key);
+
+	m_pQuick_3_Key = xr_new<CUIStatic>();
+	m_pUIQuickList_3->AttachChild		(m_pQuick_3_Key);
+	xml_init.InitStatic					(uiXml, "quickslot_3_key_static", 0, m_pQuick_3_Key);
+
 	//pop-up menu
 	AttachChild							(&UIPropertiesBox);
 	UIPropertiesBox.Init				(0,0,300,300);
@@ -379,7 +424,8 @@ void CUIInventoryWnd::Update()
 		CheckForcedWeightVolumeUpdate();
 	}
 
-	UIStaticTimeString.SetText(*InventoryUtilities::GetGameTimeAsString(InventoryUtilities::etpTimeToMinutes));
+	auto time_curr_string = Actor()->HasPDAWorkable() ? InventoryUtilities::GetGameTimeAsString(InventoryUtilities::etpTimeToMinutes).c_str() : "";
+	UIStaticTimeString.SetText(time_curr_string);
 
 	CUIWindow::Update					();
 }

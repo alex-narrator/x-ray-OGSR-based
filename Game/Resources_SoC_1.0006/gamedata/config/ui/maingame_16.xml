@@ -110,5 +110,9 @@
 
 	<artefact_panel x="130" y="710" width="730" height="50" cell_width="38" cell_height="50" scale="0.75"/>
 	
+	<slot_panel x="130" y="610" width="730" height="50" cell_width="38" cell_height="50" scale="0.75">
+		<text complex_mode="0" x="45" y="0" font="graffiti50" r="255" g="255" b="255" a="130"/>
+	</slot_panel>
+	
 	<new_contact_snd>detectors\contact_1</new_contact_snd>	
 </w>

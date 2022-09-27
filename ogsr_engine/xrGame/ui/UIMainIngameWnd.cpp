@@ -52,8 +52,8 @@
 
 using namespace InventoryUtilities;
 
-#define DEFAULT_MAP_SCALE 1.f
-#define MAININGAME_XML "maingame.xml"
+constexpr auto DEFAULT_MAP_SCALE = 1.f;
+constexpr auto MAININGAME_XML = "maingame.xml";
 
 
 static CUIMainIngameWnd* GetMainIngameWindow()
@@ -507,8 +507,8 @@ void CUIMainIngameWnd::Update()
 	UpdatePickUpItem				();
 
 	bool show_panels = IsHUDElementAllowed(eGear);
-	m_quickSlotPanel->Show(show_panels);
-	m_artefactPanel->Show(show_panels); //отрисовка панели артефактов
+	m_quickSlotPanel->Show	(show_panels);
+	m_artefactPanel->Show	(show_panels); //отрисовка панели артефактов
 
 	UpdateFlashingIcons(); //обновляем состояние мигающих иконок
 
@@ -1083,7 +1083,9 @@ void CUIQuickSlotPanel::DrawItemInSlot(const PIItem itm, CUIStatic* m_QuickSlot_
 {
 	PIItem iitm = itm;
 
-	m_QuickSlot_Icon->SetShader(InventoryUtilities::GetEquipmentIconsShader());
+	m_QuickSlot_Icon->SetShader(GetEquipmentIconsShader());
+	CIconParams icon_params = iitm->m_icon_params;
+	icon_params.set_shader(m_QuickSlot_Icon);
 
 	int iGridWidth = iitm->GetGridWidth();
 	int iGridHeight = iitm->GetGridHeight();
@@ -1117,93 +1119,91 @@ void CUIQuickSlotPanel::Update()
 
 	if (!pActor) return;
 
+	string16	slot_use{};
 	string32	str;
 	shared_str itm_name;
 	u32 count;
 	bool SearchRuck = !psActorFlags.test(AF_QUICK_FROM_BELT);
 
-	auto itm = pActor->inventory().m_slots[QUICK_SLOT_0].m_pIItem;
+	u8 slot = QUICK_SLOT_0;
+	sprintf_s(slot_use, "ui_use_slot_%d", slot);
+	auto itm = pActor->inventory().m_slots[slot].m_pIItem;
 
-	if (itm)
-	{
-		sprintf_s(str, "%s", *CStringTable().translate("ui_quick_slot_use_str_0"));
+	if (itm){
+		sprintf_s(str, "%s", CStringTable().translate(slot_use).c_str());
 		m_UseQuickSlot_0_Text->SetText(str);
-		m_UseQuickSlot_0_Text->Show(/*true*/!itm->cast_weapon_ammo());
+		m_UseQuickSlot_0_Text->Show(itm->cast_eatable_item() || itm->cast_hud_item());
+
 		itm_name = itm->object().cNameSect();
 		count = pActor->inventory().GetSameItemCount(itm_name.c_str(), SearchRuck);
 		sprintf(str, "x%d", count);
 		m_CountItemQuickSlot_0_Text->SetText(str);
-		m_CountItemQuickSlot_0_Text->Show(true);
+		m_CountItemQuickSlot_0_Text->Show(SearchRuck);
 		DrawItemInSlot(itm, m_QuickSlot_0_Icon, m_QuickSlot_0_Icon_Size);
-	}
-	else
-	{
+	}else{
 		m_UseQuickSlot_0_Text->Show(false);
 		m_CountItemQuickSlot_0_Text->Show(false);
 		m_QuickSlot_0_Icon->Show(false);
 	}
 
-	itm = pActor->inventory().m_slots[QUICK_SLOT_1].m_pIItem;
+	slot = QUICK_SLOT_1;
+	sprintf_s(slot_use, "ui_use_slot_%d", slot);
+	itm = pActor->inventory().m_slots[slot].m_pIItem;
 
-	if (itm)
-	{
-		sprintf_s(str, "%s", *CStringTable().translate("ui_quick_slot_use_str_1"));
+	if (itm){
+		sprintf_s(str, "%s", CStringTable().translate(slot_use).c_str());
 		m_UseQuickSlot_1_Text->SetText(str);
-		m_UseQuickSlot_1_Text->Show(/*true*/!itm->cast_weapon_ammo());
+		m_UseQuickSlot_1_Text->Show(itm->cast_eatable_item() || itm->cast_hud_item());
 
 		itm_name = itm->object().cNameSect();
 		count = pActor->inventory().GetSameItemCount(itm_name.c_str(), SearchRuck);
 		sprintf(str, "x%d", count);
 		m_CountItemQuickSlot_1_Text->SetText(str);
-		m_CountItemQuickSlot_1_Text->Show(true);
+		m_CountItemQuickSlot_1_Text->Show(SearchRuck);
 		DrawItemInSlot(itm, m_QuickSlot_1_Icon, m_QuickSlot_1_Icon_Size);
-	}
-	else
-	{
+	}else{
 		m_UseQuickSlot_1_Text->Show(false);
 		m_CountItemQuickSlot_1_Text->Show(false);
 		m_QuickSlot_1_Icon->Show(false);
 	}
 
-	itm = pActor->inventory().m_slots[QUICK_SLOT_2].m_pIItem;
+	slot = QUICK_SLOT_2;
+	sprintf_s(slot_use, "ui_use_slot_%d", slot);
+	itm = pActor->inventory().m_slots[slot].m_pIItem;
 
-	if (itm)
-	{
-		sprintf_s(str, "%s", *CStringTable().translate("ui_quick_slot_use_str_2"));
+	if (itm){
+		sprintf_s(str, "%s", CStringTable().translate(slot_use).c_str());
 		m_UseQuickSlot_2_Text->SetText(str);
-		m_UseQuickSlot_2_Text->Show(/*true*/!itm->cast_weapon_ammo());
+		m_UseQuickSlot_2_Text->Show(itm->cast_eatable_item() || itm->cast_hud_item());
 
 		itm_name = itm->object().cNameSect();
 		count = pActor->inventory().GetSameItemCount(itm_name.c_str(), SearchRuck);
 		sprintf(str, "x%d", count);
 		m_CountItemQuickSlot_2_Text->SetText(str);
-		m_CountItemQuickSlot_2_Text->Show(true);
+		m_CountItemQuickSlot_2_Text->Show(SearchRuck);
 		DrawItemInSlot(itm, m_QuickSlot_2_Icon, m_QuickSlot_2_Icon_Size);
-	}
-	else
-	{
+	}else{
 		m_UseQuickSlot_2_Text->Show(false);
 		m_CountItemQuickSlot_2_Text->Show(false);
 		m_QuickSlot_2_Icon->Show(false);
 	}
 
-	itm = pActor->inventory().m_slots[QUICK_SLOT_3].m_pIItem;
+	slot = QUICK_SLOT_3;
+	sprintf_s(slot_use, "ui_use_slot_%d", slot);
+	itm = pActor->inventory().m_slots[slot].m_pIItem;
 
-	if (itm)
-	{
-		sprintf_s(str, "%s", *CStringTable().translate("ui_quick_slot_use_str_3"));
+	if (itm){
+		sprintf_s(str, "%s", CStringTable().translate(slot_use).c_str());
 		m_UseQuickSlot_3_Text->SetText(str);
-		m_UseQuickSlot_3_Text->Show(/*true*/!itm->cast_weapon_ammo());
+		m_UseQuickSlot_3_Text->Show(itm->cast_eatable_item() || itm->cast_hud_item());
 
 		itm_name = itm->object().cNameSect();
 		count = pActor->inventory().GetSameItemCount(itm_name.c_str(), SearchRuck);
 		sprintf(str, "x%d", count);
 		m_CountItemQuickSlot_3_Text->SetText(str);
-		m_CountItemQuickSlot_3_Text->Show(true);
+		m_CountItemQuickSlot_3_Text->Show(SearchRuck);
 		DrawItemInSlot(itm, m_QuickSlot_3_Icon, m_QuickSlot_3_Icon_Size);
-	}
-	else
-	{
+	}else{
 		m_UseQuickSlot_3_Text->Show(false);
 		m_CountItemQuickSlot_3_Text->Show(false);
 		m_QuickSlot_3_Icon->Show(false);

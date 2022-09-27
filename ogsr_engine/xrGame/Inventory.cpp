@@ -128,6 +128,7 @@ void CInventory::Clear()
 	m_all.clear							();
 	m_ruck.clear						();
 	m_belt.clear						();
+	m_slot.clear						();
 	
 	for(u32 i=0; i<m_slots.size(); i++)
 	{
@@ -285,6 +286,8 @@ bool CInventory::DropItem(CGameObject *pObj)
 
 			m_slots[pIItem->GetSlot()].m_pIItem = NULL;	
 
+			m_slot.erase(std::find(m_slot.begin(), m_slot.end(), pIItem));
+
 			pIItem->object().processing_deactivate();
 		}break;
 	default:
@@ -350,6 +353,8 @@ bool CInventory::Slot(PIItem pIItem, bool bNotActivate)
 
 	m_slots[pIItem->GetSlot()].m_pIItem = pIItem;
 
+	m_slot.push_back(pIItem);
+
 	//удалить из рюкзака или пояса
 	TIItemContainer::iterator it = std::find(m_ruck.begin(), m_ruck.end(), pIItem);
 	if(m_ruck.end() != it) m_ruck.erase(it);
@@ -382,6 +387,9 @@ bool CInventory::Belt(PIItem pIItem)
 	{
 		if(m_iActiveSlot == pIItem->GetSlot()) Activate(NO_ACTIVE_SLOT);
 		m_slots[pIItem->GetSlot()].m_pIItem = NULL;
+
+		TIItemContainer::iterator it = std::find(m_slot.begin(), m_slot.end(), pIItem);
+		if (m_slot.end() != it) m_slot.erase(it);
 	}
 	
 	m_belt.insert(m_belt.end(), pIItem); 
@@ -419,6 +427,9 @@ bool CInventory::Ruck(PIItem pIItem, bool skip_volume_check)
 	{
 		if(m_iActiveSlot == pIItem->GetSlot()) Activate(NO_ACTIVE_SLOT);
 		m_slots[pIItem->GetSlot()].m_pIItem = NULL;
+
+		TIItemContainer::iterator it = std::find(m_slot.begin(), m_slot.end(), pIItem);
+		if (m_slot.end() != it) m_slot.erase(it);
 	}
 	else
 	{
@@ -1349,9 +1360,8 @@ bool CInventory::IsFreeHands()
 	CHudItem* pHudItem = smart_cast<CHudItem*>(ActiveItem());
 
 	return g_eFreeHands != eFreeHandsManual ||
-		(ActiveItem() && ActiveItem()->IsSingleHanded() && !pHudItem->IsPending()) ||
-		ActiveItem() == NULL ||
-		GetActiveSlot() == NO_ACTIVE_SLOT;
+		GetActiveSlot() == NO_ACTIVE_SLOT || !ActiveItem() ||
+		(ActiveItem() && ActiveItem()->IsSingleHanded() && (!pHudItem || !pHudItem->IsPending()));
 }
 
 void CInventory::TryToHideWeapon(bool b_hide_state, bool b_save_prev_slot)

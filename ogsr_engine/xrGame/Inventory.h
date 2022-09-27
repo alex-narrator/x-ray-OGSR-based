@@ -122,7 +122,7 @@ public:
 
 	void					SetSlotsBlocked		( u16 mask, bool bBlock, bool now = false );
 	TIItemContainer			m_all;
-	TIItemContainer			m_ruck, m_belt;
+	TIItemContainer			m_ruck, m_belt, m_slot;
 	TISlotArr				m_slots;
 
 	//возвращает все кроме PDA в слоте и болта
