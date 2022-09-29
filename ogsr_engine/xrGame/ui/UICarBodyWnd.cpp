@@ -171,8 +171,6 @@ void CUICarBodyWnd::Init()
 		::Sound->create		(sounds[eInvProperties],	uiXml.Read("snd_properties",	0, NULL), st_Effect, sg_SourceType);
 		::Sound->create		(sounds[eInvDropItem],		uiXml.Read("snd_drop_item",		0, NULL), st_Effect, sg_SourceType);
 		::Sound->create		(sounds[eInvDetachAddon],	uiXml.Read("snd_detach_addon",	0, NULL), st_Effect, sg_SourceType);
-		::Sound->create		(sounds[eInvMagLoad],		uiXml.Read("snd_mag_load",		0, NULL), st_Effect, sg_SourceType);
-		::Sound->create		(sounds[eInvMagUnload],		uiXml.Read("snd_mag_unload",	0, NULL), st_Effect, sg_SourceType);
 		::Sound->create		(sounds[eInvMoveItem],		uiXml.Read("snd_move_item",		0, NULL), st_Effect, sg_SourceType);
 
 		uiXml.SetLocalRoot(stored_root);
@@ -534,12 +532,11 @@ void CUICarBodyWnd::SendMessage(CUIWindow *pWnd, s16 msg, void *pData)
 				{
 					auto ProcessUnload = [](void* pWpn) {
 						auto WpnMagaz = static_cast<CWeaponMagazined*>(pWpn);
-						WpnMagaz->UnloadMagazine();
-						WpnMagaz->PullShutter();
+						WpnMagaz->UnloadWeaponFull();
 						if (auto WpnMagazWgl = smart_cast<CWeaponMagazinedWGrenade*>(WpnMagaz)){
 							if (WpnMagazWgl->IsGrenadeLauncherAttached()){
 								WpnMagazWgl->PerformSwitchGL();
-								WpnMagazWgl->UnloadMagazine();
+								WpnMagazWgl->UnloadWeaponFull();
 								WpnMagazWgl->PerformSwitchGL();
 							}
 						}
@@ -558,7 +555,6 @@ void CUICarBodyWnd::SendMessage(CUIWindow *pWnd, s16 msg, void *pData)
 					//Msg("load %s to %s", (LPCSTR)UIPropertiesBox.GetClickedItem()->GetData(), pAmmo->cNameSect().c_str());
 					(smart_cast<CWeaponAmmo*>(CurrentIItem()))->ReloadBox((LPCSTR)m_pUIPropertiesBox->GetClickedItem()->GetData());
 					//SetCurrentItem(NULL);
-					PlaySnd(eInvMagLoad);
 				}break;
 				case INVENTORY_UNLOAD_AMMO_BOX:
 				{
@@ -574,7 +570,6 @@ void CUICarBodyWnd::SendMessage(CUIWindow *pWnd, s16 msg, void *pData)
 						ProcessUnload(child_itm->m_pData);
 					}
 					//SetCurrentItem(NULL);
-					PlaySnd(eInvMagUnload);
 				}break;
 				case INVENTORY_DETACH_ADDON: {
 					CurrentIItem()->cast_weapon()->Detach((const char*)(m_pUIPropertiesBox->GetClickedItem()->GetData()), true);

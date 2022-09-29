@@ -156,6 +156,9 @@ void CWeaponAmmo::Load(LPCSTR section)
 		}
 		//
 		m_misfireProbabilityBox = READ_IF_EXISTS(pSettings, r_float, section, "misfire_probability_box", 0.0f);
+
+		if (pSettings->line_exist(section, "load_sound"))
+			sndLoad.create(pSettings->r_string(section, "load_sound"), st_Effect, sg_SourceType);
 		//
 		return;
 	}
@@ -166,6 +169,11 @@ void CWeaponAmmo::Load(LPCSTR section)
 	{
 		m_ammoSect = pSettings->r_string(section, "ammo_in_box");
 		m_EmptySect = pSettings->r_string(section, "empty_box");
+
+		if (pSettings->line_exist(section, "load_sound"))
+			sndLoad.create(pSettings->r_string(section, "load_sound"), st_Effect, sg_SourceType);
+		if (pSettings->line_exist(section, "unload_sound"))
+			sndUnload.create(pSettings->r_string(section, "unload_sound"), st_Effect, sg_SourceType);
 	}
 	//
 	m_InvShortName = CStringTable().translate(pSettings->r_string(m_ammoSect, "inv_name_short"));
@@ -308,10 +316,8 @@ CInventoryItem *CWeaponAmmo::can_make_killing	(const CInventory *inventory) cons
 {
 	VERIFY					(inventory);
 
-	TIItemContainer::const_iterator	I = inventory->m_all.begin();
-	TIItemContainer::const_iterator	E = inventory->m_all.end();
-	for ( ; I != E; ++I) {
-		CWeapon		*weapon = smart_cast<CWeapon*>(*I);
+	for (const auto& item : inventory->m_all) {
+		CWeapon		*weapon = smart_cast<CWeapon*>(item);
 		if (!weapon)
 			continue;
 		xr_vector<shared_str>::const_iterator	i = std::find(weapon->m_ammoTypes.begin(),weapon->m_ammoTypes.end(),cNameSect());
@@ -365,16 +371,13 @@ void CWeaponAmmo::UnloadBox()
 {
 	if (!m_boxCurr) return;
 
-	if (m_pCurrentInventory) //попробуем доложить патроны в наявные пачки
-	{
+	if (m_pCurrentInventory) { //попробуем доложить патроны в наявные пачки
 		TIItemContainer& list = m_pCurrentInventory->m_all;
-		for (TIItemContainer::iterator l_it = list.begin(); list.end() != l_it; ++l_it)
-		{
+		for (TIItemContainer::iterator l_it = list.begin(); list.end() != l_it; ++l_it){
 			auto* exist_ammo_box = smart_cast<CWeaponAmmo*>(*l_it);
 			u16 exist_free_count = exist_ammo_box ? exist_ammo_box->m_boxSize - exist_ammo_box->m_boxCurr : 0;
 
-			if (exist_ammo_box && exist_ammo_box->cNameSect() == m_ammoSect && exist_free_count > 0)
-			{
+			if (exist_ammo_box && exist_ammo_box->cNameSect() == m_ammoSect && exist_free_count > 0){
 				exist_ammo_box->m_boxCurr = exist_ammo_box->m_boxCurr + (exist_free_count < m_boxCurr ? exist_free_count : m_boxCurr);
 				m_boxCurr = m_boxCurr - (exist_free_count < m_boxCurr ? exist_free_count : m_boxCurr);
 			}
@@ -383,11 +386,17 @@ void CWeaponAmmo::UnloadBox()
 
 	//spawn ammo from box
 	if (m_boxCurr > 0)
-		SpawnAmmo(m_boxCurr, *m_ammoSect);
+		SpawnAmmo(m_boxCurr, m_ammoSect.c_str());
 	//destroy motherbox
 	DestroyObject();
 	//spawn empty box
-	SpawnAmmo(0, *m_EmptySect);
+	SpawnAmmo(0, m_EmptySect.c_str());
+
+	if (pSettings->line_exist(cNameSect(), "unload_sound")) {
+		if (sndUnload._feedback())
+			sndUnload.stop();
+		sndUnload.play_at_pos(H_Parent(), H_Parent()->Position(), false);
+	}
 }
 
 void CWeaponAmmo::ReloadBox(LPCSTR ammo_sect)
@@ -396,8 +405,7 @@ void CWeaponAmmo::ReloadBox(LPCSTR ammo_sect)
 
 	bool forActor = g_actor->m_inventory == m_pCurrentInventory;
 
-	while (m_boxCurr < m_boxSize)
-	{
+	while (m_boxCurr < m_boxSize){
 		CCartridge l_cartridge;
 		auto m_pAmmo = smart_cast<CWeaponAmmo*>(m_pCurrentInventory->GetAmmoByLimit(ammo_sect, forActor, false));
 
@@ -409,17 +417,20 @@ void CWeaponAmmo::ReloadBox(LPCSTR ammo_sect)
 			m_pAmmo->DestroyObject();
 	}
 
-	if (IsBoxReloadableEmpty())
-	{
-		for (u32 i = 0; i < m_ammoTypes.size(); ++i)
-		{
-			if (*m_ammoTypes[i] == ammo_sect)
-			{
+	if (IsBoxReloadableEmpty()){
+		for (u32 i = 0; i < m_ammoTypes.size(); ++i){
+			if (m_ammoTypes[i].c_str() == ammo_sect){
 				DestroyObject();
-				SpawnAmmo(m_boxCurr, *m_magTypes[i]);
+				SpawnAmmo(m_boxCurr, m_magTypes[i].c_str());
 				break;
 			}
 		}
+	}
+
+	if (pSettings->line_exist(cNameSect(), "load_sound")) {
+		if (sndLoad._feedback())
+			sndLoad.stop();
+		sndLoad.play_at_pos(H_Parent(), H_Parent()->Position(), false);
 	}
 }
 

@@ -234,7 +234,7 @@ bool CWeaponMagazinedWGrenade::SwitchMode()
 
 void  CWeaponMagazinedWGrenade::PerformSwitchGL()
 {
-	if (IsZoomed())		OnZoomOut();
+	if (IsZoomed())		OnZoomOut(true);
 
 	m_bGrenadeMode		= !m_bGrenadeMode;
 
@@ -877,14 +877,14 @@ void CWeaponMagazinedWGrenade::PlayAnimShutter()
 {
 	VERIFY(GetState() == eShutter);
 	if (m_bGrenadeMode){
-		if (AnimationExist("anim_shutter_g"))
-			PlayHUDMotion("anim_shutter_g", true, GetState());
+		if (AnimationExist("anm_shutter_g"))
+			PlayHUDMotion("anm_shutter_g", true, GetState());
 		else
-			PlayHUDMotion({ "anim_draw", "anm_show_g" }, true, GetState());
+			PlayHUDMotion({ "anm_draw", "anm_show_g" }, true, GetState());
 	}else{
 		if (IsGrenadeLauncherAttached()){
-			if (AnimationExist("anim_shutter_w_gl"))
-				PlayHUDMotion("anim_shutter_w_gl", true, GetState());
+			if (AnimationExist("anm_shutter_w_gl"))
+				PlayHUDMotion("anm_shutter_w_gl", true, GetState());
 			else
 				PlayHUDMotion({ "anim_draw", "anm_show_w_gl" }, true, GetState());
 		}else

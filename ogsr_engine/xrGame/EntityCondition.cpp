@@ -170,11 +170,10 @@ void CEntityCondition::ChangePsyHealth(float value)
 void CEntityCondition::ChangeBleeding(float percent)
 {
 	//затянуть раны
-	for(WOUND_VECTOR_IT it = m_WoundVector.begin(); m_WoundVector.end() != it; ++it)
-	{
-		(*it)->Incarnation			(percent, m_fMinWoundSize);
-		if(0 == (*it)->TotalSize	())
-			(*it)->SetDestroy		(true);
+	for(const auto& wound : m_WoundVector){
+		wound->Incarnation(percent, m_fMinWoundSize);
+		if(fis_zero(wound->TotalSize()))
+			wound->SetDestroy		(true);
 	}
 }
 

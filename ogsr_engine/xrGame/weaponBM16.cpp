@@ -188,8 +188,8 @@ void CWeaponBM16::PlayAnimIdle()
 void CWeaponBM16::PlayAnimShutter()
 {
 	VERIFY(GetState() == eShutter);
-	if (AnimationExist("anim_shutter"))
-		PlayHUDMotion("anim_shutter", true, GetState(), true);
+	if (AnimationExist("anm_shutter"))
+		PlayHUDMotion("anm_shutter", true, GetState(), true);
 	else
 		switch (m_magazine.size())
 		{

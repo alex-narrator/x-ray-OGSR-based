@@ -120,8 +120,6 @@ protected:
 		eInvProperties,
 		eInvDropItem,
 		eInvDetachAddon,
-		eInvMagLoad,
-		eInvMagUnload,
 		eInvMoveItem,
 		eInvSndMax
 	};

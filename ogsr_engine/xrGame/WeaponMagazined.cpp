@@ -64,6 +64,7 @@ CWeaponMagazined::~CWeaponMagazined()
 	//
 	HUD_SOUND::DestroySound(sndAimStart);
 	HUD_SOUND::DestroySound(sndAimEnd);
+	HUD_SOUND::DestroySound(sndUnload);
 	//
 	if (m_binoc_vision)
 		xr_delete(m_binoc_vision);
@@ -99,6 +100,7 @@ void CWeaponMagazined::StopHUDSounds()
 	//
 	HUD_SOUND::StopSound(sndAimStart);
 	HUD_SOUND::StopSound(sndAimEnd);
+	HUD_SOUND::StopSound(sndUnload);
 	//
 	inherited::StopHUDSounds();
 }
@@ -197,6 +199,9 @@ void CWeaponMagazined::Load	(LPCSTR section)
 		HUD_SOUND::LoadSound(section, "snd_aim_start", sndAimStart, m_eSoundShow);
 	if (pSettings->line_exist(section, "snd_aim_end"))
 		HUD_SOUND::LoadSound(section, "snd_aim_end", sndAimEnd, m_eSoundHide);
+
+	if (pSettings->line_exist(section, "snd_unload"))
+		HUD_SOUND::LoadSound(section, "snd_unload", sndUnload, m_eSoundReload);
 	
 	m_pSndShotCurrent = &sndShot;
 		
@@ -510,6 +515,9 @@ void CWeaponMagazined::OnStateSwitch(u32 S, u32 oldState)
 	case eShutter:
 		switch2_Shutter();
 		break;
+	case eUnload:
+		switch2_Unload();
+		break;
 	}
 }
 
@@ -594,6 +602,7 @@ void CWeaponMagazined::UpdateSounds	()
 	//
 	if (sndAimStart.playing		()) sndAimStart.set_position	(get_LastFP());
 	if (sndAimEnd.playing		()) sndAimEnd.set_position		(get_LastFP());
+	if (sndUnload.playing		()) sndUnload.set_position		(get_LastFP());
 }
 
 void CWeaponMagazined::state_Fire	(float dt)
@@ -740,7 +749,7 @@ void CWeaponMagazined::OnAnimationEnd(u32 state)
 		case eReload:
 		  ReloadMagazine();
 		  HandleCartridgeInChamber();
-		  HUD_SOUND::StopSound( sndReload );
+		  HUD_SOUND::StopSound(sndReload);
 		  HUD_SOUND::StopSound(sndReloadPartly);
 		  SwitchState( eIdle );
 		  break;	// End of reload animation
@@ -752,6 +761,11 @@ void CWeaponMagazined::OnAnimationEnd(u32 state)
 			ShutterAction();	
 			SwitchState(eIdle);	
 			break;	// End of Shutter animation
+		case eUnload:
+			UnloadMagazine();
+			HUD_SOUND::StopSound(sndUnload);
+			SwitchState(eShutter);
+			break;	// End of Unload animation
 	}
 }
 
@@ -1569,12 +1583,12 @@ void CWeaponMagazined::OnZoomIn			()
 		}
 	}
 }
-void CWeaponMagazined::OnZoomOut()
+void CWeaponMagazined::OnZoomOut(bool rezoom)
 {
 	if (!m_bZoomMode)
 		return;
 
-	inherited::OnZoomOut();
+	inherited::OnZoomOut(rezoom);
 
 	if (GetState() == eIdle)
 		PlayAnimIdle();
@@ -1600,6 +1614,9 @@ void CWeaponMagazined::OnZoomOut()
 
 		SwitchNightVision(false, false);
 	}
+
+	if (rezoom)
+		OnZoomIn();
 }
 
 void CWeaponMagazined::OnZoomChanged()
@@ -1864,8 +1881,8 @@ void CWeaponMagazined::switch2_Shutter()
 void CWeaponMagazined::PlayAnimShutter()
 {
 	VERIFY(GetState() == eShutter);
-	if(AnimationExist("anim_shutter"))
-		PlayHUDMotion("anim_shutter", true, GetState());
+	if(AnimationExist("anm_shutter"))
+		PlayHUDMotion("anm_shutter", true, GetState());
 	else
 		PlayHUDMotion({ "anim_draw", "anm_show" }, true, GetState());
 	PlaySound(sndShutter, get_LastFP());
@@ -2179,4 +2196,29 @@ void  CWeaponMagazined::SwitchFlashlight(bool on) {
 		flashlight_omni->set_active(false);
 		flashlight_glow->set_active(false);
 	}
+}
+
+void CWeaponMagazined::UnloadWeaponFull() {
+	if (AnimationExist("anm_unload") && 
+		m_pCurrentInventory && 
+		m_pCurrentInventory->InSlot(this)) {
+		SwitchState(eUnload);
+		return;
+	}
+	PlaySound(sndUnload, get_LastFP());
+	UnloadMagazine();
+	ShutterAction();
+}
+
+void CWeaponMagazined::switch2_Unload()
+{
+	PlayAnimUnload();
+	SetPending(TRUE);
+}
+//
+void CWeaponMagazined::PlayAnimUnload()
+{
+	VERIFY(GetState() == eUnload);
+	PlayHUDMotion("anm_unload", true, GetState());
+	PlaySound(sndUnload, get_LastFP());
 }

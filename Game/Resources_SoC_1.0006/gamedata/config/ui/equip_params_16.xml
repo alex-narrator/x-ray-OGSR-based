@@ -9,6 +9,9 @@
 		<power_level x="0" y="0" width="91" height="8">
 			<text font="letterica16" r="124" g="119" b="115"></text>
 		</power_level>
+		<power_ttl x="0" y="0" width="91" height="8">
+			<text font="letterica16" r="124" g="119" b="115"></text>
+		</power_ttl>
 		
 		<outfit_helmet_inbuild x="0" y="0" width="91" height="8">
 			<text font="letterica16" r="124" g="119" b="115"></text>

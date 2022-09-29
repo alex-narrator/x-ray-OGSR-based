@@ -121,6 +121,7 @@ public:
 		eSwitch,
 		//
 		eShutter, //затвор
+		eUnload,
 	};
 	enum EWeaponSubStates{
 		eSubstateReloadBegin		=0,
@@ -297,7 +298,7 @@ public:
 	float					GetZoomStepDelta	(float, float, u32);
 	virtual	void			ZoomChange			(bool inc);
 	virtual void			OnZoomIn			();
-	virtual void			OnZoomOut			();
+	virtual void			OnZoomOut			(bool = false);
 	bool IsZoomed() const override { return m_bZoomMode; }
 	CUIStaticItem*			ZoomTexture			();	
 	bool ZoomHideCrosshair()

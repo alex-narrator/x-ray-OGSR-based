@@ -15,6 +15,7 @@ class motion_marks;
 class CMotionDef;
 
 #include "actor_defs.h"
+#include "hudsound.h"
 
 class CHUDState
 {
@@ -82,6 +83,8 @@ protected: //чтоб нельзя было вызвать на прямую
 	bool			BobbingEnable{};
 
 	u32				m_dwStateTime{};
+
+	HUD_SOUND		sndOnItemTake;
 public:
 	virtual void	Load				(LPCSTR section);
 	virtual CHudItem*cast_hud_item		()	 { return this; }
@@ -128,13 +131,15 @@ public:
 
 	virtual void	PlayAnimIdle		();
 	bool			TryPlayAnimIdle		();
-	virtual bool IsZoomed() const { return false; }
+	virtual bool	IsZoomed			() const { return false; }
 	//virtual void	PlayAnimBore		();
 	virtual void	PlayAnimIdleMoving	();
 	virtual void	PlayAnimIdleMovingSlow();
 	virtual void	PlayAnimIdleSprint	();
-	virtual void PlayAnimIdleMovingCrouch();
-	virtual void PlayAnimIdleMovingCrouchSlow();
+	virtual void	PlayAnimIdleMovingCrouch();
+	virtual void	PlayAnimIdleMovingCrouchSlow();
+
+	virtual void	PlayAnimOnItemTake();
 
 	virtual void	UpdateCL			();
 	virtual void	renderable_Render	();

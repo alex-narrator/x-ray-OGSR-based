@@ -94,6 +94,9 @@ void CUIEatableParams::SetInfo(CInventoryItem* obj) {
 		_val *= 100.0f;
 		LPCSTR _sn = "%";
 		LPCSTR _color = (_val > 0) ? "%c[green]" : "%c[red]";
+		if(i == _radiation_influence)
+			_color = (_val > 0) ? "%c[red]" : "%c[green]";
+
 		sprintf_s(text_to_show, "%s %s %+.1f %s",
 			effect_name,
 			_color,

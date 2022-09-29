@@ -306,7 +306,7 @@ void CUIDragItem::OnFrame()
 
 void CUIDragItem::Draw()
 {
-	Fvector2 tmp;
+	Fvector2 tmp{};
 	tmp.sub					(GetWndPos(), GetUICursor()->GetCursorPosition());
 	tmp.sub					(m_pos_offset);
 	tmp.mul					(-1.0f);
@@ -384,7 +384,8 @@ void CUICellItem::ColorizeItems( std::initializer_list<CUIDragDropListEx*> args 
 
 	  auto Wpn = smart_cast<CWeaponMagazined*>(inventoryitem);
 	  auto Ammo = smart_cast<CWeaponAmmo*>(inventoryitem);
-	  if (!Wpn && !Ammo)
+	  bool is_power_consumer = inventoryitem->IsPowerConsumer();
+	  if (!Wpn && !Ammo && !is_power_consumer)
 		  return;
 
 	  if (Wpn) {
@@ -404,6 +405,9 @@ void CUICellItem::ColorizeItems( std::initializer_list<CUIDragDropListEx*> args 
 			  std::copy(Ammo->m_ammoTypes.begin(), Ammo->m_ammoTypes.end(), std::back_inserter(ColorizeSects));
 		  if (Ammo->IsBoxReloadable())
 			  ColorizeSects.push_back(Ammo->m_ammoSect);
+	  }
+	  else if (is_power_consumer) {
+		  std::copy(inventoryitem->m_power_sources.begin(), inventoryitem->m_power_sources.end(), std::back_inserter(ColorizeSects));
 	  }
   };
 

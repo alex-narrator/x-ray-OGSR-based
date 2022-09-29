@@ -181,7 +181,7 @@ void CWeaponShotgun::switch2_Fire2	()
 		SetPending(TRUE);
 
 		// Fire
-		Fvector						p1, d; 
+		Fvector						p1{}, d{};
 		p1.set	(get_LastFP()); 
 		d.set	(get_LastFD());
 
@@ -286,7 +286,8 @@ void CWeaponShotgun::OnAnimationEnd(u32 state)
 
 void CWeaponShotgun::Reload() 
 {
-	OnZoomOut();
+	if(IsZoomed())
+		OnZoomOut();
 	if(m_bTriStateReload){
 		TriStateReload();
 	}
@@ -375,10 +376,11 @@ void CWeaponShotgun::PlayAnimCloseWeapon()
 void CWeaponShotgun::PlayAnimShutter()
 {
 	VERIFY(GetState() == eShutter);
-	if (AnimationExist("anim_shutter"))
-		PlayHUDMotion("anim_shutter", true, GetState());
+	if (AnimationExist("anm_shutter"))
+		PlayHUDMotion("anm_shutter", true, GetState());
 	else
 		PlayHUDMotion({ "anm_shots" }, true, GetState());
+	PlaySound(sndShutter, get_LastFP());
 }
 
 bool CWeaponShotgun::HaveCartridgeInInventory( u8 cnt ) {

@@ -1925,3 +1925,10 @@ void CActor::UpdateVisorEfects() {
 	sprintf(_buff, "r2_visor_refl_control %d", b_enable_effect);
 	Console->Execute(_buff);
 }
+
+void CActor::TryPlayAnimItemTake() {
+	if (!inventory().ActiveItem()) return;
+	const auto hud_item = smart_cast<CHudItem*>(inventory().ActiveItem());
+	if (!hud_item || !hud_item->GetHUDmode()) return;
+	hud_item->PlayAnimOnItemTake();
+}

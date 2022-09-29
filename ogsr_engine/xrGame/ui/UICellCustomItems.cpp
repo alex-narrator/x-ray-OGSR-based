@@ -392,7 +392,7 @@ void CUIWeaponCellItem::UpdateItemText()
 	if (object()->GetAmmoMagSize()) {
 		string32				str;
 		auto pWeaponMag = smart_cast<CWeaponMagazined*>(object());
-		sprintf_s(str, "%d/%d%s", object()->GetAmmoElapsed(), object()->GetAmmoMagSize(), pWeaponMag->HasFireModes() ? pWeaponMag->GetCurrentFireModeStr() : "");
+		sprintf_s(str, "%d/%d%s", object()->GetAmmoElapsed(), object()->GetAmmoMagSize(), pWeaponMag && pWeaponMag->HasFireModes() ? pWeaponMag->GetCurrentFireModeStr() : "");
 
 		float pos_x{ GetWidth() - m_text_add->GetWidth() };
 		float pos_y{ GetHeight() - m_text_add->GetHeight() };

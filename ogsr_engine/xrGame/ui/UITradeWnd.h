@@ -109,8 +109,6 @@ protected:
 		eInvDropItem,
 		eInvMoveItem,
 		eInvDetachAddon,
-		eInvMagLoad,
-		eInvMagUnload,
 		eInvSndMax
 	};
 

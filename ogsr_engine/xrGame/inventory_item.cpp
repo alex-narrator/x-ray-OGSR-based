@@ -264,14 +264,16 @@ void	CInventoryItem::Hit					(SHit* pHDS)
 	float hit_power = pHDS->damage();
 	hit_power *= m_HitTypeK[pHDS->hit_type];
 
-	if (pHDS->type() == ALife::eHitTypeRadiation && !fis_zero(m_fRadiationAccumFactor))
+	bool is_rad_hit = pHDS->type() == ALife::eHitTypeRadiation;
+
+	if (is_rad_hit && !fis_zero(m_fRadiationAccumFactor))
 	{
 		m_ItemEffect[eRadiationRestoreSpeed] += m_fRadiationAccumFactor * pHDS->damage();
 		clamp<float>(m_ItemEffect[eRadiationRestoreSpeed], -m_fRadiationAccumLimit, m_fRadiationAccumLimit);
 		//Msg("! item [%s] current m_fRadiationRestoreSpeed [%.3f]", object().cName().c_str(), m_fRadiationRestoreSpeed);
 	}
 
-	if (!m_flags.test(FUsingCondition)) return;
+	if (!m_flags.test(FUsingCondition) || is_rad_hit) return;
 
 	ChangeCondition(-hit_power);
 
@@ -820,25 +822,19 @@ bool  CInventoryItem::WillBeBroken()
 
 void CInventoryItem::TryBreakToPieces(bool play_effects)
 {
-	if (WillBeBroken() && !b_brake_item)
-	{
+	if (WillBeBroken() && !b_brake_item){
 		b_brake_item = true;
 
-		if (play_effects)
-		{
-			if (object().H_Parent())
-			{
+		if (play_effects){
+			if (object().H_Parent()){
 				//играем звук
 				sndBreaking.play_at_pos(object().H_Parent(), object().H_Parent()->Position(), false);
 				SetDropManual(TRUE);
-			}
-			else
-			{
+			}else{
 				//играем звук
 				sndBreaking.play_at_pos(cast_game_object(), object().Position(), false);
 				//отыграть партиклы разбивания
-				if (*m_sBreakParticles)
-				{
+				if (*m_sBreakParticles){
 					//показываем эффекты
 					CParticlesObject* pStaticPG;
 					pStaticPG = CParticlesObject::Create(*m_sBreakParticles, TRUE);

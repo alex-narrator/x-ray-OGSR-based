@@ -774,6 +774,8 @@ public:
 
 	virtual bool	IsVolumeUnlimited		() const { return false; };
 
+			void	TryPlayAnimItemTake		();
+
 protected:
 			bool	m_bIsHardHold{};
 			bool	m_bRuckAmmoPlacement{};

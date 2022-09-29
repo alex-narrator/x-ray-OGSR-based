@@ -64,8 +64,6 @@ protected:
 								eInvDropItem,
 								eInvAttachAddon,
 								eInvDetachAddon,
-								eInvMagLoad,
-								eInvMagUnload,
 								eInvSndMax};
 
 	ref_sound					sounds					[eInvSndMax];

@@ -325,6 +325,8 @@ public:
 	virtual bool					CanBeCharged	() const;
 	virtual bool					CanBeChargedBy	(CInventoryItem*) const;
 	virtual void					Recharge();
+
+	virtual float					GetPowerTTL		() const { return m_fTTLOnPowerConsumption; };
 protected:
 	HitImmunity::HitTypeSVec		m_HitTypeProtection;
 

@@ -582,6 +582,12 @@
 	<string id="st_charge">
 		<text>зар€дить</text>
 	</string>
+	<string id="st_power_ttl">
+		<text>„ас роботи</text>
+	</string>	
+	<string id="st_time_hour">
+		<text>год.</text>
+	</string>	
 	
 	<string id="st_move_with_content">
 		<text>перенести с содержимым</text>

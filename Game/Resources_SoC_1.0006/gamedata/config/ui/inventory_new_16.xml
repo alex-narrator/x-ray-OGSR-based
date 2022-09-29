@@ -360,8 +360,6 @@
 		<snd_attach_addon>interface\inv_attach_addon</snd_attach_addon>
 		<snd_detach_addon>interface\inv_detach_addon</snd_detach_addon>
 		<snd_item_use>interface\inv_slot</snd_item_use>
-		<snd_mag_load>interface\wm_load</snd_mag_load>
-		<snd_mag_unload>interface\wm_load</snd_mag_unload>
 	</action_sounds>
 	
 	<condition_progess_bar x="3" y="1" width="29" height="4" horz="1" min="0" max="100" pos="1">

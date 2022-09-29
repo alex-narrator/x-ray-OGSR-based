@@ -1033,6 +1033,20 @@ bool CInventory::CanPutInSlot(PIItem pIItem, bool check_all) const
 {
 	if(!m_bSlotsUseful) return false;
 
+	if (!OwnerIsActor()) {
+		if (!smart_cast<CEntityAlive*>(m_pOwner)->g_Alive()
+			&& !m_slots[pIItem->GetSlot()].m_bPersistent) return false;
+
+		switch (pIItem->GetSlot())
+		{
+		case QUICK_SLOT_0:
+		case QUICK_SLOT_1:
+		case QUICK_SLOT_2:
+		case QUICK_SLOT_3:
+			return false;
+		}
+	}
+
 	if( !GetOwner()->CanPutInSlot(pIItem, pIItem->GetSlot() ) ) return false;
 
 	if (IsSlotDisabled(pIItem->GetSlot())) return false;
@@ -1357,11 +1371,23 @@ bool CInventory::IsActiveSlotBlocked() const {
 
 bool CInventory::IsFreeHands()
 {
-	CHudItem* pHudItem = smart_cast<CHudItem*>(ActiveItem());
+	const auto active_hud_item = smart_cast<CHudItem*>(ActiveItem());
 
-	return g_eFreeHands != eFreeHandsManual ||
-		GetActiveSlot() == NO_ACTIVE_SLOT || !ActiveItem() ||
-		(ActiveItem() && ActiveItem()->IsSingleHanded() && (!pHudItem || !pHudItem->IsPending()));
+	switch (g_eFreeHands)
+	{
+	case eFreeHandsOff:
+		return true;
+		break;
+	case eFreeHandsAuto:
+		if (active_hud_item && active_hud_item->IsPending())
+			return false;
+		break;
+	case eFreeHandsManual:
+		if (active_hud_item && (active_hud_item->IsPending() || !ActiveItem()->IsSingleHanded()))
+			return false;
+		break;
+	}
+	return true;
 }
 
 void CInventory::TryToHideWeapon(bool b_hide_state, bool b_save_prev_slot)

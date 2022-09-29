@@ -28,7 +28,7 @@ protected:
 	HUD_SOUND		sndFireModes;
 	HUD_SOUND		sndZoomChange;
 	//
-	HUD_SOUND		sndShutter;
+	HUD_SOUND		sndShutter, sndUnload;
 	HUD_SOUND		sndZoomIn;
 	HUD_SOUND		sndZoomOut;
 	HUD_SOUND		sndNightVisionOn;
@@ -184,7 +184,7 @@ protected:
 	//////////////////////////////////////////////
 public:
 	virtual void	OnZoomIn			();
-	virtual void	OnZoomOut			();
+	virtual void	OnZoomOut			(bool = false);
 	virtual void	OnZoomChanged		();
 	virtual	void	OnNextFireMode		();
 	virtual	void	OnPrevFireMode		();
@@ -248,7 +248,6 @@ public:
 	virtual bool	HasChamber				() { return /*ParentIsActor() &&*/ m_bHasChamber; };
 	//разрядить кол-во патронов
 	virtual void	UnloadAmmo(int unload_count, bool spawn_ammo = true, bool detach_magazine = false);
-	IC void			PullShutter() { ShutterAction(); };
 	//
 	int				GetMagazineCount() const;
 	//
@@ -287,6 +286,8 @@ public:
 
 	virtual void	SwitchLaser				(bool on);
 	virtual void	SwitchFlashlight		(bool on);
+
+	virtual void	UnloadWeaponFull		();
 protected:
 	bool			m_bNightVisionEnabled{};
 	bool			m_bNightVisionSwitchedOn{ true };
@@ -295,4 +296,6 @@ protected:
 	virtual void	switch2_Shutter();
 	virtual void	PlayAnimShutter();
 	virtual void	PlayAnimFiremodes();
+	virtual void	switch2_Unload();
+	virtual void	PlayAnimUnload();
 };

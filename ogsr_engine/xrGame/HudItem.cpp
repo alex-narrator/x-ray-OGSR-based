@@ -18,6 +18,7 @@
 #include "HUDManager.h"
 #include "Weapon.h"
 #include "ActorCondition.h"
+#include "ai_sounds.h"
 
 ENGINE_API extern float psHUD_FOV_def;
 
@@ -57,6 +58,8 @@ void CHudItem::Load(LPCSTR section)
 
 		hud_recalc_koef = READ_IF_EXISTS(pSettings, r_float, hud_sect, "hud_recalc_koef", 1.35f); //На калаше при 1.35 вроде норм смотрится, другим стволам возможно придется подбирать другие значения.
 	}
+
+	HUD_SOUND::LoadSound(section, !!pSettings->line_exist(section, "snd_on_item_take") ? "snd_on_item_take" : "snd_draw", sndOnItemTake, SOUND_TYPE_ITEM_TAKING);
 
 	m_animation_slot	= pSettings->r_u32(section,"animation_slot");
 
@@ -546,6 +549,15 @@ void CHudItem::PlayAnimIdleMovingCrouchSlow()
 void CHudItem::PlayAnimIdleSprint()
 {
 	PlayHUDMotion({ "anm_idle_sprint", "anm_idle", "anim_idle_sprint", "anim_idle" }, true, GetState());
+}
+
+void CHudItem::PlayAnimOnItemTake()
+{
+	if (AnimationExist("anm_on_item_take"))
+		PlayHUDMotion("anm_on_item_take", true, GetState());
+	else
+		PlayHUDMotion({ "anim_draw", "anm_show" }, true, GetState());
+	HUD_SOUND::PlaySound(sndOnItemTake, object().H_Parent()->Position(), object().H_Parent(), true);
 }
 
 void CHudItem::OnMovementChanged(ACTOR_DEFS::EMoveCommand cmd)

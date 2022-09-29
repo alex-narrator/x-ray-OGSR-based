@@ -1167,7 +1167,7 @@ bool CWeapon::Action(s32 cmd, u32 flags)
 				if (HasScopeSecond() && (flags & CMD_START)) {
 					m_bScopeSecondMode = !m_bScopeSecondMode;
 					if (IsZoomed())
-						OnZoomOut();
+						OnZoomOut(true);
 					return true;
 				}
 			}
@@ -1684,7 +1684,7 @@ void CWeapon::OnZoomIn()
 		pActor->callback(GameObject::eOnActorWeaponZoomIn)(lua_game_object());
 }
 
-void CWeapon::OnZoomOut()
+void CWeapon::OnZoomOut(bool rezoom)
 {
 	m_fZoomFactor = 1.f;// Core.Features.test(xrCore::Feature::ogse_wpn_zoom_system) ? 1.f : g_fov;
 

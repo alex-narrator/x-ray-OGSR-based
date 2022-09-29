@@ -302,13 +302,11 @@ void CUIInventoryWnd::ProcessPropertiesBoxClicked	()
 		{
 			auto ProcessUnload = [](void* pWpn) {
 				auto WpnMagaz = static_cast<CWeaponMagazined*>(pWpn);
-				WpnMagaz->UnloadMagazine();
-				WpnMagaz->PullShutter();
+				WpnMagaz->UnloadWeaponFull();
 				if (auto WpnMagazWgl = smart_cast<CWeaponMagazinedWGrenade*>(WpnMagaz)){
 					if (WpnMagazWgl->IsGrenadeLauncherAttached()){
 						WpnMagazWgl->PerformSwitchGL();
-						WpnMagazWgl->UnloadMagazine();
-						WpnMagazWgl->PullShutter();
+						WpnMagazWgl->UnloadWeaponFull();
 						WpnMagazWgl->PerformSwitchGL();
 					}
 				}
@@ -324,10 +322,8 @@ void CUIInventoryWnd::ProcessPropertiesBoxClicked	()
 		}break;
 		case INVENTORY_RELOAD_AMMO_BOX:
 		{
-			//Msg("load %s to %s", (LPCSTR)UIPropertiesBox.GetClickedItem()->GetData(), pAmmo->cNameSect().c_str());
 			(smart_cast<CWeaponAmmo*>(CurrentIItem()))->ReloadBox((LPCSTR)UIPropertiesBox.GetClickedItem()->GetData());
 			InitInventory_delayed();
-			PlaySnd(eInvMagLoad);
 		}break;
 		case INVENTORY_UNLOAD_AMMO_BOX:
 		{
@@ -343,7 +339,6 @@ void CUIInventoryWnd::ProcessPropertiesBoxClicked	()
 				auto child_itm = itm->Child(i);
 				ProcessUnload(child_itm->m_pData);
 			}
-			PlaySnd(eInvMagUnload);
 		}break;
 		case INVENTORY_CHARGE_DEVICE:
 			auto battery = smart_cast<CPowerBattery*>(CurrentIItem());

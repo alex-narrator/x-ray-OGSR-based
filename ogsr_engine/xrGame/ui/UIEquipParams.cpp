@@ -81,6 +81,19 @@ void CUIEquipParams::SetInfo(CInventoryItem* obj){
 		m_CapInfo.AttachChild(power_level_static);
 		_h += list_item_h;
 	}
+	if (obj->IsPowerConsumer()) {
+		auto power_level_static = xr_new<CUIStatic>();
+		CUIXmlInit::InitStatic(uiXml, "equip_params:power_ttl", 0, power_level_static);
+		power_level_static->SetAutoDelete(true);
+		pos_top = power_level_static->GetPosTop();
+		power_level_static->SetWndPos(power_level_static->GetPosLeft(), _h + pos_top);
+		float power_ttl = obj->GetPowerTTL();
+		sprintf_s(temp_text, " %.0f ", power_ttl);
+		strconcat(sizeof(text_to_show), text_to_show, CStringTable().translate("st_power_ttl").c_str(), temp_text, CStringTable().translate("st_time_hour").c_str());
+		power_level_static->SetText(text_to_show);
+		m_CapInfo.AttachChild(power_level_static);
+		_h += list_item_h;
+	}
 
 	auto pScope = smart_cast<CScope*>(obj);
 	if (pScope) {
