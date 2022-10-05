@@ -25,6 +25,19 @@ enum : u32
 	//equipment
 	WARBELT_SLOT,
 	BACKPACK_SLOT,
+	VEST_SLOT,
+	//vest pouch - left side
+	VEST_POUCH_1,
+	VEST_POUCH_2,
+	VEST_POUCH_3,
+	//vest pouch - chest
+	VEST_POUCH_4,
+	VEST_POUCH_5,
+	VEST_POUCH_6,
+	//vest pouch - right side
+	VEST_POUCH_7,
+	VEST_POUCH_8,
+	VEST_POUCH_9,
 	//
     SLOTS_TOTAL,
     NO_ACTIVE_SLOT = 255

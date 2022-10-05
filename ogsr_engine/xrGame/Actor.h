@@ -24,6 +24,7 @@ class CActorCondition;
 class CCustomOutfit;
 class CWarbelt;
 class CBackpack;
+class CVest;
 class CTorch;
 class CNightVisionDevice;
 class CCustomDetector;
@@ -212,6 +213,8 @@ public:
 	virtual float		GetArtefactsProtection	(float, ALife::EHitType);
 
 	virtual void		UpdateArtefactPanel	();
+	virtual void		UpdateSlotPanel		();
+	virtual void		UpdateVestPanel		();
 	virtual void		UpdateQuickSlotPanel();
 protected:
 	//звук тяжелого дыхания
@@ -641,6 +644,7 @@ public:
 		virtual CCustomOutfit*			GetOutfit	() const;
 		virtual CWarbelt*				GetWarbelt	() const;
 		virtual CBackpack*				GetBackpack	() const;
+		virtual CVest*					GetVest		() const;
 		virtual CTorch*					GetTorch	() const;
 		virtual CNightVisionDevice*		GetNightVisionDevice() const;
 private:

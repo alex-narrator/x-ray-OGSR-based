@@ -112,6 +112,7 @@
 
 #	include "Warbelt.h"
 #	include "Backpack.h"
+#	include "Vest.h"
 
 #	include "PowerBattery.h"
 
@@ -296,6 +297,7 @@ void CObjectFactory::register_classes	()
 	//equipment
 	ADD(CWarbelt				,CSE_ALifeItem					,CLSID_WARBELT					,"obj_warbelt");
 	ADD(CBackpack				,CSE_ALifeItem					,CLSID_BACKPACK					,"obj_backpack");
+	ADD(CVest					,CSE_ALifeItem					,CLSID_VEST						,"obj_vest");
 
 	//power battery
 	ADD(CPowerBattery			,CSE_ALifeItem					, CLSID_POWER_BATTERY			,"obj_power_battery");

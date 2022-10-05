@@ -41,11 +41,14 @@ CUIInventoryWnd*	g_pInvWnd = NULL;
 
 CUIInventoryWnd::CUIInventoryWnd() : 
 	m_pUIBagList(nullptr), m_pUIBeltList(nullptr), 
-	m_pUIOutfitList(nullptr), m_pUIHelmetList(nullptr), m_pUIWarBeltList(nullptr), m_pUIBackPackList(nullptr), 
+	m_pUIOutfitList(nullptr), m_pUIHelmetList(nullptr), m_pUIWarBeltList(nullptr), m_pUIBackPackList(nullptr), m_pUIVestList(nullptr),
 	m_pUIKnifeList(nullptr), m_pUIOnShoulderList(nullptr), m_pUIOnBackList(nullptr), m_pUIHolsterList(nullptr),
 	m_pUIGrenadeList(nullptr), m_pUIArtefactList(nullptr),
 	m_pUIDetectorList(nullptr), m_pUIOnHeadList(nullptr), m_pUIPdaList(nullptr),
-	m_pUIQuickList_0(nullptr), m_pUIQuickList_1(nullptr), m_pUIQuickList_2(nullptr), m_pUIQuickList_3(nullptr)
+	m_pUIQuickList_0(nullptr), m_pUIQuickList_1(nullptr), m_pUIQuickList_2(nullptr), m_pUIQuickList_3(nullptr),
+	m_pUIVestPouch_1(nullptr), m_pUIVestPouch_2(nullptr), m_pUIVestPouch_3(nullptr), 
+	m_pUIVestPouch_4(nullptr), m_pUIVestPouch_5(nullptr), m_pUIVestPouch_6(nullptr), 
+	m_pUIVestPouch_7(nullptr), m_pUIVestPouch_8(nullptr), m_pUIVestPouch_9(nullptr)
 {
 	m_iCurrentActiveSlot				= NO_ACTIVE_SLOT;
 	UIRank								= NULL;
@@ -152,6 +155,10 @@ void CUIInventoryWnd::Init()
 	xml_init.InitDragDropListEx			(uiXml, "dragdrop_backpack", 0, m_pUIBackPackList);
 	BindDragDropListEnents				(m_pUIBackPackList);
 
+	m_pUIVestList						= xr_new<CUIDragDropListEx>(); AttachChild(m_pUIVestList); m_pUIVestList->SetAutoDelete(true);
+	xml_init.InitDragDropListEx			(uiXml, "dragdrop_vest", 0, m_pUIVestList);
+	BindDragDropListEnents				(m_pUIVestList);
+
 	m_pUIKnifeList						= xr_new<CUIDragDropListEx>(); AttachChild(m_pUIKnifeList); m_pUIKnifeList->SetAutoDelete(true);
 	xml_init.InitDragDropListEx			(uiXml, "dragdrop_knife", 0, m_pUIKnifeList);
 	BindDragDropListEnents				(m_pUIKnifeList);
@@ -204,12 +211,49 @@ void CUIInventoryWnd::Init()
 	xml_init.InitDragDropListEx			(uiXml, "dragdrop_quick_3", 0, m_pUIQuickList_3);
 	BindDragDropListEnents				(m_pUIQuickList_3);
 
+	m_pUIVestPouch_1					= xr_new<CUIDragDropListEx>(); AttachChild(m_pUIVestPouch_1); m_pUIVestPouch_1->SetAutoDelete(true);
+	xml_init.InitDragDropListEx			(uiXml, "dragdrop_vest_pouch_1", 0, m_pUIVestPouch_1);
+	BindDragDropListEnents				(m_pUIVestPouch_1);
+
+	m_pUIVestPouch_2					= xr_new<CUIDragDropListEx>(); AttachChild(m_pUIVestPouch_2); m_pUIVestPouch_2->SetAutoDelete(true);
+	xml_init.InitDragDropListEx			(uiXml, "dragdrop_vest_pouch_2", 0, m_pUIVestPouch_2);
+	BindDragDropListEnents				(m_pUIVestPouch_2);
+
+	m_pUIVestPouch_3					= xr_new<CUIDragDropListEx>(); AttachChild(m_pUIVestPouch_3); m_pUIVestPouch_3->SetAutoDelete(true);
+	xml_init.InitDragDropListEx			(uiXml, "dragdrop_vest_pouch_3", 0, m_pUIVestPouch_3);
+	BindDragDropListEnents				(m_pUIVestPouch_3);
+
+	m_pUIVestPouch_4					= xr_new<CUIDragDropListEx>(); AttachChild(m_pUIVestPouch_4); m_pUIVestPouch_4->SetAutoDelete(true);
+	xml_init.InitDragDropListEx			(uiXml, "dragdrop_vest_pouch_4", 0, m_pUIVestPouch_4);
+	BindDragDropListEnents				(m_pUIVestPouch_4);
+
+	m_pUIVestPouch_5					= xr_new<CUIDragDropListEx>(); AttachChild(m_pUIVestPouch_5); m_pUIVestPouch_5->SetAutoDelete(true);
+	xml_init.InitDragDropListEx			(uiXml, "dragdrop_vest_pouch_5", 0, m_pUIVestPouch_5);
+	BindDragDropListEnents				(m_pUIVestPouch_5);
+
+	m_pUIVestPouch_6					= xr_new<CUIDragDropListEx>(); AttachChild(m_pUIVestPouch_6); m_pUIVestPouch_6->SetAutoDelete(true);
+	xml_init.InitDragDropListEx			(uiXml, "dragdrop_vest_pouch_6", 0, m_pUIVestPouch_6);
+	BindDragDropListEnents				(m_pUIVestPouch_6);
+
+	m_pUIVestPouch_7					= xr_new<CUIDragDropListEx>(); AttachChild(m_pUIVestPouch_7); m_pUIVestPouch_7->SetAutoDelete(true);
+	xml_init.InitDragDropListEx			(uiXml, "dragdrop_vest_pouch_7", 0, m_pUIVestPouch_7);
+	BindDragDropListEnents				(m_pUIVestPouch_7);
+
+	m_pUIVestPouch_8					= xr_new<CUIDragDropListEx>(); AttachChild(m_pUIVestPouch_8); m_pUIVestPouch_8->SetAutoDelete(true);
+	xml_init.InitDragDropListEx			(uiXml, "dragdrop_vest_pouch_8", 0, m_pUIVestPouch_8);
+	BindDragDropListEnents				(m_pUIVestPouch_8);
+
+	m_pUIVestPouch_9					= xr_new<CUIDragDropListEx>(); AttachChild(m_pUIVestPouch_9); m_pUIVestPouch_9->SetAutoDelete(true);
+	xml_init.InitDragDropListEx			(uiXml, "dragdrop_vest_pouch_9", 0, m_pUIVestPouch_9);
+	BindDragDropListEnents				(m_pUIVestPouch_9);
+
 	for ( u8 i = 0; i < SLOTS_TOTAL; i++ )
 		m_slots_array[ i ] = NULL;
 	m_slots_array[OUTFIT_SLOT]			= m_pUIOutfitList;
 	m_slots_array[HELMET_SLOT]			= m_pUIHelmetList;
 	m_slots_array[WARBELT_SLOT]			= m_pUIWarBeltList;
 	m_slots_array[BACKPACK_SLOT]		= m_pUIBackPackList;
+	m_slots_array[VEST_SLOT]			= m_pUIVestList;
 
 	m_slots_array[KNIFE_SLOT]			= m_pUIKnifeList;
 	m_slots_array[ON_SHOULDER_SLOT]		= m_pUIOnShoulderList;
@@ -227,6 +271,16 @@ void CUIInventoryWnd::Init()
 	m_slots_array[QUICK_SLOT_1]			= m_pUIQuickList_1;
 	m_slots_array[QUICK_SLOT_2]			= m_pUIQuickList_2;
 	m_slots_array[QUICK_SLOT_3]			= m_pUIQuickList_3;
+
+	m_slots_array[VEST_POUCH_1]			= m_pUIVestPouch_1;
+	m_slots_array[VEST_POUCH_2]			= m_pUIVestPouch_2;
+	m_slots_array[VEST_POUCH_3]			= m_pUIVestPouch_3;
+	m_slots_array[VEST_POUCH_4]			= m_pUIVestPouch_4;
+	m_slots_array[VEST_POUCH_5]			= m_pUIVestPouch_5;
+	m_slots_array[VEST_POUCH_6]			= m_pUIVestPouch_6;
+	m_slots_array[VEST_POUCH_7]			= m_pUIVestPouch_7;
+	m_slots_array[VEST_POUCH_8]			= m_pUIVestPouch_8;
+	m_slots_array[VEST_POUCH_9]			= m_pUIVestPouch_9;
 
 	//slot keys statisc
 	m_pKnifeKey = xr_new<CUIStatic>();
@@ -630,16 +684,17 @@ void CUIInventoryWnd::UpdateCustomDraw()
 		auto list = GetSlotList(i);
 		if (!list) 
 			continue;
-		if (inv.IsSlotDisabled(i)) {
-			if(i==HELMET_SLOT)
-				list->SetCellsAvailable(0);
-			else
-				list->SetCellsCapacity({});
-		}else{
-			if (i == HELMET_SLOT)
-				list->ResetCellsAvailable();
-			else
-				list->ResetCellsCapacity();
+
+		switch (i)
+		{
+		case HELMET_SLOT:
+			inv.IsSlotDisabled(i) ? list->SetCellsAvailable(0) : list->ResetCellsAvailable();
+		break;
+		default:
+		{
+			inv.IsSlotDisabled(i) ? list->SetCellsCapacity({}) : list->ResetCellsCapacity();
+			list->Show(!inv.IsSlotDisabled(i));
+		}break;
 		}
 	}
 

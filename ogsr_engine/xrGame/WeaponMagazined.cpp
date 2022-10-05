@@ -1735,9 +1735,9 @@ void CWeaponMagazined::GetBriefInfo(xr_string& str_name, xr_string& icon_sect_na
 	const int AE = GetAmmoElapsed(), AC = b_use_mags ? GetMagazineCount() : GetAmmoCurrent();
 	
 	if (AE == 0 || m_magazine.empty())
-		icon_sect_name = "";//m_ammoTypes[m_ammoType].c_str();
+		icon_sect_name = "";
 	else
-		icon_sect_name = m_magazine.back().m_ammoSect.c_str();//m_ammoTypes[m_magazine.back().m_LocalAmmoType].c_str();
+		icon_sect_name = b_use_mags && (b_gear_info && !b_wpn_info) ? GetMagazineEmptySect() : m_magazine.back().m_ammoSect.c_str();
 
 	string256 sItemName;
 	strcpy_s(sItemName, *CStringTable().translate(AE > 0 ? pSettings->r_string(icon_sect_name.c_str(), "inv_name_short") : "st_not_loaded"));

@@ -4,7 +4,6 @@
 [mag_base]:identity_immunities
 belt 			= true
 default_to_ruck = true
-slot 			= 12,13,14,15
 
 class			= AMMO
 cform           = skeleton
@@ -29,8 +28,16 @@ icon_group = 1
 load_sound = interface\wm_load
 unload_sound = interface\wm_load
 
+[mag_small]:mag_base
+slot = 12,13,14,15,19,20,25,26
+belt = true
+
+[mag_large]:mag_base
+slot = 12,13,14,15,21,22,23,24,27
+belt = false
+
 ;;;;;;;;;;;;;;;;;;;;;;;;магазин 8 набоїв 9х18;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-[clip_8_900x18]:mag_base
+[clip_8_900x18]:mag_small
 visual 			= weapons\magazines\clip_8_900x18.ogf
 box_size 			= 8
 inv_grid_width     = 1
@@ -65,7 +72,7 @@ ammo_types 		= ammo_9x18_fmj, ammo_9x18_pmm
 mag_types 		= clip_8_900x18_fmj, clip_8_900x18_ap
 
 ;;;;;;;;;;;;;;;;;магазин 12 набоїв 9х18;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-[clip_12_900x18]:mag_base
+[clip_12_900x18]:mag_small
 visual          = weapons\magazines\clip_12_900x18.ogf
 box_size 		= 12
 inv_grid_width     = 1
@@ -103,7 +110,7 @@ mag_types 		= clip_12_900x18_fmj, clip_12_900x18_ap
 ;misfire_probability_box = 1
 
 ;;;;;;;;;;;;;;;;;магазин 13 набоїв 9х19;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-[clip_13_900x19]:mag_base
+[clip_13_900x19]:mag_small
 visual          = weapons\magazines\clip_13_900x19.ogf
 box_size 		= 13
 inv_grid_width     = 1
@@ -141,7 +148,7 @@ mag_types 		= clip_13_900x19_fmj, clip_13_900x19_ap
 ;misfire_probability_box = 1
 
 ;;;;;;;;;;;;;;;;;магазин 15 набоїв 9х19;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-[clip_15_900x19]:mag_base
+[clip_15_900x19]:mag_small
 visual          = weapons\magazines\clip_15_900x19.ogf
 box_size 		= 15
 inv_grid_width     = 1
@@ -179,7 +186,7 @@ mag_types 		= clip_15_900x19_fmj, clip_15_900x19_ap
 ;misfire_probability_box = 1
 
 ;;;;;;;;;;;;;;;;;магазин 16 набоїв 9х19;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-[clip_16_900x19]:mag_base
+[clip_16_900x19]:mag_small
 visual          = weapons\magazines\clip_16_900x19.ogf
 box_size 		= 16
 inv_grid_width     = 1
@@ -217,13 +224,14 @@ mag_types 		= clip_16_900x19_fmj, clip_16_900x19_ap
 ;misfire_probability_box = 1
 
 ;;;;;;;;;;;;;;;;;магазин 30 набоїв 9х19;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-[mag_30_900x19]:mag_base
+[mag_30_900x19]:mag_large
 visual          = weapons\magazines\mag_30_900x19.ogf
 box_size 		= 30
 inv_grid_width     = 1
 inv_grid_height    = 2
 inv_grid_x         = 0
 inv_grid_y         = 4
+belt 			= false
 
 [mag_30_900x19_fmj]:mag_30_900x19
 inv_grid_width     = 1
@@ -246,12 +254,8 @@ ammo_in_box 	= ammo_9x19_pbp
 empty_box 		= mag_30_900x19_empty
 
 [mag_30_900x19_empty]:mag_30_900x19
-inv_grid_width     = 1
-inv_grid_height    = 2
-inv_grid_x         = 2
-inv_grid_y         = 4
-inv_name		= clip_12_900x18_empty
-inv_name_short 	= clip_12_900x18_empty_short
+inv_name		= mag_30_900x19_empty
+inv_name_short 	= mag_30_900x19_empty_short
 cost 			= 200
 inv_weight 		= 0.2
 ammo_types 		= ammo_9x19_fmj, ammo_9x19_pbp
@@ -259,7 +263,7 @@ mag_types 		= mag_30_900x19_fmj, mag_30_900x19_ap
 ;misfire_probability_box = 1
 
 ;;;;;;;;;;;;;;;;;магазин 7 набоїв 11.43х23;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-[clip_7_1143x23]:mag_base
+[clip_7_1143x23]:mag_small
 visual          = weapons\magazines\clip_7_1143x23.ogf
 box_size 		= 7
 inv_grid_width     = 1
@@ -297,7 +301,7 @@ mag_types 		= clip_7_1143x23_fmj, clip_7_1143x23_hydro
 ;misfire_probability_box = 1
 
 ;;;;;;;;;;;;;;;;;магазин 8 набоїв 11.43х23;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-[clip_8_1143x23]:mag_base
+[clip_8_1143x23]:mag_small
 visual          = weapons\magazines\clip_8_1143x23.ogf
 box_size 		= 8
 inv_grid_width     = 1
@@ -335,7 +339,7 @@ mag_types 		= clip_8_1143x23_fmj, clip_8_1143x23_hydro
 ;misfire_probability_box = 1
 
 ;;;;;;;;;;;;;;;;;;;;магазин 30 набоїв 5,45х39;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-[mag_30_545x39]:mag_base
+[mag_30_545x39]:mag_large
 visual          = weapons\magazines\mag_30_545x39.ogf
 box_size 		= 30
 inv_grid_width     = 1
@@ -372,7 +376,7 @@ mag_types 		= mag_30_545x39_fmj, mag_30_545x39_ap
 ;misfire_probability_box = 1
 
 ;;;;;;;;;;;;;;;;;;;;магазин 30 набоїв 5,56х45;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-[mag_30_556x45]:mag_base
+[mag_30_556x45]:mag_large
 visual          = weapons\magazines\mag_30_556x45.ogf
 box_size 			= 30
 inv_grid_width     = 1
@@ -409,7 +413,7 @@ mag_types 		= mag_30_556x45_fmj, mag_30_556x45_ap
 ;misfire_probability_box = 1
 
 ;;;;;;;;;;;;;;;;;;;;магазин 10 набоїв 9х39;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-[mag_10_900x39]:mag_base
+[mag_10_900x39]:mag_large
 visual          = weapons\magazines\mag_10_900x39.ogf
 box_size 			= 10
 inv_grid_width     = 1
@@ -456,7 +460,7 @@ mag_types 		= mag_10_900x39_pab9, mag_10_900x39_sp5, mag_10_900x39_ap
 ;misfire_probability_box = 1
 
 ;;;;;;;;;;;;;;;;;;;;магазин 20 набоїв 9х39;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-[mag_20_900x39]:mag_base
+[mag_20_900x39]:mag_large
 visual          = weapons\magazines\mag_20_900x39.ogf
 box_size 			= 20
 inv_grid_width     = 1
@@ -503,7 +507,7 @@ mag_types 		= mag_20_900x39_pab9, mag_20_900x39_sp5, mag_20_900x39_ap
 ;misfire_probability_box = 1
 
 ;;;;;;;;;;;;;;;;;;;;магазин 10 набоїв 7,62х54;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-[mag_10_762x54]:mag_base
+[mag_10_762x54]:mag_large
 visual          = weapons\magazines\mag_10_762x54.ogf
 box_size 			= 10
 inv_grid_width     = 1
@@ -550,7 +554,7 @@ mag_types 		= mag_10_762x54_7n1, mag_10_762x54_7n14, mag_10_762x54_ap
 ;misfire_probability_box = 1
 
 ;;;;;;;;;;;;;;;;;;;;магазин 20 набоїв 7,62х54;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-[mag_20_762x54]:mag_base
+[mag_20_762x54]:mag_large
 visual          = weapons\magazines\mag_10_762x54.ogf
 box_size 			= 20
 inv_grid_width     = 1

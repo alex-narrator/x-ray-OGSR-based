@@ -85,108 +85,151 @@ void CUIInventoryWnd::InitInventory()
 
 	//Slots
 	PIItem	_itm						= m_pInv->m_slots[KNIFE_SLOT].m_pIItem;
-	if (_itm)
-	{
+	if (_itm){
 		CUICellItem* itm = create_cell_item(_itm);
 		m_pUIKnifeList->SetItem(itm);
 	}
+
 	_itm								= m_pInv->m_slots[ON_SHOULDER_SLOT].m_pIItem;
-	if(_itm)
-	{
+	if(_itm){
 		CUICellItem* itm				= create_cell_item(_itm);
 		m_pUIOnShoulderList->SetItem		(itm);
 	}
+
 	_itm								= m_pInv->m_slots[ON_BACK_SLOT].m_pIItem;
-	if(_itm)
-	{
+	if(_itm){
 		CUICellItem* itm				= create_cell_item(_itm);
 		m_pUIOnBackList->SetItem		(itm);
 	}
+
 	_itm								= m_pInv->m_slots[HOLSTER_SLOT].m_pIItem;
-	if (_itm)
-	{
+	if (_itm){
 		CUICellItem* itm				= create_cell_item(_itm);
 		m_pUIHolsterList->SetItem		(itm);
 	}
 
 	_itm								= m_pInv->m_slots[GRENADE_SLOT].m_pIItem;
-	if(_itm)
-	{
+	if(_itm){
 		CUICellItem* itm				= create_cell_item( _itm );
 		m_pUIGrenadeList->SetItem		(itm);
 	}
+
 	_itm								= m_pInv->m_slots[ARTEFACT_SLOT].m_pIItem;
-	if(_itm)
-	{
+	if(_itm){
 		CUICellItem* itm				= create_cell_item(_itm);
 		m_pUIArtefactList->SetItem		(itm);
 	}
 
 	_itm								= m_pInv->m_slots[DETECTOR_SLOT].m_pIItem;
-	if (_itm)
-	{
+	if (_itm){
 		CUICellItem* itm				= create_cell_item(_itm);
 		m_pUIDetectorList->SetItem		(itm);
 	}
 
 	_itm								= m_pInv->m_slots[ON_HEAD_SLOT].m_pIItem;
-	if (_itm)
-	{
+	if (_itm){
 		CUICellItem* itm				= create_cell_item(_itm);
 		m_pUIOnHeadList->SetItem			(itm);
 	}
 
 	_itm								= m_pInv->m_slots[PDA_SLOT].m_pIItem;
-	if (_itm)
-	{
+	if (_itm){
 		CUICellItem* itm				= create_cell_item(_itm);
 		m_pUIPdaList->SetItem			(itm);
 	}
 
 	_itm								= m_pInv->m_slots[QUICK_SLOT_0].m_pIItem;
-	if(_itm)
-	{
+	if(_itm){
 		CUICellItem* itm				= create_cell_item(_itm);
 		m_pUIQuickList_0->SetItem		(itm);
 	}
+
 	_itm								= m_pInv->m_slots[QUICK_SLOT_1].m_pIItem;
-	if(_itm)
-	{
+	if(_itm){
 		CUICellItem* itm				= create_cell_item(_itm);
 		m_pUIQuickList_1->SetItem		(itm);
 	}
+
 	_itm								= m_pInv->m_slots[QUICK_SLOT_2].m_pIItem;
-	if(_itm)
-	{
+	if(_itm){
 		CUICellItem* itm				= create_cell_item(_itm);
 		m_pUIQuickList_2->SetItem		(itm);
 	}
+
 	_itm								= m_pInv->m_slots[QUICK_SLOT_3].m_pIItem;
-	if(_itm)
-	{
+	if(_itm){
 		CUICellItem* itm				= create_cell_item(_itm);
 		m_pUIQuickList_3->SetItem		(itm);
 	}
 
 	_itm								= m_pInv->m_slots[HELMET_SLOT].m_pIItem;
-	if (_itm)
-	{
+	if (_itm){
 		CUICellItem* itm				= create_cell_item(_itm);
 		m_pUIHelmetList->SetItem		(itm);
 	}
 
 	_itm								= m_pInv->m_slots[WARBELT_SLOT].m_pIItem;
-	if (_itm)
-	{
+	if (_itm){
 		CUICellItem* itm				= create_cell_item(_itm);
 		m_pUIWarBeltList->SetItem		(itm);
 	}
 
 	_itm								= m_pInv->m_slots[BACKPACK_SLOT].m_pIItem;
-	if (_itm)
-	{
+	if (_itm){
 		CUICellItem* itm				= create_cell_item(_itm);
 		m_pUIBackPackList->SetItem		(itm);
+	}
+
+	_itm								= m_pInv->m_slots[VEST_SLOT].m_pIItem;
+	if (_itm){
+		CUICellItem* itm				= create_cell_item(_itm);
+		m_pUIVestList->SetItem			(itm);
+	}
+	///vest pouches
+	_itm = m_pInv->m_slots[VEST_POUCH_1].m_pIItem;
+	if (_itm) {
+		CUICellItem* itm = create_cell_item(_itm);
+		m_pUIVestPouch_1->SetItem(itm);
+	}
+	_itm = m_pInv->m_slots[VEST_POUCH_2].m_pIItem;
+	if (_itm) {
+		CUICellItem* itm = create_cell_item(_itm);
+		m_pUIVestPouch_2->SetItem(itm);
+	}
+	_itm = m_pInv->m_slots[VEST_POUCH_3].m_pIItem;
+	if (_itm) {
+		CUICellItem* itm = create_cell_item(_itm);
+		m_pUIVestPouch_3->SetItem(itm);
+	}
+	_itm = m_pInv->m_slots[VEST_POUCH_4].m_pIItem;
+	if (_itm) {
+		CUICellItem* itm = create_cell_item(_itm);
+		m_pUIVestPouch_4->SetItem(itm);
+	}
+	_itm = m_pInv->m_slots[VEST_POUCH_5].m_pIItem;
+	if (_itm) {
+		CUICellItem* itm = create_cell_item(_itm);
+		m_pUIVestPouch_5->SetItem(itm);
+	}
+	_itm = m_pInv->m_slots[VEST_POUCH_6].m_pIItem;
+	if (_itm) {
+		CUICellItem* itm = create_cell_item(_itm);
+		m_pUIVestPouch_6->SetItem(itm);
+	}
+	_itm = m_pInv->m_slots[VEST_POUCH_7].m_pIItem;
+	if (_itm) {
+		CUICellItem* itm = create_cell_item(_itm);
+		m_pUIVestPouch_7->SetItem(itm);
+	}
+	_itm = m_pInv->m_slots[VEST_POUCH_8].m_pIItem;
+	if (_itm) {
+		CUICellItem* itm = create_cell_item(_itm);
+		m_pUIVestPouch_8->SetItem(itm);
+	}
+	_itm = m_pInv->m_slots[VEST_POUCH_9].m_pIItem;
+	if (_itm) {
+		CUICellItem* itm = create_cell_item(_itm);
+		m_pUIVestPouch_9->SetItem(itm);
 	}
 
 	PIItem _outfit						= m_pInv->m_slots[OUTFIT_SLOT].m_pIItem;
@@ -272,7 +315,7 @@ bool CUIInventoryWnd::ToSlot(CUICellItem* itm, bool force_place)
 		
 		new_owner->SetItem					(i);
 	
-		bool b_not_activate = !GetInventory()->activate_slot(_slot) && !iitem->cast_weapon();
+		bool b_not_activate = !GetInventory()->activate_slot(_slot) && !iitem->cast_hud_item();
 		GetInventory()->Slot(iitem, b_not_activate);
 		PlaySnd(eInvItemToSlot);
 		m_b_need_update_stats = true;
@@ -309,7 +352,8 @@ bool CUIInventoryWnd::ToSlot(CUICellItem* itm, bool force_place)
 		}break;
 		case WARBELT_SLOT:
 		case BACKPACK_SLOT:
-		case OUTFIT_SLOT: {
+		case OUTFIT_SLOT: 
+		case VEST_SLOT:{
 			UpdateCustomDraw();
 		}break;
 		}
@@ -355,7 +399,8 @@ bool CUIInventoryWnd::ToBag(CUICellItem* itm, bool b_use_cursor_pos)
 		{
 		case WARBELT_SLOT:
 		case BACKPACK_SLOT:
-		case OUTFIT_SLOT: {
+		case OUTFIT_SLOT: 
+		case VEST_SLOT:{
 			UpdateCustomDraw();
 		}break;
 		}
@@ -426,6 +471,7 @@ bool CUIInventoryWnd::OnItemSelected(CUICellItem* itm)
 		m_pUIHelmetList,
 		m_pUIWarBeltList,
 		m_pUIBackPackList,
+		m_pUIVestList,
 		//
 		m_pUIKnifeList,
 		m_pUIOnShoulderList, 
@@ -442,7 +488,17 @@ bool CUIInventoryWnd::OnItemSelected(CUICellItem* itm)
 		m_pUIQuickList_0,
 		m_pUIQuickList_1,
 		m_pUIQuickList_2,
-		m_pUIQuickList_3
+		m_pUIQuickList_3,
+
+		m_pUIVestPouch_1,
+		m_pUIVestPouch_2,
+		m_pUIVestPouch_3,
+		m_pUIVestPouch_4,
+		m_pUIVestPouch_5,
+		m_pUIVestPouch_6,
+		m_pUIVestPouch_7,
+		m_pUIVestPouch_8,
+		m_pUIVestPouch_9
 		} );
 	return false;
 }
@@ -534,13 +590,19 @@ bool CUIInventoryWnd::OnItemDbClick(CUICellItem* itm)
           // Пытаемся найти свободный слот из списка разрешенных.
           // Если его нету, то принудительно займет первый слот,
           // указанный в списке.
-          auto slots = __item->GetSlots();
+          auto& slots = __item->GetSlots();
           for (const auto& slot : slots) {
             __item->SetSlot(slot);
             if ( ToSlot( itm, false ) )
               return true;
           }
-          __item->SetSlot( slots.size() ? slots[ 0 ]: NO_ACTIVE_SLOT );
+          //__item->SetSlot( slots.size() ? slots[ 0 ]: NO_ACTIVE_SLOT );
+		  for (const auto& slot : slots) {
+			  if (!m_pInv->IsSlotDisabled(slot)) {
+				  __item->SetSlot(slot);
+				  break;
+			  }
+		  }
           if ( !ToSlot( itm, false ) )
             if ( !ToBelt( itm, false ) )
               ToSlot( itm, true );
@@ -577,11 +639,12 @@ void CUIInventoryWnd::ClearAllLists()
 	m_pUIHelmetList->ClearAll				(true);
 	m_pUIWarBeltList->ClearAll				(true);
 	m_pUIBackPackList->ClearAll				(true);
+	m_pUIVestList->ClearAll					(true);
 	//
 	m_pUIKnifeList->ClearAll				(true);
-	m_pUIOnShoulderList->ClearAll				(true);
-	m_pUIOnBackList->ClearAll			(true);
-	m_pUIHolsterList->ClearAll			(true);
+	m_pUIOnShoulderList->ClearAll			(true);
+	m_pUIOnBackList->ClearAll				(true);
+	m_pUIHolsterList->ClearAll				(true);
 	//
 	m_pUIGrenadeList->ClearAll				(true);
 	m_pUIArtefactList->ClearAll				(true);
@@ -594,6 +657,16 @@ void CUIInventoryWnd::ClearAllLists()
 	m_pUIQuickList_1->ClearAll				(true);
 	m_pUIQuickList_2->ClearAll				(true);
 	m_pUIQuickList_3->ClearAll				(true);
+
+	m_pUIVestPouch_1->ClearAll				(true);
+	m_pUIVestPouch_2->ClearAll				(true);
+	m_pUIVestPouch_3->ClearAll				(true);
+	m_pUIVestPouch_4->ClearAll				(true);
+	m_pUIVestPouch_5->ClearAll				(true);
+	m_pUIVestPouch_6->ClearAll				(true);
+	m_pUIVestPouch_7->ClearAll				(true);
+	m_pUIVestPouch_8->ClearAll				(true);
+	m_pUIVestPouch_9->ClearAll				(true);
 }
 
 

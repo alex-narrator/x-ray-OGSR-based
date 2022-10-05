@@ -29,8 +29,6 @@
 
 #include "Artifact.h"
 #include "CustomOutfit.h"
-#include "Warbelt.h"
-#include "Backpack.h"
 #include "WeaponKnife.h"
 #include "string_table.h"
 
@@ -331,8 +329,6 @@ void CUICarBodyWnd::ActivatePropertiesBox()
 	auto pWeapon		= smart_cast<CWeapon*>		(CurrentIItem());
 	auto pAmmo			= smart_cast<CWeaponAmmo*>	(CurrentIItem());
 	auto pEatableItem	= smart_cast<CEatableItem*> (CurrentIItem());
-	auto pWarbelt		= smart_cast<CWarbelt*>		(CurrentIItem());
-	auto pBackpack		= smart_cast<CBackpack*>	(CurrentIItem());
 
 	bool b_actor_inv = CurrentItem()->OwnerList() == m_pUIOurBagList;
 	auto inv = &m_pActorInventoryOwner->inventory();
@@ -448,26 +444,7 @@ void CUICarBodyWnd::ActivatePropertiesBox()
 	bool hasMany = CurrentItem()->ChildsCount() > 0;
 	bool can_move_stack = CanTakeStack(CurrentItem(), b_actor_inv ? m_pOtherGO : m_pActorGO);
 
-	if ((pWarbelt || pBackpack) && b_actor_inv && inv->InSlot(CurrentIItem())) {
-		bool can_move_content = true;
-		if (pWarbelt) {
-			for (const auto& belt_item : inv->m_belt) {
-				if (!CanMoveToOther(belt_item, m_pOtherGO))
-					can_move_content = false;
-			}
-		}
-		if (pBackpack) {
-			for (const auto& ruck_item : inv->m_ruck) {
-				if (!CanMoveToOther(ruck_item, m_pOtherGO))
-					can_move_content = false;
-			}
-		}
-		if (can_move_content) {
-			m_pUIPropertiesBox->AddItem("st_move_with_content", NULL, INVENTORY_MOVE_WITH_CONTENT);
-			b_show = true;
-		}
-	}
-	else if (CanMoveToOther(CurrentIItem(), b_actor_inv ? m_pOtherGO : m_pActorGO)) {
+	if (CanMoveToOther(CurrentIItem(), b_actor_inv ? m_pOtherGO : m_pActorGO)) {
 		m_pUIPropertiesBox->AddItem("st_move", NULL, INVENTORY_MOVE_ACTION);
 		if (hasMany && can_move_stack)
 			m_pUIPropertiesBox->AddItem("st_move_all", (void*)33, INVENTORY_MOVE_ACTION);
@@ -512,7 +489,7 @@ void CUICarBodyWnd::SendMessage(CUIWindow *pWnd, s16 msg, void *pData)
 			UpdateLists_delayed();
 		}
 		else if (m_pUIMoveAllFromRuckButton == pWnd){
-			MoveItemWithContent(NULL, BACKPACK_SLOT);
+			MoveAllFromRuck();
 		}
 	}
 	else if(pWnd == m_pUIPropertiesBox && msg == PROPERTY_CLICKED){
@@ -552,9 +529,7 @@ void CUICarBodyWnd::SendMessage(CUIWindow *pWnd, s16 msg, void *pData)
 				}break;
 				case INVENTORY_RELOAD_AMMO_BOX:
 				{
-					//Msg("load %s to %s", (LPCSTR)UIPropertiesBox.GetClickedItem()->GetData(), pAmmo->cNameSect().c_str());
 					(smart_cast<CWeaponAmmo*>(CurrentIItem()))->ReloadBox((LPCSTR)m_pUIPropertiesBox->GetClickedItem()->GetData());
-					//SetCurrentItem(NULL);
 				}break;
 				case INVENTORY_UNLOAD_AMMO_BOX:
 				{
@@ -569,7 +544,6 @@ void CUICarBodyWnd::SendMessage(CUIWindow *pWnd, s16 msg, void *pData)
 						auto child_itm = itm->Child(i);
 						ProcessUnload(child_itm->m_pData);
 					}
-					//SetCurrentItem(NULL);
 				}break;
 				case INVENTORY_DETACH_ADDON: {
 					CurrentIItem()->cast_weapon()->Detach((const char*)(m_pUIPropertiesBox->GetClickedItem()->GetData()), true);
@@ -589,12 +563,6 @@ void CUICarBodyWnd::SendMessage(CUIWindow *pWnd, s16 msg, void *pData)
 
 					MoveItems(CurrentItem(), b_all);
 				}break;
-				case INVENTORY_MOVE_WITH_CONTENT:
-				{
-					auto iitem = CurrentIItem();
-					u32 slot = iitem->GetSlot();
-					MoveItemWithContent(CurrentItem(), slot);
-				}
 			}
 
 			// refresh if nessesary
@@ -953,29 +921,13 @@ void CUICarBodyWnd::PlaySnd(eInventorySndAction a)
 		sounds[a].play(NULL, sm_2D);
 }
 
-void CUICarBodyWnd::MoveItemWithContent(CUICellItem* itm, u32 slot)
+void CUICarBodyWnd::MoveAllFromRuck()
 {
-	EItemPlace move_from = eItemPlaceUndefined;
+	const auto& inv = m_pActorInventoryOwner->inventory();
 
-	switch (slot)
-	{
-	case WARBELT_SLOT:
-		move_from = eItemPlaceBelt;
-		break;
-	case BACKPACK_SLOT:
-		move_from = eItemPlaceRuck;
-		break;
-	}
-
-	auto inv_all = m_pActorInventoryOwner->inventory().m_all;
-
-	for (const auto& item : inv_all){
-		if (item->m_eItemPlace == move_from){
+	for (const auto& item : inv.m_ruck){
 			TransferItem(item, m_pActorGO, m_pOtherGO);
-		}
 	}
-
-	if (itm) MoveItems(itm, false);
 }
 
 bool CUICarBodyWnd::CanMoveToOther(PIItem pItem, CGameObject* owner_to) const {

@@ -101,7 +101,7 @@ public:
 	CUIStatic*					m_addons					[eMaxAddon];
 protected:
 	virtual		void			UpdateItemText();
-	Fvector2					m_addon_offset				[eMaxAddon];
+	Fvector2					m_addon_offset				[eMaxAddon]{};
 	void						CreateIcon					(eAddonType, CIconParams &params);
 	void						DestroyIcon					(eAddonType);
 	CUIStatic*					GetIcon						(eAddonType);

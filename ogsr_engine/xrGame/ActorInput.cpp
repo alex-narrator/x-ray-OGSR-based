@@ -242,6 +242,7 @@ void CActor::IR_OnKeyboardPress(int cmd){
 					//
 					bool SearchRuck = !psActorFlags.test(AF_QUICK_FROM_BELT);
 					PIItem iitm = inventory().GetSame(itm, SearchRuck);
+
 					if (iitm)
 					{
 						inventory().Eat(iitm);

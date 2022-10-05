@@ -8,13 +8,7 @@ CBackpack::CBackpack(){
 	SetSlot(BACKPACK_SLOT);
 }
 
-CBackpack::~CBackpack(){
-}
-
-void CBackpack::Load(LPCSTR section)
-{
-	inherited::Load(section);
-}
+CBackpack::~CBackpack(){}
 
 void CBackpack::Hit(SHit* pHDS){
 	Msg("pHDS before hit: [%.2f]", pHDS->power);

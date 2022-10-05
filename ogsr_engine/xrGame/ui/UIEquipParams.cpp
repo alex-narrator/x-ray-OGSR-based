@@ -147,7 +147,7 @@ void CUIEquipParams::SetInfo(CInventoryItem* obj){
 		inbuild_helmet_static->SetAutoDelete(true);
 		pos_top = inbuild_helmet_static->GetPosTop();
 		inbuild_helmet_static->SetWndPos(inbuild_helmet_static->GetPosLeft(), _h + pos_top);
-		sprintf_s(temp_text, " %s", pOutfit->m_bIsHelmetAllowed ? CStringTable().translate("st_no").c_str() : CStringTable().translate("st_yes").c_str());
+		sprintf_s(temp_text, " %s", pOutfit->m_bIsHelmetBuiltIn ? CStringTable().translate("st_yes").c_str() : CStringTable().translate("st_no").c_str());
 		strconcat(sizeof(text_to_show), text_to_show, CStringTable().translate("st_inbuild_helmet").c_str(), temp_text);
 		inbuild_helmet_static->SetText(text_to_show);
 		m_CapInfo.AttachChild(inbuild_helmet_static);

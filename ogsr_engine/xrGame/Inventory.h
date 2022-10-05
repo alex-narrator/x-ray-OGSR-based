@@ -76,6 +76,7 @@ public:
 	PIItem					Same				(const PIItem pIItem, bool bSearchRuck) const;
 	// Ищет на поясе IItem для указанного слота
 	PIItem					SameSlot			(const u32 slot, PIItem pIItem, bool bSearchRuck) const;
+	PIItem					SameGrenade			(PIItem pIItem, bool bSearchRuck) const;
 	// Ищет на поясе или в рюкзаке IItem с указанным именем (cName())
 	PIItem					Get					(const char *name, bool bSearchRuck) const;
 	// Ищет на поясе или в рюкзаке IItem с указанным именем (id)
@@ -122,7 +123,7 @@ public:
 
 	void					SetSlotsBlocked		( u16 mask, bool bBlock, bool now = false );
 	TIItemContainer			m_all;
-	TIItemContainer			m_ruck, m_belt, m_slot;
+	TIItemContainer			m_ruck, m_belt;
 	TISlotArr				m_slots;
 
 	//возвращает все кроме PDA в слоте и болта

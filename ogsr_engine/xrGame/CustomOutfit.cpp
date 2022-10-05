@@ -41,7 +41,7 @@ void CCustomOutfit::Load(LPCSTR section)
 
 	m_full_icon_name		= pSettings->r_string(section,"full_icon_name");
 
-	m_bIsHelmetAllowed		= !!READ_IF_EXISTS(pSettings, r_bool, section, "helmet_allowed", true);
+	m_bIsHelmetBuiltIn		= !!READ_IF_EXISTS(pSettings, r_bool, section, "helmet_built_in", false);
 
 	m_VisorTexture			= READ_IF_EXISTS(pSettings, r_string, section, "visor_texture", nullptr);
 }
@@ -82,7 +82,7 @@ void	CCustomOutfit::OnMoveToSlot		(EItemPlace prevPlace)
 			else
 				g_player_hud->load_default();
 
-			if(!m_bIsHelmetAllowed)
+			if(m_bIsHelmetBuiltIn)
 				m_pCurrentInventory->DropSlotsToRuck(HELMET_SLOT);
 
 			if (m_UIVisor)
@@ -136,7 +136,7 @@ float CCustomOutfit::GetPowerLoss()
 };
 
 void CCustomOutfit::DrawHUDMask() {
-	if (m_UIVisor && !!m_VisorTexture && !m_bIsHelmetAllowed) {
+	if (m_UIVisor && !!m_VisorTexture && m_bIsHelmetBuiltIn) {
 		m_UIVisor->SetPos(0, 0);
 		m_UIVisor->SetRect(0, 0, UI_BASE_WIDTH, UI_BASE_HEIGHT);
 		m_UIVisor->Render();

@@ -382,23 +382,27 @@ void CArtefact::OnStateSwitch(u32 S, u32 oldState)
 	{
 	case eShowing: 
 	{ 
+		SetPending(TRUE);
 		PlayHUDMotion({ "anim_show", "anm_show" }, false, S);
 		HUD_SOUND::PlaySound(sndShow, Fvector{}, H_Parent(), true, false);
 	} break;
 	case eHiding:
 	{
 		if (oldState != eHiding) {
+			SetPending(TRUE);
 			PlayHUDMotion({ "anim_hide", "anm_hide" }, false, S);
 			HUD_SOUND::PlaySound(sndHide, Fvector{}, H_Parent(), true, false);
 		}
 	} break;
 	case eActivating:
 	{
+		SetPending(TRUE);
 		PlayHUDMotion({ "anim_activate", "anm_activate" }, false, S);
 		HUD_SOUND::PlaySound(sndActivate, Fvector{}, H_Parent(), true, false);
 	} break;
 	case eIdle:
 	{ 
+		SetPending(FALSE);
 		PlayAnimIdle();
 	} break;
 	}
@@ -416,8 +420,7 @@ void CArtefact::OnAnimationEnd(u32 state)
 	case eHiding:
 		{
 			SwitchState(eHidden);
-//.			if(m_pCurrentInventory->GetNextActiveSlot()!=NO_ACTIVE_SLOT)
-//.				m_pCurrentInventory->Activate(m_pCurrentInventory->GetPrevActiveSlot());
+			SetPending(FALSE);
 		}break;
 	case eShowing:
 		{
@@ -427,6 +430,7 @@ void CArtefact::OnAnimationEnd(u32 state)
 		{
 			if(!fis_zero(GetCondition())){
 				ActivateArtefact();
+				SetPending(FALSE);
 			}
 			else
 			{

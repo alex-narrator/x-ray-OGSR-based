@@ -74,6 +74,7 @@ bool CUIInventoryCellItem::EqualTo(CUICellItem* itm)
 								fsimilar(object()->GetCondition(), ci->object()->GetCondition(), 0.01f) &&
 								fsimilar(object()->Weight(), ci->object()->Weight(), 0.01f) &&
 								fsimilar(object()->Volume(), ci->object()->Volume(), 0.01f) &&
+								fsimilar(object()->GetPowerLevel(), ci->object()->GetPowerLevel(), 0.01f) &&
 								fsimilar(object()->GetItemEffect(CInventoryItem::eRadiationRestoreSpeed), ci->object()->GetItemEffect(CInventoryItem::eRadiationRestoreSpeed), 0.01f) &&
 								object()->object().cNameSect() == ci->object()->object().cNameSect() && 
 								object()->m_eItemPlace == ci->object()->m_eItemPlace &&
@@ -568,9 +569,9 @@ void CUIWeaponCellItem::InitAllAddons(CUIStatic* s_silencer, CUIStatic* s_scope,
 
 void CUIWeaponCellItem::InitAddon(CUIStatic* s, CIconParams &params, Fvector2 addon_offset, bool b_rotate)
 {
-		Fvector2				base_scale;
-		Fvector2				inventory_size;
-		Fvector2				expected_size;
+		Fvector2				base_scale{};
+		Fvector2				inventory_size{};
+		Fvector2				expected_size{};
 		static int method = 1;
 		
 		inventory_size.x = INV_GRID_WIDTHF  * m_grid_size.x;
@@ -606,7 +607,7 @@ void CUIWeaponCellItem::InitAddon(CUIStatic* s, CIconParams &params, Fvector2 ad
 			base_scale.y = expected_size.y / inventory_size.y;
 		}
 
-		Fvector2 cell_size;
+		Fvector2 cell_size{};
 		cell_size.x = params.grid_width * INV_GRID_WIDTHF;
 		cell_size.y = params.grid_height * INV_GRID_HEIGHTF;
 		cell_size.mul(base_scale);
@@ -614,7 +615,7 @@ void CUIWeaponCellItem::InitAddon(CUIStatic* s, CIconParams &params, Fvector2 ad
 		if (b_rotate)
 		{
 			s->SetWndSize(Fvector2().set(cell_size.y, cell_size.x));
-			Fvector2 new_offset;
+			Fvector2 new_offset{};
 			new_offset.x = addon_offset.y*base_scale.x;
 			new_offset.y = GetHeight() - addon_offset.x*base_scale.x - cell_size.x;
 			addon_offset = new_offset;
@@ -633,7 +634,7 @@ void CUIWeaponCellItem::InitAddon(CUIStatic* s, CIconParams &params, Fvector2 ad
 		if (b_rotate)
 		{
 			s->SetHeading(GetHeading());
-			Fvector2 offs;
+			Fvector2 offs{};
 			offs.set(0.0f, s->GetWndSize().y);
 			s->SetHeadingPivot(Fvector2().set(0.0f, 0.0f), /*Fvector2().set(0.0f,0.0f)*/offs, true);
 		}

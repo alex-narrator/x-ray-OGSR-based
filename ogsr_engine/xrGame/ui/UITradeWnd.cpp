@@ -39,9 +39,9 @@
 #include "../xr_3da/xr_input.h"
 
 
-#define				TRADE_XML			"trade.xml"
-#define				TRADE_CHARACTER_XML	"trade_character.xml"
-#define				TRADE_ITEM_XML		"trade_item.xml"
+constexpr auto TRADE_XML = "trade.xml";
+constexpr auto TRADE_CHARACTER_XML = "trade_character.xml";
+constexpr auto TRADE_ITEM_XML = "trade_item.xml";
 
 
 struct CUITradeInternal{
@@ -457,9 +457,7 @@ void CUITradeWnd::SendMessage(CUIWindow *pWnd, s16 msg, void *pData)
 				}break;
 				case INVENTORY_RELOAD_AMMO_BOX:
 				{
-					//Msg("load %s to %s", (LPCSTR)UIPropertiesBox.GetClickedItem()->GetData(), pAmmo->cNameSect().c_str());
 					(smart_cast<CWeaponAmmo*>(CurrentIItem()))->ReloadBox((LPCSTR)m_pUIPropertiesBox->GetClickedItem()->GetData());
-					//SetCurrentItem(NULL);
 				}break;
 				case INVENTORY_UNLOAD_AMMO_BOX:
 				{
@@ -475,7 +473,6 @@ void CUITradeWnd::SendMessage(CUIWindow *pWnd, s16 msg, void *pData)
 						auto child_itm = itm->Child(i);
 						ProcessUnload(child_itm->m_pData);
 					}
-					//SetCurrentItem(NULL);
 				}break;
 				case INVENTORY_DETACH_ADDON: {
 					CurrentIItem()->cast_weapon()->Detach((const char*)(m_pUIPropertiesBox->GetClickedItem()->GetData()), true);

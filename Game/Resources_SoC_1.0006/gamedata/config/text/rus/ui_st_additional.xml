@@ -648,7 +648,7 @@
 		<text>на голову</text>
 	</string>
 	<string id="st_move_to_slot_10">
-		<text>в руки</text>
+		<text>в подсумок</text>
 	</string>
 	<string id="st_move_to_slot_11">
 		<text>надеть</text>
@@ -685,6 +685,16 @@
 	<string id="st_move_to_slot_17">
 		<text>надеть</text>
 	</string>	
+	<string id="st_move_to_slot_18">
+		<text>надеть</text>
+	</string>		
+	
+	<string id="st_to_quick_slot">
+		<text>до кишені</text>
+	</string>
+	<string id="st_to_pouch">
+		<text>до розгрузки</text>
+	</string>
 	
 	<string id="kb_cam_1">
 		<text>Вид от первого лица</text>
@@ -697,10 +707,10 @@
 	</string>
 
 	<string id="inventory_item_use_or_drag">
-		<text>Поднять предмет ($$ACTION_USE$$) \n Перетащить предмет (SHIFT+$$ACTION_USE$$)</text>
+		<text>Поднять предмет [$$ACTION_USE$$] \n Перетащить предмет [SHIFT+$$ACTION_USE$$]</text>
 	</string>
 	<string id="game_object_drag">
-		<text>Перетащить предмет (SHIFT+$$ACTION_USE$$)</text>
+		<text>Перетащить предмет [$$ACTION_ADDITIONAL_ACTION$$]+[$$ACTION_USE$$]</text>
 	</string>
 
 	<string id="st_press_any_key">

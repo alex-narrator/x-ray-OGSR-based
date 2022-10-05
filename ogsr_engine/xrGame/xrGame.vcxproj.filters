@@ -6119,6 +6119,9 @@
     <ClInclude Include="PowerBattery.h">
       <Filter>Core\Client\Objects\items &amp; weapons\Devices</Filter>
     </ClInclude>
+    <ClInclude Include="Vest.h">
+      <Filter>Core\Client\Objects\items &amp; weapons\Outfit</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="damage_manager.cpp">
@@ -8941,6 +8944,9 @@
     </ClCompile>
     <ClCompile Include="PowerBattery.cpp">
       <Filter>Core\Client\Objects\items &amp; weapons\Devices</Filter>
+    </ClCompile>
+    <ClCompile Include="Vest.cpp">
+      <Filter>Core\Client\Objects\items &amp; weapons\Outfit</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

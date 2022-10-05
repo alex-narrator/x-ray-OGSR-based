@@ -42,12 +42,23 @@ void CUIInventoryWnd::ActivatePropertiesBox()
     
 	bool b_show = false;
 
+	bool to_quick{};
+	bool to_pouch{};
+
 	if (!pOutfit && CurrentIItem()->GetSlot() != NO_ACTIVE_SLOT) {
-		auto slots = CurrentIItem()->GetSlots();
+		auto& slots = CurrentIItem()->GetSlots();
 		for (u8 i = 0; i < (u8)slots.size(); ++i) {
 			auto slot = slots[i];
 			if (slot != NO_ACTIVE_SLOT && !m_pInv->IsSlotDisabled(slot)) {
 				if (!m_pInv->m_slots[slot].m_pIItem || m_pInv->m_slots[slot].m_pIItem != CurrentIItem()) {
+					if (slot >= QUICK_SLOT_0 && slot <= QUICK_SLOT_3) {
+						to_quick = true;
+						continue;
+					}
+					if (slot >= VEST_POUCH_1 && slot <= VEST_POUCH_9) {
+						to_pouch = true;
+						continue;
+					}
 					string128 full_action_text;
 					strconcat(sizeof(full_action_text), full_action_text, "st_move_to_slot_", std::to_string(slot).c_str());
 					UIPropertiesBox.AddItem(full_action_text, (void*)(__int64)slot, INVENTORY_TO_SLOT_ACTION);
@@ -56,7 +67,14 @@ void CUIInventoryWnd::ActivatePropertiesBox()
 			}
 		}
 	}
-
+	if (to_quick) {
+		UIPropertiesBox.AddItem("st_to_quick_slot", NULL, INVENTORY_TO_QUICK_OR_POUCH);
+		b_show = true;
+	}
+	if (to_pouch) {
+		UIPropertiesBox.AddItem("st_to_pouch", (void*)33, INVENTORY_TO_QUICK_OR_POUCH);
+		b_show = true;
+	}
 
 	if(CurrentIItem()->Belt() && m_pInv->CanPutInBelt(CurrentIItem()))
 	{
@@ -260,7 +278,7 @@ void CUIInventoryWnd::ProcessPropertiesBoxClicked	()
 				// Пытаемся найти свободный слот из списка разрешенных.
 				// Если его нету, то принудительно займет первый слот,
 				// указанный в списке.
-				auto slots = item->GetSlots();
+				auto& slots = item->GetSlots();
 				for ( u8 i = 0; i < (u8)slots.size(); ++i ) {
 					item->SetSlot( slots[ i ] );
 				if ( ToSlot( CurrentItem(), false ) )
@@ -269,6 +287,31 @@ void CUIInventoryWnd::ProcessPropertiesBoxClicked	()
 		        item->SetSlot( slots.size() ? slots[ 0 ]: NO_ACTIVE_SLOT );
 		        ToSlot( CurrentItem(), true );
 	        }break;
+		case INVENTORY_TO_QUICK_OR_POUCH:
+		{
+			void* d = UIPropertiesBox.GetClickedItem()->GetData();
+			bool b_to_pouch = (d == (void*)33);
+			auto item = CurrentIItem();
+			auto& slots = item->GetSlots();
+			u8 min_slot = b_to_pouch ? VEST_POUCH_1 : QUICK_SLOT_0;
+			u8 max_slot = b_to_pouch ? VEST_POUCH_9 : QUICK_SLOT_3;
+			for (u8 i = 0; i < (u8)slots.size(); ++i) {
+				auto slot = slots[i];
+				if (slot >= min_slot && slot <= max_slot) {
+					item->SetSlot(slot);
+					if (ToSlot(CurrentItem(), false))
+						return;
+				}
+			}
+			for (u8 i = 0; i < (u8)slots.size(); ++i) {
+				auto slot = slots[i];
+				if (slot >= min_slot && slot <= max_slot) {
+					item->SetSlot(slot);
+					if (ToSlot(CurrentItem(), true))
+						return;
+				}
+			}
+		}break;
 		case INVENTORY_TO_BELT_ACTION:	
 			ToBelt(CurrentItem(),false);
 			break;

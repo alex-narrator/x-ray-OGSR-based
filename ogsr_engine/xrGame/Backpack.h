@@ -8,7 +8,6 @@ private:
 public:
 								CBackpack			();
 	virtual						~CBackpack			();
-	virtual void				Load				(LPCSTR section);
 
 	virtual void				Hit					(SHit* pHDS);
 			void				HitItemsInBackPack	(SHit* pHDS, bool hit_random_item);

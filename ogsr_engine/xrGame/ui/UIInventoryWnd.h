@@ -97,6 +97,7 @@ protected:
 	CUIDragDropListEx*			m_pUIHelmetList;
 	CUIDragDropListEx*			m_pUIWarBeltList;
 	CUIDragDropListEx*			m_pUIBackPackList;
+	CUIDragDropListEx*			m_pUIVestList;
 
 	CUIDragDropListEx*			m_pUIKnifeList;
 	CUIDragDropListEx*			m_pUIOnShoulderList;
@@ -114,6 +115,16 @@ protected:
 	CUIDragDropListEx*			m_pUIQuickList_1;
 	CUIDragDropListEx*			m_pUIQuickList_2;
 	CUIDragDropListEx*			m_pUIQuickList_3;
+
+	CUIDragDropListEx*			m_pUIVestPouch_1;
+	CUIDragDropListEx*			m_pUIVestPouch_2;
+	CUIDragDropListEx*			m_pUIVestPouch_3;
+	CUIDragDropListEx*			m_pUIVestPouch_4;
+	CUIDragDropListEx*			m_pUIVestPouch_5;
+	CUIDragDropListEx*			m_pUIVestPouch_6;
+	CUIDragDropListEx*			m_pUIVestPouch_7;
+	CUIDragDropListEx*			m_pUIVestPouch_8;
+	CUIDragDropListEx*			m_pUIVestPouch_9;
 
 	// alpet: для индексированного доступа
 	CUIDragDropListEx*			m_slots_array[ SLOTS_TOTAL ];

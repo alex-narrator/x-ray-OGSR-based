@@ -21,6 +21,8 @@ class					CUIPdaMsgListItem;
 class					CLAItem;
 class					CUIZoneMap;
 class					CUIArtefactPanel;
+class					CUISlotPanel;
+class					CUIVestPanel;
 class					CUIScrollView;
 class					CActor;
 class					CWeapon;
@@ -136,6 +138,8 @@ protected:
 	CUIScrollView*		m_UIIcons{};
 public:	
 	CUIArtefactPanel*		m_artefactPanel;
+	CUISlotPanel*			m_slotPanel;
+	CUIVestPanel*			m_vestPanel;
 	CUIQuickSlotPanel*		m_quickSlotPanel;
 	
 public:

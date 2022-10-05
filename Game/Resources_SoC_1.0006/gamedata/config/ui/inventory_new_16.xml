@@ -41,6 +41,10 @@
 	<dragdrop_backpack x="640" y="0" width="30" height="30"
             cell_width = "30" cell_height="30" rows_num="1" cols_num="1"
             custom_placement="0"/>
+			
+	<dragdrop_vest x="680" y="0" width="30" height="30"
+            cell_width = "30" cell_height="30" rows_num="1" cols_num="1"
+            custom_placement="0"/>			
 
     <dragdrop_knife x="0" y="0" width="120" height="60"
             cell_width = "23" cell_height="30" rows_num="2" cols_num="1"
@@ -67,32 +71,60 @@
             custom_placement="0"/>		
 
 	<dragdrop_detector x="520" y="70" width="60" height="60"
-            cell_width = "30" cell_height="30" rows_num="2" cols_num="2"
+            cell_width = "30" cell_height="30" rows_num="1" cols_num="1"
             custom_placement="0"/>
 			
 	<dragdrop_on_head x="590" y="70" width="60" height="60"
-            cell_width = "30" cell_height="30" rows_num="2" cols_num="2"
+            cell_width = "30" cell_height="30" rows_num="1" cols_num="2"
             custom_placement="0"/>
 			
 	<dragdrop_pda x="660" y="70" width="60" height="60"
-            cell_width = "30" cell_height="30" rows_num="2" cols_num="2"
+            cell_width = "30" cell_height="30" rows_num="1" cols_num="2"
             custom_placement="0"/>			
 
 	<dragdrop_quick_0 x="0" y="70" width="120" height="60"
             cell_width = "30" cell_height="30" rows_num="2" cols_num="4"
-            custom_placement="0" />
-			
+            custom_placement="0" />			
 	<dragdrop_quick_1 x="130" y="70" width="120" height="60"
             cell_width = "30" cell_height="30" rows_num="2" cols_num="4"
-            custom_placement="0"/>
-			
+            custom_placement="0"/>			
 	<dragdrop_quick_2 x="260" y="70" width="120" height="60"
             cell_width = "30" cell_height="30" rows_num="2" cols_num="4"
-            custom_placement="0"/>
-			
+            custom_placement="0"/>			
 	<dragdrop_quick_3 x="390" y="70" width="120" height="60"
             cell_width = "30" cell_height="30" rows_num="2" cols_num="4"
             custom_placement="0"/>
+	
+<!-- vest pouches left side (slots 19,20,21)	 -->
+	<dragdrop_vest_pouch_1 x="710" y="30" width="30" height="30"
+            cell_width = "30" cell_height="30" rows_num="1" cols_num="1"
+            custom_placement="0"/>
+	<dragdrop_vest_pouch_2 x="710" y="0" width="30" height="30"
+            cell_width = "30" cell_height="30" rows_num="1" cols_num="1"
+            custom_placement="0"/>	
+	<dragdrop_vest_pouch_3 x="710" y="0" width="30" height="60"
+            cell_width = "30" cell_height="30" rows_num="2" cols_num="1"
+            custom_placement="0"/>		
+<!-- vest pouches chest (slots 22,23,24) -->			
+	<dragdrop_vest_pouch_4 x="740" y="0" width="30" height="60"
+            cell_width = "30" cell_height="30" rows_num="2" cols_num="1"
+            custom_placement="0"/>		
+	<dragdrop_vest_pouch_5 x="770" y="0" width="30" height="60"
+            cell_width = "30" cell_height="30" rows_num="2" cols_num="1"
+            custom_placement="0"/>		
+	<dragdrop_vest_pouch_6 x="800" y="0" width="30" height="60"
+            cell_width = "30" cell_height="30" rows_num="2" cols_num="1"
+            custom_placement="0"/>
+<!-- vest pouches right side (slots 25,26,27)-->			
+	<dragdrop_vest_pouch_7 x="830" y="30" width="30" height="30"
+            cell_width = "30" cell_height="30" rows_num="1" cols_num="1"
+            custom_placement="0"/>	
+	<dragdrop_vest_pouch_8 x="830" y="0" width="30" height="30"
+            cell_width = "30" cell_height="30" rows_num="1" cols_num="1"
+            custom_placement="0"/>			
+	<dragdrop_vest_pouch_9 x="830" y="0" width="30" height="60"
+            cell_width = "30" cell_height="30" rows_num="2" cols_num="1"
+            custom_placement="0"/>	
 
 	<knife_key_static x="0" y="0" width="0" height="0">
 		<text x="0" y="0" font="letterica16" r="231" g="153" b="22">ui_use_slot_0</text>

@@ -105,6 +105,8 @@ CUIMainIngameWnd::CUIMainIngameWnd()
 	UIZoneMap						= xr_new<CUIZoneMap>();
 	m_pPickUpItem					= nullptr;
 	m_artefactPanel					= xr_new<CUIArtefactPanel>();
+	m_slotPanel						= xr_new<CUISlotPanel>();
+	m_vestPanel						= xr_new<CUIVestPanel>();
 	m_quickSlotPanel				= xr_new<CUIQuickSlotPanel>();
 
 	warn_icon_list[ewiWeaponJammed]	= &UIWeaponJammedIcon;	
@@ -127,6 +129,8 @@ CUIMainIngameWnd::~CUIMainIngameWnd()
 	DestroyFlashingIcons		();
 	xr_delete					(UIZoneMap);
 	xr_delete					(m_artefactPanel);
+	xr_delete					(m_slotPanel);
+	xr_delete					(m_vestPanel);
 	xr_delete					(m_quickSlotPanel);
 	HUD_SOUND::DestroySound		(m_contactSnd);
 	xr_delete					(g_MissileForceShape);
@@ -295,6 +299,12 @@ void CUIMainIngameWnd::Init()
 
 	m_artefactPanel->InitFromXML			(uiXml, "artefact_panel", 0);
 	this->AttachChild						(m_artefactPanel);	
+
+	m_slotPanel->InitFromXML				(uiXml, "slot_panel", 0);
+	this->AttachChild						(m_slotPanel);
+
+	m_vestPanel->InitFromXML				(uiXml, "vest_panel", 0);
+	this->AttachChild						(m_vestPanel);
 
 	m_quickSlotPanel->Init					();
 	m_quickSlotPanel->SetWindowName			("quick_slot_panel");
@@ -509,6 +519,8 @@ void CUIMainIngameWnd::Update()
 	bool show_panels = IsHUDElementAllowed(eGear);
 	m_quickSlotPanel->Show	(show_panels);
 	m_artefactPanel->Show	(show_panels); //отрисовка панели артефактов
+	m_slotPanel->Show		(show_panels); //отрисовка панели слотів
+	m_vestPanel->Show		(show_panels); //отрисовка панели розгрузки
 
 	UpdateFlashingIcons(); //обновляем состояние мигающих иконок
 

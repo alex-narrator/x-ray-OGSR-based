@@ -205,6 +205,7 @@ constexpr auto CLSID_EQUIPMENT_EXO            = MK_CLSID('E','Q','U','_','E','X'
 
 constexpr auto CLSID_WARBELT				  = MK_CLSID('I','I','_','W','R','B','L','T');
 constexpr auto CLSID_BACKPACK				  = MK_CLSID('I','I','_','B','P','A','C','K');
+constexpr auto CLSID_VEST					  = MK_CLSID('I','I','_','V','E','S','T',' ');
 
 //power battery
 constexpr auto CLSID_POWER_BATTERY			  = MK_CLSID('I','I','_','P','W','R','B','T');

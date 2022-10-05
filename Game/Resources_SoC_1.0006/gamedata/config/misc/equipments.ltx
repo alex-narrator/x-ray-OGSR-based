@@ -26,6 +26,7 @@ default_to_ruck		= false
 
 [warbelt_adv]:warbelt
 max_belt 			= 8
+slots_allowed 		= 0,3,4
 
 [psy_helmet]:identity_immunities
 GroupControlSection	= spawn_group
@@ -160,3 +161,42 @@ inv_weight			= 0.3
 
 charge_count = 5
 rechargeable = true
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;vest;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+[vest]:identity_immunities
+GroupControlSection	= spawn_group
+discovery_dependency =
+$spawn 				= "devices\detector_simple"
+$prefetch 			= 32
+class				= II_VEST
+cform				= skeleton
+visual				= equipments\item_datchik1.ogf
+description			= vest_descr
+slot				= 18
+
+slots_allowed 		= 3,19,22,24,25
+
+inv_name			= Vest
+inv_name_short		= Vest
+inv_weight			= 0.1
+
+inv_grid_width		= 1
+inv_grid_height		= 1
+inv_grid_x			= 9
+inv_grid_y			= 14
+cost				= 500	;30
+default_to_ruck		= false
+
+[vest_adv]:vest
+description			= vest_descr_adv
+inv_name			= Vest_adv
+inv_name_short		= Vest_adv
+
+slots_allowed 		= 3,19,20,22,23,24,25,26
+
+[vest_heavy]:vest
+description			= vest_descr_heavy
+inv_name			= Vest_heavy
+inv_name_short		= Vest_heavy
+
+slots_allowed 		= 3,21,22,23,24,27

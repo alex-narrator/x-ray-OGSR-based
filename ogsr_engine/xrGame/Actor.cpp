@@ -24,6 +24,7 @@
 #include "CustomOutfit.h"
 #include "Warbelt.h"
 #include "Backpack.h"
+#include "Vest.h"
 #include "Torch.h"
 #include "NightVisionDevice.h"
 #include "actorcondition.h"
@@ -1366,6 +1367,8 @@ void CActor::OnItemRuck		(CInventoryItem *inventory_item, EItemPlace previous_pl
 		UpdateArtefactPanel();
 	else if (previous_place == eItemPlaceSlot) {
 		UpdateQuickSlotPanel();
+		UpdateSlotPanel();
+		UpdateVestPanel();
 	}
 }
 void CActor::OnItemBelt		(CInventoryItem *inventory_item, EItemPlace previous_place){
@@ -1374,6 +1377,8 @@ void CActor::OnItemBelt		(CInventoryItem *inventory_item, EItemPlace previous_pl
 	UpdateArtefactPanel();
 	if (previous_place == eItemPlaceSlot) {
 		UpdateQuickSlotPanel();
+		UpdateSlotPanel();
+		UpdateVestPanel();
 	}
 }
 
@@ -1384,12 +1389,26 @@ void CActor::OnItemSlot(CInventoryItem* inventory_item, EItemPlace previous_plac
 		UpdateArtefactPanel();
 	}
 	UpdateQuickSlotPanel();
+	UpdateSlotPanel();
+	UpdateVestPanel();
 }
 
 
 void CActor::UpdateArtefactPanel(){
 	if (Level().CurrentViewEntity() && Level().CurrentViewEntity() == this) { //Оно надо вообще без мультиплеера?
-		HUD().GetUI()->UIMainIngameWnd->m_artefactPanel->InitIcons(inventory().m_belt);
+		HUD().GetUI()->UIMainIngameWnd->m_artefactPanel->Update();
+	}
+}
+
+void CActor::UpdateSlotPanel() {
+	if (Level().CurrentViewEntity() && Level().CurrentViewEntity() == this) { //Оно надо вообще без мультиплеера?
+		HUD().GetUI()->UIMainIngameWnd->m_slotPanel->Update();
+	}
+}
+
+void CActor::UpdateVestPanel() {
+	if (Level().CurrentViewEntity() && Level().CurrentViewEntity() == this) { //Оно надо вообще без мультиплеера?
+		HUD().GetUI()->UIMainIngameWnd->m_vestPanel->Update();
 	}
 }
 
@@ -1670,6 +1689,12 @@ CBackpack* CActor::GetBackpack() const
 	return _bp ? smart_cast<CBackpack*>(_bp) : NULL;
 }
 
+CVest* CActor::GetVest() const
+{
+	PIItem _v = inventory().m_slots[VEST_SLOT].m_pIItem;
+	return _v ? smart_cast<CVest*>(_v) : NULL;
+}
+
 CTorch* CActor::GetTorch() const
 {
 	PIItem _tc = inventory().m_slots[ON_HEAD_SLOT].m_pIItem;
@@ -1917,7 +1942,7 @@ void CActor::DrawHUDMasks() {
 }
 #include "../xr_3da/XR_IOConsole.h"
 void CActor::UpdateVisorEfects() {
-	bool has_visor = GetOutfit() && !GetOutfit()->m_bIsHelmetAllowed;
+	bool has_visor = GetOutfit() && GetOutfit()->m_bIsHelmetBuiltIn;
 	bool b_enable_effect = eacFirstEye == cam_active && g_Alive() && has_visor;
 	string128 _buff{};
 	sprintf(_buff, "r2_rain_drops_control %d", b_enable_effect);
