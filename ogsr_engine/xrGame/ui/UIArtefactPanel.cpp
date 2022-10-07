@@ -178,6 +178,7 @@ void CUIVestPanel::Update()
 		case VEST_POUCH_7:
 		case VEST_POUCH_8:
 		case VEST_POUCH_9:
+		case VEST_POUCH_10:
 		{
 			if (_itm) {
 				m_vRects.push_back(&(_itm->m_icon_params));

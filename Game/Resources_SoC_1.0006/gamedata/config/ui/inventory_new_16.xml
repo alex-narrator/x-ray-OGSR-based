@@ -18,113 +18,117 @@
 	</back>
 
 
-    <dragdrop_bag x="20" y="42" width="325" height="410"
-            cell_width = "31" cell_height="41" rows_num="10" cols_num="10" 
+    <dragdrop_bag x="20" y="42" width="300" height="400"
+            cell_width = "30" cell_height="40" rows_num="10" cols_num="10" 
             unlimited="1" group_similar="1" condition_progress_bar="1"/>
 
-    <dragdrop_belt x="566" y="118" width="312" height="104"
-            cell_width = "39" cell_height="52" rows_num="2" cols_num="4"
+    <dragdrop_belt x="740" y="80" width="120" height="80"
+            cell_width = "30" cell_height="40" rows_num="2" cols_num="4"
 			custom_placement="1"/>
 
-    <dragdrop_outfit x="858" y="360" width="62" height="164" 
-            cell_width = "31" cell_height="41" rows_num="4" cols_num="2" 
+    <dragdrop_outfit x="858" y="405" width="60" height="120" 
+            cell_width = "30" cell_height="40" rows_num="3" cols_num="2" 
             custom_placement="0"/>
 			
-	<dragdrop_helmet x="858" y="275" width="62" height="82"
-            cell_width = "31" cell_height="41" rows_num="2" cols_num="2"
+	<dragdrop_helmet x="858" y="325" width="60" height="80"
+            cell_width = "30" cell_height="40" rows_num="2" cols_num="2"
             custom_placement="0" condition_progress_bar="1"/>			
-			
-	<dragdrop_warbelt x="600" y="0" width="30" height="30"
-            cell_width = "30" cell_height="30" rows_num="1" cols_num="1"
+
+	<dragdrop_on_head x="858" y="285" width="60" height="40"
+            cell_width = "30" cell_height="40" rows_num="1" cols_num="2"
             custom_placement="0"/>
 			
-	<dragdrop_backpack x="640" y="0" width="30" height="30"
-            cell_width = "30" cell_height="30" rows_num="1" cols_num="1"
+	<dragdrop_warbelt x="680" y="80" width="60" height="40"
+            cell_width = "30" cell_height="40" rows_num="1" cols_num="2"
             custom_placement="0"/>
 			
-	<dragdrop_vest x="680" y="0" width="30" height="30"
-            cell_width = "30" cell_height="30" rows_num="1" cols_num="1"
+	<dragdrop_backpack x="620" y="0" width="60" height="80"
+            cell_width = "30" cell_height="40" rows_num="2" cols_num="2"
+            custom_placement="0"/>
+			
+	<dragdrop_vest x="680" y="0" width="60" height="80"
+            cell_width = "30" cell_height="40" rows_num="2" cols_num="2"
             custom_placement="0"/>			
 
-    <dragdrop_knife x="0" y="0" width="120" height="60"
-            cell_width = "23" cell_height="30" rows_num="2" cols_num="1"
+    <dragdrop_knife x="0" y="0" width="30" height="80"
+            cell_width = "30" cell_height="40" rows_num="2" cols_num="1"
             custom_placement="0" vertical_placement="1" condition_progress_bar="1"/>
 
-	<dragdrop_on_shoulder x="33" y="118" width="235" height="104"
-            cell_width = "39" cell_height="52" rows_num="2" cols_num="6"
+	<dragdrop_on_shoulder x="33" y="118" width="180" height="80"
+            cell_width = "30" cell_height="40" rows_num="2" cols_num="6"
             custom_placement="0" condition_progress_bar="1" vertical_placement="0"/>
 			
-    <dragdrop_on_back x="300" y="118" width="235" height="104"
-            cell_width = "39" cell_height="52" rows_num="2" cols_num="6"
+    <dragdrop_on_back x="300" y="118" width="180" height="80"
+            cell_width = "30" cell_height="40" rows_num="2" cols_num="6"
             custom_placement="0" condition_progress_bar="1"/>
 
-	<dragdrop_holster x="390" y="0" width="120" height="60"
-            cell_width = "30" cell_height="30" rows_num="2" cols_num="4"
+	<dragdrop_holster x="390" y="0" width="60" height="40"
+            cell_width = "30" cell_height="40" rows_num="1" cols_num="2"
             custom_placement="0" condition_progress_bar="1"/>
 			
-	<dragdrop_grenade x="520" y="0" width="30" height="30"
-            cell_width = "30" cell_height="30" rows_num="1" cols_num="1"
+	<dragdrop_grenade x="520" y="0" width="30" height="40"
+            cell_width = "30" cell_height="40" rows_num="1" cols_num="1"
             custom_placement="0"/>
 			
-	<dragdrop_artefact x="560" y="0" width="30" height="30"
-            cell_width = "30" cell_height="30" rows_num="1" cols_num="1"
+	<dragdrop_artefact x="560" y="0" width="30" height="40"
+            cell_width = "30" cell_height="40" rows_num="1" cols_num="1"
             custom_placement="0"/>		
 
-	<dragdrop_detector x="520" y="70" width="60" height="60"
-            cell_width = "30" cell_height="30" rows_num="1" cols_num="1"
+	<dragdrop_detector x="520" y="70" width="30" height="40"
+            cell_width = "30" cell_height="40" rows_num="1" cols_num="1"
             custom_placement="0"/>
 			
-	<dragdrop_on_head x="590" y="70" width="60" height="60"
-            cell_width = "30" cell_height="30" rows_num="1" cols_num="2"
-            custom_placement="0"/>
-			
-	<dragdrop_pda x="660" y="70" width="60" height="60"
-            cell_width = "30" cell_height="30" rows_num="1" cols_num="2"
+	<dragdrop_pda x="660" y="70" width="30" height="40"
+            cell_width = "30" cell_height="40" rows_num="1" cols_num="1"
             custom_placement="0"/>			
 
-	<dragdrop_quick_0 x="0" y="70" width="120" height="60"
-            cell_width = "30" cell_height="30" rows_num="2" cols_num="4"
+	<dragdrop_quick_0 x="0" y="70" width="60" height="80"
+            cell_width = "30" cell_height="40" rows_num="2" cols_num="2"
             custom_placement="0" />			
-	<dragdrop_quick_1 x="130" y="70" width="120" height="60"
-            cell_width = "30" cell_height="30" rows_num="2" cols_num="4"
+	<dragdrop_quick_1 x="130" y="70" width="60" height="80"
+            cell_width = "30" cell_height="40" rows_num="2" cols_num="2"
             custom_placement="0"/>			
-	<dragdrop_quick_2 x="260" y="70" width="120" height="60"
-            cell_width = "30" cell_height="30" rows_num="2" cols_num="4"
+	<dragdrop_quick_2 x="260" y="70" width="60" height="80"
+            cell_width = "30" cell_height="40" rows_num="2" cols_num="2"
             custom_placement="0"/>			
-	<dragdrop_quick_3 x="390" y="70" width="120" height="60"
-            cell_width = "30" cell_height="30" rows_num="2" cols_num="4"
+	<dragdrop_quick_3 x="390" y="70" width="60" height="80"
+            cell_width = "30" cell_height="40" rows_num="2" cols_num="2"
             custom_placement="0"/>
 	
 <!-- vest pouches left side (slots 19,20,21)	 -->
-	<dragdrop_vest_pouch_1 x="710" y="30" width="30" height="30"
-            cell_width = "30" cell_height="30" rows_num="1" cols_num="1"
+	<dragdrop_vest_pouch_1 x="740" y="30" width="30" height="40"
+            cell_width = "30" cell_height="40" rows_num="1" cols_num="1"
             custom_placement="0"/>
-	<dragdrop_vest_pouch_2 x="710" y="0" width="30" height="30"
-            cell_width = "30" cell_height="30" rows_num="1" cols_num="1"
+	<dragdrop_vest_pouch_2 x="740" y="30" width="30" height="40"
+            cell_width = "30" cell_height="40" rows_num="1" cols_num="1"
             custom_placement="0"/>	
-	<dragdrop_vest_pouch_3 x="710" y="0" width="30" height="60"
-            cell_width = "30" cell_height="30" rows_num="2" cols_num="1"
+	<dragdrop_vest_pouch_3 x="740" y="0" width="30" height="80"
+            cell_width = "30" cell_height="40" rows_num="2" cols_num="1"
             custom_placement="0"/>		
-<!-- vest pouches chest (slots 22,23,24) -->			
-	<dragdrop_vest_pouch_4 x="740" y="0" width="30" height="60"
-            cell_width = "30" cell_height="30" rows_num="2" cols_num="1"
+<!-- vest pouches chest (slots 22,23,24,25) -->			
+	<dragdrop_vest_pouch_4 x="770" y="0" width="30" height="80"
+            cell_width = "30" cell_height="40" rows_num="2" cols_num="1"
             custom_placement="0"/>		
-	<dragdrop_vest_pouch_5 x="770" y="0" width="30" height="60"
-            cell_width = "30" cell_height="30" rows_num="2" cols_num="1"
+	<dragdrop_vest_pouch_5 x="800" y="0" width="30" height="80"
+            cell_width = "30" cell_height="40" rows_num="2" cols_num="1"
             custom_placement="0"/>		
-	<dragdrop_vest_pouch_6 x="800" y="0" width="30" height="60"
-            cell_width = "30" cell_height="30" rows_num="2" cols_num="1"
+	<dragdrop_vest_pouch_6 x="830" y="0" width="30" height="80"
+            cell_width = "30" cell_height="40" rows_num="2" cols_num="1"
+            custom_placement="0"/>	
+	<dragdrop_vest_pouch_7 x="860" y="0" width="30" height="80"
+            cell_width = "30" cell_height="40" rows_num="2" cols_num="1"
             custom_placement="0"/>
-<!-- vest pouches right side (slots 25,26,27)-->			
-	<dragdrop_vest_pouch_7 x="830" y="30" width="30" height="30"
-            cell_width = "30" cell_height="30" rows_num="1" cols_num="1"
-            custom_placement="0"/>	
-	<dragdrop_vest_pouch_8 x="830" y="0" width="30" height="30"
-            cell_width = "30" cell_height="30" rows_num="1" cols_num="1"
+<!-- vest pouches right side (slots 26,27,28)-->			
+	<dragdrop_vest_pouch_8 x="890" y="30" width="30" height="40"
+            cell_width = "30" cell_height="40" rows_num="1" cols_num="1"
             custom_placement="0"/>			
-	<dragdrop_vest_pouch_9 x="830" y="0" width="30" height="60"
-            cell_width = "30" cell_height="30" rows_num="2" cols_num="1"
-            custom_placement="0"/>	
+	<dragdrop_vest_pouch_9 x="890" y="0" width="30" height="40"
+            cell_width = "30" cell_height="40" rows_num="1" cols_num="1"
+            custom_placement="0"/>
+	<dragdrop_vest_pouch_10 x="890" y="0" width="30" height="80"
+            cell_width = "30" cell_height="40" rows_num="2" cols_num="1"
+            custom_placement="0"/>				
+			
 
 	<knife_key_static x="0" y="0" width="0" height="0">
 		<text x="0" y="0" font="letterica16" r="231" g="153" b="22">ui_use_slot_0</text>

@@ -12,12 +12,14 @@ public:
 	virtual void				Load(LPCSTR section);
 
 protected:
-	u32							m_iMaxBelt{};
+	u32							m_iBeltWidth{};
+	u32							m_iBeltHeight{};
 	bool						m_bDropPouch{};
 	xr_vector<u8>				m_belt_slots{};
 
 public:
-	u32							GetMaxBelt				() const	{ return m_iMaxBelt; }
+	u32							GetBeltWidth			() const	{ return m_iBeltWidth; }
+	u32							GetBeltHeight			() const	{ return m_iBeltHeight; }
 	bool						HasDropPouch			() const	{ return m_bDropPouch; }
 
 	virtual void				OnMoveToSlot			(EItemPlace prevPlace);

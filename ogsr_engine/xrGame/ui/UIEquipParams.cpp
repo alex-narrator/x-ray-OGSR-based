@@ -161,7 +161,7 @@ void CUIEquipParams::SetInfo(CInventoryItem* obj){
 		belt_cells_static->SetAutoDelete(true);
 		pos_top = belt_cells_static->GetPosTop();
 		belt_cells_static->SetWndPos(belt_cells_static->GetPosLeft(), _h + pos_top);
-		sprintf_s(temp_text, " [%d]", pWarbelt->GetMaxBelt());
+		sprintf_s(temp_text, " [%dx%d]", pWarbelt->GetBeltWidth(), pWarbelt->GetBeltHeight());
 		strconcat(sizeof(text_to_show), text_to_show, CStringTable().translate("st_belt_cells_available").c_str(), temp_text);
 		belt_cells_static->SetText(text_to_show);
 		m_CapInfo.AttachChild(belt_cells_static);

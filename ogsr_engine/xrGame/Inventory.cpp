@@ -1130,10 +1130,10 @@ bool CInventory::CanPutInBelt(PIItem pIItem) const
 	if (!m_bBeltUseful)							return false;
 	if (!pIItem || !pIItem->Belt())				return false;
 	if (OwnerIsActor() && !IsAllItemsLoaded())	return true;
-	if (m_belt.size() >= BeltSize())			return false;
+//	if (m_belt.size() >= BeltSize())			return false;
 	auto belt = static_cast<TIItemContainer>(m_belt);
 
-	return FreeRoom_inBelt(belt, pIItem, BeltSize(), 1);
+	return FreeRoom_inBelt(belt, pIItem, BeltWidth(), BeltHeight());
 }
 //проверяет можем ли поместить вещь в рюкзак,
 //при этом реально ничего не меняется
@@ -1549,13 +1549,23 @@ void CInventory::TryAmmoCustomPlacement(CInventoryItem* pIItem)
 	pWeapon->SetAmmoWasSpawned(false);	//сбрасываем флажок спавна патронов
 }
 
-u32  CInventory::BeltSize() const
-{
+u32  CInventory::BeltWidth() const{
 	auto pActor = smart_cast<CActor*>(m_pOwner);
 	if (pActor){
 		auto warbelt = pActor->GetWarbelt();
 		if(warbelt){
-			return warbelt->GetMaxBelt();
+			return warbelt->GetBeltWidth();
+		}
+	}
+	return 0; //m_iMaxBeltWidth;
+}
+
+u32  CInventory::BeltHeight() const {
+	auto pActor = smart_cast<CActor*>(m_pOwner);
+	if (pActor) {
+		auto warbelt = pActor->GetWarbelt();
+		if (warbelt) {
+			return warbelt->GetBeltHeight();
 		}
 	}
 	return 0; //m_iMaxBeltWidth;
@@ -1642,6 +1652,7 @@ bool CInventory::IsSlotDisabled(u32 slot) const
 	case VEST_POUCH_7:
 	case VEST_POUCH_8:
 	case VEST_POUCH_9:
+	case VEST_POUCH_10:
 		return !(vest && vest->SlotAllowed(slot));
 	break;
 	}

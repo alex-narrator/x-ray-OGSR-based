@@ -125,6 +125,7 @@ protected:
 	CUIDragDropListEx*			m_pUIVestPouch_7;
 	CUIDragDropListEx*			m_pUIVestPouch_8;
 	CUIDragDropListEx*			m_pUIVestPouch_9;
+	CUIDragDropListEx*			m_pUIVestPouch_10;
 
 	// alpet: для индексированного доступа
 	CUIDragDropListEx*			m_slots_array[ SLOTS_TOTAL ];

@@ -231,6 +231,11 @@ void CUIInventoryWnd::InitInventory()
 		CUICellItem* itm = create_cell_item(_itm);
 		m_pUIVestPouch_9->SetItem(itm);
 	}
+	_itm = m_pInv->m_slots[VEST_POUCH_10].m_pIItem;
+	if (_itm) {
+		CUICellItem* itm = create_cell_item(_itm);
+		m_pUIVestPouch_10->SetItem(itm);
+	}
 
 	PIItem _outfit						= m_pInv->m_slots[OUTFIT_SLOT].m_pIItem;
 	CUICellItem* outfit					= (_outfit)?create_cell_item(_outfit):NULL;
@@ -498,7 +503,8 @@ bool CUIInventoryWnd::OnItemSelected(CUICellItem* itm)
 		m_pUIVestPouch_6,
 		m_pUIVestPouch_7,
 		m_pUIVestPouch_8,
-		m_pUIVestPouch_9
+		m_pUIVestPouch_9,
+		m_pUIVestPouch_10
 		} );
 	return false;
 }
@@ -667,6 +673,7 @@ void CUIInventoryWnd::ClearAllLists()
 	m_pUIVestPouch_7->ClearAll				(true);
 	m_pUIVestPouch_8->ClearAll				(true);
 	m_pUIVestPouch_9->ClearAll				(true);
+	m_pUIVestPouch_10->ClearAll				(true);
 }
 
 

@@ -34,10 +34,11 @@ enum : u32
 	VEST_POUCH_4,
 	VEST_POUCH_5,
 	VEST_POUCH_6,
-	//vest pouch - right side
 	VEST_POUCH_7,
+	//vest pouch - right side
 	VEST_POUCH_8,
 	VEST_POUCH_9,
+	VEST_POUCH_10,
 	//
     SLOTS_TOTAL,
     NO_ACTIVE_SLOT = 255

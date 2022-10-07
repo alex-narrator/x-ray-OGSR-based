@@ -10,23 +10,43 @@ visual				= equipments\item_datchik1.ogf
 description			= warbelt_descr
 slot				= 16
 
-max_belt 			= 4
+belt_width 			= 4
 drop_pouch 			= true
 
 inv_name			= Warbelt
 inv_name_short		= Warbelt
 inv_weight			= 0.1
 
-inv_grid_width		= 1
-inv_grid_height		= 1
-inv_grid_x			= 9
-inv_grid_y			= 14
+inv_grid_width     = 2
+inv_grid_height    = 1
+inv_grid_x         = 10
+inv_grid_y         = 18
+
+icon_group = 2
 cost				= 500	;30
 default_to_ruck		= false
 
 [warbelt_adv]:warbelt
-max_belt 			= 8
+inv_grid_width     = 2
+inv_grid_height    = 1
+inv_grid_x         = 10
+inv_grid_y         = 19
+belt_width 			= 4
+belt_height 		= 2
 slots_allowed 		= 0,3,4
+
+[pouch]:warbelt
+description			= pouch_descr
+inv_name			= pouch
+inv_name_short		= pouch_short
+inv_grid_width     = 1
+inv_grid_height    = 1
+inv_grid_x         = 10
+inv_grid_y         = 16
+
+belt_width 			= 2
+belt_height 		= 2
+;slots_allowed 		= 0,3,4
 
 [psy_helmet]:identity_immunities
 GroupControlSection	= spawn_group
@@ -75,10 +95,11 @@ inv_name			= Backpack
 inv_name_short		= Backpack
 inv_weight			= 0.5
 
-inv_grid_width		= 1
-inv_grid_height		= 1
-inv_grid_x			= 9
-inv_grid_y			= 14
+inv_grid_width     = 2
+inv_grid_height    = 2
+inv_grid_x         = 0
+inv_grid_y         = 10
+icon_group = 2
 cost				= 500	;30
 default_to_ruck		= false
 
@@ -139,21 +160,26 @@ GroupControlSection	= spawn_group
 discovery_dependency =
 class				= II_PWRBT
 cform				= skeleton
-visual				= equipments\item_datchik1.ogf
+visual				= dynamics\devices\duracell.ogf
 description			= battery_descr
 
 inv_name			= battery
 inv_name_short		= battery
 inv_weight			= 0.1
 
-inv_grid_width		= 1
-inv_grid_height		= 1
-inv_grid_x			= 9
-inv_grid_y			= 14
+inv_grid_width     = 1
+inv_grid_height    = 1
+inv_grid_x         = 11
+inv_grid_y         = 4
+icon_group = 2
 cost				= 500	;30
 default_to_ruck		= false
 
 [powerbank]:battery
+inv_grid_width     = 1
+inv_grid_height    = 1
+inv_grid_x         = 11
+inv_grid_y         = 5
 description			= powerbank_descr
 inv_name			= powerbank
 inv_name_short		= powerbank
@@ -174,29 +200,47 @@ visual				= equipments\item_datchik1.ogf
 description			= vest_descr
 slot				= 18
 
-slots_allowed 		= 3,19,22,24,25
+slots_allowed 		= 3,22,25
 
 inv_name			= Vest
 inv_name_short		= Vest
 inv_weight			= 0.1
 
-inv_grid_width		= 1
-inv_grid_height		= 1
-inv_grid_x			= 9
-inv_grid_y			= 14
+icon_group 			= 2
+inv_grid_width     = 2
+inv_grid_height    = 2
+inv_grid_x         = 18
+inv_grid_y         = 17
+
 cost				= 500	;30
 default_to_ruck		= false
+
+[vest_medium]:vest
+description			= vest_descr_medium
+inv_name			= Vest_medium
+inv_name_short		= Vest_medium
+inv_grid_width     = 2
+inv_grid_height    = 2
+inv_grid_x         = 16
+inv_grid_y         = 17
+slots_allowed 		= 3,19,20,22,23,24,25,26
 
 [vest_adv]:vest
 description			= vest_descr_adv
 inv_name			= Vest_adv
 inv_name_short		= Vest_adv
-
-slots_allowed 		= 3,19,20,22,23,24,25,26
+inv_grid_width     = 2
+inv_grid_height    = 2
+inv_grid_x         = 14
+inv_grid_y         = 17
+slots_allowed 		= 3,19,20,22,23,24,25,26,27
 
 [vest_heavy]:vest
 description			= vest_descr_heavy
 inv_name			= Vest_heavy
 inv_name_short		= Vest_heavy
-
-slots_allowed 		= 3,21,22,23,24,27
+inv_grid_width     = 2
+inv_grid_height    = 2
+inv_grid_x         = 12
+inv_grid_y         = 17
+slots_allowed 		= 3,21,22,23,24,25,28

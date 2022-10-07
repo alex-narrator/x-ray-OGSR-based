@@ -267,7 +267,7 @@ void CUIWarbeltCellItem::UpdateItemText() {
 	inherited::UpdateItemText();
 
 	string32				str;
-	sprintf_s(str, "%s[%d]", object()->HasDropPouch() ? "•" : "", object()->GetMaxBelt());
+	sprintf_s(str, "%s[%dx%d]", object()->HasDropPouch() ? "•" : "", object()->GetBeltWidth(), object()->GetBeltHeight());
 
 	float pos_x{ GetWidth() - m_text_add->GetWidth() };
 	float pos_y{ GetHeight() - m_text_add->GetHeight() };

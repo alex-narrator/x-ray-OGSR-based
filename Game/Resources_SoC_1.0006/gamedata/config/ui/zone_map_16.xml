@@ -10,6 +10,7 @@
 			</dist_text>
 			
 			<no_power x="40" y="85" width="0" height="0" light_anim="ui_slow_blinking_alpha" la_cyclic="1" la_texture="1" la_alpha="1">
+				<texture>ui_battery_low</texture>	
 				<text align="l" font="graffiti19" color="red">ui_st_no_power</text>
 			</no_power>
 			<current_time x="15" y="3" width="0" height="0">

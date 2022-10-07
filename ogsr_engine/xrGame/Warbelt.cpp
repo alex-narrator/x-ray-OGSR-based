@@ -17,7 +17,8 @@ void CWarbelt::Load(LPCSTR section)
 {
 	inherited::Load(section);
 
-	m_iMaxBelt		= READ_IF_EXISTS(pSettings, r_u32,	section, "max_belt",	0);
+	m_iBeltWidth	= READ_IF_EXISTS(pSettings, r_u32,	section, "belt_width",	1);
+	m_iBeltHeight	= READ_IF_EXISTS(pSettings, r_u32,	section, "belt_height",	1);
 	m_bDropPouch	= READ_IF_EXISTS(pSettings, r_bool, section, "drop_pouch",	false);
 
 	if (pSettings->line_exist(section, "slots_allowed")) {

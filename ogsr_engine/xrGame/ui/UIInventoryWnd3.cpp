@@ -55,7 +55,7 @@ void CUIInventoryWnd::ActivatePropertiesBox()
 						to_quick = true;
 						continue;
 					}
-					if (slot >= VEST_POUCH_1 && slot <= VEST_POUCH_9) {
+					if (slot >= VEST_POUCH_1 && slot <= VEST_POUCH_10) {
 						to_pouch = true;
 						continue;
 					}
@@ -294,7 +294,7 @@ void CUIInventoryWnd::ProcessPropertiesBoxClicked	()
 			auto item = CurrentIItem();
 			auto& slots = item->GetSlots();
 			u8 min_slot = b_to_pouch ? VEST_POUCH_1 : QUICK_SLOT_0;
-			u8 max_slot = b_to_pouch ? VEST_POUCH_9 : QUICK_SLOT_3;
+			u8 max_slot = b_to_pouch ? VEST_POUCH_10 : QUICK_SLOT_3;
 			for (u8 i = 0; i < (u8)slots.size(); ++i) {
 				auto slot = slots[i];
 				if (slot >= min_slot && slot <= max_slot) {

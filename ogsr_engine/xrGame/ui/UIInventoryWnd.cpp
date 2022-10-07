@@ -47,8 +47,8 @@ CUIInventoryWnd::CUIInventoryWnd() :
 	m_pUIDetectorList(nullptr), m_pUIOnHeadList(nullptr), m_pUIPdaList(nullptr),
 	m_pUIQuickList_0(nullptr), m_pUIQuickList_1(nullptr), m_pUIQuickList_2(nullptr), m_pUIQuickList_3(nullptr),
 	m_pUIVestPouch_1(nullptr), m_pUIVestPouch_2(nullptr), m_pUIVestPouch_3(nullptr), 
-	m_pUIVestPouch_4(nullptr), m_pUIVestPouch_5(nullptr), m_pUIVestPouch_6(nullptr), 
-	m_pUIVestPouch_7(nullptr), m_pUIVestPouch_8(nullptr), m_pUIVestPouch_9(nullptr)
+	m_pUIVestPouch_4(nullptr), m_pUIVestPouch_5(nullptr), m_pUIVestPouch_6(nullptr), m_pUIVestPouch_7(nullptr), 
+	m_pUIVestPouch_8(nullptr), m_pUIVestPouch_9(nullptr), m_pUIVestPouch_10(nullptr)
 {
 	m_iCurrentActiveSlot				= NO_ACTIVE_SLOT;
 	UIRank								= NULL;
@@ -247,6 +247,10 @@ void CUIInventoryWnd::Init()
 	xml_init.InitDragDropListEx			(uiXml, "dragdrop_vest_pouch_9", 0, m_pUIVestPouch_9);
 	BindDragDropListEnents				(m_pUIVestPouch_9);
 
+	m_pUIVestPouch_10					= xr_new<CUIDragDropListEx>(); AttachChild(m_pUIVestPouch_10); m_pUIVestPouch_10->SetAutoDelete(true);
+	xml_init.InitDragDropListEx			(uiXml, "dragdrop_vest_pouch_10", 0, m_pUIVestPouch_10);
+	BindDragDropListEnents				(m_pUIVestPouch_10);
+
 	for ( u8 i = 0; i < SLOTS_TOTAL; i++ )
 		m_slots_array[ i ] = NULL;
 	m_slots_array[OUTFIT_SLOT]			= m_pUIOutfitList;
@@ -281,6 +285,7 @@ void CUIInventoryWnd::Init()
 	m_slots_array[VEST_POUCH_7]			= m_pUIVestPouch_7;
 	m_slots_array[VEST_POUCH_8]			= m_pUIVestPouch_8;
 	m_slots_array[VEST_POUCH_9]			= m_pUIVestPouch_9;
+	m_slots_array[VEST_POUCH_10]		= m_pUIVestPouch_10;
 
 	//slot keys statisc
 	m_pKnifeKey = xr_new<CUIStatic>();
@@ -668,10 +673,10 @@ void CUIInventoryWnd::UpdateCustomDraw()
 		return;
 
 	auto& inv = Actor()->inventory();
-	u32 belt_size = inv.BeltSize();
-
-	m_pUIBeltList->SetCellsAvailable(belt_size);
-	/*m_pUIBeltList->SetCellsCapacity({ (int)belt_size, 1 });*/
+	//u32 belt_size = inv.BeltSize();
+	Ivector2 belt_capacity{ inv.BeltWidth(),inv.BeltHeight() };
+	//m_pUIBeltList->SetCellsAvailable(belt_size);
+	m_pUIBeltList->SetCellsCapacity(belt_capacity);
 
 	if (!Actor()->GetBackpack()) {
 		m_pUIBagList->SetCellsAvailable(0);

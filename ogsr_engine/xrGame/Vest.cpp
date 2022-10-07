@@ -38,7 +38,7 @@ void CVest::OnMoveToSlot(EItemPlace prevPlace) {
 			auto warbelt = pActor->GetWarbelt();
 			if(!warbelt || !warbelt->SlotAllowed(GRENADE_SLOT))
 				inv->DropSlotsToRuck(GRENADE_SLOT);
-			inv->DropSlotsToRuck(VEST_POUCH_1, VEST_POUCH_9);
+			inv->DropSlotsToRuck(VEST_POUCH_1, VEST_POUCH_10);
 		}
 	}
 }
@@ -52,7 +52,7 @@ void CVest::OnMoveToRuck(EItemPlace prevPlace) {
 			auto warbelt = pActor->GetWarbelt();
 			if (!warbelt || !warbelt->SlotAllowed(GRENADE_SLOT))
 				inv->DropSlotsToRuck(GRENADE_SLOT);
-			inv->DropSlotsToRuck(VEST_POUCH_1, VEST_POUCH_9);
+			inv->DropSlotsToRuck(VEST_POUCH_1, VEST_POUCH_10);
 		}
 	}
 }

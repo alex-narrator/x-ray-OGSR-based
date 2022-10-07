@@ -198,3 +198,17 @@ void CWeaponBM16::PlayAnimShutter()
 		case 2: PlayHUDMotion({ "anim_draw_2", "anim_draw", "anm_show_2" }, true, GetState()); break;
 		}
 }
+
+void CWeaponBM16::PlayAnimOnItemTake()
+{
+	if (AnimationExist("anm_on_item_take"))
+		PlayHUDMotion("anm_on_item_take", true, GetState());
+	else
+		switch (m_magazine.size())
+		{
+		case 0: PlayHUDMotion({ "anim_draw_0", "anim_draw", "anm_show_0" }, true, GetState()); break;
+		case 1: PlayHUDMotion({ "anim_draw_1", "anim_draw", "anm_show_1" }, true, GetState()); break;
+		case 2: PlayHUDMotion({ "anim_draw_2", "anim_draw", "anm_show_2" }, true, GetState()); break;
+		}
+	HUD_SOUND::PlaySound(sndOnItemTake, H_Parent()->Position(), H_Parent(), true);
+}
