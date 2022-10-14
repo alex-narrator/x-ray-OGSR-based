@@ -103,15 +103,13 @@ CInventory::CInventory()
 //	m_slots[BIODETECTOR_SLOT].m_bVisible		= false;
 	m_slots[DETECTOR_SLOT].m_bVisible			= false; //KRodin: это очень важно! Слот для зп-стайл детекторов должен быть НЕ активируемым!
 
-	for (u32 i = 0; i < m_slots.size(); ++i)
-	{
+	for (u32 i = 0; i < m_slots.size(); ++i){
 		sprintf_s(temp, "slot_visible_%d", i + 1);
 		if (pSettings->line_exist("inventory", temp))
 			m_slots[i].m_bVisible = !!pSettings->r_bool("inventory", temp);
 	}
 
 	m_bSlotsUseful								= true;
-	m_bBeltUseful								= false;
 
 	m_fTotalWeight								= -1.f;
 	m_fTotalVolume								= -1.f;
@@ -130,6 +128,7 @@ void CInventory::Clear()
 	m_all.clear							();
 	m_ruck.clear						();
 	m_belt.clear						();
+	m_vest.clear						();
 	
 	for(u32 i=0; i<m_slots.size(); i++)
 	{
@@ -176,16 +175,23 @@ void CInventory::Take(CGameObject *pObj, bool bNotActivate, bool strict_placemen
 	switch(pIItem->m_eItemPlace)
 	{
 	case eItemPlaceBelt:
-		result							= Belt(pIItem); 
+		result = Belt(pIItem); 
 		if (!result) {
 			Msg("!![%s] cant put in belt item [%s], moving to ruck...", __FUNCTION__, pIItem->object().cName().c_str());
 			pIItem->m_eItemPlace = eItemPlaceRuck;
 			R_ASSERT(Ruck(pIItem));
 		}
-
-		break;
+	break;
+	case eItemPlaceVest:
+		result = Vest(pIItem);
+		if (!result) {
+			Msg("!![%s] cant put in vest item [%s], moving to ruck...", __FUNCTION__, pIItem->object().cName().c_str());
+			pIItem->m_eItemPlace = eItemPlaceRuck;
+			R_ASSERT(Ruck(pIItem));
+		}
+	break;
 	case eItemPlaceRuck:
-		result							= Ruck(pIItem);
+		result = Ruck(pIItem);
 #ifdef DEBUG
 		if(!result) 
 			Msg("cant put in ruck item %s", *pIItem->object().cName());
@@ -227,6 +233,10 @@ void CInventory::Take(CGameObject *pObj, bool bNotActivate, bool strict_placemen
 		else if (!force_ruck_default && !pIItem->RuckDefault() && CanPutInBelt(pIItem))
 		{
 			result						= Belt(pIItem); VERIFY(result);
+		}
+		else if (!force_ruck_default && !pIItem->RuckDefault() && CanPutInVest(pIItem))
+		{
+			result						= Vest(pIItem); VERIFY(result);
 		}
 		else
 		{
@@ -271,14 +281,19 @@ bool CInventory::DropItem(CGameObject *pObj)
 	switch(pIItem->m_eItemPlace)
 	{
 	case eItemPlaceBelt:{
-			ASSERT_FMT(InBelt(pIItem), "CInventory::DropItem: InBelt(pIItem): %s, owner [%s]", pObj->cName().c_str(), m_pOwner->Name());
-			m_belt.erase(std::find(m_belt.begin(), m_belt.end(), pIItem));
-			pIItem->object().processing_deactivate();
-		}break;
+		ASSERT_FMT(InBelt(pIItem), "CInventory::DropItem: InBelt(pIItem): %s, owner [%s]", pObj->cName().c_str(), m_pOwner->Name());
+		m_belt.erase(std::find(m_belt.begin(), m_belt.end(), pIItem));
+		pIItem->object().processing_deactivate();
+	}break;
+	case eItemPlaceVest: {
+		ASSERT_FMT(InVest(pIItem), "CInventory::DropItem: InVest(pIItem): %s, owner [%s]", pObj->cName().c_str(), m_pOwner->Name());
+		m_vest.erase(std::find(m_vest.begin(), m_vest.end(), pIItem));
+		pIItem->object().processing_deactivate();
+	}break;
 	case eItemPlaceRuck:{
-			ASSERT_FMT(InRuck(pIItem), "CInventory::DropItem: InRuck(pIItem): %s, owner [%s]", pObj->cName().c_str(), m_pOwner->Name());
-			m_ruck.erase(std::find(m_ruck.begin(), m_ruck.end(), pIItem));
-		}break;
+		ASSERT_FMT(InRuck(pIItem), "CInventory::DropItem: InRuck(pIItem): %s, owner [%s]", pObj->cName().c_str(), m_pOwner->Name());
+		m_ruck.erase(std::find(m_ruck.begin(), m_ruck.end(), pIItem));
+	}break;
 	case eItemPlaceSlot:{
 			TryRestoreSlot(pIItem);
 			ASSERT_FMT(InSlot(pIItem), "CInventory::DropItem: InSlot(pIItem): [%s], id: [%u], owner [%s]", pObj->cName().c_str(), pObj->ID(), m_pOwner->Name());
@@ -353,10 +368,9 @@ bool CInventory::Slot(PIItem pIItem, bool bNotActivate)
 	m_slots[pIItem->GetSlot()].m_pIItem = pIItem;
 
 	//удалить из рюкзака или пояса
-	TIItemContainer::iterator it = std::find(m_ruck.begin(), m_ruck.end(), pIItem);
-	if(m_ruck.end() != it) m_ruck.erase(it);
-	it = std::find(m_belt.begin(), m_belt.end(), pIItem);
-	if(m_belt.end() != it) m_belt.erase(it);
+	if (InRuck(pIItem)) m_ruck.erase(std::find(m_ruck.begin(), m_ruck.end(), pIItem));
+	if (InBelt(pIItem)) m_belt.erase(std::find(m_belt.begin(), m_belt.end(), pIItem));
+	if (InVest(pIItem)) m_vest.erase(std::find(m_vest.begin(), m_vest.end(), pIItem));
 
 	if ( ( m_iActiveSlot == pIItem->GetSlot() || ( m_iActiveSlot == NO_ACTIVE_SLOT && m_iNextActiveSlot == NO_ACTIVE_SLOT ) ) && !bNotActivate )
 		if (activate_slot(pIItem->GetSlot()))
@@ -380,19 +394,14 @@ bool CInventory::Belt(PIItem pIItem)
 	
 	//вещь была в слоте
 	bool in_slot = InSlot(pIItem);
-	if(in_slot) 
-	{
+	if(in_slot) {
 		if(m_iActiveSlot == pIItem->GetSlot()) Activate(NO_ACTIVE_SLOT);
 		m_slots[pIItem->GetSlot()].m_pIItem = NULL;
 	}
-	
-	m_belt.insert(m_belt.end(), pIItem); 
+	if (InRuck(pIItem)) m_ruck.erase(std::find(m_ruck.begin(), m_ruck.end(), pIItem));
+	if (InVest(pIItem)) m_vest.erase(std::find(m_vest.begin(), m_vest.end(), pIItem));
 
-	if(!in_slot)
-	{
-		TIItemContainer::iterator it = std::find(m_ruck.begin(), m_ruck.end(), pIItem); 
-		if(m_ruck.end() != it) m_ruck.erase(it);
-	}
+	m_belt.push_back(pIItem);
 
 	CalcTotalWeight();
 	CalcTotalVolume();
@@ -411,6 +420,40 @@ bool CInventory::Belt(PIItem pIItem)
 	return true;
 }
 
+bool CInventory::Vest(PIItem pIItem)
+{
+	if (!CanPutInVest(pIItem))	return false;
+
+	//вещь была в слоте
+	bool in_slot = InSlot(pIItem);
+	if (in_slot)
+	{
+		if (m_iActiveSlot == pIItem->GetSlot()) Activate(NO_ACTIVE_SLOT);
+		m_slots[pIItem->GetSlot()].m_pIItem = NULL;
+	}
+
+	if (InRuck(pIItem)) m_ruck.erase(std::find(m_ruck.begin(), m_ruck.end(), pIItem));
+	if (InBelt(pIItem)) m_belt.erase(std::find(m_belt.begin(), m_belt.end(), pIItem));
+
+	m_vest.push_back(pIItem);
+
+	CalcTotalWeight();
+	CalcTotalVolume();
+	InvalidateState();
+
+	auto PrevPlace = pIItem->m_eItemPlace;
+	pIItem->m_eItemPlace = eItemPlaceVest;
+	m_pOwner->OnItemVest(pIItem, PrevPlace);
+	pIItem->OnMoveToVest(PrevPlace);
+
+	if (in_slot)
+		pIItem->object().processing_deactivate();
+
+	pIItem->object().processing_activate();
+
+	return true;
+}
+
 bool CInventory::Ruck(PIItem pIItem, bool skip_volume_check)
 {
 	if(!CanPutInRuck(pIItem, skip_volume_check)) return false;
@@ -422,14 +465,10 @@ bool CInventory::Ruck(PIItem pIItem, bool skip_volume_check)
 		if(m_iActiveSlot == pIItem->GetSlot()) Activate(NO_ACTIVE_SLOT);
 		m_slots[pIItem->GetSlot()].m_pIItem = NULL;
 	}
-	else
-	{
-		//вещь была на поясе или вообще только поднята с земли
-		TIItemContainer::iterator it = std::find(m_belt.begin(), m_belt.end(), pIItem); 
-		if(m_belt.end() != it) m_belt.erase(it);
-	}
+	if (InBelt(pIItem)) m_belt.erase(std::find(m_belt.begin(), m_belt.end(), pIItem));
+	if (InVest(pIItem)) m_vest.erase(std::find(m_vest.begin(), m_vest.end(), pIItem));
 	
-	m_ruck.insert									(m_ruck.end(), pIItem); 
+	m_ruck.push_back								(pIItem); 
 	
 	CalcTotalWeight									();
 	CalcTotalVolume									();
@@ -768,18 +807,28 @@ void CInventory::UpdateDropItem(PIItem pIItem)
 //ищем на поясе гранату такоже типа
 PIItem CInventory::Same(const PIItem pIItem, bool bSearchRuck) const
 {
-	const TIItemContainer& list = bSearchRuck ? m_ruck : m_belt;
-	for (TIItemContainer::const_iterator it = list.begin(); list.end() != it; ++it)
-	{
-		const PIItem l_pIItem = *it;
+	if (bSearchRuck) {
+		for (const auto& item : m_ruck) {
+			if ((item != pIItem) &&
+				!xr_strcmp(item->object().cNameSect(),
+					pIItem->object().cNameSect()))
+				return item;
+		}
+	} else {
+		for (const auto& item : m_vest) {
+			if ((item != pIItem) &&
+				!xr_strcmp(item->object().cNameSect(),
+					pIItem->object().cNameSect()))
+				return item;
+		}
 
-		if ((l_pIItem != pIItem) &&
-			!xr_strcmp(l_pIItem->object().cNameSect(),
-				pIItem->object().cNameSect()))
-			return l_pIItem;
-	}
+		for (const auto& item : m_belt) {
+			if ((item != pIItem) &&
+				!xr_strcmp(item->object().cNameSect(),
+					pIItem->object().cNameSect()))
+				return item;
+		}
 
-	if(!bSearchRuck)
 		for (u32 i = 0; i < m_slots.size(); ++i) {
 			const auto _item = m_slots[i].m_pIItem;
 			if (!_item) continue;
@@ -790,6 +839,7 @@ PIItem CInventory::Same(const PIItem pIItem, bool bSearchRuck) const
 				return _item;
 			}
 		}
+	}
 
 	return NULL;
 }
@@ -799,14 +849,25 @@ PIItem CInventory::SameSlot(const u32 slot, PIItem pIItem, bool bSearchRuck) con
 {
 	if(slot == NO_ACTIVE_SLOT) 	return NULL;
 
-	const auto& list = bSearchRuck ? m_ruck : m_belt;
-	for(const auto& _item : list){
-		if (_item != pIItem && _item->GetSlot() == slot) {
-			return _item;
+	if (bSearchRuck) {
+		for (const auto& _item : m_ruck) {
+			if (_item != pIItem && _item->GetSlot() == slot) {
+				return _item;
+			}
 		}
-	}
+	} else {
+		for (const auto& _item : m_vest) {
+			if (_item != pIItem && _item->GetSlot() == slot) {
+				return _item;
+			}
+		}
 
-	if(!bSearchRuck)
+		for (const auto& _item : m_belt) {
+			if (_item != pIItem && _item->GetSlot() == slot) {
+				return _item;
+			}
+		}
+
 		for (u32 i = 0; i < m_slots.size(); ++i) {
 			const auto _item = m_slots[i].m_pIItem;
 			if (!_item) continue;
@@ -815,6 +876,7 @@ PIItem CInventory::SameSlot(const u32 slot, PIItem pIItem, bool bSearchRuck) con
 				return _item;
 			}
 		}
+	}
 
 	return NULL;
 }
@@ -822,14 +884,25 @@ PIItem CInventory::SameSlot(const u32 slot, PIItem pIItem, bool bSearchRuck) con
 //ищем на поясе гранату для слота
 PIItem CInventory::SameGrenade(PIItem pIItem, bool bSearchRuck) const
 {
-	const auto& list = bSearchRuck ? m_ruck : m_belt;
-	for (const auto& _item : list) {
-		if (_item != pIItem && smart_cast<CGrenade*>(_item)) {
-			return _item;
+	if (bSearchRuck) {
+		for (const auto& _item : m_ruck) {
+			if (_item != pIItem && smart_cast<CGrenade*>(_item)) {
+				return _item;
+			}
 		}
-	}
+	} else {
+		for (const auto& _item : m_vest) {
+			if (_item != pIItem && smart_cast<CGrenade*>(_item)) {
+				return _item;
+			}
+		}
 
-	if (!bSearchRuck)
+		for (const auto& _item : m_belt) {
+			if (_item != pIItem && smart_cast<CGrenade*>(_item)) {
+				return _item;
+			}
+		}
+
 		for (u32 i = 0; i < m_slots.size(); ++i) {
 			const auto _item = m_slots[i].m_pIItem;
 			if (!_item) continue;
@@ -838,6 +911,7 @@ PIItem CInventory::SameGrenade(PIItem pIItem, bool bSearchRuck) const
 				return _item;
 			}
 		}
+	}
 
 	return NULL;
 }
@@ -847,13 +921,12 @@ PIItem CInventory::Get(const char *name, bool bSearchRuck) const
 {
 	const TIItemContainer &list = bSearchRuck ? m_ruck : m_belt;
 	
-	for(TIItemContainer::const_iterator it = list.begin(); list.end() != it; ++it) 
-	{
-		PIItem pIItem = *it;
-		if(pIItem && !xr_strcmp(pIItem->object().cNameSect(), name) && 
-								pIItem->Useful()) 
-				return pIItem;
+	for(const auto& item : list) {
+		if(item && !xr_strcmp(item->object().cNameSect(), name) && item->Useful())
+				return item;
 	}
+
+
 	return NULL;
 }
 
@@ -861,12 +934,9 @@ PIItem CInventory::Get(CLASS_ID cls_id, bool bSearchRuck) const
 {
 	const TIItemContainer &list = bSearchRuck ? m_ruck : m_belt;
 	
-	for(TIItemContainer::const_iterator it = list.begin(); list.end() != it; ++it) 
-	{
-		PIItem pIItem = *it;
-		if(pIItem && pIItem->object().CLS_ID == cls_id && 
-								pIItem->Useful()) 
-				return pIItem;
+	for(const auto& item : list){
+		if(item && item->object().CLS_ID == cls_id && item->Useful())
+				return item;
 	}
 	return NULL;
 }
@@ -875,11 +945,9 @@ PIItem CInventory::Get(const u16 id, bool bSearchRuck) const
 {
 	const TIItemContainer &list = bSearchRuck ? m_ruck : m_belt;
 
-	for(TIItemContainer::const_iterator it = list.begin(); list.end() != it; ++it) 
-	{
-		PIItem pIItem = *it;
-		if(pIItem && pIItem->object().ID() == id) 
-			return pIItem;
+	for(const auto& item : list){
+		if(item && item->object().ID() == id)
+			return item;
 	}
 	return NULL;
 }
@@ -905,14 +973,10 @@ PIItem CInventory::GetAmmo(const char *name, bool forActor) const
 
 PIItem CInventory::item(CLASS_ID cls_id) const
 {
-	const TIItemContainer &list = m_all;
-
-	for(TIItemContainer::const_iterator it = list.begin(); list.end() != it; ++it) 
-	{
-		PIItem pIItem = *it;
-		if(pIItem && pIItem->object().CLS_ID == cls_id && 
-			pIItem->Useful()) 
-			return pIItem;
+	for(const auto& item : m_all){
+		if(item && item->object().CLS_ID == cls_id &&
+			item->Useful())
+			return item;
 	}
 	return NULL;
 }
@@ -956,10 +1020,8 @@ u32 CInventory::dwfGetSameItemCount(LPCSTR caSection, bool SearchAll)
 {
 	u32			l_dwCount = 0;
 	TIItemContainer	&l_list = SearchAll ? m_all : m_ruck;
-	for(TIItemContainer::iterator l_it = l_list.begin(); l_list.end() != l_it; ++l_it) 
-	{
-		PIItem	l_pIItem = *l_it;
-		if (l_pIItem && !xr_strcmp(l_pIItem->object().cNameSect(), caSection))
+	for(const auto& item : l_list){
+		if (item && !xr_strcmp(item->object().cNameSect(), caSection))
             ++l_dwCount;
 	}
 	
@@ -969,10 +1031,8 @@ u32		CInventory::dwfGetGrenadeCount(LPCSTR caSection, bool SearchAll)
 {
 	u32			l_dwCount = 0;
 	TIItemContainer	&l_list = SearchAll ? m_all : m_ruck;
-	for(TIItemContainer::iterator l_it = l_list.begin(); l_list.end() != l_it; ++l_it) 
-	{
-		PIItem	l_pIItem = *l_it;
-		if (l_pIItem && l_pIItem->object().CLS_ID == CLSID_GRENADE_F1 || l_pIItem->object().CLS_ID == CLSID_GRENADE_RGD5)
+	for(const auto& item : l_list){
+		if (item && (item->object().CLS_ID == CLSID_GRENADE_F1 || item->object().CLS_ID == CLSID_GRENADE_RGD5))
 			++l_dwCount;
 	}
 
@@ -981,11 +1041,8 @@ u32		CInventory::dwfGetGrenadeCount(LPCSTR caSection, bool SearchAll)
 
 bool CInventory::bfCheckForObject(ALife::_OBJECT_ID tObjectID)
 {
-	TIItemContainer	&l_list = m_all;
-	for(TIItemContainer::iterator l_it = l_list.begin(); l_list.end() != l_it; ++l_it) 
-	{
-		PIItem	l_pIItem = *l_it;
-		if (l_pIItem && l_pIItem->object().ID() == tObjectID)
+	for(const auto& item : m_all) {
+		if (item && item->object().ID() == tObjectID)
 			return(true);
 	}
 	return		(false);
@@ -993,12 +1050,9 @@ bool CInventory::bfCheckForObject(ALife::_OBJECT_ID tObjectID)
 
 CInventoryItem *CInventory::get_object_by_id(ALife::_OBJECT_ID tObjectID)
 {
-	TIItemContainer	&l_list = m_all;
-	for(TIItemContainer::iterator l_it = l_list.begin(); l_list.end() != l_it; ++l_it) 
-	{
-		PIItem	l_pIItem = *l_it;
-		if (l_pIItem && l_pIItem->object().ID() == tObjectID)
-			return	(l_pIItem);
+	for(const auto& item : m_all) {
+		if (item && item->object().ID() == tObjectID)
+			return	(item);
 	}
 	return		(0);
 }
@@ -1044,20 +1098,20 @@ bool CInventory::Eat(PIItem pIItem, CInventoryOwner* eater)
 	return			true;
 }
 
-bool CInventory::InSlot(PIItem pIItem) const
-{
+bool CInventory::InSlot(PIItem pIItem) const{
 	if(pIItem->GetSlot() < m_slots.size() && 
 		m_slots[pIItem->GetSlot()].m_pIItem == pIItem)
 		return true;
 	return false;
 }
-bool CInventory::InBelt(PIItem pIItem) const
-{
+bool CInventory::InBelt(PIItem pIItem) const{
 	if(Get(pIItem->object().ID(), false)) return true;
 	return false;
 }
-bool CInventory::InRuck(PIItem pIItem) const
-{
+bool CInventory::InVest(PIItem pIItem) const {
+	return (std::find(m_vest.begin(), m_vest.end(), pIItem) != m_vest.end());
+}
+bool CInventory::InRuck(PIItem pIItem) const{
 	if(Get(pIItem->object().ID(), true)) return true;
 	return false;
 }
@@ -1067,26 +1121,13 @@ bool CInventory::CanPutInSlot(PIItem pIItem, bool check_all) const
 {
 	if(!m_bSlotsUseful) return false;
 
-	if (!OwnerIsActor()) {
-		if (!smart_cast<CEntityAlive*>(m_pOwner)->g_Alive() && 
-			!m_slots[pIItem->GetSlot()].m_bPersistent) return false;
+	if(!GetOwner()->CanPutInSlot(pIItem, pIItem->GetSlot())) return false;
 
-		switch (pIItem->GetSlot())
-		{
-		case QUICK_SLOT_0:
-		case QUICK_SLOT_1:
-		case QUICK_SLOT_2:
-		case QUICK_SLOT_3:
-			return false;
-		}
-	}
-
-	if( !GetOwner()->CanPutInSlot(pIItem, pIItem->GetSlot() ) ) return false;
-
-	if (IsSlotDisabled(pIItem->GetSlot())) return false;
+	if (!IsSlotAllowed(pIItem->GetSlot()) && !check_all) return false;
 
 	if(pIItem->GetSlot() < m_slots.size() && 
-		!m_slots[pIItem->GetSlot()].m_pIItem)
+		!m_slots[pIItem->GetSlot()].m_pIItem 
+		&& IsSlotAllowed(pIItem->GetSlot()))
 		return true;
 
 	//оглянемо усі доступні слоти
@@ -1114,7 +1155,7 @@ bool CInventory::CanPutInSlot(PIItem pIItem, u8 slot) const
 	if (!GetOwner()->CanPutInSlot(pIItem, slot))
 		return false;
 
-	if (IsSlotDisabled(slot)) return false;
+	if (!IsSlotAllowed(slot)) return false;
 
 	if (slot < m_slots.size() && !m_slots[slot].m_pIItem)
 		return true;
@@ -1129,11 +1170,27 @@ bool CInventory::CanPutInBelt(PIItem pIItem) const
 	if (InBelt(pIItem))							return false;
 	if (!m_bBeltUseful)							return false;
 	if (!pIItem || !pIItem->Belt())				return false;
-	if (OwnerIsActor() && !IsAllItemsLoaded())	return true;
-//	if (m_belt.size() >= BeltSize())			return false;
+	if (!IsAllItemsLoaded())					return true;
+	auto pActor = smart_cast<CActor*>(m_pOwner);
+	if (pActor && !pActor->GetWarbelt())		return false;
+//	if (m_belt.size() >= BeltWidth() * BeltHeight())return false;
 	auto belt = static_cast<TIItemContainer>(m_belt);
 
 	return FreeRoom_inBelt(belt, pIItem, BeltWidth(), BeltHeight());
+}
+
+bool CInventory::CanPutInVest(PIItem pIItem) const
+{
+	if (InVest(pIItem))							return false;
+	if (!m_bVestUseful)							return false;
+	if (!pIItem || !pIItem->Vest())				return false;
+	if (!IsAllItemsLoaded())					return true;
+	auto pActor = smart_cast<CActor*>(m_pOwner);
+	if (pActor && !pActor->GetVest())			return false;
+//	if (m_vest.size() >= VestWidth() * VestHeight())return false;
+	auto vest = static_cast<TIItemContainer>(m_vest);
+
+	return FreeRoom_inVest(vest, pIItem, VestWidth(), VestHeight());
 }
 //проверяет можем ли поместить вещь в рюкзак,
 //при этом реально ничего не меняется
@@ -1144,12 +1201,12 @@ bool CInventory::CanPutInRuck(PIItem pIItem, bool skip_volume_check) const
 	if (skip_volume_check) return true;
 
 	//для НПЦ може бути анлімітед обсяг
-	if (!OwnerIsActor() && m_pOwner->IsVolumeUnlimited()) return true;
+	if (m_pOwner->IsVolumeUnlimited()) return true;
 
 	if (OwnerIsActor() && !IsAllItemsLoaded())	return true;
 
 	if (!pIItem->IsQuestItem() &&
-		TotalVolume() + pIItem->Volume() > m_pOwner->MaxCarryVolume())
+		(TotalVolume() + pIItem->Volume() > m_pOwner->MaxCarryVolume()))
 		return false;
 
 	return true;
@@ -1201,7 +1258,10 @@ bool CInventory::CanTakeItem(CInventoryItem *inventory_item) const
 	if(!OwnerIsActor() && (TotalWeight() + inventory_item->Weight() > m_pOwner->MaxCarryWeight()))
 		return false;
 
-	if (!CanPutInSlot(inventory_item, true) && !CanPutInBelt(inventory_item) && !CanPutInRuck(inventory_item))
+	if (!CanPutInSlot(inventory_item, true) && 
+		!CanPutInBelt(inventory_item) && 
+		!CanPutInVest(inventory_item) && 
+		!CanPutInRuck(inventory_item))
 		return	false;
 
 	return	true;
@@ -1209,34 +1269,30 @@ bool CInventory::CanTakeItem(CInventoryItem *inventory_item) const
 
 void  CInventory::AddAvailableItems(TIItemContainer& items_container, bool for_trade) const
 {
-	for(TIItemContainer::const_iterator it = m_ruck.begin(); m_ruck.end() != it; ++it) 
-	{
-		PIItem pIItem = *it;
-		if(!for_trade || pIItem->CanTrade())
-			items_container.push_back(pIItem);
+	for(const auto& item : m_ruck){
+		if(!for_trade || item->CanTrade())
+			items_container.push_back(item);
 	}
 
-	if(m_bBeltUseful)
-	{
-		for(TIItemContainer::const_iterator it = m_belt.begin(); m_belt.end() != it; ++it) 
-		{
-			PIItem pIItem = *it;
-			if(!for_trade || pIItem->CanTrade())
-				items_container.push_back(pIItem);
+	if(m_bBeltUseful){
+		for(const auto& item : m_belt) {
+			if(!for_trade || item->CanTrade())
+				items_container.push_back(item);
+		}
+	}
+
+	if (m_bVestUseful) {
+		for (const auto& item : m_vest) {
+			if (!for_trade || item->CanTrade())
+				items_container.push_back(item);
 		}
 	}
 	
-	if(m_bSlotsUseful)
-	{
-		TISlotArr::const_iterator slot_it			= m_slots.begin();
-		TISlotArr::const_iterator slot_it_e			= m_slots.end();
-		for(;slot_it!=slot_it_e;++slot_it)
-		{
-			const CInventorySlot& S = *slot_it;
-			if(S.m_pIItem && (!for_trade || S.m_pIItem->CanTrade())  )
-			{
-				if(!S.m_bPersistent || S.m_pIItem->GetSlot()==GRENADE_SLOT )
-					items_container.push_back(S.m_pIItem);
+	if(m_bSlotsUseful){
+		for(const auto& slot : m_slots){
+			if(slot.m_pIItem && (!for_trade || slot.m_pIItem->CanTrade())  ){
+				if(!slot.m_bPersistent || slot.m_pIItem->GetSlot()==GRENADE_SLOT )
+					items_container.push_back(slot.m_pIItem);
 			}
 		}
 	}		
@@ -1244,9 +1300,8 @@ void  CInventory::AddAvailableItems(TIItemContainer& items_container, bool for_t
 
 bool CInventory::isBeautifulForActiveSlot	(CInventoryItem *pIItem)
 {
-	TISlotArr::iterator it =  m_slots.begin();
-	for( ; it!=m_slots.end(); ++it) {
-		if ((*it).m_pIItem && (*it).m_pIItem->IsNecessaryItem(pIItem))
+	for(const auto& slot : m_slots) {
+		if (slot.m_pIItem && slot.m_pIItem->IsNecessaryItem(pIItem))
 			return		(true);
 	}
 	return				(false);
@@ -1254,13 +1309,9 @@ bool CInventory::isBeautifulForActiveSlot	(CInventoryItem *pIItem)
 
 void CInventory::Items_SetCurrentEntityHud(bool current_entity)
 {
-	TIItemContainer::iterator it;
-	for(it = m_all.begin(); m_all.end() != it; ++it) 
-	{
-		PIItem pIItem = *it;
-		CWeapon* pWeapon = smart_cast<CWeapon*>(pIItem);
-		if (pWeapon)
-		{
+	for(const auto& item : m_all){
+		CWeapon* pWeapon = smart_cast<CWeapon*>(item);
+		if (pWeapon){
 			pWeapon->InitAddons();
 			pWeapon->UpdateAddonsVisibility();
 		}
@@ -1329,20 +1380,31 @@ void CInventory::Iterate( bool bSearchRuck, std::function<bool( const PIItem )> 
 
 void CInventory::IterateAmmo( bool bSearchRuck, std::function<bool( const PIItem )> callback ) const {
 	
-	if (!bSearchRuck) {
-		for (u32 i = 0; i < m_slots.size(); ++i){
-			const auto itm = m_slots[i].m_pIItem;
-			const auto* ammo = smart_cast<CWeaponAmmo*>(itm);
-			if (ammo && itm->Useful() && callback(itm))
+	if (bSearchRuck) {
+		for (const auto& item : m_ruck) {
+			const auto* ammo = smart_cast<CWeaponAmmo*>(item);
+			if (ammo && item->Useful() && callback(item))
 				break;
 		}
-	}
+	} else {
+		for (const auto& item : m_vest) {
+			const auto* ammo = smart_cast<CWeaponAmmo*>(item);
+			if (ammo && item->Useful() && callback(item))
+				break;
+		}
 
-	const auto& list = bSearchRuck ? m_ruck : m_belt;
-	for ( const auto& it : list ) {
-		const auto *ammo = smart_cast<CWeaponAmmo*>( it );
-		if ( ammo && it->Useful() && callback( it ) )
-			break;
+		for (const auto& item : m_belt) {
+			const auto* ammo = smart_cast<CWeaponAmmo*>(item);
+			if (ammo && item->Useful() && callback(item))
+				break;
+		}
+
+		for (u32 i = 0; i < m_slots.size(); ++i){
+			const auto item = m_slots[i].m_pIItem;
+			const auto* ammo = smart_cast<CWeaponAmmo*>(item);
+			if (ammo && item->Useful() && callback(item))
+				break;
+		}
 	}
 }
 
@@ -1449,17 +1511,31 @@ void CInventory::TryToHideWeapon(bool b_hide_state, bool b_save_prev_slot)
 //получаем айтем из всего инвентаря или с пояса
 PIItem CInventory::GetSame(const PIItem pIItem, bool bSearchRuck) const
 {
-	const auto& list = bSearchRuck ? m_ruck : m_belt;
-
-	for (const auto& _item : list){
-		if ((_item != pIItem) &&
-			!xr_strcmp(_item->object().cNameSect(),
-				pIItem->object().cNameSect())) {
-			return _item;
+	if (bSearchRuck) {
+		for (const auto& _item : m_ruck) {
+			if ((_item != pIItem) &&
+				!xr_strcmp(_item->object().cNameSect(),
+					pIItem->object().cNameSect())) {
+				return _item;
+			}
 		}
-	}
+	} else {
+		for (const auto& _item : m_vest) {
+			if ((_item != pIItem) &&
+				!xr_strcmp(_item->object().cNameSect(),
+					pIItem->object().cNameSect())) {
+				return _item;
+			}
+		}
 
-	if(!bSearchRuck)
+		for (const auto& _item : m_belt) {
+			if ((_item != pIItem) &&
+				!xr_strcmp(_item->object().cNameSect(),
+					pIItem->object().cNameSect())) {
+				return _item;
+			}
+		}
+
 		for (u32 i = 0; i < m_slots.size(); ++i) {
 			const auto _item = m_slots[i].m_pIItem;
 			if (!_item) continue;
@@ -1470,6 +1546,7 @@ PIItem CInventory::GetSame(const PIItem pIItem, bool bSearchRuck) const
 				return _item;
 			}
 		}
+	}
 
 	return NULL;
 }
@@ -1484,12 +1561,16 @@ u32 CInventory::GetSameItemCount(LPCSTR caSection, bool SearchRuck)
 	}
 	//помимо пояса еще и в слотах поищем
 	/*if (!SearchRuck)*/
-		for (u32 i = 0; i < m_slots.size(); ++i)
-		{
-			PIItem l_pIItem = m_slots[i].m_pIItem;
-			if (l_pIItem && !xr_strcmp(l_pIItem->object().cNameSect(), caSection))
-				++l_dwCount;
-		}
+	for (const auto& item : m_vest) {
+		if (item && !xr_strcmp(item->object().cNameSect(), caSection))
+			++l_dwCount;
+	}
+
+	for (u32 i = 0; i < m_slots.size(); ++i){
+		PIItem l_pIItem = m_slots[i].m_pIItem;
+		if (l_pIItem && !xr_strcmp(l_pIItem->object().cNameSect(), caSection))
+			++l_dwCount;
+	}
 
 	return		(l_dwCount);
 }
@@ -1521,14 +1602,19 @@ void CInventory::TryAmmoCustomPlacement(CInventoryItem* pIItem)
 	//Msg("ammo [%s] with ID [%d] has taken", pIItem->object().cNameSect().c_str(), pIItem->object().ID());
 
 	if (psActorFlags.test(AF_AMMO_FROM_BELT) && pWeapon->IsAmmoWasSpawned() && !pActor->IsRuckAmmoPlacement()) { //если включены патроны с пояса, то для боеприпасов актора, которые спавнятся при разрядке
-		auto pWarbelt = pActor->GetWarbelt();
-		bool b_has_drop_pouch = pWarbelt && pWarbelt->HasDropPouch();
+		auto pWarbelt	= pActor->GetWarbelt();
+		auto pVest		= pActor->GetVest();
+		bool b_has_drop_pouch = pWarbelt && pWarbelt->HasDropPouch() || pVest && pVest->HasDropPouch();
 
 		if (pAmmo->IsBoxReloadableEmpty() && b_has_drop_pouch) //якщо пустий магазин та є сумка для скидання - кладемо до рюкзаку
 			return;
 
-		if (CanPutInBelt(pAmmo)){  //попробуем положить патроны в пояс
+		if (CanPutInVest(pAmmo)){  //спробуємо до розгрузки
 			//Msg("ammo [%s] with ID [%d] was placed to belt", pIItem->object().cNameSect().c_str(), pIItem->object().ID());
+			pAmmo->m_eItemPlace = eItemPlaceVest;
+		}
+		else if (CanPutInBelt(pAmmo)) {  //спробуємо до поясу
+			//Msg("ammo [%s] with ID [%d] was placed to vest", pIItem->object().cNameSect().c_str(), pIItem->object().ID());
 			pAmmo->m_eItemPlace = eItemPlaceBelt;
 		}else{ //попробуем определить свободный слот и положить в него
 			auto& slots = pAmmo->GetSlots();
@@ -1543,7 +1629,7 @@ void CInventory::TryAmmoCustomPlacement(CInventoryItem* pIItem)
 			}
 		}
 
-		if (!CanPutInBelt(pAmmo) && !CanPutInSlot(pAmmo) && !b_has_drop_pouch) //нікуди не вміщається та немає сумки для скидання - кидаємо на землю
+		if (!CanPutInBelt(pAmmo) && !CanPutInVest(pAmmo) && !CanPutInSlot(pAmmo) && !b_has_drop_pouch) //нікуди не вміщається та немає сумки для скидання - кидаємо на землю
 			pAmmo->SetDropManual(TRUE);
 	}
 	pWeapon->SetAmmoWasSpawned(false);	//сбрасываем флажок спавна патронов
@@ -1571,6 +1657,28 @@ u32  CInventory::BeltHeight() const {
 	return 0; //m_iMaxBeltWidth;
 }
 
+u32  CInventory::VestWidth() const {
+	auto pActor = smart_cast<CActor*>(m_pOwner);
+	if (pActor) {
+		auto vest = pActor->GetVest();
+		if (vest) {
+			return vest->GetVestWidth();
+		}
+	}
+	return 0; //m_iMaxBeltWidth;
+}
+
+u32  CInventory::VestHeight() const {
+	auto pActor = smart_cast<CActor*>(m_pOwner);
+	if (pActor) {
+		auto vest = pActor->GetVest();
+		if (vest) {
+			return vest->GetVestHeight();
+		}
+	}
+	return 0; //m_iMaxBeltWidth;
+}
+
 bool CInventory::IsAllItemsLoaded() const {
 	return UpdatesCount;
 }
@@ -1579,11 +1687,14 @@ bool CInventory::OwnerIsActor() const {
 	return smart_cast<CActor*>(m_pOwner);
 }
 
-void CInventory::DropBeltToRuck(){
-	if (!OwnerIsActor()) return;
-
+void CInventory::DropBeltToRuck(bool skip_volume_check){
 	while (!m_belt.empty())
-		Ruck(m_belt.back());
+		Ruck(m_belt.back(), skip_volume_check);
+}
+
+void CInventory::DropVestToRuck(bool skip_volume_check) {
+	while (!m_vest.empty())
+		Ruck(m_vest.back(), skip_volume_check);
 }
 
 void CInventory::DropSlotsToRuck(u32 min_slot, u32 max_slot) {
@@ -1619,11 +1730,11 @@ void CInventory::UpdateVolumeDropOut()
 	}
 }
 
-bool CInventory::IsSlotDisabled(u32 slot) const
+bool CInventory::IsSlotAllowed(u32 slot) const
 {
 	auto pActor = smart_cast<CActor*>(m_pOwner);
 	if (!pActor || !IsAllItemsLoaded()) 
-		return false;
+		return true;
 
 	auto outfit		= pActor->GetOutfit();
 	auto warbelt	= pActor->GetWarbelt();
@@ -1632,32 +1743,18 @@ bool CInventory::IsSlotDisabled(u32 slot) const
 	{
 	case KNIFE_SLOT:
 	case HOLSTER_SLOT:
-		return !(warbelt && warbelt->SlotAllowed(slot));
+	case ARTEFACT_SLOT:
+		return (warbelt && warbelt->SlotAllowed(slot));
 	break;
 	case GRENADE_SLOT:
-		return !(warbelt && warbelt->SlotAllowed(slot) || vest && vest->SlotAllowed(slot));
-	break;
-	case ARTEFACT_SLOT:
-		return !(warbelt && warbelt->SlotAllowed(slot));
+		return (warbelt && warbelt->SlotAllowed(slot) || vest && vest->SlotAllowed(slot));
 	break;
 	case HELMET_SLOT:
-		return (outfit && outfit->m_bIsHelmetBuiltIn);
-	break;
-	case VEST_POUCH_1:
-	case VEST_POUCH_2:
-	case VEST_POUCH_3:
-	case VEST_POUCH_4:
-	case VEST_POUCH_5:
-	case VEST_POUCH_6:
-	case VEST_POUCH_7:
-	case VEST_POUCH_8:
-	case VEST_POUCH_9:
-	case VEST_POUCH_10:
-		return !(vest && vest->SlotAllowed(slot));
+		return (!outfit || !outfit->m_bIsHelmetBuiltIn);
 	break;
 	}
 
-	return false;
+	return true;
 }
 
 void CInventory::TryRestoreSlot(CInventoryItem* pIItem) {

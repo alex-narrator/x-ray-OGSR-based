@@ -61,14 +61,12 @@ bool CAI_Stalker::tradable_item					(CInventoryItem *inventory_item, const u16 &
 u32 CAI_Stalker::fill_items						(CInventory &inventory, CGameObject *old_owner, ALife::_OBJECT_ID new_owner_id)
 {
 	u32							result = 0;
-	TIItemContainer::iterator	I = inventory.m_all.begin();
-	TIItemContainer::iterator	E = inventory.m_all.end();
-	for ( ; I != E; ++I) {
-		if (!tradable_item(*I,old_owner->ID()))
+	for (const auto & item : inventory.m_all) {
+		if (!tradable_item(item,old_owner->ID()))
 			continue;
 		
-		m_temp_items.emplace_back(*I, old_owner->ID(), new_owner_id);
-		result					+= (*I)->Cost();
+		m_temp_items.emplace_back(item, old_owner->ID(), new_owner_id);
+		result					+= item->Cost();
 	}
 
 	return						(result);
@@ -256,11 +254,9 @@ void CAI_Stalker::update_sell_info					()
 	std::sort				(m_temp_items.begin(),m_temp_items.end());
 	select_items			();
 
-	TIItemContainer::iterator	I = inventory().m_all.begin();
-	TIItemContainer::iterator	E = inventory().m_all.end();
-	for ( ; I != E; ++I) {
-		if (!tradable_item(*I, ID()))
-			m_temp_items.emplace_back(*I, ID(), ID());
+	for (const auto& item : inventory().m_all) {
+		if (!tradable_item(item, ID()))
+			m_temp_items.emplace_back(item, ID(), ID());
 	}
 }
 
@@ -336,10 +332,8 @@ bool CAI_Stalker::enough_ammo						(const CWeapon *new_weapon) const
 {
 	//int						ammo_box_count = 0;
 
-	TIItemContainer::const_iterator	I = inventory().m_all.begin();
-	TIItemContainer::const_iterator	E = inventory().m_all.end();
-	for ( ; I != E; ++I) {
-		if (std::find(new_weapon->m_ammoTypes.begin(),new_weapon->m_ammoTypes.end(),(*I)->object().cNameSect()) == new_weapon->m_ammoTypes.end())
+	for (const auto& item : inventory().m_all) {
+		if (std::find(new_weapon->m_ammoTypes.begin(),new_weapon->m_ammoTypes.end(), item->object().cNameSect()) == new_weapon->m_ammoTypes.end())
 			continue;
 
 		//++ammo_box_count;
@@ -389,10 +383,8 @@ bool CAI_Stalker::can_take							(CInventoryItem const * item)
 	bool						new_weapon_enough_ammo = enough_ammo(new_weapon);
 	u32							new_weapon_rank = get_rank(new_weapon->cNameSect());
 
-	TIItemContainer::iterator	I = inventory().m_all.begin();
-	TIItemContainer::iterator	E = inventory().m_all.end();
-	for ( ; I != E; ++I)
-		if (conflicted(*I,new_weapon,new_weapon_enough_ammo,new_weapon_rank))
+	for (const auto& item : inventory().m_all)
+		if (conflicted(item,new_weapon,new_weapon_enough_ammo,new_weapon_rank))
 			return				(false);
 
 	return						(true);
@@ -403,22 +395,18 @@ void CAI_Stalker::remove_personal_only_ammo			(const CInventoryItem *item)
 	const CWeapon			*weapon = smart_cast<const CWeapon*>(item);
 	VERIFY					(weapon);
 
-	xr_vector<shared_str>::const_iterator	I = weapon->m_ammoTypes.begin();
-	xr_vector<shared_str>::const_iterator	E = weapon->m_ammoTypes.end();
-	for ( ; I != E; ++I) {
+	for (const auto& ammo_type : weapon->m_ammoTypes) {
 		bool				found = false;
 
-		TIItemContainer::const_iterator	i = inventory().m_all.begin();
-		TIItemContainer::const_iterator	e = inventory().m_all.end();
-		for ( ; i != e; ++i) {
-			if ((*i)->object().ID() == weapon->ID())
+		for (const auto& item : inventory().m_all) {
+			if (item->object().ID() == weapon->ID())
 				continue;
 
-			const CWeapon	*temp = smart_cast<const CWeapon*>(*i);
+			const CWeapon	*temp = smart_cast<const CWeapon*>(item);
 			if (!temp)
 				continue;
 
-			if (std::find(temp->m_ammoTypes.begin(),temp->m_ammoTypes.end(),*I) == temp->m_ammoTypes.end())
+			if (std::find(temp->m_ammoTypes.begin(),temp->m_ammoTypes.end(), ammo_type) == temp->m_ammoTypes.end())
 				continue;
 
 			found			= true;
@@ -428,12 +416,12 @@ void CAI_Stalker::remove_personal_only_ammo			(const CInventoryItem *item)
 		if (found)
 			continue;
 
-		for (i = inventory().m_all.begin(); i != e; ++i) {
-			if (xr_strcmp(*I,(*i)->object().cNameSect()))
+		for (const auto& item : inventory().m_all) {
+			if (xr_strcmp(ammo_type, item->object().cNameSect()))
 				continue;
 
 			NET_Packet		packet;
-			u_EventGen		(packet,GE_DESTROY,(*i)->object().ID());
+			u_EventGen		(packet,GE_DESTROY, item->object().ID());
 			u_EventSend		(packet);
 		}
 	}

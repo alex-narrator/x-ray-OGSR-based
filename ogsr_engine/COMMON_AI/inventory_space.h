@@ -26,19 +26,6 @@ enum : u32
 	WARBELT_SLOT,
 	BACKPACK_SLOT,
 	VEST_SLOT,
-	//vest pouch - left side
-	VEST_POUCH_1,
-	VEST_POUCH_2,
-	VEST_POUCH_3,
-	//vest pouch - chest
-	VEST_POUCH_4,
-	VEST_POUCH_5,
-	VEST_POUCH_6,
-	VEST_POUCH_7,
-	//vest pouch - right side
-	VEST_POUCH_8,
-	VEST_POUCH_9,
-	VEST_POUCH_10,
 	//
     SLOTS_TOTAL,
     NO_ACTIVE_SLOT = 255
@@ -61,6 +48,7 @@ enum EItemPlace
 	eItemPlaceBelt,
 	eItemPlaceRuck,
 	eItemPlaceBeltActor,
+	eItemPlaceVest,
 };
 
 extern u32	INV_STATE_LADDER;

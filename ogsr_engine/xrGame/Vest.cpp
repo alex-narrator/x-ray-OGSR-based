@@ -12,6 +12,10 @@ void CVest::Load(LPCSTR section)
 {
 	inherited::Load(section);
 
+	m_iVestWidth	= READ_IF_EXISTS(pSettings, r_u32,	section, "vest_width",	1);
+	m_iVestHeight	= READ_IF_EXISTS(pSettings, r_u32,	section, "vest_height",	1);
+	m_bDropPouch	= READ_IF_EXISTS(pSettings, r_bool, section, "drop_pouch",	false);
+
 	if (pSettings->line_exist(section, "slots_allowed")) {
 		char buf[16]{};
 		LPCSTR str = pSettings->r_string(section, "slots_allowed");
@@ -38,7 +42,7 @@ void CVest::OnMoveToSlot(EItemPlace prevPlace) {
 			auto warbelt = pActor->GetWarbelt();
 			if(!warbelt || !warbelt->SlotAllowed(GRENADE_SLOT))
 				inv->DropSlotsToRuck(GRENADE_SLOT);
-			inv->DropSlotsToRuck(VEST_POUCH_1, VEST_POUCH_10);
+			inv->DropVestToRuck();
 		}
 	}
 }
@@ -52,7 +56,7 @@ void CVest::OnMoveToRuck(EItemPlace prevPlace) {
 			auto warbelt = pActor->GetWarbelt();
 			if (!warbelt || !warbelt->SlotAllowed(GRENADE_SLOT))
 				inv->DropSlotsToRuck(GRENADE_SLOT);
-			inv->DropSlotsToRuck(VEST_POUCH_1, VEST_POUCH_10);
+			inv->DropVestToRuck();
 		}
 	}
 }

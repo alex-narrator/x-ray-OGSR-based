@@ -52,15 +52,18 @@ public:
 	
 	bool					Slot				(PIItem pIItem, bool bNotActivate = false);	
 	bool					Belt				(PIItem pIItem);
+	bool					Vest				(PIItem pIItem);
 	bool					Ruck				(PIItem pIItem, bool skip_volume_check = false);
 
 	bool 					InSlot				(PIItem pIItem) const;
 	bool 					InBelt				(PIItem pIItem) const;
+	bool 					InVest				(PIItem pIItem) const;
 	bool 					InRuck				(PIItem pIItem) const;
 
 	bool 					CanPutInSlot		(PIItem pIItem, bool check_all = false) const;
 	bool 					CanPutInSlot		(PIItem pIItem, u8 slot) const;
 	bool 					CanPutInBelt		(PIItem pIItem) const;
+	bool 					CanPutInVest		(PIItem pIItem) const;
 	bool 					CanPutInRuck		(PIItem pIItem, bool skip_volume_check = false) const;
 
 	bool					CanTakeItem			(CInventoryItem *inventory_item) const;
@@ -120,10 +123,12 @@ public:
 	void 					SetSlotsUseful		(bool slots_useful) {m_bSlotsUseful = slots_useful;}
 	bool 					IsBeltUseful		() const			{return m_bBeltUseful;}
 	void 					SetBeltUseful		(bool belt_useful)	{m_bBeltUseful = belt_useful;}
+	bool 					IsVestUseful		() const			{return m_bVestUseful;}
+	void 					SetVestUseful		(bool vest_useful)	{ m_bVestUseful = vest_useful;}
 
 	void					SetSlotsBlocked		( u16 mask, bool bBlock, bool now = false );
 	TIItemContainer			m_all;
-	TIItemContainer			m_ruck, m_belt;
+	TIItemContainer			m_ruck, m_belt, m_vest;
 	TISlotArr				m_slots;
 
 	//возвращает все кроме PDA в слоте и болта
@@ -173,7 +178,8 @@ protected:
 	CInventoryOwner*	m_pOwner;
 
 	//флаг, показывающий наличие пояса в инвенторе
-	bool				m_bBeltUseful;
+	bool				m_bBeltUseful{};
+	bool				m_bVestUseful{};
 	//флаг, допускающий использование слотов
 	bool				m_bSlotsUseful;
 
@@ -213,10 +219,14 @@ public:
 	u32						BeltWidth			() const;
 	u32						BeltHeight			() const;
 
-	void					DropBeltToRuck		();
+	u32						VestWidth			() const;
+	u32						VestHeight			() const;
+
+	void					DropBeltToRuck		(bool = false);
+	void					DropVestToRuck		(bool = false);
 	void					DropSlotsToRuck		(u32 min_slot, u32 max_slot = NO_ACTIVE_SLOT);
 	void					UpdateVolumeDropOut	();
-	bool					IsSlotDisabled		(u32) const;
+	bool					IsSlotAllowed		(u32) const;
 
 	void					TryRestoreSlot		(CInventoryItem* pIItem);
 

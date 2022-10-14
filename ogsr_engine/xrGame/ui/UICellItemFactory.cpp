@@ -22,6 +22,9 @@ CUICellItem*	create_cell_item(CInventoryItem* itm)
 	CWarbelt* pWarbelt					= smart_cast<CWarbelt*>(itm);
 	if (pWarbelt)						return xr_new<CUIWarbeltCellItem>(pWarbelt);
 
+	CVest* pVest						= smart_cast<CVest*>(itm);
+	if (pVest)							return xr_new<CUIVestCellItem>(pVest);
+
 	CBackpack* pBackpack				= smart_cast<CBackpack*>(itm);
 	if (pBackpack)						return xr_new<CUICBackpackCellItem>(pBackpack);
 

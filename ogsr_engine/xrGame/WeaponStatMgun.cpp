@@ -16,14 +16,14 @@
 void 	CWeaponStatMgun::BoneCallbackX		(CBoneInstance *B)
 {
 	CWeaponStatMgun	*P = static_cast<CWeaponStatMgun*>(B->callback_param());
-	Fmatrix rX;		rX.rotateX		(P->m_cur_x_rot);
+	Fmatrix rX{};		rX.rotateX(P->m_cur_x_rot);
 	B->mTransform.mulB_43(rX);
 }
 
 void 	CWeaponStatMgun::BoneCallbackY		(CBoneInstance *B)
 {
 	CWeaponStatMgun	*P = static_cast<CWeaponStatMgun*>(B->callback_param());
-	Fmatrix rY;		rY.rotateY		(P->m_cur_y_rot);
+	Fmatrix rY{};		rY.rotateY(P->m_cur_y_rot);
 	B->mTransform.mulB_43(rY);
 }
 
@@ -172,7 +172,7 @@ void CWeaponStatMgun::UpdateBarrelDir()
 	m_fire_bone_xform.transform_dir	(m_fire_dir);
 
 	m_allow_fire		= true;
-	Fmatrix				XFi;
+	Fmatrix				XFi{};
 	XFi.invert			(XFORM());
 	Fvector				dep;
 	XFi.transform_dir	(dep,m_destEnemyDir);
@@ -198,7 +198,7 @@ void CWeaponStatMgun::UpdateBarrelDir()
 
 void CWeaponStatMgun::cam_Update			(float dt, float fov)
 {
-	Fvector							P,Da;
+	Fvector							P{},Da{};
 	Da.set							(0,0,0);
 
 	IKinematics* K					= smart_cast<IKinematics*>(Visual());
@@ -209,7 +209,7 @@ void CWeaponStatMgun::cam_Update			(float dt, float fov)
 
 	Fvector d = C.k;
 	XFORM().transform_dir			(d);
-	Fvector2 des_cam_dir;
+	Fvector2 des_cam_dir{};
 
 	d.getHP(des_cam_dir.x, des_cam_dir.y);
 	des_cam_dir.mul(-1.0f);

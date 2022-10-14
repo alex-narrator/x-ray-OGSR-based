@@ -57,6 +57,7 @@ namespace GameObject {
 		eOnMouseWheel,
 		eOnMouseMove,
 		eOnItemToBelt,
+		eOnItemToVest,
 		eOnItemToRuck,
 		eOnItemToSlot,
 		eOnBeforeUseItem,

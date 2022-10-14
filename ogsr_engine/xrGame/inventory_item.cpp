@@ -35,6 +35,7 @@ CInventoryItem::CInventoryItem()
 	SetSlot(NO_ACTIVE_SLOT);
 	m_flags.zero();
 	m_flags.set			(Fbelt,FALSE);
+	m_flags.set			(Fvest,FALSE);
 	m_flags.set			(Fruck,TRUE);
 	m_flags.set			(FRuckDefault,FALSE);
 	m_pCurrentInventory	= NULL;
@@ -134,6 +135,7 @@ void CInventoryItem::Load(LPCSTR section)
 		m_Description = CStringTable().translate( pSettings->r_string(section, "description") );
 
 	m_flags.set(Fbelt,				READ_IF_EXISTS(pSettings, r_bool, section, "belt",				FALSE));
+	m_flags.set(Fvest,				READ_IF_EXISTS(pSettings, r_bool, section, "vest",				FALSE));
 	m_flags.set(FRuckDefault,		READ_IF_EXISTS(pSettings, r_bool, section, "default_to_ruck",	FALSE));
 	m_flags.set(FCanTake,			READ_IF_EXISTS(pSettings, r_bool, section, "can_take",			TRUE));
 	m_flags.set(FCanTrade,			READ_IF_EXISTS(pSettings, r_bool, section, "can_trade",			TRUE));
@@ -169,7 +171,7 @@ void CInventoryItem::Load(LPCSTR section)
 	m_ItemEffect[eAdditionalWalkAccel]					= READ_IF_EXISTS(pSettings, r_float, section, "additional_walk_accel",		0.f);
 	m_ItemEffect[eAdditionalJumpSpeed]					= READ_IF_EXISTS(pSettings, r_float, section, "additional_jump_speed",		0.f);
 	m_ItemEffect[eAdditionalWeight]						= READ_IF_EXISTS(pSettings, r_float, section, "additional_max_weight",		0.f);
-	m_ItemEffect[eAdditionalVolume]						= READ_IF_EXISTS(pSettings, r_float, section, "additional_max_volume",		0.f);
+//	m_ItemEffect[eAdditionalVolume]						= READ_IF_EXISTS(pSettings, r_float, section, "additional_max_volume",		0.f);
 	//protection
 	m_HitTypeProtection[ALife::eHitTypeBurn]			= READ_IF_EXISTS(pSettings, r_float, section, "burn_protection",			0.f);
 	m_HitTypeProtection[ALife::eHitTypeStrike]			= READ_IF_EXISTS(pSettings, r_float, section, "strike_protection",			0.f);
@@ -783,6 +785,20 @@ void CInventoryItem::OnMoveToBelt(EItemPlace prevPlace) {
   }
 };
 
+void CInventoryItem::OnMoveToVest(EItemPlace prevPlace) {
+	if (smart_cast<CActor*>(object().H_Parent())) {
+		if (Core.Features.test(xrCore::Feature::equipped_untradable)) {
+			m_flags.set(FIAlwaysUntradable, TRUE);
+			m_flags.set(FIUngroupable, TRUE);
+			if (Core.Features.test(xrCore::Feature::highlight_equipped))
+				m_highlight_equipped = true;
+		}
+		else if (Core.Features.test(xrCore::Feature::highlight_equipped)) {
+			m_flags.set(FIUngroupable, TRUE);
+			m_highlight_equipped = true;
+		}
+	}
+};
 
 void CInventoryItem::OnMoveToRuck(EItemPlace prevPlace) {
   if ( smart_cast<CActor*>( object().H_Parent() ) ) {

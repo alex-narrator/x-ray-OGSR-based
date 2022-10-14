@@ -59,6 +59,7 @@ protected:
 								eInvSndClose,
 								eInvItemToSlot,
 								eInvItemToBelt,
+								eInvItemToVest,
 								eInvItemToRuck,
 								eInvProperties,
 								eInvDropItem,
@@ -92,12 +93,13 @@ protected:
 		
 	CUIDragDropListEx*			m_pUIBagList;
 	CUIDragDropListEx*			m_pUIBeltList;
+	CUIDragDropListEx*			m_pUIVestList;
 
 	CUIOutfitDragDropList*		m_pUIOutfitList;
 	CUIDragDropListEx*			m_pUIHelmetList;
 	CUIDragDropListEx*			m_pUIWarBeltList;
 	CUIDragDropListEx*			m_pUIBackPackList;
-	CUIDragDropListEx*			m_pUIVestList;
+	CUIDragDropListEx*			m_pUITacticalVestList;
 
 	CUIDragDropListEx*			m_pUIKnifeList;
 	CUIDragDropListEx*			m_pUIOnShoulderList;
@@ -115,17 +117,6 @@ protected:
 	CUIDragDropListEx*			m_pUIQuickList_1;
 	CUIDragDropListEx*			m_pUIQuickList_2;
 	CUIDragDropListEx*			m_pUIQuickList_3;
-
-	CUIDragDropListEx*			m_pUIVestPouch_1;
-	CUIDragDropListEx*			m_pUIVestPouch_2;
-	CUIDragDropListEx*			m_pUIVestPouch_3;
-	CUIDragDropListEx*			m_pUIVestPouch_4;
-	CUIDragDropListEx*			m_pUIVestPouch_5;
-	CUIDragDropListEx*			m_pUIVestPouch_6;
-	CUIDragDropListEx*			m_pUIVestPouch_7;
-	CUIDragDropListEx*			m_pUIVestPouch_8;
-	CUIDragDropListEx*			m_pUIVestPouch_9;
-	CUIDragDropListEx*			m_pUIVestPouch_10;
 
 	// alpet: для индексированного доступа
 	CUIDragDropListEx*			m_slots_array[ SLOTS_TOTAL ];
@@ -191,6 +182,7 @@ protected:
 	bool						ToSlot						(CUICellItem* itm, bool force_place);
 	bool						ToBag						(CUICellItem* itm, bool b_use_cursor_pos);
 	bool						ToBelt						(CUICellItem* itm, bool b_use_cursor_pos);
+	bool						ToVest						(CUICellItem* itm, bool b_use_cursor_pos);
 
 
 	void						AttachAddon					(PIItem item_to_upgrade);
@@ -206,6 +198,7 @@ public:
 	PIItem						CurrentIItem();
 	void						UpdateWeightVolume();
 	//обновление отрисовки сетки пояса
-	void						UpdateCustomDraw();
+	void						UpdateCustomDraw(bool = true);
 	void						CheckForcedWeightVolumeUpdate();
+	void						ReinitVestList();
 };

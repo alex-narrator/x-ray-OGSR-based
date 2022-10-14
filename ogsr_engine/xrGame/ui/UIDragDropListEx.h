@@ -12,7 +12,8 @@ class CUIDragItem;
 enum EListType{
 		iwSlot,
 		iwBag,
-		iwBelt
+		iwBelt,
+		iwVest,
 };
 
 struct CUICell {
@@ -40,7 +41,7 @@ private:
 
 	enum{	
 		flGroupSimilar		= (1 << 0),
-		flAutoGrow		= (1 << 1),
+		flAutoGrow			= (1 << 1),
 		flCustomPlacement	= (1 << 2),
 		flVerticalPlacement	= (1 << 3),
 		flAlwaysShowScroll	= (1 << 4),
@@ -48,6 +49,7 @@ private:
 		// !Место свободно! = (1 << 6),
 		flHighlightCellSp	= (1 << 7),
 		flHighlightAllCells	= (1 << 8),
+		flLineUpInColumns	= (1 << 9),
 	};
 	Flags16					m_flags;
 	CUICellItem*			m_selected_item;
@@ -119,6 +121,8 @@ public:
 			void			SetHighlightCellSp( bool b );
 			bool			GetHighlightAllCells();
 			void			SetHighlightAllCells( bool b );
+			bool			GetLineUpInColumns();
+			void			SetLineUpInColumns(bool b);
 
 			bool			GetConditionProgBarVisibility() {return m_bConditionProgBarVisible;};
 			void			SetConditionProgBarVisibility(bool b) {m_bConditionProgBarVisible = b;};

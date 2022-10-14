@@ -290,23 +290,53 @@ bool CGrenade::Action(s32 cmd, u32 flags)
 						types_sect_grn.push_back(this->cNameSect());
 						int        count_types = 1;    // текущие количество типов гранат в активе
 						//GRENADE_FROM_BELT
-						auto& placement = psActorFlags.test(AF_AMMO_FROM_BELT) ? inv->m_belt : inv->m_ruck;
-						for (const auto& item : placement){
-							CGrenade* pGrenade = smart_cast<CGrenade*>(item);
-							if (pGrenade){
-								// составляем список типов гранат (с) НаноБот
-								bool    new_type = true;
-								for (const auto& sect : types_sect_grn){
-									if (!xr_strcmp(pGrenade->cNameSect(), sect)) // если совпадают
-										new_type = false;
-								}
-								if (new_type){    // новый тип гранаты?, добавляем
-									types_sect_grn.push_back(pGrenade->cNameSect());
-									count_types++;
+						if (!psActorFlags.test(AF_AMMO_FROM_BELT)) {
+							for (const auto& item : inv->m_ruck) {
+								CGrenade* pGrenade = smart_cast<CGrenade*>(item);
+								if (pGrenade) {
+									// составляем список типов гранат (с) НаноБот
+									bool    new_type = true;
+									for (const auto& sect : types_sect_grn) {
+										if (!xr_strcmp(pGrenade->cNameSect(), sect)) // если совпадают
+											new_type = false;
+									}
+									if (new_type) {    // новый тип гранаты?, добавляем
+										types_sect_grn.push_back(pGrenade->cNameSect());
+										count_types++;
+									}
 								}
 							}
-						}
-						if (psActorFlags.test(AF_AMMO_FROM_BELT)) {
+						} else {
+							for (const auto& item : inv->m_vest) {
+								CGrenade* pGrenade = smart_cast<CGrenade*>(item);
+								if (pGrenade) {
+									// составляем список типов гранат (с) НаноБот
+									bool    new_type = true;
+									for (const auto& sect : types_sect_grn) {
+										if (!xr_strcmp(pGrenade->cNameSect(), sect)) // если совпадают
+											new_type = false;
+									}
+									if (new_type) {    // новый тип гранаты?, добавляем
+										types_sect_grn.push_back(pGrenade->cNameSect());
+										count_types++;
+									}
+								}
+							}
+							for (const auto& item : inv->m_belt) {
+								CGrenade* pGrenade = smart_cast<CGrenade*>(item);
+								if (pGrenade) {
+									// составляем список типов гранат (с) НаноБот
+									bool    new_type = true;
+									for (const auto& sect : types_sect_grn) {
+										if (!xr_strcmp(pGrenade->cNameSect(), sect)) // если совпадают
+											new_type = false;
+									}
+									if (new_type) {    // новый тип гранаты?, добавляем
+										types_sect_grn.push_back(pGrenade->cNameSect());
+										count_types++;
+									}
+								}
+							}
 							for (u32 i = 0; i < inv->m_slots.size(); ++i) {
 								const auto _item = inv->m_slots[i].m_pIItem;
 								if (!_item) continue;
@@ -341,22 +371,59 @@ bool CGrenade::Action(s32 cmd, u32 flags)
 							// Ищем в активе гранату с секцией следущего типа
 							//GRENADE_FROM_BELT
 							auto _slot = this->GetSlot();
-							for (const auto& item : placement){
-								CGrenade* pGrenade = smart_cast<CGrenade*>(item);
-								if (pGrenade && !xr_strcmp(pGrenade->cNameSect(), sect_next_grn)){
-									pGrenade->SetSlot(_slot);
-									inv->Ruck(this, true);
-									inv->SetActiveSlot(NO_ACTIVE_SLOT);
-									inv->Slot(pGrenade);
-									//GRENADE_FROM_BELT
-									if (psActorFlags.test(AF_AMMO_FROM_BELT)) {
-										if (!inv->Belt(this))	//текущую гранату, обратно в пояс.
-											inv->Slot(this);	//або у слот якщо до поясу не лізе
+							if (!psActorFlags.test(AF_AMMO_FROM_BELT)) {
+								for (const auto& item : inv->m_ruck) {
+									CGrenade* pGrenade = smart_cast<CGrenade*>(item);
+									if (pGrenade && !xr_strcmp(pGrenade->cNameSect(), sect_next_grn)) {
+										pGrenade->SetSlot(_slot);
+										inv->Ruck(this, true);
+										inv->SetActiveSlot(NO_ACTIVE_SLOT);
+										inv->Slot(pGrenade);
+										//GRENADE_FROM_BELT
+										if (psActorFlags.test(AF_AMMO_FROM_BELT)) {
+											if (!inv->Vest(this))						//поточну гранату до розгрузки
+												if (!inv->Belt(this))					//якщо ні то у пояс
+													if (inv->CanPutInSlot(this, true))	//перевіримо так щоб вільний слот був призначено автоматично
+														inv->Slot(this);				//та пхнемо у слот якщо нікуди не лізе
+										}
+										return true;
 									}
-									return true;
 								}
-							}
-							if (psActorFlags.test(AF_AMMO_FROM_BELT)) {
+							} else {
+								for (const auto& item : inv->m_vest) {
+									CGrenade* pGrenade = smart_cast<CGrenade*>(item);
+									if (pGrenade && !xr_strcmp(pGrenade->cNameSect(), sect_next_grn)) {
+										pGrenade->SetSlot(_slot);
+										inv->Ruck(this, true);
+										inv->SetActiveSlot(NO_ACTIVE_SLOT);
+										inv->Slot(pGrenade);
+										//GRENADE_FROM_BELT
+										if (psActorFlags.test(AF_AMMO_FROM_BELT)) {
+											if (!inv->Vest(this))						//поточну гранату до розгрузки
+												if (!inv->Belt(this))					//якщо ні то у пояс
+													if (inv->CanPutInSlot(this, true))	//перевіримо так щоб вільний слот був призначено автоматично
+														inv->Slot(this);				//та пхнемо у слот якщо нікуди не лізе
+										}
+										return true;
+									}
+								}
+								for (const auto& item : inv->m_belt) {
+									CGrenade* pGrenade = smart_cast<CGrenade*>(item);
+									if (pGrenade && !xr_strcmp(pGrenade->cNameSect(), sect_next_grn)) {
+										pGrenade->SetSlot(_slot);
+										inv->Ruck(this, true);
+										inv->SetActiveSlot(NO_ACTIVE_SLOT);
+										inv->Slot(pGrenade);
+										//GRENADE_FROM_BELT
+										if (psActorFlags.test(AF_AMMO_FROM_BELT)) {
+											if (!inv->Vest(this))						//поточну гранату до розгрузки
+												if (!inv->Belt(this))					//якщо ні то у пояс
+													if (inv->CanPutInSlot(this, true))	//перевіримо так щоб вільний слот був призначено автоматично
+														inv->Slot(this);				//та пхнемо у слот якщо нікуди не лізе
+										}
+										return true;
+									}
+								}
 								for (u32 i = 0; i < inv->m_slots.size(); ++i) {
 									const auto _item = inv->m_slots[i].m_pIItem;
 									CGrenade* pGrenade = smart_cast<CGrenade*>(_item);
@@ -366,9 +433,10 @@ bool CGrenade::Action(s32 cmd, u32 flags)
 										inv->SetActiveSlot(NO_ACTIVE_SLOT);
 										inv->Slot(pGrenade);
 										//GRENADE_FROM_BELT
-										if (!inv->Belt(this) &&				//текущую гранату, обратно в пояс.
-											inv->CanPutInSlot(this, true))	//перевіримо так щоб вільний слот був призначено автоматично
-											inv->Slot(this);				//або у слот якщо до поясу не лізе
+										if (!inv->Vest(this))						//поточну гранату до розгрузки
+											if(!inv->Belt(this))					//якщо ні то у пояс
+												if(inv->CanPutInSlot(this, true))	//перевіримо так щоб вільний слот був призначено автоматично
+													inv->Slot(this);				//та пхнемо у слот якщо нікуди не лізе
 										return true;
 									}
 								}
@@ -433,8 +501,8 @@ void CGrenade::GetBriefInfo(xr_string& str_name, xr_string& icon_sect_name, xr_s
 {
 	str_name = NameShort();
 	bool SearchRuck = !psActorFlags.test(AF_AMMO_FROM_BELT);
-	u32 ThisGrenadeCount = m_pCurrentInventory->GetSameItemCount(*cNameSect(), SearchRuck);
-	string16				stmp;
+	u32 ThisGrenadeCount = m_pCurrentInventory->GetSameItemCount(cNameSect().c_str(), SearchRuck);
+	string16				stmp{};
 	auto CurrentHUD		= HUD().GetUI()->UIMainIngameWnd;
 
 	if (CurrentHUD->IsHUDElementAllowed(eGear))
@@ -443,5 +511,5 @@ void CGrenade::GetBriefInfo(xr_string& str_name, xr_string& icon_sect_name, xr_s
 		sprintf_s(stmp, "");
 
 	str_count = stmp;
-	icon_sect_name = *cNameSect();
+	icon_sect_name = cNameSect().c_str();
 }

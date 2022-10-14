@@ -74,7 +74,8 @@ void CInventoryOwner::Load					(LPCSTR section)
 	if(pSettings->line_exist(section, "inv_max_weight"))
 		m_inventory->SetMaxWeight( pSettings->r_float(section,"inv_max_weight") );
 
-	m_inventory->SetMaxVolume(READ_IF_EXISTS(pSettings, r_float, section, "inv_max_volume", 0.f));
+	if (pSettings->line_exist(section, "inv_max_volume"))
+		m_inventory->SetMaxVolume(pSettings->r_float(section, "inv_max_volume"));
 
 	if(pSettings->line_exist(section, "need_osoznanie_mode"))
 	{
@@ -351,7 +352,7 @@ float  CInventoryOwner::MaxCarryWeight () const
 		ret += backpack->GetItemEffect(CInventoryItem::eAdditionalWeight);
 
 	if (inventory().OwnerIsActor()){
-		auto placement = psActorFlags.test(AF_ARTEFACTS_FROM_ALL) ? inventory().m_all : inventory().m_belt;
+		auto &placement = psActorFlags.test(AF_ARTEFACTS_FROM_ALL) ? inventory().m_all : inventory().m_belt;
 		for (const auto& it : placement) {
 			auto artefact = smart_cast<CArtefact*>(it);
 			if (artefact && !fis_zero(artefact->GetCondition()))
@@ -373,24 +374,9 @@ float  CInventoryOwner::MaxCarryVolume() const
 {
 	float ret = inventory().GetMaxVolume();
 
-	auto outfit = GetOutfit();
-	if (outfit && !fis_zero(outfit->GetCondition()))
-		ret += outfit->GetItemEffect(CInventoryItem::eAdditionalVolume);
-
 	auto backpack = GetBackpack();
 	if (backpack && !fis_zero(backpack->GetCondition()))
-		ret += backpack->GetItemEffect(CInventoryItem::eAdditionalVolume);
-
-	if (inventory().OwnerIsActor()){
-		auto placement = psActorFlags.test(AF_ARTEFACTS_FROM_ALL) ? inventory().m_all : inventory().m_belt;
-		for (const auto& item : placement) {
-			auto artefact = smart_cast<CArtefact*>(item);
-			if (artefact && !fis_zero(artefact->GetCondition()))
-				ret += artefact->GetItemEffect(CInventoryItem::eAdditionalVolume);
-		}
-	}
-
-
+		ret += backpack->GetAdditionalVolume();
 
 	return ret;
 }
@@ -509,21 +495,23 @@ void CInventoryOwner::OnItemDropUpdate ()
 {
 }
 
-void CInventoryOwner::OnItemBelt	(CInventoryItem *inventory_item, EItemPlace previous_place)
-{
+void CInventoryOwner::OnItemBelt	(CInventoryItem *inventory_item, EItemPlace previous_place){
 	CGameObject	*object = smart_cast<CGameObject*>(this);
 	VERIFY(object);
 	object->callback(GameObject::eOnItemToBelt)(inventory_item->object().lua_game_object());
 }
-void CInventoryOwner::OnItemRuck	(CInventoryItem *inventory_item, EItemPlace previous_place)
-{
+void CInventoryOwner::OnItemVest(CInventoryItem* inventory_item, EItemPlace previous_place){
+	CGameObject* object = smart_cast<CGameObject*>(this);
+	VERIFY(object);
+	object->callback(GameObject::eOnItemToVest)(inventory_item->object().lua_game_object());
+}
+void CInventoryOwner::OnItemRuck	(CInventoryItem *inventory_item, EItemPlace previous_place){
 	CGameObject	*object = smart_cast<CGameObject*>(this);
 	VERIFY(object);
 	object->callback(GameObject::eOnItemToRuck)(inventory_item->object().lua_game_object());
 	detach		(inventory_item);
 }
-void CInventoryOwner::OnItemSlot	(CInventoryItem *inventory_item, EItemPlace previous_place)
-{
+void CInventoryOwner::OnItemSlot	(CInventoryItem *inventory_item, EItemPlace previous_place){
 	CGameObject	*object = smart_cast<CGameObject*>(this);
 	VERIFY(object);
 	object->callback(GameObject::eOnItemToSlot)(inventory_item->object().lua_game_object());
@@ -575,20 +563,18 @@ void CInventoryOwner::sell_useless_items		()
 {
 	CGameObject					*object = smart_cast<CGameObject*>(this);
 
-	TIItemContainer::iterator	I = inventory().m_all.begin();
-	TIItemContainer::iterator	E = inventory().m_all.end();
-	for ( ; I != E; ++I) {
-		if ((*I)->object().CLS_ID == CLSID_IITEM_BOLT)
+	for (const auto& item : inventory().m_all) {
+		if (item->object().CLS_ID == CLSID_IITEM_BOLT)
 			continue;
 
-		if ((*I)->object().CLS_ID == CLSID_DEVICE_PDA) {
-			CPda				*pda = smart_cast<CPda*>(*I);
+		if (item->object().CLS_ID == CLSID_DEVICE_PDA) {
+			CPda				*pda = smart_cast<CPda*>(item);
 			VERIFY				(pda);
 			if (pda->GetOriginalOwnerID() == object->ID())
 				continue;
 		}
 
-		(*I)->object().DestroyObject();
+		item->object().DestroyObject();
 	}
 }
 
@@ -655,10 +641,6 @@ float CInventoryOwner::deficit(const shared_str& section) const
 		return					((*I).second);
 
 	return						(1.f);
-}
-
-bool CInventoryOwner::IsVolumeUnlimited() const {
-	return fis_zero(MaxCarryVolume());
 }
 
 bool CInventoryOwner::CanPutInSlot(PIItem item, u32 slot) {

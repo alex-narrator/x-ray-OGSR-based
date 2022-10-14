@@ -113,6 +113,9 @@ bool  CAttachableItem::can_be_attached	() const
 	if (!item().m_pCurrentInventory->IsBeltUseful())
 		return				(true);
 
+	if (!item().m_pCurrentInventory->IsVestUseful())
+		return				(true);
+
 	if (item().m_eItemPlace != eItemPlaceBelt)
 		return				(false);
 	 

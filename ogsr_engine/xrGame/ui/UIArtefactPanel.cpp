@@ -163,29 +163,9 @@ void CUIVestPanel::Update()
 	auto pActor = smart_cast<CActor*>(Level().CurrentViewEntity());
 	auto& inv = pActor->inventory();
 
-	for (u32 i = 0; i < inv.m_slots.size(); ++i) {
-		const auto& _itm = inv.m_slots[i].m_pIItem;
-		if (!_itm) continue;
-
-		switch (i)
-		{
-		case VEST_POUCH_1:
-		case VEST_POUCH_2:
-		case VEST_POUCH_3:
-		case VEST_POUCH_4:
-		case VEST_POUCH_5:
-		case VEST_POUCH_6:
-		case VEST_POUCH_7:
-		case VEST_POUCH_8:
-		case VEST_POUCH_9:
-		case VEST_POUCH_10:
-		{
-			if (_itm) {
-				m_vRects.push_back(&(_itm->m_icon_params));
-			}
-		}
-		default:
-			break;
+	for (const auto& _itm : inv.m_vest) {
+		if (_itm) {
+			m_vRects.push_back(&(_itm->m_icon_params));
 		}
 	}
 }

@@ -15,7 +15,6 @@ xr_vector<_action> actions = {
 	DEF_ACTION("down",				kDOWN)
 	DEF_ACTION("jump",				kJUMP)
 	DEF_ACTION("crouch",			kCROUCH)
-//	DEF_ACTION("crouch_toggle",		kCROUCH_TOGGLE)
 	DEF_ACTION("accel",				kACCEL)
 	DEF_ACTION("sprint_toggle",  	kSPRINT_TOGGLE)
 
@@ -93,9 +92,6 @@ xr_vector<_action> actions = {
 	DEF_ACTION("speech_menu_7",		kSPEECH_MENU_7)
 	DEF_ACTION("speech_menu_8",		kSPEECH_MENU_8)
 	DEF_ACTION("speech_menu_9",		kSPEECH_MENU_9)
-
-/*	DEF_ACTION("use_bandage",		kUSE_BANDAGE)
-	DEF_ACTION("use_medkit",			kUSE_MEDKIT)*/
 
 	DEF_ACTION("use_quick_slot_0",		kUSE_QUICK_SLOT_0)
 	DEF_ACTION("use_quick_slot_1",		kUSE_QUICK_SLOT_1)
@@ -222,7 +218,7 @@ void initialize_bindings()
 		{
 			pSettings->r_line(keyboard_section, i, &name, &value);
 			
-			_action n;
+			_action n{};
 			n.id = (EGameActions)id++;
 			n.action_name = name;
 			n.export_name = value;
@@ -231,7 +227,7 @@ void initialize_bindings()
 	}
 
 	// last action
-	_action nL;
+	_action nL{};
 	nL.id = kLASTACTION;
 	nL.action_name = NULL;
 	nL.export_name = NULL;
@@ -241,7 +237,7 @@ void initialize_bindings()
 	{
 		if (actions[idx].id != kLASTACTION)
 		{
-			_binding b;
+			_binding b{};
 			b.m_action = &actions[idx];
 			g_key_bindings.push_back(b);
 		}
@@ -251,7 +247,7 @@ void initialize_bindings()
 void remap_keys()
 {
 	int idx				= 0;
-	string128			buff;
+	string128			buff{};
 	while(keyboards[idx].key_name)
 	{
 		buff[0]				= 0;
@@ -393,8 +389,7 @@ void GetActionAllBinding		(LPCSTR _action, char* dst_buff, int dst_buff_sz)
 	int			action_id	= action_name_to_id(_action);
 	_binding*	pbinding	= &g_key_bindings[action_id];
 
-	string128	prim;
-	string128	sec;
+	string128	prim{},sec{};
 	prim[0]		= 0;
 	sec[0]		= 0;
 

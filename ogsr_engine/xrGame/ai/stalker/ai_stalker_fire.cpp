@@ -354,32 +354,30 @@ void CAI_Stalker::update_best_item_info	()
 
 	// try to find the best item which can kill
 	{
-		TIItemContainer::iterator					I = inventory().m_all.begin();
-		TIItemContainer::iterator					E = inventory().m_all.end();
-		for ( ; I != E; ++I) {
-			if ((*I)->can_kill()) {
-				ai().ef_storage().non_alife().member_item()	= &(*I)->object();
+		for (const auto& item : inventory().m_all) {
+			if (item->can_kill()) {
+				ai().ef_storage().non_alife().member_item()	= &item->object();
 				float								value;
 				if (memory().enemy().selected())
 					value							= ai().ef_storage().m_pfWeaponEffectiveness->ffGetValue();
 				else
-					value							= (float)(*I)->object().ef_weapon_type();
+					value							= (float)(item)->object().ef_weapon_type();
 
 				if (!fsimilar(value,m_best_item_value) && (value < m_best_item_value))
 					continue;
 
 				if (!fsimilar(value,m_best_item_value) && (value > m_best_item_value)) {
 					m_best_item_value	= value;
-					m_best_item_to_kill = *I;
+					m_best_item_to_kill = item;
 					continue;
 				}
 
 				VERIFY					(fsimilar(value,m_best_item_value));
-				if (m_best_item_to_kill && ((*I)->object().ef_weapon_type() <= m_best_item_to_kill->object().ef_weapon_type()))
+				if (m_best_item_to_kill && (item->object().ef_weapon_type() <= m_best_item_to_kill->object().ef_weapon_type()))
 					continue;
 
 				m_best_item_value		= value;
-				m_best_item_to_kill		= *I;
+				m_best_item_to_kill		= item;
 			}
 		}
 	}

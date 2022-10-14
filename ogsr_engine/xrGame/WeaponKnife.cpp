@@ -180,7 +180,7 @@ void CWeaponKnife::OnMotionMark(u32 state, const motion_marks& M)
 
 	if (H_Parent())
 	{
-		Fvector p1, d;
+		Fvector p1{}, d{};
 		p1.set(get_LastFP());
 		d.set(get_LastFD());
 		smart_cast<CEntity*>(H_Parent())->g_fireParams(this, p1, d);

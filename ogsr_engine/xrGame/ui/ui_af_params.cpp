@@ -43,7 +43,7 @@ LPCSTR af_item_sect_names[] = {
 	"additional_jump_speed",
 	//
 	"additional_max_weight",
-	"additional_max_volume",
+//	"additional_max_volume",
 	//
 	"burn_immunity",
 	"strike_immunity",
@@ -70,7 +70,7 @@ LPCSTR af_item_param_names[] = {
 	"ui_inv_jump_speed",
 	//
 	"ui_inv_weight",
-	"ui_inv_volume",
+//	"ui_inv_volume",
 	//
 	"ui_inv_outfit_burn_protection",			// "(burn_imm)",
 	"ui_inv_outfit_shock_protection",			// "(shock_imm)",
@@ -143,7 +143,7 @@ void CUIArtefactParams::SetInfo(CInventoryItem* obj)
 		}
 
 		if (fis_zero(_val))				continue;
-		if (i != _item_additional_weight && i != _item_additional_volume)
+		if (i != _item_additional_weight)
 			_val *= 100.0f;
 
 		LPCSTR _sn = "%";
@@ -154,9 +154,9 @@ void CUIArtefactParams::SetInfo(CInventoryItem* obj)
 			_sn = *CStringTable().translate("st_rad");
 		}
 		//
-		else if (i == _item_additional_weight || i == _item_additional_volume)
+		else if (i == _item_additional_weight)
 		{
-			_sn = i == _item_additional_weight ? *CStringTable().translate("st_kg") : *CStringTable().translate("st_l");
+			_sn = *CStringTable().translate("st_kg");
 		}
 
 		LPCSTR _color = (_val>0)?"%c[green]":"%c[red]";

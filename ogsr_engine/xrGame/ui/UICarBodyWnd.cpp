@@ -983,11 +983,11 @@ bool CUICarBodyWnd::CanTakeStack(CUICellItem* ci, CGameObject* owner_to) const {
 
 void CUICarBodyWnd::CheckForcedWeightVolumeUpdate() {
 	bool need_update{};
-	auto place_to_search = psActorFlags.test(AF_ARTEFACTS_FROM_ALL) ? m_pActorInventoryOwner->inventory().m_all : m_pActorInventoryOwner->inventory().m_belt;
+	auto &place_to_search = psActorFlags.test(AF_ARTEFACTS_FROM_ALL) ? m_pActorInventoryOwner->inventory().m_all : m_pActorInventoryOwner->inventory().m_belt;
 	for (const auto& item : place_to_search) {
 		auto artefact = smart_cast<CArtefact*>(item);
 		if (artefact && !fis_zero(artefact->m_fTTLOnDecrease) && !fis_zero(artefact->GetCondition()) &&
-			(!fis_zero(artefact->GetItemEffect(CInventoryItem::eAdditionalWeight)) || !fis_zero(artefact->GetItemEffect(CInventoryItem::eAdditionalVolume)))) {
+			(!fis_zero(artefact->GetItemEffect(CInventoryItem::eAdditionalWeight)))) {
 			need_update = true;
 			break;
 		}

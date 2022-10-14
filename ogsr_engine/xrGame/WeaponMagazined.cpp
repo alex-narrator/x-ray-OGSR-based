@@ -142,7 +142,7 @@ BOOL CWeaponMagazined::net_Spawn(CSE_Abstract* DC)
 //	Msg("weapon [%s] spawned with magazine status [%s]", cName().c_str(), wpn->m_bIsMagazineAttached ? "atached" : "detached");
 
 	if (IsMagazineAttached()) {
-		if (!GetAmmoElapsed() && !AmmoTypeIsMagazine(m_ammoType)) {
+		if (!AmmoTypeIsMagazine(m_ammoType)) {
 			Msg("! [%s] weapon %s detaching magazine due to incorrect ammotype %d|[%s]", __FUNCTION__, cName().c_str(), m_ammoType, m_ammoTypes[m_ammoType].c_str());
 			m_bIsMagazineAttached = false; //костиль від вильоту
 		}else
@@ -1996,8 +1996,7 @@ float CWeaponMagazined::GetConditionMisfireProbability() const
 {
 	float mis = inherited::GetConditionMisfireProbability();
 	//вероятность осечки от магазина
-	if (GetMagazineEmptySect())
-	{
+	if (GetMagazineEmptySect()){
 		float mag_missfire_prob = READ_IF_EXISTS(pSettings, r_float, GetMagazineEmptySect(), "misfire_probability_box", 0.0f);
 		mis += mag_missfire_prob;
 	}
@@ -2007,12 +2006,10 @@ float CWeaponMagazined::GetConditionMisfireProbability() const
 //
 int CWeaponMagazined::GetMagazineCount() const
 {
-	int iMagazinesCount = 0;
+	int iMagazinesCount{};
 
-	for (int i = 0; i < (int)m_ammoTypes.size(); ++i)
-	{
+	for (int i = 0; i < (int)m_ammoTypes.size(); ++i){
 		bool b_search_ruck = !psActorFlags.test(AF_AMMO_FROM_BELT);
-
 		iMagazinesCount += (int)Actor()->inventory().GetSameItemCount(m_ammoTypes[i].c_str(), b_search_ruck);
 	}
 	return iMagazinesCount;

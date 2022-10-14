@@ -12,6 +12,8 @@
 #include "inventory_item.h"
 #include "CustomOutfit.h"
 #include "Warbelt.h"
+#include "Vest.h"
+#include "Backpack.h"
 #include "WeaponAmmo.h"
 #include "Addons.h"
 #include "PowerBattery.h"
@@ -37,7 +39,9 @@ void CUIEquipParams::Init() {
 bool CUIEquipParams::Check(CInventoryItem* obj){
 	if (smart_cast<CWeaponAmmo*>		(obj) || 
 		smart_cast<CWarbelt*>			(obj) ||
+		smart_cast<CVest*>				(obj) ||
 		smart_cast<CCustomOutfit*>		(obj) ||
+		smart_cast<CBackpack*>			(obj) ||
 		smart_cast<CScope*>				(obj) ||
 		smart_cast<CInventoryContainer*>(obj) ||
 		smart_cast<CPowerBattery*>		(obj) ||
@@ -154,25 +158,43 @@ void CUIEquipParams::SetInfo(CInventoryItem* obj){
 		_h += list_item_h;
 	}
 
-	auto pWarbelt = smart_cast<CWarbelt*>(obj);
-	if (pWarbelt) {
+	auto pBackpack = smart_cast<CBackpack*>(obj);
+	if (pBackpack) {
+		auto power_level_static = xr_new<CUIStatic>();
+		CUIXmlInit::InitStatic(uiXml, "equip_params:additional_max_volume", 0, power_level_static);
+		power_level_static->SetAutoDelete(true);
+		pos_top = power_level_static->GetPosTop();
+		power_level_static->SetWndPos(power_level_static->GetPosLeft(), _h + pos_top);
+		sprintf_s(temp_text, " %.0f", pBackpack->GetAdditionalVolume());
+		strconcat(sizeof(text_to_show), text_to_show, CStringTable().translate("ui_inv_volume").c_str(), temp_text, CStringTable().translate("st_l").c_str());
+		power_level_static->SetText(text_to_show);
+		m_CapInfo.AttachChild(power_level_static);
+		_h += list_item_h;
+	}
+
+	auto pWarbelt	= smart_cast<CWarbelt*>(obj);
+	auto pVest		= smart_cast<CVest*>(obj);
+	if (pWarbelt || pVest) {
 		auto belt_cells_static = xr_new<CUIStatic>();
-		CUIXmlInit::InitStatic(uiXml, "equip_params:warbelt_cells", 0, belt_cells_static);
+		CUIXmlInit::InitStatic(uiXml, "equip_params:equipment_cells", 0, belt_cells_static);
 		belt_cells_static->SetAutoDelete(true);
 		pos_top = belt_cells_static->GetPosTop();
+		u32 cells_width		= pWarbelt ? pWarbelt->GetBeltWidth() : pVest->GetVestWidth();
+		u32 cells_height	= pWarbelt ? pWarbelt->GetBeltHeight() : pVest->GetVestHeight();
 		belt_cells_static->SetWndPos(belt_cells_static->GetPosLeft(), _h + pos_top);
-		sprintf_s(temp_text, " [%dx%d]", pWarbelt->GetBeltWidth(), pWarbelt->GetBeltHeight());
-		strconcat(sizeof(text_to_show), text_to_show, CStringTable().translate("st_belt_cells_available").c_str(), temp_text);
+		sprintf_s(temp_text, " [%dx%d]", cells_width, cells_height);
+		strconcat(sizeof(text_to_show), text_to_show, CStringTable().translate("st_cells_available").c_str(), temp_text);
 		belt_cells_static->SetText(text_to_show);
 		m_CapInfo.AttachChild(belt_cells_static);
 		_h += list_item_h;
 
 		auto drop_pouch_static = xr_new<CUIStatic>();
-		CUIXmlInit::InitStatic(uiXml, "equip_params:warbelt_drop_pouch", 0, drop_pouch_static);
+		CUIXmlInit::InitStatic(uiXml, "equip_params:drop_pouch", 0, drop_pouch_static);
 		drop_pouch_static->SetAutoDelete(true);
 		pos_top = drop_pouch_static->GetPosTop();
 		drop_pouch_static->SetWndPos(drop_pouch_static->GetPosLeft(), _h + pos_top);
-		sprintf_s(temp_text, " %s", pWarbelt->HasDropPouch() ? CStringTable().translate("st_yes").c_str() : CStringTable().translate("st_no").c_str());
+		bool has_pouch = pWarbelt ? pWarbelt->HasDropPouch() : pVest->HasDropPouch();
+		sprintf_s(temp_text, " %s", has_pouch ? CStringTable().translate("st_yes").c_str() : CStringTable().translate("st_no").c_str());
 		strconcat(sizeof(text_to_show), text_to_show, CStringTable().translate("st_has_drop_pouch").c_str(), temp_text);
 		drop_pouch_static->SetText(text_to_show);
 		m_CapInfo.AttachChild(drop_pouch_static);

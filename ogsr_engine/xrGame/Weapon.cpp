@@ -1834,10 +1834,8 @@ CInventoryItem *CWeapon::can_kill	(CInventory *inventory) const
 	if (GetAmmoElapsed() || m_ammoTypes.empty())
 		return				(const_cast<CWeapon*>(this));
 
-	TIItemContainer::iterator I = inventory->m_all.begin();
-	TIItemContainer::iterator E = inventory->m_all.end();
-	for ( ; I != E; ++I) {
-		CInventoryItem	*inventory_item = smart_cast<CInventoryItem*>(*I);
+	for (const auto& item : inventory->m_all) {
+		CInventoryItem	*inventory_item = smart_cast<CInventoryItem*>(item);
 		if (!inventory_item)
 			continue;
 		

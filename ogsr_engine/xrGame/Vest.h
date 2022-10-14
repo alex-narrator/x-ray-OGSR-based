@@ -15,7 +15,14 @@ public:
 
     virtual     void			OnMoveToSlot        (EItemPlace prevPlace);
     virtual     void			OnMoveToRuck        (EItemPlace prevPlace);
+
+    u32							GetVestWidth        () const { return m_iVestWidth; }
+    u32							GetVestHeight       () const { return m_iVestHeight; }
+    bool						HasDropPouch        () const { return m_bDropPouch; }
 protected:
-    xr_vector<u8>       m_vest_slots{};
+    xr_vector<u8>               m_vest_slots{};
+    u32							m_iVestWidth{};
+    u32							m_iVestHeight{};
+    bool						m_bDropPouch{};
 };
 

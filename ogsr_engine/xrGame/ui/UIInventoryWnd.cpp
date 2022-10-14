@@ -40,15 +40,13 @@ constexpr auto INVENTORY_XML		= "inventory_new.xml";
 CUIInventoryWnd*	g_pInvWnd = NULL;
 
 CUIInventoryWnd::CUIInventoryWnd() : 
-	m_pUIBagList(nullptr), m_pUIBeltList(nullptr), 
-	m_pUIOutfitList(nullptr), m_pUIHelmetList(nullptr), m_pUIWarBeltList(nullptr), m_pUIBackPackList(nullptr), m_pUIVestList(nullptr),
+	m_pUIBagList(nullptr), m_pUIBeltList(nullptr), m_pUIVestList(nullptr),
+	m_pUIOutfitList(nullptr), m_pUIHelmetList(nullptr), 
+	m_pUIWarBeltList(nullptr), m_pUIBackPackList(nullptr), m_pUITacticalVestList(nullptr),
 	m_pUIKnifeList(nullptr), m_pUIOnShoulderList(nullptr), m_pUIOnBackList(nullptr), m_pUIHolsterList(nullptr),
 	m_pUIGrenadeList(nullptr), m_pUIArtefactList(nullptr),
 	m_pUIDetectorList(nullptr), m_pUIOnHeadList(nullptr), m_pUIPdaList(nullptr),
-	m_pUIQuickList_0(nullptr), m_pUIQuickList_1(nullptr), m_pUIQuickList_2(nullptr), m_pUIQuickList_3(nullptr),
-	m_pUIVestPouch_1(nullptr), m_pUIVestPouch_2(nullptr), m_pUIVestPouch_3(nullptr), 
-	m_pUIVestPouch_4(nullptr), m_pUIVestPouch_5(nullptr), m_pUIVestPouch_6(nullptr), m_pUIVestPouch_7(nullptr), 
-	m_pUIVestPouch_8(nullptr), m_pUIVestPouch_9(nullptr), m_pUIVestPouch_10(nullptr)
+	m_pUIQuickList_0(nullptr), m_pUIQuickList_1(nullptr), m_pUIQuickList_2(nullptr), m_pUIQuickList_3(nullptr)
 {
 	m_iCurrentActiveSlot				= NO_ACTIVE_SLOT;
 	UIRank								= NULL;
@@ -139,6 +137,10 @@ void CUIInventoryWnd::Init()
 	xml_init.InitDragDropListEx			(uiXml, "dragdrop_belt", 0, m_pUIBeltList);
 	BindDragDropListEnents				(m_pUIBeltList);
 
+	m_pUIVestList						= xr_new<CUIDragDropListEx>(); AttachChild(m_pUIVestList); m_pUIVestList->SetAutoDelete(true);
+	xml_init.InitDragDropListEx			(uiXml, "dragdrop_vest", 0, m_pUIVestList);
+	BindDragDropListEnents				(m_pUIVestList);
+
 	m_pUIOutfitList						= xr_new<CUIOutfitDragDropList>(); AttachChild(m_pUIOutfitList); m_pUIOutfitList->SetAutoDelete(true);
 	xml_init.InitDragDropListEx			(uiXml, "dragdrop_outfit", 0, m_pUIOutfitList);
 	BindDragDropListEnents				(m_pUIOutfitList);
@@ -155,9 +157,9 @@ void CUIInventoryWnd::Init()
 	xml_init.InitDragDropListEx			(uiXml, "dragdrop_backpack", 0, m_pUIBackPackList);
 	BindDragDropListEnents				(m_pUIBackPackList);
 
-	m_pUIVestList						= xr_new<CUIDragDropListEx>(); AttachChild(m_pUIVestList); m_pUIVestList->SetAutoDelete(true);
-	xml_init.InitDragDropListEx			(uiXml, "dragdrop_vest", 0, m_pUIVestList);
-	BindDragDropListEnents				(m_pUIVestList);
+	m_pUITacticalVestList				= xr_new<CUIDragDropListEx>(); AttachChild(m_pUITacticalVestList); m_pUITacticalVestList->SetAutoDelete(true);
+	xml_init.InitDragDropListEx			(uiXml, "dragdrop_tactical_vest", 0, m_pUITacticalVestList);
+	BindDragDropListEnents				(m_pUITacticalVestList);
 
 	m_pUIKnifeList						= xr_new<CUIDragDropListEx>(); AttachChild(m_pUIKnifeList); m_pUIKnifeList->SetAutoDelete(true);
 	xml_init.InitDragDropListEx			(uiXml, "dragdrop_knife", 0, m_pUIKnifeList);
@@ -171,7 +173,7 @@ void CUIInventoryWnd::Init()
 	xml_init.InitDragDropListEx			(uiXml, "dragdrop_on_back", 0, m_pUIOnBackList);
 	BindDragDropListEnents				(m_pUIOnBackList);
 
-	m_pUIHolsterList				= xr_new<CUIDragDropListEx>(); AttachChild(m_pUIHolsterList); m_pUIHolsterList->SetAutoDelete(true);
+	m_pUIHolsterList					= xr_new<CUIDragDropListEx>(); AttachChild(m_pUIHolsterList); m_pUIHolsterList->SetAutoDelete(true);
 	xml_init.InitDragDropListEx			(uiXml, "dragdrop_holster", 0, m_pUIHolsterList);
 	BindDragDropListEnents				(m_pUIHolsterList);
 
@@ -211,53 +213,13 @@ void CUIInventoryWnd::Init()
 	xml_init.InitDragDropListEx			(uiXml, "dragdrop_quick_3", 0, m_pUIQuickList_3);
 	BindDragDropListEnents				(m_pUIQuickList_3);
 
-	m_pUIVestPouch_1					= xr_new<CUIDragDropListEx>(); AttachChild(m_pUIVestPouch_1); m_pUIVestPouch_1->SetAutoDelete(true);
-	xml_init.InitDragDropListEx			(uiXml, "dragdrop_vest_pouch_1", 0, m_pUIVestPouch_1);
-	BindDragDropListEnents				(m_pUIVestPouch_1);
-
-	m_pUIVestPouch_2					= xr_new<CUIDragDropListEx>(); AttachChild(m_pUIVestPouch_2); m_pUIVestPouch_2->SetAutoDelete(true);
-	xml_init.InitDragDropListEx			(uiXml, "dragdrop_vest_pouch_2", 0, m_pUIVestPouch_2);
-	BindDragDropListEnents				(m_pUIVestPouch_2);
-
-	m_pUIVestPouch_3					= xr_new<CUIDragDropListEx>(); AttachChild(m_pUIVestPouch_3); m_pUIVestPouch_3->SetAutoDelete(true);
-	xml_init.InitDragDropListEx			(uiXml, "dragdrop_vest_pouch_3", 0, m_pUIVestPouch_3);
-	BindDragDropListEnents				(m_pUIVestPouch_3);
-
-	m_pUIVestPouch_4					= xr_new<CUIDragDropListEx>(); AttachChild(m_pUIVestPouch_4); m_pUIVestPouch_4->SetAutoDelete(true);
-	xml_init.InitDragDropListEx			(uiXml, "dragdrop_vest_pouch_4", 0, m_pUIVestPouch_4);
-	BindDragDropListEnents				(m_pUIVestPouch_4);
-
-	m_pUIVestPouch_5					= xr_new<CUIDragDropListEx>(); AttachChild(m_pUIVestPouch_5); m_pUIVestPouch_5->SetAutoDelete(true);
-	xml_init.InitDragDropListEx			(uiXml, "dragdrop_vest_pouch_5", 0, m_pUIVestPouch_5);
-	BindDragDropListEnents				(m_pUIVestPouch_5);
-
-	m_pUIVestPouch_6					= xr_new<CUIDragDropListEx>(); AttachChild(m_pUIVestPouch_6); m_pUIVestPouch_6->SetAutoDelete(true);
-	xml_init.InitDragDropListEx			(uiXml, "dragdrop_vest_pouch_6", 0, m_pUIVestPouch_6);
-	BindDragDropListEnents				(m_pUIVestPouch_6);
-
-	m_pUIVestPouch_7					= xr_new<CUIDragDropListEx>(); AttachChild(m_pUIVestPouch_7); m_pUIVestPouch_7->SetAutoDelete(true);
-	xml_init.InitDragDropListEx			(uiXml, "dragdrop_vest_pouch_7", 0, m_pUIVestPouch_7);
-	BindDragDropListEnents				(m_pUIVestPouch_7);
-
-	m_pUIVestPouch_8					= xr_new<CUIDragDropListEx>(); AttachChild(m_pUIVestPouch_8); m_pUIVestPouch_8->SetAutoDelete(true);
-	xml_init.InitDragDropListEx			(uiXml, "dragdrop_vest_pouch_8", 0, m_pUIVestPouch_8);
-	BindDragDropListEnents				(m_pUIVestPouch_8);
-
-	m_pUIVestPouch_9					= xr_new<CUIDragDropListEx>(); AttachChild(m_pUIVestPouch_9); m_pUIVestPouch_9->SetAutoDelete(true);
-	xml_init.InitDragDropListEx			(uiXml, "dragdrop_vest_pouch_9", 0, m_pUIVestPouch_9);
-	BindDragDropListEnents				(m_pUIVestPouch_9);
-
-	m_pUIVestPouch_10					= xr_new<CUIDragDropListEx>(); AttachChild(m_pUIVestPouch_10); m_pUIVestPouch_10->SetAutoDelete(true);
-	xml_init.InitDragDropListEx			(uiXml, "dragdrop_vest_pouch_10", 0, m_pUIVestPouch_10);
-	BindDragDropListEnents				(m_pUIVestPouch_10);
-
 	for ( u8 i = 0; i < SLOTS_TOTAL; i++ )
 		m_slots_array[ i ] = NULL;
 	m_slots_array[OUTFIT_SLOT]			= m_pUIOutfitList;
 	m_slots_array[HELMET_SLOT]			= m_pUIHelmetList;
 	m_slots_array[WARBELT_SLOT]			= m_pUIWarBeltList;
 	m_slots_array[BACKPACK_SLOT]		= m_pUIBackPackList;
-	m_slots_array[VEST_SLOT]			= m_pUIVestList;
+	m_slots_array[VEST_SLOT]			= m_pUITacticalVestList;
 
 	m_slots_array[KNIFE_SLOT]			= m_pUIKnifeList;
 	m_slots_array[ON_SHOULDER_SLOT]		= m_pUIOnShoulderList;
@@ -275,17 +237,6 @@ void CUIInventoryWnd::Init()
 	m_slots_array[QUICK_SLOT_1]			= m_pUIQuickList_1;
 	m_slots_array[QUICK_SLOT_2]			= m_pUIQuickList_2;
 	m_slots_array[QUICK_SLOT_3]			= m_pUIQuickList_3;
-
-	m_slots_array[VEST_POUCH_1]			= m_pUIVestPouch_1;
-	m_slots_array[VEST_POUCH_2]			= m_pUIVestPouch_2;
-	m_slots_array[VEST_POUCH_3]			= m_pUIVestPouch_3;
-	m_slots_array[VEST_POUCH_4]			= m_pUIVestPouch_4;
-	m_slots_array[VEST_POUCH_5]			= m_pUIVestPouch_5;
-	m_slots_array[VEST_POUCH_6]			= m_pUIVestPouch_6;
-	m_slots_array[VEST_POUCH_7]			= m_pUIVestPouch_7;
-	m_slots_array[VEST_POUCH_8]			= m_pUIVestPouch_8;
-	m_slots_array[VEST_POUCH_9]			= m_pUIVestPouch_9;
-	m_slots_array[VEST_POUCH_10]		= m_pUIVestPouch_10;
 
 	//slot keys statisc
 	m_pKnifeKey = xr_new<CUIStatic>();
@@ -359,6 +310,7 @@ void CUIInventoryWnd::Init()
 	::Sound->create						(sounds[eInvSndClose],		uiXml.Read("snd_close",			0,	NULL),st_Effect,sg_SourceType);
 	::Sound->create						(sounds[eInvItemToSlot],	uiXml.Read("snd_item_to_slot",	0,	NULL),st_Effect,sg_SourceType);
 	::Sound->create						(sounds[eInvItemToBelt],	uiXml.Read("snd_item_to_belt",	0,	NULL),st_Effect,sg_SourceType);
+	::Sound->create						(sounds[eInvItemToVest],	uiXml.Read("snd_item_to_vest",	0,	NULL),st_Effect,sg_SourceType);
 	::Sound->create						(sounds[eInvItemToRuck],	uiXml.Read("snd_item_to_ruck",	0,	NULL),st_Effect,sg_SourceType);
 	::Sound->create						(sounds[eInvProperties],	uiXml.Read("snd_properties",	0,	NULL),st_Effect,sg_SourceType);
 	::Sound->create						(sounds[eInvDropItem],		uiXml.Read("snd_drop_item",		0,	NULL),st_Effect,sg_SourceType);
@@ -372,6 +324,7 @@ EListType CUIInventoryWnd::GetType(CUIDragDropListEx* l)
 {
 	if(l==m_pUIBagList)			return iwBag;
 	if(l==m_pUIBeltList)		return iwBelt;
+	if(l==m_pUIVestList)		return iwVest;
 
         for ( u8 i = 0; i < SLOTS_TOTAL; i++ )
           if ( m_slots_array[ i ] == l )
@@ -542,6 +495,7 @@ void CUIInventoryWnd::Hide()
 void CUIInventoryWnd::HideSlotsHighlight()
 {
 	m_pUIBeltList->enable_highlight(false);
+	m_pUIVestList->enable_highlight(false);
 	for (const auto& DdList : m_slots_array)
 		if (DdList)
 			DdList->enable_highlight(false);
@@ -551,6 +505,9 @@ void CUIInventoryWnd::ShowSlotsHighlight(PIItem InvItem)
 {
 	if (InvItem->m_flags.test(CInventoryItem::Fbelt) && !Actor()->inventory().InBelt(InvItem))
 		m_pUIBeltList->enable_highlight(true);
+
+	if (InvItem->m_flags.test(CInventoryItem::Fvest) && !Actor()->inventory().InVest(InvItem))
+		m_pUIVestList->enable_highlight(true);
 
 	for (const u8 slot : InvItem->GetSlots())
 		if (auto DdList = m_slots_array[slot]; DdList && (!Actor()->inventory().InSlot(InvItem) || InvItem->GetSlot() != slot))
@@ -667,16 +624,19 @@ bool CUIInventoryWnd::OnKeyboard(int dik, EUIMessages keyboard_action)
 	return false;
 }
 
-void CUIInventoryWnd::UpdateCustomDraw()
+void CUIInventoryWnd::UpdateCustomDraw(bool b_full_reinit)
 {
 	if (!smart_cast<CActor*>(Level().CurrentEntity())) 
 		return;
 
 	auto& inv = Actor()->inventory();
 	//u32 belt_size = inv.BeltSize();
-	Ivector2 belt_capacity{ inv.BeltWidth(),inv.BeltHeight() };
+	Ivector2 belt_capacity{ (int)inv.BeltWidth(),(int)inv.BeltHeight() };
 	//m_pUIBeltList->SetCellsAvailable(belt_size);
 	m_pUIBeltList->SetCellsCapacity(belt_capacity);
+
+	Ivector2 vest_capacity{ (int)inv.VestWidth(),(int)inv.VestHeight() };
+	m_pUIVestList->SetCellsCapacity(vest_capacity);
 
 	if (!Actor()->GetBackpack()) {
 		m_pUIBagList->SetCellsAvailable(0);
@@ -693,26 +653,27 @@ void CUIInventoryWnd::UpdateCustomDraw()
 		switch (i)
 		{
 		case HELMET_SLOT:
-			inv.IsSlotDisabled(i) ? list->SetCellsAvailable(0) : list->ResetCellsAvailable();
+			inv.IsSlotAllowed(i) ? list->ResetCellsAvailable() : list->SetCellsAvailable(0);
 		break;
 		default:
 		{
-			inv.IsSlotDisabled(i) ? list->SetCellsCapacity({}) : list->ResetCellsCapacity();
-			list->Show(!inv.IsSlotDisabled(i));
+			inv.IsSlotAllowed(i) ?list->ResetCellsCapacity() : list->SetCellsCapacity({});
+			list->Show(inv.IsSlotAllowed(i));
 		}break;
 		}
 	}
 
-	InitInventory_delayed();
+	if(b_full_reinit)
+		InitInventory_delayed();
 }
 
 void CUIInventoryWnd::CheckForcedWeightVolumeUpdate() {
 	bool need_update{};
-	auto place_to_search = psActorFlags.test(AF_ARTEFACTS_FROM_ALL) ? GetInventory()->m_all : GetInventory()->m_belt;
+	auto &place_to_search = psActorFlags.test(AF_ARTEFACTS_FROM_ALL) ? GetInventory()->m_all : GetInventory()->m_belt;
 	for (const auto& item : place_to_search) {
 		auto artefact = smart_cast<CArtefact*>(item);
 		if (artefact && !fis_zero(artefact->m_fTTLOnDecrease) && !fis_zero(artefact->GetCondition()) &&
-			(!fis_zero(artefact->GetItemEffect(CInventoryItem::eAdditionalWeight)) || !fis_zero(artefact->GetItemEffect(CInventoryItem::eAdditionalVolume)))) {
+			(!fis_zero(artefact->GetItemEffect(CInventoryItem::eAdditionalWeight)))) {
 			need_update = true;
 			break;
 		}

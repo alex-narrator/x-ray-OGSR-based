@@ -144,7 +144,7 @@ public:
 	virtual float GetCarryVolume			() const;
 	virtual float MaxCarryVolume			() const;
 
-	virtual bool IsVolumeUnlimited			() const;
+	virtual bool IsVolumeUnlimited			() const { return true; };
 
 	virtual CCustomOutfit*			GetOutfit()	const {return NULL;};
 	virtual CBackpack*				GetBackpack() const {return NULL;};
@@ -178,6 +178,7 @@ public:
 	virtual void			OnItemTake				(CInventoryItem *inventory_item);
 	
 	virtual void			OnItemBelt				(CInventoryItem *inventory_item, EItemPlace previous_place);
+	virtual void			OnItemVest				(CInventoryItem *inventory_item, EItemPlace previous_place);
 	virtual void			OnItemRuck				(CInventoryItem *inventory_item, EItemPlace previous_place);
 	virtual void			OnItemSlot				(CInventoryItem *inventory_item, EItemPlace previous_place);
 	

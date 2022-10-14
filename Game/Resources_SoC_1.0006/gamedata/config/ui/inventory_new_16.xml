@@ -18,35 +18,47 @@
 	</back>
 
 
-    <dragdrop_bag x="20" y="42" width="300" height="400"
+    <dragdrop_bag x="20" y="42" width="316" height="400"
             cell_width = "30" cell_height="40" rows_num="10" cols_num="10" 
             unlimited="1" group_similar="1" condition_progress_bar="1"/>
 
     <dragdrop_belt x="740" y="80" width="120" height="80"
             cell_width = "30" cell_height="40" rows_num="2" cols_num="4"
 			custom_placement="1"/>
-
-    <dragdrop_outfit x="858" y="405" width="60" height="120" 
-            cell_width = "30" cell_height="40" rows_num="3" cols_num="2" 
-            custom_placement="0"/>
 			
-	<dragdrop_helmet x="858" y="325" width="60" height="80"
-            cell_width = "30" cell_height="40" rows_num="2" cols_num="2"
-            custom_placement="0" condition_progress_bar="1"/>			
+	<dragdrop_vest x="740" y="0" width="120" height="80"
+            cell_width = "30" cell_height="40" rows_num="2" cols_num="4"
+			custom_placement="1" line_up_in_columns="1"/>
 
 	<dragdrop_on_head x="858" y="285" width="60" height="40"
             cell_width = "30" cell_height="40" rows_num="1" cols_num="2"
             custom_placement="0"/>
+
+	<dragdrop_helmet x="858" y="325" width="60" height="80"
+            cell_width = "30" cell_height="40" rows_num="2" cols_num="2"
+            custom_placement="0" condition_progress_bar="1"/>			
+
+    <dragdrop_outfit x="858" y="405" width="60" height="120" 
+            cell_width = "30" cell_height="40" rows_num="3" cols_num="2" 
+            custom_placement="0" condition_progress_bar="1"/>
+			
+	<dragdrop_backpack x="918" y="405" width="60" height="80"
+            cell_width = "30" cell_height="40" rows_num="2" cols_num="2"
+            custom_placement="0" condition_progress_bar="1"/>			
+			
+	<dragdrop_pda x="828" y="405" width="30" height="40"
+            cell_width = "30" cell_height="40" rows_num="1" cols_num="1"
+            custom_placement="0"/>				
+			
+	<dragdrop_detector x="828" y="445" width="30" height="40"
+            cell_width = "30" cell_height="40" rows_num="1" cols_num="1"
+            custom_placement="0"/>		
 			
 	<dragdrop_warbelt x="680" y="80" width="60" height="40"
             cell_width = "30" cell_height="40" rows_num="1" cols_num="2"
             custom_placement="0"/>
 			
-	<dragdrop_backpack x="620" y="0" width="60" height="80"
-            cell_width = "30" cell_height="40" rows_num="2" cols_num="2"
-            custom_placement="0"/>
-			
-	<dragdrop_vest x="680" y="0" width="60" height="80"
+	<dragdrop_tactical_vest x="680" y="0" width="60" height="80"
             cell_width = "30" cell_height="40" rows_num="2" cols_num="2"
             custom_placement="0"/>			
 
@@ -72,15 +84,7 @@
 			
 	<dragdrop_artefact x="560" y="0" width="30" height="40"
             cell_width = "30" cell_height="40" rows_num="1" cols_num="1"
-            custom_placement="0"/>		
-
-	<dragdrop_detector x="520" y="70" width="30" height="40"
-            cell_width = "30" cell_height="40" rows_num="1" cols_num="1"
-            custom_placement="0"/>
-			
-	<dragdrop_pda x="660" y="70" width="30" height="40"
-            cell_width = "30" cell_height="40" rows_num="1" cols_num="1"
-            custom_placement="0"/>			
+            custom_placement="0"/>					
 
 	<dragdrop_quick_0 x="0" y="70" width="60" height="80"
             cell_width = "30" cell_height="40" rows_num="2" cols_num="2"
@@ -94,42 +98,8 @@
 	<dragdrop_quick_3 x="390" y="70" width="60" height="80"
             cell_width = "30" cell_height="40" rows_num="2" cols_num="2"
             custom_placement="0"/>
-	
-<!-- vest pouches left side (slots 19,20,21)	 -->
-	<dragdrop_vest_pouch_1 x="740" y="30" width="30" height="40"
-            cell_width = "30" cell_height="40" rows_num="1" cols_num="1"
-            custom_placement="0"/>
-	<dragdrop_vest_pouch_2 x="740" y="30" width="30" height="40"
-            cell_width = "30" cell_height="40" rows_num="1" cols_num="1"
-            custom_placement="0"/>	
-	<dragdrop_vest_pouch_3 x="740" y="0" width="30" height="80"
-            cell_width = "30" cell_height="40" rows_num="2" cols_num="1"
-            custom_placement="0"/>		
-<!-- vest pouches chest (slots 22,23,24,25) -->			
-	<dragdrop_vest_pouch_4 x="770" y="0" width="30" height="80"
-            cell_width = "30" cell_height="40" rows_num="2" cols_num="1"
-            custom_placement="0"/>		
-	<dragdrop_vest_pouch_5 x="800" y="0" width="30" height="80"
-            cell_width = "30" cell_height="40" rows_num="2" cols_num="1"
-            custom_placement="0"/>		
-	<dragdrop_vest_pouch_6 x="830" y="0" width="30" height="80"
-            cell_width = "30" cell_height="40" rows_num="2" cols_num="1"
-            custom_placement="0"/>	
-	<dragdrop_vest_pouch_7 x="860" y="0" width="30" height="80"
-            cell_width = "30" cell_height="40" rows_num="2" cols_num="1"
-            custom_placement="0"/>
-<!-- vest pouches right side (slots 26,27,28)-->			
-	<dragdrop_vest_pouch_8 x="890" y="30" width="30" height="40"
-            cell_width = "30" cell_height="40" rows_num="1" cols_num="1"
-            custom_placement="0"/>			
-	<dragdrop_vest_pouch_9 x="890" y="0" width="30" height="40"
-            cell_width = "30" cell_height="40" rows_num="1" cols_num="1"
-            custom_placement="0"/>
-	<dragdrop_vest_pouch_10 x="890" y="0" width="30" height="80"
-            cell_width = "30" cell_height="40" rows_num="2" cols_num="1"
-            custom_placement="0"/>				
 			
-
+<!-- action key statics -->
 	<knife_key_static x="0" y="0" width="0" height="0">
 		<text x="0" y="0" font="letterica16" r="231" g="153" b="22">ui_use_slot_0</text>
 	</knife_key_static>
@@ -247,10 +217,10 @@
 			<texture>ui_inv_icon_bleeding_restore_speed</texture>
 			<text font="letterica16" x="20" y="0" color="ui_clr_1"/>
 		</static_additional_max_weight>
-		<static_additional_max_volume x="0" y="0" width="226" height="15" complex_mode="1">
+<!-- 		<static_additional_max_volume x="0" y="0" width="226" height="15" complex_mode="1">
 			<texture>ui_inv_icon_bleeding_restore_speed</texture>
 			<text font="letterica16" x="20" y="0" color="ui_clr_1"/>
-		</static_additional_max_volume>		
+		</static_additional_max_volume>	 -->	
 		
 		<static_burn_immunity x="0" y="0" width="226" height="15" complex_mode="1">
 			<texture>ui_inv_icon_burn_immunity</texture>
@@ -390,6 +360,7 @@
 		<snd_close>interface\inv_close</snd_close>
 		<snd_item_to_slot>interface\inv_slot</snd_item_to_slot>
 		<snd_item_to_belt>interface\inv_belt</snd_item_to_belt>
+		<snd_item_to_vest>interface\inv_belt</snd_item_to_vest>
 		<snd_item_to_ruck>interface\inv_ruck</snd_item_to_ruck>
 		<snd_properties>interface\inv_properties</snd_properties>
 		<snd_drop_item>interface\inv_drop</snd_drop_item>

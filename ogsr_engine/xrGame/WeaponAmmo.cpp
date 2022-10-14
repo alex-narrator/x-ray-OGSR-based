@@ -372,9 +372,8 @@ void CWeaponAmmo::UnloadBox()
 	if (!m_boxCurr) return;
 
 	if (m_pCurrentInventory) { //попробуем доложить патроны в наявные пачки
-		TIItemContainer& list = m_pCurrentInventory->m_all;
-		for (TIItemContainer::iterator l_it = list.begin(); list.end() != l_it; ++l_it){
-			auto* exist_ammo_box = smart_cast<CWeaponAmmo*>(*l_it);
+		for (const auto& item : m_pCurrentInventory->m_all){
+			auto* exist_ammo_box = smart_cast<CWeaponAmmo*>(item);
 			u16 exist_free_count = exist_ammo_box ? exist_ammo_box->m_boxSize - exist_ammo_box->m_boxCurr : 0;
 
 			if (exist_ammo_box && exist_ammo_box->cNameSect() == m_ammoSect && exist_free_count > 0){

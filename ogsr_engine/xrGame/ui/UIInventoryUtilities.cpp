@@ -6,6 +6,7 @@
 #include "../eatable_item.h"
 #include "../Level.h"
 #include "../HUDManager.h"
+#include "UIGameSP.h"
 #include "../date_time.h"
 #include "../string_table.h"
 #include "../Inventory.h"
@@ -79,9 +80,12 @@ bool InventoryUtilities::GreaterRoomInRuck(PIItem item1, PIItem item2)
    	return					false;
 }
 
-bool InventoryUtilities::FreeRoom_inBelt	(TIItemContainer& item_list, PIItem _item, int width, int height)
-{
-	bool*				ruck_room	= (bool*)alloca(width*height);
+bool InventoryUtilities::FreeRoom_inBelt	(TIItemContainer& item_list, PIItem _item, int width, int height){
+
+	if (!HasFreeSpace(item_list, _item, width, height))
+		return false;
+
+	bool* ruck_room = (bool*)_malloca(width * height);
 
 	int		i,j,k,m;
 	int		place_row = 0,  place_col = 0;
@@ -105,32 +109,25 @@ bool InventoryUtilities::FreeRoom_inBelt	(TIItemContainer& item_list, PIItem _it
 	
 	found_place			= true;
 
-	for(xr_vector<PIItem>::iterator it = item_list.begin(); (item_list.end() != it) && found_place; ++it) 
-	{
-		PIItem pItem = *it;
-		int iWidth	= pItem->GetGridWidth(); 
-		int iHeight = pItem->GetGridHeight();
+	for(const auto& item : item_list) {
+		int iWidth	= item->GetGridWidth();
+		int iHeight = item->GetGridHeight();
 		//проверить можно ли разместить элемент,
 		//проверяем последовательно каждую клеточку
 		found_place = false;
 	
-		for(i=0; (i<height - iHeight +1) && !found_place; ++i)
-		{
-			for(j=0; (j<width - iWidth +1) && !found_place; ++j)
-			{
+		for(i=0; (i<height - iHeight +1) && !found_place; ++i){
+			for(j=0; (j<width - iWidth +1) && !found_place; ++j){
 				can_place = true;
 
-				for(k=0; (k<iHeight) && can_place; ++k)
-				{
-					for(m=0; (m<iHeight) && can_place; ++m)
-					{
+				for(k=0; (k<iHeight) && can_place; ++k){
+					for(m=0; (m<iHeight) && can_place; ++m){
 						if(ruck_room[(i+k)*width + (j+m)])
 								can_place =  false;
 					}
 				}
 			
-				if(can_place)
-				{
+				if(can_place){
 					found_place=true;
 					place_row = i;
 					place_col = j;
@@ -140,12 +137,9 @@ bool InventoryUtilities::FreeRoom_inBelt	(TIItemContainer& item_list, PIItem _it
 		}
 
 		//разместить элемент на найденном месте
-		if(found_place)
-		{
-			for(k=0; k<iHeight; ++k)
-			{
-				for(m=0; m<iWidth; ++m)
-				{
+		if(found_place){
+			for(k=0; k<iHeight; ++k){
+				for(m=0; m<iWidth; ++m){
 					ruck_room[(place_row+k)*width + place_col+m] = true;
 				}
 			}
@@ -157,6 +151,98 @@ bool InventoryUtilities::FreeRoom_inBelt	(TIItemContainer& item_list, PIItem _it
 
 	//для какого-то элемента места не нашлось
 	if(!found_place) return false;
+
+	return true;
+}
+
+bool InventoryUtilities::FreeRoom_inVest(TIItemContainer& item_list, PIItem _item, int width, int height) {
+
+	if (!HasFreeSpace(item_list, _item, width, height))
+		return false;
+
+	bool* ruck_room = (bool*)_malloca(width*height);
+
+	int		i, j, k, m;
+	int		place_row = 0, place_col = 0;
+	bool	found_place;
+	bool	can_place;
+
+
+	for (i = 0; i < width; ++i)
+		for (j = 0; j < height; ++j)
+			ruck_room[i *height + j] = false;
+
+	item_list.push_back(_item);
+	std::stable_sort(
+		item_list.begin(), item_list.end(), [](const auto& a, const auto& b) {
+			if (a->GetGridHeight() > b->GetGridHeight()) return true;
+			if (a->GetGridHeight() == b->GetGridHeight())
+				return a->GetGridWidth() > b->GetGridWidth();
+			return false;
+		}
+	);
+
+	found_place = true;
+
+	for (const auto& item : item_list) {
+		int iWidth = item->GetGridWidth();
+		int iHeight = item->GetGridHeight();
+		//проверить можно ли разместить элемент,
+		//проверяем последовательно каждую клеточку
+		found_place = false;
+
+		for (i = 0; (i < width - iWidth + 1) && !found_place; ++i) {
+			for (j = 0; (j < height - iHeight + 1) && !found_place; ++j) {
+				can_place = true;
+
+				for (k = 0; (k < iWidth) && can_place; ++k) {
+					for (m = 0; (m < iWidth) && can_place; ++m) {
+						if (ruck_room[(i + k) * height + (j + m)])
+							can_place = false;
+					}
+				}
+
+				if (can_place) {
+					found_place = true;
+					place_row = i;
+					place_col = j;
+				}
+
+			}
+		}
+
+		//разместить элемент на найденном месте
+		if (found_place) {
+			for (k = 0; k < iWidth; ++k) {
+				for (m = 0; m < iHeight; ++m) {
+					ruck_room[(place_row + k) * height + place_col + m] = true;
+				}
+			}
+		}
+	}
+
+	// remove
+	item_list.erase(std::remove(item_list.begin(), item_list.end(), _item), item_list.end());
+
+	//для какого-то элемента места не нашлось
+	if (!found_place) return false;
+
+	return true;
+}
+
+bool InventoryUtilities::HasFreeSpace(TIItemContainer& item_list, PIItem _item, int width, int height) {
+	if (_item->GetGridWidth() > width ||
+		_item->GetGridHeight() > height)
+		return false;
+
+	int list_area = width * height;
+	int item_area = _item->GetGridWidth() * _item->GetGridHeight();
+	int total_area{};
+	for (const auto& item : item_list) {
+		total_area += item->GetGridWidth() * item->GetGridHeight();
+	}
+	if ((total_area + item_area) > list_area)
+		return false;
 
 	return true;
 }

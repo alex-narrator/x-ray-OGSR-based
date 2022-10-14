@@ -121,6 +121,14 @@ bool CUIDragDropListEx::GetHighlightAllCells() {
   return !!m_flags.test( flHighlightAllCells );
 }
 
+void CUIDragDropListEx::SetLineUpInColumns(bool b) {
+	m_flags.set(flLineUpInColumns, b);
+}
+
+bool CUIDragDropListEx::GetLineUpInColumns() {
+	return !!m_flags.test(flLineUpInColumns);
+}
+
 void CUIDragDropListEx::SendMessage(CUIWindow* pWnd, s16 msg, void* pData)
 {
 	CUIWndCallback::OnEvent(pWnd, msg, pData);
@@ -598,11 +606,10 @@ void CUICellContainer::PlaceItemAtPos(CUICellItem* itm, Ivector2& cell_pos)
 {
 	Ivector2 cs				= itm->GetGridSize();
 	Ivector2 cp				= cell_pos;
-	if (m_pParentDragDropList->GetVerticalPlacement())
-	{
+	if (m_pParentDragDropList->GetVerticalPlacement()){
 		std::swap(cs.x, cs.y);
-		if (cp.y == 0)
-			cp.y = m_pParentDragDropList->CellsCapacity().y-cs.y;
+		//if (cp.y == 0)
+		//	cp.y = m_pParentDragDropList->CellsCapacity().y-cs.y;
 	}
 	for(int x=0; x<cs.x; ++x)
 		for(int y=0; y<cs.y; ++y){
@@ -674,15 +681,22 @@ CUICellItem* CUICellContainer::RemoveItem(CUICellItem* itm, bool force_root)
 
 Ivector2 CUICellContainer::FindFreeCell	(const Ivector2& _size)
 {
-	Ivector2 tmp;
+	Ivector2 tmp{};
 	Ivector2 size = _size;
 	if (m_pParentDragDropList->GetVerticalPlacement())
 		std::swap(size.x, size.y);
 
-	for(tmp.y=0; tmp.y<=m_cellsCapacity.y-size.y; ++tmp.y )
-		for(tmp.x=0; tmp.x<=m_cellsCapacity.x-size.x; ++tmp.x )
-			if(IsRoomFree(tmp,_size))
-				return  tmp;
+	if (m_pParentDragDropList->GetLineUpInColumns()) {
+		for (tmp.x = 0; tmp.x <= m_cellsCapacity.x - size.x; ++tmp.x)
+			for (tmp.y = 0; tmp.y <= m_cellsCapacity.y - size.y; ++tmp.y)
+				if (IsRoomFree(tmp, _size))
+					return  tmp;
+	} else {
+		for(tmp.y=0; tmp.y<=m_cellsCapacity.y-size.y; ++tmp.y )
+			for(tmp.x=0; tmp.x<=m_cellsCapacity.x-size.x; ++tmp.x )
+				if(IsRoomFree(tmp,_size))
+					return  tmp;
+	}
 
 	if(m_pParentDragDropList->IsAutoGrow())
 	{
@@ -717,16 +731,15 @@ bool CUICellContainer::HasFreeSpace		(const Ivector2& _size){
 
 bool CUICellContainer::IsRoomFree(const Ivector2& pos, const Ivector2& _size)
 {
-	Ivector2 tmp;
+	Ivector2 tmp{};
 	Ivector2 size = _size;
 	if (m_pParentDragDropList->GetVerticalPlacement())
 		std::swap(size.x, size.y);
 	for(tmp.x =pos.x; tmp.x<pos.x+size.x; ++tmp.x)
-		for(tmp.y =pos.y; tmp.y<pos.y+size.y; ++tmp.y)
-		{
+		for(tmp.y =pos.y; tmp.y<pos.y+size.y; ++tmp.y){
 			if(!ValidCell(tmp))		return		false;
 
-			CUICell& C				= GetCellAt(tmp);
+			CUICell& C = GetCellAt(tmp);
 
 			if (!C.Empty() || C.cell_disabled)
 				return false;

@@ -4,10 +4,10 @@
 #include "eatable_item.h"
 #include "Artifact.h"
 #include "Warbelt.h"
+#include "Vest.h"
 #include "Backpack.h"
 
-class CUIInventoryCellItem :public CUICellItem
-{
+class CUIInventoryCellItem :public CUICellItem{
 	typedef  CUICellItem	inherited;
 protected:
 	bool						b_auto_drag_childs;
@@ -29,8 +29,7 @@ public:
 	virtual					~CUIInventoryCellItem		();
 };
 
-class CUIWarbeltCellItem :public CUIInventoryCellItem
-{
+class CUIWarbeltCellItem :public CUIInventoryCellItem{
 	typedef  CUIInventoryCellItem	inherited;
 protected:
 	virtual		void			UpdateItemText				();
@@ -40,8 +39,17 @@ public:
 				CWarbelt*		object						() {return (CWarbelt*)m_pData;}
 };
 
-class CUICBackpackCellItem :public CUIInventoryCellItem
-{
+class CUIVestCellItem :public CUIInventoryCellItem{
+	typedef  CUIInventoryCellItem	inherited;
+protected:
+	virtual		void			UpdateItemText				();
+public:
+								CUIVestCellItem				(CVest* itm);
+	virtual		void			Update						();
+				CVest*			object						() {return (CVest*)m_pData;}
+};
+
+class CUICBackpackCellItem :public CUIInventoryCellItem{
 	typedef  CUIInventoryCellItem	inherited;
 protected:
 	virtual		void			UpdateItemText				();
@@ -51,8 +59,7 @@ public:
 				CBackpack*		object						() {return (CBackpack*)m_pData;}
 };
 
-class CUIEatableCellItem :public CUIInventoryCellItem
-{
+class CUIEatableCellItem :public CUIInventoryCellItem{
 	typedef  CUIInventoryCellItem	inherited;
 protected:
 	virtual		void			UpdateItemText			();
@@ -63,8 +70,7 @@ public:
 				CEatableItem*	object						() {return (CEatableItem*)m_pData;}
 };
 
-class CUIArtefactCellItem :public CUIInventoryCellItem
-{
+class CUIArtefactCellItem :public CUIInventoryCellItem{
 	typedef  CUIInventoryCellItem	inherited;
 public:
 								CUIArtefactCellItem			(CArtefact* itm);
@@ -72,8 +78,7 @@ public:
 				CArtefact*		object						() { return (CArtefact*)m_pData; }
 };
 
-class CUIAmmoCellItem :public CUIInventoryCellItem
-{
+class CUIAmmoCellItem :public CUIInventoryCellItem{
 	typedef  CUIInventoryCellItem	inherited;
 protected:
 	virtual		void			UpdateItemText				();
@@ -85,8 +90,7 @@ public:
 	CWeaponAmmo*				object						() { return (CWeaponAmmo*)m_pData; }
 };
 
-class CUIWeaponCellItem :public CUIInventoryCellItem
-{
+class CUIWeaponCellItem :public CUIInventoryCellItem{
 	typedef  CUIInventoryCellItem	inherited;
 public:
 	enum eAddonType{
@@ -124,8 +128,7 @@ public:
 	Fvector2					get_addon_offset			(u32 idx)				{ return m_addon_offset[idx]; }
 };
 
-class CBuyItemCustomDrawCell :public ICustomDrawCell
-{
+class CBuyItemCustomDrawCell :public ICustomDrawCell{
 	CGameFont*			m_pFont;
 	string16			m_string;
 public:

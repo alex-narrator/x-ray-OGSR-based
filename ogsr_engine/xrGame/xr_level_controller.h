@@ -86,9 +86,6 @@ enum	EGameActions
 	kSPEECH_MENU_8,		
 	kSPEECH_MENU_9,
 						
-/*	kUSE_BANDAGE,
-	kUSE_MEDKIT,	*/
-
 	kUSE_QUICK_SLOT_0,
 	kUSE_QUICK_SLOT_1,
 	kUSE_QUICK_SLOT_2,

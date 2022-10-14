@@ -224,7 +224,7 @@ void CActor::g_cl_CheckControls(u32 mstate_wf, Fvector &vControlAccel, float &Ju
 				float jump_speed = m_fJumpSpeed;
 				//Msg("m_fJumpSpeed = %.2f", m_fJumpSpeed);
 
-				auto placement = psActorFlags.test(AF_ARTEFACTS_FROM_ALL) ? inventory().m_all : inventory().m_belt;
+				auto &placement = psActorFlags.test(AF_ARTEFACTS_FROM_ALL) ? inventory().m_all : inventory().m_belt;
 				for (const auto& item : placement) {
 					auto artefact = smart_cast<CArtefact*>(item);
 					if (artefact && !fis_zero(artefact->GetCondition()))
@@ -356,7 +356,7 @@ void CActor::g_cl_CheckControls(u32 mstate_wf, Fvector &vControlAccel, float &Ju
 				float walk_accel = m_fWalkAccel;
 				//Msg("m_fWalkAccel = %.2f", m_fWalkAccel);
 
-				auto placement = psActorFlags.test(AF_ARTEFACTS_FROM_ALL) ? inventory().m_all : inventory().m_belt;
+				auto &placement = psActorFlags.test(AF_ARTEFACTS_FROM_ALL) ? inventory().m_all : inventory().m_belt;
 				for (const auto& it : placement) {
 					auto artefact = smart_cast<CArtefact*>(it);
 					if (artefact && !fis_zero(artefact->GetCondition()))
@@ -450,7 +450,7 @@ void CActor::g_cl_CheckControls(u32 mstate_wf, Fvector &vControlAccel, float &Ju
 
 
 	//transform local dir to world dir
-	Fmatrix				mOrient;
+	Fmatrix				mOrient{};
 	mOrient.rotateY(-r_model_yaw);
 	mOrient.transform_dir(vControlAccel);
 }
@@ -501,7 +501,7 @@ void CActor::g_Orientate	(u32 mstate_rl, float dt)
 	angle_lerp		(r_model_yaw_delta,calc_yaw,PI_MUL_4,dt);
 
 	// build matrix
-	Fmatrix mXFORM;
+	Fmatrix mXFORM{};
 	mXFORM.rotateY	(-(r_model_yaw + r_model_yaw_delta));
 	mXFORM.c.set	(Position());
 	XFORM().set		(mXFORM);
@@ -532,7 +532,7 @@ bool CActor::g_LadderOrient()
 	if(mag<EPS_L) return false;
 	leader_norm.div(mag);
 	leader_norm.invert();
-	Fmatrix M;M.set(Fidentity);
+	Fmatrix M{}; M.set(Fidentity);
 	M.k.set(leader_norm);
 	M.j.set(0.f,1.f,0.f);
 	generate_orthonormal_basis1(M.k,M.j,M.i);
@@ -556,7 +556,7 @@ bool CActor::g_LadderOrient()
 	////angle_lerp(angles3.z,angles1.z,angles2.z,dt);
 	//angle_lerp(angles3.x,angles1.x,angles2.x,dt);
 	//XFORM().setHPB(angles3.x,angles3.y,angles3.z);
-	Fvector position;
+	Fvector position{};
 	position.set(Position());
 	//XFORM().rotation(q3);
 	VERIFY2(_valid(M),"Invalide matrix in g_LadderOrient");

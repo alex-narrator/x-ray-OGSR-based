@@ -548,7 +548,7 @@ void CEntityAlive::UpdateBloodDrops()
 			if(pWound->GetBoneNum() != BI_NONE)
 			{
 				Fvector pos;
-				Fvector pos_distort;
+				Fvector pos_distort{};
 				pos_distort.random_dir();
 				pos_distort.mul(0.15f);
 				CParticlesPlayer::GetBonePos(this, pWound->GetBoneNum(), Fvector().set(0,0,0), pos);

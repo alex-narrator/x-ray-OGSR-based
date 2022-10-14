@@ -33,7 +33,7 @@ inv_grid_x         = 10
 inv_grid_y         = 19
 belt_width 			= 4
 belt_height 		= 2
-slots_allowed 		= 0,3,4
+slots_allowed 		= 0,3,4,10
 
 [pouch]:warbelt
 description			= pouch_descr
@@ -46,7 +46,6 @@ inv_grid_y         = 16
 
 belt_width 			= 2
 belt_height 		= 2
-;slots_allowed 		= 0,3,4
 
 [psy_helmet]:identity_immunities
 GroupControlSection	= spawn_group
@@ -100,6 +99,7 @@ inv_grid_height    = 2
 inv_grid_x         = 0
 inv_grid_y         = 10
 icon_group = 2
+inv_show_condition = true
 cost				= 500	;30
 default_to_ruck		= false
 
@@ -200,7 +200,9 @@ visual				= equipments\item_datchik1.ogf
 description			= vest_descr
 slot				= 18
 
-slots_allowed 		= 3,22,25
+slots_allowed 		= 3
+vest_width 			= 2
+vest_height 		= 2
 
 inv_name			= Vest
 inv_name_short		= Vest
@@ -223,7 +225,9 @@ inv_grid_width     = 2
 inv_grid_height    = 2
 inv_grid_x         = 16
 inv_grid_y         = 17
-slots_allowed 		= 3,19,20,22,23,24,25,26
+slots_allowed 		= 3
+vest_width 			= 3
+vest_height 		= 2
 
 [vest_adv]:vest
 description			= vest_descr_adv
@@ -233,7 +237,9 @@ inv_grid_width     = 2
 inv_grid_height    = 2
 inv_grid_x         = 14
 inv_grid_y         = 17
-slots_allowed 		= 3,19,20,22,23,24,25,26,27
+slots_allowed 		= 3
+vest_width 			= 4
+vest_height 		= 2
 
 [vest_heavy]:vest
 description			= vest_descr_heavy
@@ -243,4 +249,6 @@ inv_grid_width     = 2
 inv_grid_height    = 2
 inv_grid_x         = 12
 inv_grid_y         = 17
-slots_allowed 		= 3,21,22,23,24,25,28
+slots_allowed 		= 3
+vest_width 			= 4
+vest_height 		= 3

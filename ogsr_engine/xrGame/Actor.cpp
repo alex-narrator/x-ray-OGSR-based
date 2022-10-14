@@ -134,6 +134,7 @@ CActor::CActor() : CEntityAlive(),current_ik_cam_shift(0)
 
 	//разрешить использование пояса в inventory
 	inventory().SetBeltUseful(true);
+	inventory().SetVestUseful(true);
 
 	m_anims					= xr_new<SActorMotions>();
 	m_vehicle_anims			= xr_new<SActorVehicleAnims>();
@@ -225,7 +226,7 @@ void CActor::Load	(LPCSTR section )
 
 	// m_PhysicMovementControl: General
 	//m_PhysicMovementControl->SetParent		(this);
-	Fbox	bb;Fvector	vBOX_center,vBOX_size;
+	Fbox	bb{}; Fvector	vBOX_center, vBOX_size;
 	// m_PhysicMovementControl: BOX
 	vBOX_center= pSettings->r_fvector3	(section,"ph_box2_center"	);
 	vBOX_size	= pSettings->r_fvector3	(section,"ph_box2_size"		);
@@ -530,11 +531,11 @@ void CActor::HitMark	(float P,
 			dir.normalize_safe			();
 
 			float ang_diff				= angle_difference	(cam_dir.getH(), dir.getH());
-			Fvector						cp;
+			Fvector						cp{};
 			cp.crossproduct				(cam_dir,dir);
 			bool bUp					=(cp.y>0.0f);
 
-			Fvector cross;
+			Fvector cross{};
 			cross.crossproduct			(cam_dir, dir);
 			VERIFY						(ang_diff>=0.0f && ang_diff<=PI);
 
@@ -578,7 +579,7 @@ void CActor::HitSignal(float perc, Fvector& vLocalDir, CObject* who, s16 element
 		// stop-motion
 		if (character_physics_support()->movement()->Environment()==CPHMovementControl::peOnGround || character_physics_support()->movement()->Environment()==CPHMovementControl::peAtWall)
 		{
-			Fvector zeroV;
+			Fvector zeroV{};
 			zeroV.set			(0,0,0);
 			character_physics_support()->movement()->SetVelocity(zeroV);
 		}
@@ -611,37 +612,29 @@ void start_tutorial(LPCSTR name);
 void CActor::Die(CObject* who)
 {
 	inherited::Die		(who);
+	if (OnServer()){	
+		const auto &slots = inventory().m_slots;
 
-	if (OnServer())
-	{	
-		xr_vector<CInventorySlot>::iterator I = inventory().m_slots.begin();
-		xr_vector<CInventorySlot>::iterator E = inventory().m_slots.end();
+		for (u32 slot_idx = 0; slot_idx < slots.size(); ++slot_idx){
+			auto &item = slots[slot_idx].m_pIItem;
 
-
-		for (u32 slot_idx=0 ; I != E; ++I,++slot_idx)
-		{
-			if (slot_idx == inventory().GetActiveSlot()) 
-			{
-				if((*I).m_pIItem)
-				{
-					(*I).m_pIItem->SetDropManual(TRUE);
+			if (slot_idx == inventory().GetActiveSlot()) {
+				if(item){
+					item->SetDropManual(TRUE);
 				}
 			continue;
-			}
-			else
-			{
-				CCustomOutfit *pOutfit = smart_cast<CCustomOutfit *> ((*I).m_pIItem);
+			}else{
+				auto pOutfit = smart_cast<CCustomOutfit *> (item);
 				if (pOutfit) continue;
-			};
-			if((*I).m_pIItem) 
-				inventory().Ruck((*I).m_pIItem);
+			}
+
+			if(item)
+				inventory().Ruck(item);
 		};
 
-
 		///!!! чистка пояса
-		TIItemContainer &l_blist = inventory().m_belt;
-		while (!l_blist.empty())	
-			inventory().Ruck(l_blist.front());
+		inventory().DropBeltToRuck(true);
+		inventory().DropVestToRuck(true);
 	}
 
 	cam_Set					(eacFreeLook);
@@ -675,7 +668,7 @@ void	CActor::SwitchOutBorder(bool new_border_state)
 void CActor::g_Physics(Fvector& _accel, float jump, float dt)
 {
 	// Correct accel
-	Fvector						accel;
+	Fvector						accel{};
 	accel.set					(_accel);
 	hit_slowmo					-=	dt;
 	if (hit_slowmo<0)			hit_slowmo = 0.f;
@@ -1041,7 +1034,7 @@ void CActor::shedule_Update	(u32 DT)
 		float bs = conditions().BleedingSpeed();
 		if(bs>0.6f)
 		{
-			Fvector snd_pos;
+			Fvector snd_pos{};
 			snd_pos.set(0,ACTOR_HEIGHT,0);
 			if(!m_BloodSnd._feedback())
 				m_BloodSnd.play_at_pos(this, snd_pos, sm_Looped | sm_2D);
@@ -1247,11 +1240,11 @@ void CActor::RenderText				(LPCSTR Text, Fvector dpos, float* pdup, u32 color)
 	if (!g_Alive()) return;
 	
 	CBoneInstance& BI = smart_cast<IKinematics*>(Visual())->LL_GetBoneInstance(u16(m_head));
-	Fmatrix M;
+	Fmatrix M{};
 	smart_cast<IKinematics*>(Visual())->CalculateBones	();
 	M.mul						(XFORM(),BI.mTransform);
 	//------------------------------------------------
-	Fvector v0, v1;
+	Fvector v0{}, v1{};
 	v0.set(M.c); v1.set(M.c);
 	Fvector T        = Device.vCameraTop;
 	v1.add(T);
@@ -1321,7 +1314,7 @@ float CActor::Radius()const
 { 
 	float R		= inherited::Radius();
 	CWeapon* W	= smart_cast<CWeapon*>(inventory().ActiveItem());
-	if (W) R	+= W->Radius();
+	if (W) R += W->Radius();
 	return R;
 }
 
@@ -1350,17 +1343,13 @@ void CActor::OnItemDropUpdate ()
 {
 	CInventoryOwner::OnItemDropUpdate		();
 
-	TIItemContainer::iterator				I = inventory().m_all.begin();
-	TIItemContainer::iterator				E = inventory().m_all.end();
-	
-	for ( ; I != E; ++I)
-		if( !(*I)->IsInvalid() && !attached(*I))
-			attach(*I);
+	for (const auto& item : inventory().m_all)
+		if( !item->IsInvalid() && !attached(item))
+			attach(item);
 }
 
 
-void CActor::OnItemRuck		(CInventoryItem *inventory_item, EItemPlace previous_place)
-{
+void CActor::OnItemRuck		(CInventoryItem *inventory_item, EItemPlace previous_place){
 	CInventoryOwner::OnItemRuck(inventory_item, previous_place);
 
 	if (previous_place == eItemPlaceBelt)
@@ -1368,6 +1357,8 @@ void CActor::OnItemRuck		(CInventoryItem *inventory_item, EItemPlace previous_pl
 	else if (previous_place == eItemPlaceSlot) {
 		UpdateQuickSlotPanel();
 		UpdateSlotPanel();
+	}
+	else if (previous_place == eItemPlaceVest) {
 		UpdateVestPanel();
 	}
 }
@@ -1378,19 +1369,35 @@ void CActor::OnItemBelt		(CInventoryItem *inventory_item, EItemPlace previous_pl
 	if (previous_place == eItemPlaceSlot) {
 		UpdateQuickSlotPanel();
 		UpdateSlotPanel();
+	}
+	else if (previous_place == eItemPlaceVest) {
 		UpdateVestPanel();
+	}
+}
+void CActor::OnItemVest(CInventoryItem* inventory_item, EItemPlace previous_place) {
+	CInventoryOwner::OnItemVest(inventory_item, previous_place);
+
+	UpdateVestPanel();
+	if (previous_place == eItemPlaceSlot) {
+		UpdateQuickSlotPanel();
+		UpdateSlotPanel();
+	}
+	else if (previous_place == eItemPlaceBelt) {
+		UpdateArtefactPanel();
 	}
 }
 
 void CActor::OnItemSlot(CInventoryItem* inventory_item, EItemPlace previous_place){
 	CInventoryOwner::OnItemSlot(inventory_item, previous_place);
 
+	UpdateQuickSlotPanel();
+	UpdateSlotPanel();
 	if (previous_place == eItemPlaceBelt) {
 		UpdateArtefactPanel();
 	}
-	UpdateQuickSlotPanel();
-	UpdateSlotPanel();
-	UpdateVestPanel();
+	else if (previous_place == eItemPlaceVest) {
+		UpdateVestPanel();
+	}
 }
 
 
@@ -1479,7 +1486,7 @@ float	CActor::GetArtefactsProtection(float hit_power, ALife::EHitType hit_type) 
 	float res_hit_power_k		= 1.0f;
 	float _af_count				= 0.0f;
 
-	auto placement = psActorFlags.test(AF_ARTEFACTS_FROM_ALL) ? inventory().m_all : inventory().m_belt;
+	auto &placement = psActorFlags.test(AF_ARTEFACTS_FROM_ALL) ? inventory().m_all : inventory().m_belt;
 	for(TIItemContainer::iterator it = placement.begin();
 		placement.end() != it; ++it)
 	{
@@ -1885,7 +1892,7 @@ void CActor::TryToBlockSprint(bool block)
 
 bool CActor::IsHitToBackPack(SHit* pHDS){
 	if (pHDS->type() == ALife::eHitTypeRadiation) {
-		Msg("! RADIATION HITTED FOR BACKPACK");
+//		Msg("! RADIATION HITTED FOR BACKPACK");
 		return true;
 	}
 	bool calculate_direction{ true };
@@ -1922,7 +1929,7 @@ float CActor::GetRestoreParam(ActorRestoreParams param) {
 
 float CActor::GetTotalArtefactsEffect(u32 i) {
 	float res{};
-	auto placement = psActorFlags.test(AF_ARTEFACTS_FROM_ALL) ? inventory().m_all : inventory().m_belt;
+	auto &placement = psActorFlags.test(AF_ARTEFACTS_FROM_ALL) ? inventory().m_all : inventory().m_belt;
 	for (const auto& item : placement) {
 		auto artefact = smart_cast<CArtefact*>(item);
 		if (artefact && !fis_zero(artefact->GetCondition())) {

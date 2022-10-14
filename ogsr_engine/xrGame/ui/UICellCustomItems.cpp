@@ -278,6 +278,30 @@ void CUIWarbeltCellItem::UpdateItemText() {
 	m_text_add->Show(true);
 }
 
+CUIVestCellItem::CUIVestCellItem(CVest* itm)
+	:inherited(itm) {
+	m_text_add = nullptr;
+	init_add();
+}
+void CUIVestCellItem::Update() {
+	inherited::Update();
+	UpdateItemText();
+}
+void CUIVestCellItem::UpdateItemText() {
+	inherited::UpdateItemText();
+
+	string32				str;
+	sprintf_s(str, "%s[%dx%d]", object()->HasDropPouch() ? "•" : "", object()->GetVestWidth(), object()->GetVestHeight());
+
+	float pos_x{ GetWidth() - m_text_add->GetWidth() };
+	float pos_y{ GetHeight() - m_text_add->GetHeight() };
+	Fvector2 pos{ pos_x, pos_y };
+
+	m_text_add->SetWndPos(pos);
+	m_text_add->SetText(str);
+	m_text_add->Show(true);
+}
+
 CUICBackpackCellItem::CUICBackpackCellItem(CBackpack* itm)
 	:inherited(itm) {
 	m_text_add = nullptr;
@@ -291,7 +315,7 @@ void CUICBackpackCellItem::UpdateItemText() {
 	inherited::UpdateItemText();
 
 	string32				str;
-	sprintf_s(str, "%.0f%s", object()->GetItemEffect(CInventoryItem::eAdditionalVolume), CStringTable().translate("st_l").c_str());
+	sprintf_s(str, "%.0f%s", object()->GetAdditionalVolume(), CStringTable().translate("st_l").c_str());
 
 	float pos_x{ GetWidth() - m_text_add->GetWidth() };
 	float pos_y{ GetHeight() - m_text_add->GetHeight() };
