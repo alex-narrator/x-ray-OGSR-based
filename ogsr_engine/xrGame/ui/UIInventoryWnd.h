@@ -201,4 +201,5 @@ public:
 	void						UpdateCustomDraw(bool = true);
 	void						CheckForcedWeightVolumeUpdate();
 	void						ReinitVestList();
+	void						ReinitSlotList(u32);
 };

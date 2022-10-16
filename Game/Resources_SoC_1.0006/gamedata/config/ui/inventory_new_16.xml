@@ -53,13 +53,13 @@
 	<dragdrop_detector x="828" y="445" width="30" height="40"
             cell_width = "30" cell_height="40" rows_num="1" cols_num="1"
             custom_placement="0"/>		
+
+	<dragdrop_tactical_vest x="680" y="0" width="60" height="80"
+            cell_width = "30" cell_height="40" rows_num="2" cols_num="2"
+            custom_placement="0"/>
 			
 	<dragdrop_warbelt x="680" y="80" width="60" height="40"
             cell_width = "30" cell_height="40" rows_num="1" cols_num="2"
-            custom_placement="0"/>
-			
-	<dragdrop_tactical_vest x="680" y="0" width="60" height="80"
-            cell_width = "30" cell_height="40" rows_num="2" cols_num="2"
             custom_placement="0"/>			
 
     <dragdrop_knife x="0" y="0" width="30" height="80"
@@ -88,7 +88,7 @@
 
 	<dragdrop_quick_0 x="0" y="70" width="60" height="80"
             cell_width = "30" cell_height="40" rows_num="2" cols_num="2"
-            custom_placement="0" />			
+            custom_placement="0"/>			
 	<dragdrop_quick_1 x="130" y="70" width="60" height="80"
             cell_width = "30" cell_height="40" rows_num="2" cols_num="2"
             custom_placement="0"/>			

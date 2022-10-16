@@ -143,14 +143,14 @@ void CInventoryItem::Load(LPCSTR section)
 	m_flags.set(FAllowSprint,		READ_IF_EXISTS(pSettings, r_bool, section, "sprint_allowed",	TRUE));
 	m_flags.set(FUsingCondition,	READ_IF_EXISTS(pSettings, r_bool, section, "use_condition",		TRUE));
 
-	m_fControlInertionFactor	= READ_IF_EXISTS(pSettings, r_float,section,"control_inertion_factor",	1.0f);
-	m_icon_name					= READ_IF_EXISTS(pSettings, r_string,section,"icon_name",				NULL);
+	m_fControlInertionFactor		= READ_IF_EXISTS(pSettings, r_float,section,"control_inertion_factor", 1.0f);
+	m_icon_name						= READ_IF_EXISTS(pSettings, r_string,section,"icon_name", NULL);
 
-	m_always_ungroupable		= READ_IF_EXISTS( pSettings, r_bool, section, "always_ungroupable", false );
+	m_always_ungroupable			= READ_IF_EXISTS(pSettings, r_bool, section, "always_ungroupable", false );
 
-	m_need_brief_info			= READ_IF_EXISTS( pSettings, r_bool, section, "show_brief_info", true );
+	m_need_brief_info				= READ_IF_EXISTS(pSettings, r_bool, section, "show_brief_info", true );
 
-	m_bBreakOnZeroCondition		= READ_IF_EXISTS(pSettings, r_bool, section, "break_on_zero_condition", false);
+	m_bBreakOnZeroCondition			= READ_IF_EXISTS(pSettings, r_bool, section, "break_on_zero_condition", false);
 
 	if (pSettings->line_exist(section, "break_particles"))
 		m_sBreakParticles = pSettings->r_string(section, "break_particles");
@@ -188,10 +188,10 @@ void CInventoryItem::Load(LPCSTR section)
 	m_fRadiationAccumFactor								= READ_IF_EXISTS(pSettings, r_float, section, "radiation_accum_factor",		0.f);	
 	m_fRadiationAccumLimit								= READ_IF_EXISTS(pSettings, r_float, section, "radiation_accum_limit",		0.f);
 	//
-	m_fTTLOnDecrease			=	READ_IF_EXISTS	(pSettings, r_float, section,	"ttl_on_dec", 0.f);
+	m_fTTLOnDecrease	= READ_IF_EXISTS(pSettings, r_float, section,	"ttl_on_dec", 0.f);
 	// hands
-	eHandDependence				= EHandDependence(READ_IF_EXISTS(pSettings, r_u32, section, "hand_dependence", hdNone));
-	m_bIsSingleHanded			= !!READ_IF_EXISTS(pSettings, r_bool, section, "single_handed", TRUE);
+	eHandDependence		= EHandDependence(READ_IF_EXISTS(pSettings, r_u32, section, "hand_dependence", hdNone));
+	m_bIsSingleHanded	= !!READ_IF_EXISTS(pSettings, r_bool, section, "single_handed", TRUE);
 
 	if (pSettings->line_exist(section, "power_source")){
 		LPCSTR str = pSettings->r_string(section, "power_source");
@@ -204,6 +204,8 @@ void CInventoryItem::Load(LPCSTR section)
 
 	m_fTTLOnPowerConsumption	= READ_IF_EXISTS(pSettings, r_float, section, "ttl_on_power", 0.f);
 	m_fPowerLowThreshold		= READ_IF_EXISTS(pSettings, r_float, section, "power_low_threshold", 0.1f);
+
+	m_uSlotEnabled				= READ_IF_EXISTS(pSettings, r_u32, section, "slot_enabled", NO_ACTIVE_SLOT);
 }
 
 
@@ -771,21 +773,26 @@ void CInventoryItem::OnMoveToSlot(EItemPlace prevPlace) {
 
 
 void CInventoryItem::OnMoveToBelt(EItemPlace prevPlace) {
-  if ( smart_cast<CActor*>( object().H_Parent() ) ) {
-    if ( Core.Features.test( xrCore::Feature::equipped_untradable ) ) {
-      m_flags.set( FIAlwaysUntradable, TRUE );
-      m_flags.set( FIUngroupable,      TRUE );
-      if ( Core.Features.test( xrCore::Feature::highlight_equipped ) )
-        m_highlight_equipped = true;
-    }
-    else if ( Core.Features.test( xrCore::Feature::highlight_equipped ) ) {
-      m_flags.set( FIUngroupable, TRUE );
-      m_highlight_equipped = true;
-    }
-  }
+	auto pActor = smart_cast<CActor*>(object().H_Parent());
+	if ( smart_cast<CActor*>( object().H_Parent() ) ) {
+		if ( Core.Features.test( xrCore::Feature::equipped_untradable ) ) {
+			m_flags.set( FIAlwaysUntradable, TRUE );
+			m_flags.set( FIUngroupable,      TRUE );
+			if ( Core.Features.test( xrCore::Feature::highlight_equipped ) )
+				m_highlight_equipped = true;
+		}
+		else if ( Core.Features.test( xrCore::Feature::highlight_equipped ) ) {
+			m_flags.set( FIUngroupable, TRUE );
+			m_highlight_equipped = true;
+		}
+		if (IsModule() && !IsDropPouch() && prevPlace != eItemPlaceVest) {
+			pActor->inventory().DropSlotsToRuck(GetSlotEnabled());
+		}
+	}
 };
 
 void CInventoryItem::OnMoveToVest(EItemPlace prevPlace) {
+	auto pActor = smart_cast<CActor*>(object().H_Parent());
 	if (smart_cast<CActor*>(object().H_Parent())) {
 		if (Core.Features.test(xrCore::Feature::equipped_untradable)) {
 			m_flags.set(FIAlwaysUntradable, TRUE);
@@ -797,22 +804,29 @@ void CInventoryItem::OnMoveToVest(EItemPlace prevPlace) {
 			m_flags.set(FIUngroupable, TRUE);
 			m_highlight_equipped = true;
 		}
+		if (IsModule() && !IsDropPouch() && prevPlace != eItemPlaceBelt) {
+			pActor->inventory().DropSlotsToRuck(GetSlotEnabled());
+		}
 	}
 };
 
 void CInventoryItem::OnMoveToRuck(EItemPlace prevPlace) {
-  if ( smart_cast<CActor*>( object().H_Parent() ) ) {
-    if ( Core.Features.test( xrCore::Feature::equipped_untradable ) ) {
-      m_flags.set( FIAlwaysUntradable, FALSE );
-      m_flags.set( FIUngroupable,      FALSE );
-      if ( Core.Features.test( xrCore::Feature::highlight_equipped ) )
-        m_highlight_equipped = false;
-    }
-    else if ( Core.Features.test( xrCore::Feature::highlight_equipped ) ) {
-      m_flags.set( FIUngroupable, FALSE );
-      m_highlight_equipped = false;
-    }
-  }
+	auto pActor = smart_cast<CActor*>(object().H_Parent());
+	if (pActor) {
+		if ( Core.Features.test( xrCore::Feature::equipped_untradable ) ) {
+			m_flags.set( FIAlwaysUntradable, FALSE );
+			m_flags.set( FIUngroupable,      FALSE );
+			if ( Core.Features.test( xrCore::Feature::highlight_equipped ) )
+				m_highlight_equipped = false;
+		}else if ( Core.Features.test( xrCore::Feature::highlight_equipped ) ) {
+			m_flags.set( FIUngroupable, FALSE );
+			m_highlight_equipped = false;
+		}
+		if (IsModule() && !IsDropPouch()) {
+			if(prevPlace == eItemPlaceBelt || prevPlace == eItemPlaceVest)
+				pActor->inventory().DropSlotsToRuck(GetSlotEnabled());
+		}
+	}
 };
 
 void CInventoryItem::OnMoveOut(EItemPlace prevPlace) {

@@ -165,7 +165,7 @@ void CUIEquipParams::SetInfo(CInventoryItem* obj){
 		power_level_static->SetAutoDelete(true);
 		pos_top = power_level_static->GetPosTop();
 		power_level_static->SetWndPos(power_level_static->GetPosLeft(), _h + pos_top);
-		sprintf_s(temp_text, " %.0f", pBackpack->GetAdditionalVolume());
+		sprintf_s(temp_text, " %.1f", pBackpack->GetAdditionalVolume());
 		strconcat(sizeof(text_to_show), text_to_show, CStringTable().translate("ui_inv_volume").c_str(), temp_text, CStringTable().translate("st_l").c_str());
 		power_level_static->SetText(text_to_show);
 		m_CapInfo.AttachChild(power_level_static);
@@ -186,18 +186,6 @@ void CUIEquipParams::SetInfo(CInventoryItem* obj){
 		strconcat(sizeof(text_to_show), text_to_show, CStringTable().translate("st_cells_available").c_str(), temp_text);
 		belt_cells_static->SetText(text_to_show);
 		m_CapInfo.AttachChild(belt_cells_static);
-		_h += list_item_h;
-
-		auto drop_pouch_static = xr_new<CUIStatic>();
-		CUIXmlInit::InitStatic(uiXml, "equip_params:drop_pouch", 0, drop_pouch_static);
-		drop_pouch_static->SetAutoDelete(true);
-		pos_top = drop_pouch_static->GetPosTop();
-		drop_pouch_static->SetWndPos(drop_pouch_static->GetPosLeft(), _h + pos_top);
-		bool has_pouch = pWarbelt ? pWarbelt->HasDropPouch() : pVest->HasDropPouch();
-		sprintf_s(temp_text, " %s", has_pouch ? CStringTable().translate("st_yes").c_str() : CStringTable().translate("st_no").c_str());
-		strconcat(sizeof(text_to_show), text_to_show, CStringTable().translate("st_has_drop_pouch").c_str(), temp_text);
-		drop_pouch_static->SetText(text_to_show);
-		m_CapInfo.AttachChild(drop_pouch_static);
 		_h += list_item_h;
 	}
 

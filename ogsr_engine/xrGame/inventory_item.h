@@ -130,7 +130,11 @@ public:
 	virtual void                SetVolume			(float v)	{ m_volume = v;		}
 
 			float 				m_fRadiationAccumFactor{};          // alpet: скорость появления вторичной радиактивности
-			float 				m_fRadiationAccumLimit{};			  // alpet: предел вторичной радиоактивности 
+			float 				m_fRadiationAccumLimit{};			// alpet: предел вторичной радиоактивности 
+
+	virtual u32					GetSlotEnabled		() const	{ return m_uSlotEnabled; }
+	virtual bool				IsModule			() const	{ return m_uSlotEnabled != NO_ACTIVE_SLOT; }
+	virtual bool				IsDropPouch			() const	{ return m_uSlotEnabled == u32(-1); }
 
 public:
 	CInventory*					m_pCurrentInventory;
@@ -208,6 +212,8 @@ protected:
 	// 0-используется без участия рук, 1-одна рука, 2-две руки
 	EHandDependence				eHandDependence;
 	bool						m_bIsSingleHanded;
+
+	u32							m_uSlotEnabled{ NO_ACTIVE_SLOT };
 
 	////////// network //////////////////////////////////////////////////
 public:

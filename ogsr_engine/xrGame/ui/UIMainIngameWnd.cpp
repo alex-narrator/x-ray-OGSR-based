@@ -340,9 +340,10 @@ void CUIMainIngameWnd::SetAmmoIcon (const shared_str& sect_name)
 	icon_params.set_shader( &UIWeaponIcon );
 
 	float iGridWidth = icon_params.grid_width;
+	float iGridHeight = icon_params.grid_height;
 
 	float w = std::clamp(iGridWidth, 1.f, 2.f) * INV_GRID_WIDTH;
-	float h = INV_GRID_HEIGHT;
+	float h = iGridHeight * INV_GRID_HEIGHT;
 	w *= UI()->get_current_kx();
 
 	float x = UIWeaponIcon_rect.x1;

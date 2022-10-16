@@ -6,7 +6,7 @@ $spawn 				= "devices\detector_simple"
 $prefetch 			= 32
 class				= II_WRBLT
 cform				= skeleton
-visual				= equipments\item_datchik1.ogf
+visual				= dynamics\equipments\belt_2_art.ogf
 description			= warbelt_descr
 slot				= 16
 
@@ -27,13 +27,13 @@ cost				= 500	;30
 default_to_ruck		= false
 
 [warbelt_adv]:warbelt
+visual				= dynamics\equipments\belt_3_art.ogf
 inv_grid_width     = 2
 inv_grid_height    = 1
 inv_grid_x         = 10
 inv_grid_y         = 19
 belt_width 			= 4
 belt_height 		= 2
-slots_allowed 		= 0,3,4,10
 
 [pouch]:warbelt
 description			= pouch_descr
@@ -160,7 +160,7 @@ GroupControlSection	= spawn_group
 discovery_dependency =
 class				= II_PWRBT
 cform				= skeleton
-visual				= dynamics\devices\duracell.ogf
+visual				= dynamics\equipments\duracell.ogf
 description			= battery_descr
 
 inv_name			= battery
@@ -176,6 +176,7 @@ cost				= 500	;30
 default_to_ruck		= false
 
 [powerbank]:battery
+visual				= dynamics\devices\dev_power_device\dev_universalpowerdevice.ogf
 inv_grid_width     = 1
 inv_grid_height    = 1
 inv_grid_x         = 11
@@ -200,7 +201,6 @@ visual				= equipments\item_datchik1.ogf
 description			= vest_descr
 slot				= 18
 
-slots_allowed 		= 3
 vest_width 			= 2
 vest_height 		= 2
 
@@ -225,7 +225,6 @@ inv_grid_width     = 2
 inv_grid_height    = 2
 inv_grid_x         = 16
 inv_grid_y         = 17
-slots_allowed 		= 3
 vest_width 			= 3
 vest_height 		= 2
 
@@ -237,7 +236,6 @@ inv_grid_width     = 2
 inv_grid_height    = 2
 inv_grid_x         = 14
 inv_grid_y         = 17
-slots_allowed 		= 3
 vest_width 			= 4
 vest_height 		= 2
 
@@ -249,6 +247,72 @@ inv_grid_width     = 2
 inv_grid_height    = 2
 inv_grid_x         = 12
 inv_grid_y         = 17
-slots_allowed 		= 3
 vest_width 			= 4
 vest_height 		= 3
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;EQUIPMENT MODULES;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+[drop_pouch]:identity_immunities
+GroupControlSection	= spawn_group
+discovery_dependency = 
+$spawn 				= "devices\quest_items\quest_case_02"
+;$prefetch 			= 32
+class				= II_ATTCH
+cform				= skeleton
+visual				= dynamics\equipments\pouch.ogf
+
+belt = true
+vest = true
+slot_enabled = -1
+
+description         = drop_pouch_desc
+inv_name			= drop_pouch_name
+inv_name_short		= drop_pouch_name_short
+inv_weight			= 0.1
+inv_grid_width     = 1
+inv_grid_height    = 1
+inv_grid_x         = 9
+inv_grid_y         = 13
+icon_group = 2
+cost				= 1000
+
+[scabbard]:drop_pouch
+description         = scabbard_desc
+inv_name			= scabbard_name
+inv_name_short		= scabbard_name_short
+inv_grid_width     = 1
+inv_grid_height    = 1
+inv_grid_x         = 11
+inv_grid_y         = 13
+slot_enabled 		= 0
+
+[holster]:drop_pouch
+description         = holster_desc
+inv_name			= holster_name
+inv_name_short		= holster_name_short
+inv_grid_width     = 1
+inv_grid_height    = 1
+inv_grid_x         = 10
+inv_grid_y         = 13
+slot_enabled 		= 4
+
+[grenade_pouch]:drop_pouch
+description         = grenade_pouch_desc
+inv_name			= grenade_pouch_name
+inv_name_short		= grenade_pouch_name_short
+inv_grid_width     = 1
+inv_grid_height    = 1
+inv_grid_x         = 8
+inv_grid_y         = 13
+slot_enabled 		= 3
+
+[utility_pouch]:drop_pouch
+description         = utility_pouch_desc
+inv_name			= utility_pouch_name
+inv_name_short		= utility_pouch_name_short
+inv_grid_width     = 1
+inv_grid_height    = 1
+inv_grid_x         = 11
+inv_grid_y         = 11
+slot_enabled 		= 10

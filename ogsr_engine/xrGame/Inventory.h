@@ -227,6 +227,9 @@ public:
 	void					DropSlotsToRuck		(u32 min_slot, u32 max_slot = NO_ACTIVE_SLOT);
 	void					UpdateVolumeDropOut	();
 	bool					IsSlotAllowed		(u32) const;
+	bool					HasModuleForSlot	(u32) const;
+	bool					HasSameModuleEquiped(PIItem) const;
+	bool					HasDropPouch		() const;
 
 	void					TryRestoreSlot		(CInventoryItem* pIItem);
 

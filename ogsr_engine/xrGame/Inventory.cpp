@@ -1173,6 +1173,8 @@ bool CInventory::CanPutInBelt(PIItem pIItem) const
 	if (!IsAllItemsLoaded())					return true;
 	auto pActor = smart_cast<CActor*>(m_pOwner);
 	if (pActor && !pActor->GetWarbelt())		return false;
+	if (!InVest(pIItem) && HasSameModuleEquiped(pIItem))
+		return false;
 //	if (m_belt.size() >= BeltWidth() * BeltHeight())return false;
 	auto belt = static_cast<TIItemContainer>(m_belt);
 
@@ -1187,6 +1189,8 @@ bool CInventory::CanPutInVest(PIItem pIItem) const
 	if (!IsAllItemsLoaded())					return true;
 	auto pActor = smart_cast<CActor*>(m_pOwner);
 	if (pActor && !pActor->GetVest())			return false;
+	if (!InBelt(pIItem) && HasSameModuleEquiped(pIItem))			
+		return false;
 //	if (m_vest.size() >= VestWidth() * VestHeight())return false;
 	auto vest = static_cast<TIItemContainer>(m_vest);
 
@@ -1602,11 +1606,11 @@ void CInventory::TryAmmoCustomPlacement(CInventoryItem* pIItem)
 	//Msg("ammo [%s] with ID [%d] has taken", pIItem->object().cNameSect().c_str(), pIItem->object().ID());
 
 	if (psActorFlags.test(AF_AMMO_FROM_BELT) && pWeapon->IsAmmoWasSpawned() && !pActor->IsRuckAmmoPlacement()) { //если включены патроны с пояса, то для боеприпасов актора, которые спавнятся при разрядке
-		auto pWarbelt	= pActor->GetWarbelt();
-		auto pVest		= pActor->GetVest();
-		bool b_has_drop_pouch = pWarbelt && pWarbelt->HasDropPouch() || pVest && pVest->HasDropPouch();
+		//auto pWarbelt	= pActor->GetWarbelt();
+		//auto pVest		= pActor->GetVest();
+//		bool b_has_drop_pouch = pWarbelt && pWarbelt->HasDropPouch() || pVest && pVest->HasDropPouch();
 
-		if (pAmmo->IsBoxReloadableEmpty() && b_has_drop_pouch) //якщо пустий магазин та є сумка для скидання - кладемо до рюкзаку
+		if (pAmmo->IsBoxReloadableEmpty() && HasDropPouch()) //якщо пустий магазин та є сумка для скидання - кладемо до рюкзаку
 			return;
 
 		if (CanPutInVest(pAmmo)){  //спробуємо до розгрузки
@@ -1629,7 +1633,7 @@ void CInventory::TryAmmoCustomPlacement(CInventoryItem* pIItem)
 			}
 		}
 
-		if (!CanPutInBelt(pAmmo) && !CanPutInVest(pAmmo) && !CanPutInSlot(pAmmo) && !b_has_drop_pouch) //нікуди не вміщається та немає сумки для скидання - кидаємо на землю
+		if (!CanPutInBelt(pAmmo) && !CanPutInVest(pAmmo) && !CanPutInSlot(pAmmo) && !HasDropPouch()) //нікуди не вміщається та немає сумки для скидання - кидаємо на землю
 			pAmmo->SetDropManual(TRUE);
 	}
 	pWeapon->SetAmmoWasSpawned(false);	//сбрасываем флажок спавна патронов
@@ -1737,24 +1741,63 @@ bool CInventory::IsSlotAllowed(u32 slot) const
 		return true;
 
 	auto outfit		= pActor->GetOutfit();
-	auto warbelt	= pActor->GetWarbelt();
-	auto vest		= pActor->GetVest();
+	//auto warbelt	= pActor->GetWarbelt();
+	//auto vest		= pActor->GetVest();
 	switch (slot)
 	{
 	case KNIFE_SLOT:
 	case HOLSTER_SLOT:
-	case ARTEFACT_SLOT:
-		return (warbelt && warbelt->SlotAllowed(slot));
-	break;
 	case GRENADE_SLOT:
-		return (warbelt && warbelt->SlotAllowed(slot) || vest && vest->SlotAllowed(slot));
+	case ARTEFACT_SLOT:
+		return HasModuleForSlot(slot);//(warbelt && warbelt->SlotAllowed(slot));
 	break;
+	//case GRENADE_SLOT:
+	//	return (warbelt && warbelt->SlotAllowed(slot) || vest && vest->SlotAllowed(slot));
+	//break;
 	case HELMET_SLOT:
 		return (!outfit || !outfit->m_bIsHelmetBuiltIn);
 	break;
 	}
 
 	return true;
+}
+
+bool CInventory::HasModuleForSlot(u32 check_slot) const {
+	for (const auto& item : m_vest) {
+		if (item->GetSlotEnabled() == check_slot)
+			return true;
+	}
+	for (const auto& item : m_belt) {
+		if (item->GetSlotEnabled() == check_slot)
+			return true;
+	}
+	return false;
+}
+
+bool CInventory::HasSameModuleEquiped(PIItem item) const {
+	if (!item->IsModule()) 
+		return false;
+	for (const auto& _item : m_vest) {
+		if (_item->GetSlotEnabled() == item->GetSlotEnabled())
+			return true;
+	}
+	for (const auto& _item : m_belt) {
+		if (_item->GetSlotEnabled() == item->GetSlotEnabled())
+			return true;
+	}
+	return false;
+}
+
+bool CInventory::HasDropPouch() const {
+	for (const auto& item : m_vest) {
+		if (item->IsDropPouch())
+			return true;
+	}
+	for (const auto& item : m_belt) {
+		if (item->IsDropPouch())
+			return true;
+	}
+	return false;
 }
 
 void CInventory::TryRestoreSlot(CInventoryItem* pIItem) {

@@ -24,9 +24,6 @@
 		<equipment_cells x="0" y="0" width="91" height="8">
 			<text font="letterica16" r="124" g="119" b="115"></text>
 		</equipment_cells>
-		<drop_pouch x="0" y="0" width="91" height="8">
-			<text font="letterica16" r="124" g="119" b="115"></text>
-		</drop_pouch>
 		
 		<scope_zoom x="0" y="0" width="91" height="8">
 			<text font="letterica16" r="124" g="119" b="115"></text>

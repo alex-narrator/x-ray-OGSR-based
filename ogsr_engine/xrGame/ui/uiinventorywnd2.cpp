@@ -359,6 +359,10 @@ bool CUIInventoryWnd::ToBag(CUICellItem* itm, bool b_use_cursor_pos)
 		}break;
 		}
 
+		if ((old_owner == m_pUIBeltList || old_owner == m_pUIVestList) &&
+			iitem->IsModule() && !iitem->IsDropPouch())
+			UpdateCustomDraw();
+
 		return true;
 	}
 	return false;
@@ -394,6 +398,8 @@ bool CUIInventoryWnd::ToBelt(CUICellItem* itm, bool b_use_cursor_pos){
 		// обновляем статик веса в инвентаре
 		UpdateWeightVolume();
 		/*************************************************** added by Ray Twitty (aka Shadows) END ***************************************************/
+		if (iitem->IsModule() && !iitem->IsDropPouch() && old_owner != m_pUIVestList)
+			ReinitSlotList(iitem->GetSlotEnabled());
 
 		return								true;
 	}
@@ -432,6 +438,9 @@ bool CUIInventoryWnd::ToVest(CUICellItem* itm, bool b_use_cursor_pos) {
 		UpdateWeightVolume();
 		/*************************************************** added by Ray Twitty (aka Shadows) END ***************************************************/
 		//ReinitVestList();
+		if (iitem->IsModule() && !iitem->IsDropPouch() && old_owner != m_pUIBeltList)
+			ReinitSlotList(iitem->GetSlotEnabled());
+
 		return								true;
 	}
 	return									false;
@@ -573,25 +582,29 @@ bool CUIInventoryWnd::OnItemDbClick(CUICellItem* itm)
 
 	case iwBag:
 	{
-          // Пытаемся найти свободный слот из списка разрешенных.
-          // Если его нету, то принудительно займет первый слот,
-          // указанный в списке.
-          auto& slots = __item->GetSlots();
-          for (const auto& slot : slots) {
-            __item->SetSlot(slot);
-            if ( ToSlot( itm, false ) )
-              return true;
-          }
-          //__item->SetSlot( slots.size() ? slots[ 0 ]: NO_ACTIVE_SLOT );
-		  for (const auto& slot : slots) {
-			  if (m_pInv->IsSlotAllowed(slot)) {
-				  __item->SetSlot(slot);
-				  break;
-			  }
-		  }
-          if (!ToSlot(itm, false))
-            if (!ToVest(itm, false))
-				if(!ToBelt(itm, false))
+		// Пытаемся найти свободный слот из списка разрешенных.
+        // Если его нету, то принудительно займет первый слот,
+        // указанный в списке.
+        auto& slots = __item->GetSlots();
+        for (const auto& slot : slots) {
+			__item->SetSlot(slot);
+			if ( ToSlot( itm, false ) )
+				return true;
+		}
+		if (ToVest(itm, false))
+			return true;
+		if (ToBelt(itm, false))
+			return true;
+        //__item->SetSlot( slots.size() ? slots[ 0 ]: NO_ACTIVE_SLOT );
+		for (const auto& slot : slots) {
+			if (m_pInv->IsSlotAllowed(slot)) {
+				__item->SetSlot(slot);
+				break;
+			}
+		}
+		if (!ToSlot(itm, false))
+			//if (!ToVest(itm, false))
+			//	if (!ToBelt(itm, false))
 					ToSlot(itm, true);
 	}break;
 	};
@@ -656,5 +669,19 @@ void CUIInventoryWnd::ReinitVestList() {
 	for (const auto& item : m_pInv->m_vest) {
 		CUICellItem* itm = create_cell_item(item);
 		m_pUIVestList->SetItem(itm);
+	}
+}
+
+void CUIInventoryWnd::ReinitSlotList(u32 slot) {
+	auto slot_list = GetSlotList(slot);
+	if (!slot_list) return;
+
+	slot_list->ClearAll(true);
+	UpdateCustomDraw(false);
+
+	PIItem _itm = m_pInv->m_slots[slot].m_pIItem;
+	if (_itm) {
+		CUICellItem* itm = create_cell_item(_itm);
+		slot_list->SetItem(itm);
 	}
 }
