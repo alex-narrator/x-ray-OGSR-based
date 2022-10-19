@@ -24,6 +24,7 @@
 #include "CustomOutfit.h"
 #include "Warbelt.h"
 #include "Backpack.h"
+#include "Helmet.h"
 #include "Vest.h"
 #include "Torch.h"
 #include "NightVisionDevice.h"
@@ -342,6 +343,14 @@ void CActor::Load	(LPCSTR section )
 		m_HeavyBreathSnd.create	(pSettings->r_string(section,"heavy_breath_snd"), st_Effect,SOUND_TYPE_MONSTER_INJURING);
 		m_BloodSnd.create		(pSettings->r_string(section,"heavy_blood_snd"), st_Effect,SOUND_TYPE_MONSTER_INJURING);
 	}
+
+	if (pSettings->section_exist("actor_groggy")) {
+		LPCSTR concussion_sect = "actor_groggy";
+		m_fGroggyTreshold = pSettings->r_float(concussion_sect, "treshold");
+		sndGroggy.create(pSettings->r_string(concussion_sect, "snd"), st_Effect, sg_SourceType);
+		m_GroggyEffector = pSettings->r_string(concussion_sect, "effector");
+	}
+
 	if (this == Level().CurrentEntity()) //--#SM+#-- Сбрасываем режим рендеринга в дефолтный [reset some render flags]
 	{
 		g_pGamePersistent->m_pGShaderConstants.m_blender_mode.set(0.f, 0.f, 0.f, 0.f);
@@ -454,7 +463,7 @@ void	CActor::Hit							(SHit* pHDS)
 				S.set_volume(10.0f);
 				if(!m_sndShockEffector){
 					m_sndShockEffector = xr_new<SndShockEffector>();
-					m_sndShockEffector->Start(this, float(S.get_length_sec()*1000.0f), HDS.damage() );
+					m_sndShockEffector->Start(this, float(S.get_length_sec()*1000.0f), HDS.damage());
 				}
 			}
 			else
@@ -468,7 +477,29 @@ void	CActor::Hit							(SHit* pHDS)
 		};
 	}
 
-	
+	//groggy effect
+	if (this == Level().CurrentControlEntity() && IsHitToHead(pHDS) && 
+		!fis_zero(m_fGroggyTreshold) && HDS.damage() > m_fGroggyTreshold) {
+		switch (HDS.hit_type)
+		{
+		case ALife::eHitTypeFireWound:
+		case ALife::eHitTypeStrike:
+		case ALife::eHitTypePhysicStrike: 
+		{
+			CEffectorCam* ce = Actor()->Cameras().GetCamEffector((ECamEffectorType)effGroggy);
+			if (!ce && !!m_GroggyEffector) {
+				AddEffector(this, effGroggy, "effector_groggy", HDS.damage());
+			}
+			Fvector point = Position();
+			point.y += CameraHeight();
+			sndGroggy.play_at_pos(this, point);
+		}break;
+		default:
+			break;
+		}
+
+	}
+
 	//slow actor, only when he gets hit
 	hit_slowmo = conditions().HitSlowmo(pHDS);
 
@@ -624,8 +655,8 @@ void CActor::Die(CObject* who)
 				}
 			continue;
 			}else{
-				auto pOutfit = smart_cast<CCustomOutfit *> (item);
-				if (pOutfit) continue;
+				if (smart_cast<CCustomOutfit*>(item)) continue;
+				if (smart_cast<CHelmet*>(item)) continue;
 			}
 
 			if(item)
@@ -855,6 +886,10 @@ void CActor::UpdateCL	()
 	if (IsFocused()) {
 		trans.c.sub(Device.vCameraPosition);
 		g_player_hud->update(trans);
+	}
+
+	if (!sndGroggy._feedback()) {
+		RemoveEffector(this, effGroggy);
 	}
 }
 
@@ -1344,8 +1379,9 @@ void CActor::OnItemDropUpdate ()
 	CInventoryOwner::OnItemDropUpdate		();
 
 	for (const auto& item : inventory().m_all)
-		if( !item->IsInvalid() && !attached(item))
+		if (!item->IsInvalid() && !attached(item)) {
 			attach(item);
+		}
 }
 
 
@@ -1457,6 +1493,8 @@ void CActor::UpdateActiveItemEffects()
 						radiation_restore_speed *= (1.f - GetOutfit()->GetHitTypeProtection(ALife::eHitTypeRadiation));
 					if (GetBackpack() && inventory().InRuck(item)) //рюкзак захищає від радіації речей у рюкзаку
 						radiation_restore_speed *= (1.f - GetBackpack()->GetHitTypeProtection(ALife::eHitTypeRadiation));
+					if (GetHelmet() && inventory().InRuck(item)) //шолом захищає від радіації речей у рюкзаку
+						radiation_restore_speed *= (1.f - GetHelmet()->GetHitTypeProtection(ALife::eHitTypeRadiation));
 				}
 				m_ActorRestoreParam[i] += radiation_restore_speed;
 			}
@@ -1468,6 +1506,11 @@ void CActor::UpdateActiveItemEffects()
 			auto outfit = GetOutfit();
 			if (outfit && !fis_zero(outfit->GetCondition())) {
 				m_ActorRestoreParam[i] += outfit->GetItemEffect(CInventoryItem::ItemEffects(i));
+			}
+			//helmet
+			auto helmet = GetHelmet();
+			if (helmet && !fis_zero(helmet->GetCondition())) {
+				m_ActorRestoreParam[i] += helmet->GetItemEffect(CInventoryItem::ItemEffects(i));
 			}
 			//backpack
 			auto backpack = GetBackpack();
@@ -1487,28 +1530,14 @@ float	CActor::GetArtefactsProtection(float hit_power, ALife::EHitType hit_type) 
 	float _af_count				= 0.0f;
 
 	auto &placement = psActorFlags.test(AF_ARTEFACTS_FROM_ALL) ? inventory().m_all : inventory().m_belt;
-	for(TIItemContainer::iterator it = placement.begin();
-		placement.end() != it; ++it)
-	{
-		CArtefact*	artefact = smart_cast<CArtefact*>(*it);
+	for(const auto& item : placement){
+		CArtefact*	artefact = smart_cast<CArtefact*>(item);
 		if(artefact && !fis_zero(artefact->GetHitTypeProtection(hit_type)) && !fis_zero(artefact->GetCondition())){
 				res_hit_power_k	+= 1.0f - artefact->GetHitTypeProtection(hit_type);
 				_af_count += 1.0f;
 		}
 	}
-	//// учет иммунитета от шлема
-	//PIItem helm = inventory().m_slots[HELMET_SLOT].m_pIItem;
-	//if (helm) {
-	//	CArtefact*	helmet = smart_cast<CArtefact*>(helm);
-	//	if (helmet && !fis_zero(helmet->GetHitTypeProtection(hit_type)) && !fis_zero(helmet->GetCondition()))
-	//	{
-	//			res_hit_power_k += 1.0f - helmet->GetHitTypeProtection(hit_type);
-	//			_af_count += 1.0f;
-	//	}
-	//}
-
 	res_hit_power_k -= _af_count;
-
 	return res_hit_power_k > 0 ? res_hit_power_k * hit_power : 0;
 }
 
@@ -1625,12 +1654,14 @@ bool CActor::use_center_to_aim			() const
 bool CActor::can_attach			(const CInventoryItem *inventory_item) const
 {
 	const CAttachableItem	*item = smart_cast<const CAttachableItem*>(inventory_item);
-	if (!item || /*!item->enabled() ||*/ !item->can_be_attached())
+	if (!item || /*!item->enabled() ||*/ !item->can_be_attached()) {
 		return			(false);
+	}
 
 	//можно ли присоединять объекты такого типа
-	if( m_attach_item_sections.end() == std::find(m_attach_item_sections.begin(),m_attach_item_sections.end(),inventory_item->object().cNameSect()) )
+	if (m_attach_item_sections.end() == std::find(m_attach_item_sections.begin(), m_attach_item_sections.end(), inventory_item->object().cNameSect())) {
 		return false;
+	}
 
 	//если уже есть присоединненый объет такого типа 
 	if(attached(inventory_item->object().cNameSect()))
@@ -1678,38 +1709,37 @@ bool CActor::is_on_ground()
 	return (character_physics_support()->movement()->Environment() != CPHMovementControl::peInAir);
 }
 
-CCustomOutfit* CActor::GetOutfit() const
-{
+CCustomOutfit* CActor::GetOutfit() const{
 	PIItem _of	= inventory().m_slots[OUTFIT_SLOT].m_pIItem;
 	return _of?smart_cast<CCustomOutfit*>(_of):NULL;
 }
 
-CWarbelt* CActor::GetWarbelt() const
-{
+CWarbelt* CActor::GetWarbelt() const{
 	PIItem _wb = inventory().m_slots[WARBELT_SLOT].m_pIItem;
 	return _wb ? smart_cast<CWarbelt*>(_wb) : NULL;
 }
 
-CBackpack* CActor::GetBackpack() const
-{
+CBackpack* CActor::GetBackpack() const{
 	PIItem _bp = inventory().m_slots[BACKPACK_SLOT].m_pIItem;
 	return _bp ? smart_cast<CBackpack*>(_bp) : NULL;
 }
 
-CVest* CActor::GetVest() const
-{
+CHelmet* CActor::GetHelmet() const{
+	PIItem _hl = inventory().m_slots[HELMET_SLOT].m_pIItem;
+	return _hl ? smart_cast<CHelmet*>(_hl) : NULL;
+}
+
+CVest* CActor::GetVest() const{
 	PIItem _v = inventory().m_slots[VEST_SLOT].m_pIItem;
 	return _v ? smart_cast<CVest*>(_v) : NULL;
 }
 
-CTorch* CActor::GetTorch() const
-{
+CTorch* CActor::GetTorch() const{
 	PIItem _tc = inventory().m_slots[ON_HEAD_SLOT].m_pIItem;
 	return _tc ? smart_cast<CTorch*>(_tc) : NULL;
 }
 
-CNightVisionDevice* CActor::GetNightVisionDevice() const
-{
+CNightVisionDevice* CActor::GetNightVisionDevice() const{
 	PIItem _nv = inventory().m_slots[ON_HEAD_SLOT].m_pIItem;
 	return _nv ? smart_cast<CNightVisionDevice*>(_nv) : NULL;
 }
@@ -1890,7 +1920,7 @@ void CActor::TryToBlockSprint(bool block)
 		mstate_wishful &= ~mcSprint;
 }
 
-bool CActor::IsHitToBackPack(SHit* pHDS){
+bool CActor::IsHitToBackPack(SHit* pHDS) const {
 	if (pHDS->type() == ALife::eHitTypeRadiation) {
 //		Msg("! RADIATION HITTED FOR BACKPACK");
 		return true;
@@ -1910,6 +1940,13 @@ bool CActor::IsHitToBackPack(SHit* pHDS){
 		return true;
 	}
 	return false;
+}
+
+bool CActor::IsHitToHead(SHit* pHDS) const {
+	if (pHDS->type() == ALife::eHitTypeRadiation)
+		return true;
+	auto pK = smart_cast<IKinematics*>(Visual());
+	return is_bone_head(*pK, pHDS->bone());
 }
 
 #include "SimpleDetectorSHOC.h"
@@ -1944,12 +1981,18 @@ void CActor::DrawHUDMasks() {
 	auto pWeapon = smart_cast<CWeapon*>(inventory().ActiveItem());
 	if (pWeapon && pWeapon->IsZoomed() && !pWeapon->show_indicators())
 		return;
-	if (GetNightVisionDevice()) GetNightVisionDevice()->DrawHUDMask();
-	if (GetOutfit()) GetOutfit()->DrawHUDMask();
+	if (GetNightVisionDevice()) 
+		GetNightVisionDevice()->DrawHUDMask();
+	if (GetOutfit()) 
+		GetOutfit()->DrawHUDMask();
+	if (GetHelmet()) 
+		GetHelmet()->DrawHUDMask();
 }
 #include "../xr_3da/XR_IOConsole.h"
 void CActor::UpdateVisorEfects() {
-	bool has_visor = GetOutfit() && GetOutfit()->m_bIsHelmetBuiltIn;
+	bool has_visor = 
+		GetOutfit() && GetOutfit()->HasVisor() ||
+		GetHelmet() && GetHelmet()->HasVisor();
 	bool b_enable_effect = eacFirstEye == cam_active && g_Alive() && has_visor;
 	string128 _buff{};
 	sprintf(_buff, "r2_rain_drops_control %d", b_enable_effect);

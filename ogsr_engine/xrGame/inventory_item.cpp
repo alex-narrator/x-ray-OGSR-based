@@ -522,7 +522,7 @@ void CInventoryItem::load(IReader &packet)
 
     if ( m_eItemPlace == eItemPlaceSlot )
 		if ( ai().get_alife()->header().version() < 4 ) {
-			auto slots = GetSlots();
+			auto &slots = GetSlots();
             SetSlot( slots.size() ? slots[ 0 ] : NO_ACTIVE_SLOT );
 		}
 		else
@@ -623,8 +623,8 @@ void CInventoryItem::UpdateXForm	()
 	Fmatrix& mL			= V->LL_GetTransform(u16(boneL));
 	Fmatrix& mR			= V->LL_GetTransform(u16(boneR));
 	// Calculate
-	Fmatrix			mRes;
-	Fvector			R,D,N;
+	Fmatrix			mRes{};
+	Fvector			R{}, D{}, N{};
 	D.sub			(mL.c,mR.c);	D.normalize_safe();
 
 	if(fis_zero(D.magnitude()))

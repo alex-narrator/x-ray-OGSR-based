@@ -8,6 +8,7 @@
 #include "Artifact.h"
 #include "CustomOutfit.h"
 #include "Backpack.h"
+#include "Helmet.h"
 #include "../string_table.h"
 
 CUIOutfitInfo::CUIOutfitInfo()
@@ -110,8 +111,9 @@ void CUIOutfitInfo::Update()
 {
 	string128 _buff;
 
-	auto outfit = Actor()->GetOutfit();
-	auto backpack = Actor()->GetBackpack();
+	auto outfit		= Actor()->GetOutfit();
+	auto backpack	= Actor()->GetBackpack();
+	auto helmet		= Actor()->GetHelmet();
 
 	m_listWnd->Clear(false); // clear existing items and do not scroll to top
 
@@ -132,6 +134,8 @@ void CUIOutfitInfo::Update()
 					_val = outfit->GetItemEffect(CInventoryItem::ItemEffects(i));
 				if (backpack)
 					_val += backpack->GetItemEffect(CInventoryItem::ItemEffects(i));
+				if (helmet)
+					_val += helmet->GetItemEffect(CInventoryItem::ItemEffects(i));
 
 				if (!psActorFlags.is(AF_ARTEFACT_DETECTOR_CHECK) || Actor()->HasDetectorWorkable()) {
 					_val += Actor()->GetTotalArtefactsEffect(i);
@@ -140,18 +144,21 @@ void CUIOutfitInfo::Update()
 		}
 		else 
 		{
-			if (outfit)
+			if (outfit) {
 				_val = outfit->GetHitTypeProtection(ALife::EHitType(i - _hit_type_protection_index));
+			}
+			if (backpack)
+				_val += backpack->GetHitTypeProtection(ALife::EHitType(i - _hit_type_protection_index));
+			if (helmet)
+				_val += helmet->GetHitTypeProtection(ALife::EHitType(i - _hit_type_protection_index));
 
 			if (!psActorFlags.is(AF_ARTEFACT_DETECTOR_CHECK) || Actor()->HasDetectorWorkable()) {
 				_val += (1.0f - Actor()->GetArtefactsProtection(1.0f, ALife::EHitType(i - _hit_type_protection_index)));
 			}
 		}
 
-		if (fis_zero(_val))
-		{
+		if (fis_zero(_val)) 
 			continue;
-		}
 
 		LPCSTR _sn = "%";
 		_val *= 100.0f;

@@ -31,7 +31,7 @@ void CBackpack::HitItemsInBackPack(SHit* pHDS, bool hit_random_item){
 	auto& inv = m_pCurrentInventory;
 	if (inv){
 		auto pActor = smart_cast<CActor*> (inv->GetOwner());
-		if (pActor && pActor->GetBackpack() == this && pActor->IsHitToBackPack(pHDS)){
+		if (pActor && pActor->GetBackpack() == this/* && pActor->IsHitToBackPack(pHDS)*/){
 			//Msg("pHDS power: [%.2f]", pHDS->power);
 			pHDS->power *= (1.0f - GetHitTypeProtection(pHDS->type()));
 			//Msg("new_hit power: [%.2f]", pHDS->power);
@@ -56,7 +56,6 @@ void CBackpack::HitItemsInBackPack(SHit* pHDS, bool hit_random_item){
 bool  CBackpack::can_be_attached() const{
 	const CActor* pA = smart_cast<const CActor*>(H_Parent());
 	return pA ? (pA->GetBackpack() == this) : true;
-	return true;
 }
 
 float CBackpack::GetAdditionalVolume() const {

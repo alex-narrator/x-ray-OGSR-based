@@ -48,7 +48,7 @@ void SBoneProtections::reload(const shared_str& bone_sect, IKinematics* kinemati
 		float Armour = (float)atof( _GetItem(i.second.c_str(), 1, buffer) );
 		BOOL BonePassBullet = (BOOL) (atof( _GetItem(i.second.c_str(), 2, buffer) )>0.5f);
 		
-		BoneProtection	BP;
+		BoneProtection	BP{};
 		BP.koeff = Koeff;
 		BP.armour = Armour;
 		BP.BonePassBullet = BonePassBullet;

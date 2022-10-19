@@ -29,6 +29,8 @@ class CPurchaseList;
 class CWeapon;
 class CCustomOutfit;
 class CBackpack;
+class CHelmet;
+struct SHit;
 
 class CInventoryOwner : public CAttachmentOwner {							
 	friend class CInventoryScript;
@@ -146,8 +148,12 @@ public:
 
 	virtual bool IsVolumeUnlimited			() const { return true; };
 
-	virtual CCustomOutfit*			GetOutfit()	const {return NULL;};
-	virtual CBackpack*				GetBackpack() const {return NULL;};
+	virtual CCustomOutfit*					GetOutfit		() const {return nullptr;};
+	virtual CBackpack*						GetBackpack		() const {return nullptr;};
+	virtual CHelmet*						GetHelmet		() const {return nullptr;};
+
+	virtual	bool							IsHitToBackPack	(SHit* pHDS) const { return false; };
+	virtual	bool							IsHitToHead	(SHit* pHDS) const { return false; };
 
 	//////////////////////////////////////////////////////////////////////////
 	//игровые характеристики персонажа

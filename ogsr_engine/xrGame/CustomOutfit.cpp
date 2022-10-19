@@ -16,15 +16,12 @@
 #include "player_hud.h"
 #include "xrserver_objects_alife_items.h"
 
-CCustomOutfit::CCustomOutfit()
-{
-	SetSlot( OUTFIT_SLOT );
-
+CCustomOutfit::CCustomOutfit(){
+	SetSlot(OUTFIT_SLOT);
 	m_boneProtection = xr_new<SBoneProtections>();
 }
 
-CCustomOutfit::~CCustomOutfit() 
-{
+CCustomOutfit::~CCustomOutfit() {
 	xr_delete(m_boneProtection);
 	xr_delete(m_UIVisor);
 }

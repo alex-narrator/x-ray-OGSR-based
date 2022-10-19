@@ -36,7 +36,7 @@ pickup_info_radius		= 5	;3
 ef_creature_type		= 17						; option for evaluation functions
 
 ; attach params
-attachable_items		= device_torch,attachable_item,hand_radio,backpack,device_night_vision
+attachable_items		= device_torch,attachable_item,hand_radio,device_night_vision,backpack,backpack_small,helm_respirator,helm_hardhat,helm_protective,helm_tactic,helm_battle,good_psy_helmet,bad_psy_helmet
 
 ph_box0_center = 0.0,  0.9,   0.0
 ph_box0_size   = 0.35, 0.9,   0.35
@@ -70,7 +70,7 @@ hit_probability_gd_novice		= 0.20
 hit_probability_gd_stalker		= 0.30
 hit_probability_gd_veteran		= 0.40
 hit_probability_gd_master		= 0.50
-hit_sounds					= actor_hit_snds
+hit_sounds						= actor_hit_snds
 ;actor condition
 
 immunities_sect				= actor_immunities_gd_master
@@ -314,6 +314,10 @@ back_r_strafe_yaw   = 45
 l_strafe_yaw		= 0
 r_strafe_yaw		= 0
 
+[actor_groggy]
+treshold 	= 0.1
+snd 		= affects\tinnitus3a
+effector 	= effector_concussion
 
 [actor_hit_snds]
 burn			=actor\pain1,actor\pain2,actor\pain3;  ,actor\hurt4

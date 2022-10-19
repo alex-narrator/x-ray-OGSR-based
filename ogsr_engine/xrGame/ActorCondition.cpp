@@ -98,7 +98,7 @@ void CActorCondition::LoadCondition(LPCSTR entity_section)
 	m_fPowerLeakSpeed			= pSettings->r_float(section,"max_power_leak_speed");
 	
 	m_fV_Alcohol				= pSettings->r_float(section,"alcohol_v");
-	m_fV_Power = READ_IF_EXISTS(pSettings, r_float, section, "power_v", 0.0f);
+	m_fV_Power					= READ_IF_EXISTS(pSettings, r_float, section, "power_v", 0.0f);
 
 	m_fV_Satiety				= pSettings->r_float(section,"satiety_v");		
 	m_fV_SatietyPower			= pSettings->r_float(section,"satiety_power_v");

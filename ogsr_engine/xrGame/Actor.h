@@ -24,6 +24,7 @@ class CActorCondition;
 class CCustomOutfit;
 class CWarbelt;
 class CBackpack;
+class CHelmet;
 class CVest;
 class CTorch;
 class CNightVisionDevice;
@@ -242,6 +243,10 @@ protected:
 	SndShockEffector*		m_sndShockEffector;
 	xr_vector<ref_sound>	sndHit[ALife::eHitTypeMax];
 	ref_sound				sndDie[SND_DIE_COUNT];
+
+	float					m_fGroggyTreshold{};
+	ref_sound				sndGroggy{};
+	shared_str				m_GroggyEffector{};
 
 
 	float					m_fLandingTime;
@@ -645,6 +650,7 @@ public:
 		virtual CCustomOutfit*			GetOutfit	() const;
 		virtual CWarbelt*				GetWarbelt	() const;
 		virtual CBackpack*				GetBackpack	() const;
+		virtual CHelmet*				GetHelmet	() const;
 		virtual CVest*					GetVest		() const;
 		virtual CTorch*					GetTorch	() const;
 		virtual CNightVisionDevice*		GetNightVisionDevice() const;
@@ -766,7 +772,8 @@ public:
 
 			void	TryToBlockSprint		(bool block);
 			//визначаємо чи треба передати хіт до рюкзака та його вмісту
-			bool	IsHitToBackPack			(SHit* pHDS);
+	virtual	bool	IsHitToBackPack			(SHit* pHDS) const;
+	virtual	bool	IsHitToHead				(SHit* pHDS) const;
 
 			bool	HasDetectorWorkable		();
 			bool	HasPDAWorkable			();

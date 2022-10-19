@@ -3,6 +3,7 @@
 #include "inventoryowner.h"
 #include "customoutfit.h"
 #include "Backpack.h"
+#include "Helmet.h"
 #include "inventory.h"
 #include "wound.h"
 #include "level.h"
@@ -292,33 +293,61 @@ float CEntityCondition::HitOutfitEffect(SHit* pHDS)
 
 	float new_hit_power				= pHDS->damage();
 
-	auto pOutfit = pInvOwner->GetOutfit();
-	if (pOutfit)
-	{
-		if (pHDS->hit_type == ALife::eHitTypeFireWound)
-			new_hit_power = pOutfit->HitThruArmour(pHDS);
-		else
-			new_hit_power *= (1.0f - pOutfit->GetHitTypeProtection(pHDS->type()));
+	auto pOutfit	= pInvOwner->GetOutfit();
+	auto pHelmet	= pInvOwner->GetHelmet();
+	auto pBackPack	= pInvOwner->GetBackpack();
 
-		//увеличить изношенность костюма
-		pOutfit->Hit(pHDS);
+	if (pInvOwner->IsHitToHead(pHDS)) {
+		if (pHelmet) {
+			if (pHDS->hit_type == ALife::eHitTypeFireWound)
+				new_hit_power = pHelmet->HitThruArmour(pHDS);
+			else
+				new_hit_power *= (1.0f - pHelmet->GetHitTypeProtection(pHDS->type()));
+			pHelmet->Hit(pHDS);
+		} 
+		else if (pOutfit && pOutfit->m_bIsHelmetBuiltIn) {
+			if (pHDS->hit_type == ALife::eHitTypeFireWound)
+				new_hit_power = pOutfit->HitThruArmour(pHDS);
+			else
+				new_hit_power *= (1.0f - pOutfit->GetHitTypeProtection(pHDS->type()));
+			pOutfit->Hit(pHDS);
+		}
+	} 
+	else {
+		if (pBackPack && pInvOwner->IsHitToBackPack(pHDS)) {
+			new_hit_power *= (1.0f - pBackPack->GetHitTypeProtection(pHDS->type()));
+			pBackPack->Hit(pHDS);
+			pHDS->power = new_hit_power; //рюкзак може захистити костюм від пошкоджень
+		}
+		if (pOutfit) {
+			if (pHDS->hit_type == ALife::eHitTypeFireWound)
+				new_hit_power = pOutfit->HitThruArmour(pHDS);
+			else
+				new_hit_power *= (1.0f - pOutfit->GetHitTypeProtection(pHDS->type()));
+			pOutfit->Hit(pHDS);
+		}
 	}
 
-	auto pBackPack = pInvOwner->GetBackpack();
-	if (pBackPack) pBackPack->Hit(pHDS);
-
-	return							new_hit_power;
+	return new_hit_power;
 }
 
 float CEntityCondition::HitPowerEffect(float power_loss)
 {
+	float new_power_loss = power_loss;
+
 	CInventoryOwner* pInvOwner		 = smart_cast<CInventoryOwner*>(m_object);
-	if(!pInvOwner)					 return power_loss;
+	if(!pInvOwner)					 return new_power_loss;
 
 	CCustomOutfit* pOutfit			= (CCustomOutfit*)pInvOwner->inventory().m_slots[OUTFIT_SLOT].m_pIItem;
-	if(!pOutfit)					return power_loss;
+//	if(!pOutfit)					return power_loss;
 
-	float new_power_loss			= power_loss*pOutfit->GetPowerLoss();
+//	float new_power_loss			= power_loss*pOutfit->GetPowerLoss();
+	if(pOutfit)
+		new_power_loss *= pOutfit->GetPowerLoss();
+
+	auto pHelmet = pInvOwner->GetHelmet();
+	if(pHelmet)
+		new_power_loss *= pHelmet->GetPowerLoss();
 
 	return							new_power_loss;
 }

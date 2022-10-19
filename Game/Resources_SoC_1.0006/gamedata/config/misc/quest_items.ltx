@@ -267,12 +267,12 @@ cost				= 0
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Yantar
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-[good_psy_helmet]:identity_immunities
+[good_psy_helmet]:helmet
 GroupControlSection	= spawn_group
 discovery_dependency = 
 $spawn 				= "devices\quest_items\good_psy_helmet"
 ;$prefetch 			= 32
-class				= II_ATTCH
+class				= EQ_HELMT
 cform				= skeleton
 visual				= equipments\item_psi_helmet.ogf
 radius				= 1
@@ -290,14 +290,17 @@ inv_grid_x         = 2
 inv_grid_y         = 2
 icon_group = 2
 cost				= 1000
+
+attach_angle_offset = -3.092, -0.001, -1.592
+attach_position_offset = -0.001, -0.004, -0.004
 slot = 11
 
-[bad_psy_helmet]:identity_immunities
+[bad_psy_helmet]:helmet
 GroupControlSection	= spawn_group
 discovery_dependency = 
 $spawn 				= "devices\quest_items\bad_psy_helmet"
 ;$prefetch 			= 32
-class				= II_ATTCH
+class				= EQ_HELMT
 cform				= skeleton
 visual				= equipments\item_psi_helmet.ogf
 radius				= 1
@@ -315,6 +318,9 @@ inv_grid_x         = 2
 inv_grid_y         = 2
 icon_group = 2
 cost				= 1000
+
+attach_angle_offset = -3.092, -0.001, -1.592
+attach_position_offset = -0.001, -0.004, -0.004
 slot = 11
 
 

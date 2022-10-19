@@ -9,7 +9,6 @@
 #include "../inventory_item.h"
 #include "../Artifact.h"
 #include "../CustomOutfit.h"
-#include "../Backpack.h"
 #include "../Actor.h"
 #include "../ActorCondition.h"
 
@@ -112,7 +111,7 @@ void CUIArtefactParams::SetInfo(CInventoryItem* obj)
 {
 	if (!obj) return;
 
-	auto artefact	= smart_cast<CArtefact*>		(obj);
+	auto artefact	= smart_cast<CArtefact*>(obj);
 
 //	R_ASSERT2(art, "object is not CArtefact");
 	CActor *pActor = Actor();
@@ -135,7 +134,7 @@ void CUIArtefactParams::SetInfo(CInventoryItem* obj)
 
 		float					_val{};
 
-		if(i< _hit_type_protection_index){
+		if(i < _hit_type_protection_index){
 			_val = obj->GetItemEffect(CInventoryItem::ItemEffects(i));
 		}
 		else{

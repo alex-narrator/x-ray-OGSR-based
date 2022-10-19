@@ -14,7 +14,7 @@ public:
 	virtual void				Hit					(SHit* pHDS);
 			void				HitItemsInBackPack	(SHit* pHDS, bool hit_random_item);
 
-	virtual bool				can_be_attached		() const;
+	virtual bool				can_be_attached		() const override;
 	virtual float				GetAdditionalVolume	() const;
 
 protected:
