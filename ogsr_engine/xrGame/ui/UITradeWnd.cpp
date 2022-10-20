@@ -65,6 +65,7 @@ struct CUITradeInternal{
 	//кнопки
 	CUI3tButton			UIPerformTradeButton;
 	CUI3tButton			UIToTalkButton;
+	CUI3tButton			UIPerformDonationButton;
 
 	//информация о персонажах 
 	CUIStatic			UIOurIcon;
@@ -183,6 +184,9 @@ void CUITradeWnd::Init()
 
 	AttachChild							(&m_uidata->UIToTalkButton);
 	xml_init.Init3tButton				(uiXml, "button", 1, &m_uidata->UIToTalkButton);
+
+	AttachChild							(&m_uidata->UIPerformDonationButton);
+	xml_init.Init3tButton				(uiXml, "button", 2, &m_uidata->UIPerformDonationButton);
 
 	m_pUIPropertiesBox					= xr_new<CUIPropertiesBox>(); m_pUIPropertiesBox->SetAutoDelete(true);
 	AttachChild(m_pUIPropertiesBox);
@@ -401,16 +405,16 @@ void CUITradeWnd::ActivatePropertiesBox()
 
 void CUITradeWnd::SendMessage(CUIWindow *pWnd, s16 msg, void *pData)
 {
-	if(pWnd == &m_uidata->UIToTalkButton && msg == BUTTON_CLICKED)
-	{
+	if(pWnd == &m_uidata->UIToTalkButton && msg == BUTTON_CLICKED){
 		SwitchToTalk();
 	}
-	else if(pWnd == &m_uidata->UIPerformTradeButton && msg == BUTTON_CLICKED)
-	{
+	else if(pWnd == &m_uidata->UIPerformTradeButton && msg == BUTTON_CLICKED){
 		PerformTrade();
 	}
-	else if (pWnd == m_pUIPropertiesBox && msg == PROPERTY_CLICKED)
-	{
+	else if (pWnd == &m_uidata->UIPerformDonationButton && msg == BUTTON_CLICKED) {
+		PerformDonation();
+	}
+	else if (pWnd == m_pUIPropertiesBox && msg == PROPERTY_CLICKED){
 		if (m_pUIPropertiesBox->GetClickedItem())
 		{
 			switch (m_pUIPropertiesBox->GetClickedItem()->GetTAG())
@@ -540,6 +544,7 @@ void CUITradeWnd::Show()
 
 	if (auto pActor = Actor())
 		if (psActorFlags.test(AF_AMMO_FROM_BELT)) Actor()->SetRuckAmmoPlacement(true); //установим флаг перезарядки из рюкзака
+	m_uidata->UIPerformDonationButton.SetVisible(m_pOthersInvOwner->CanTakeDonations());
 	PlaySnd(eInvSndOpen);
 }
 
@@ -689,7 +694,6 @@ u32 CUITradeWnd::CalcItemsPrice(CUIDragDropListEx* pList, CTrade* pTrade, bool b
 
 void CUITradeWnd::PerformTrade()
 {
-
 	if (m_uidata->UIOurTradeList.ItemsCount()==0 && m_uidata->UIOthersTradeList.ItemsCount()==0) 
 		return;
 
@@ -701,16 +705,15 @@ void CUITradeWnd::PerformTrade()
 	our_money				+= delta_price;
 	others_money			-= delta_price;
 
-	if(our_money>=0 && others_money>=0 && (m_iOurTradePrice>=0 || m_iOthersTradePrice>0))
-	{
+	if(our_money>=0 && others_money>=0 && (m_iOurTradePrice>=0 || m_iOthersTradePrice>0)){
 		m_pOthersTrade->OnPerformTrade(m_iOthersTradePrice, m_iOurTradePrice);
 		
 		TransferItems		(&m_uidata->UIOurTradeList,		&m_uidata->UIOthersBagList, m_pOthersTrade,	true);
 		TransferItems		(&m_uidata->UIOthersTradeList,	&m_uidata->UIOurBagList,	m_pOthersTrade,	false);
-                if ( others_zero_trade ) {
-                  m_pOthersTrade->pThis.inv_owner->set_money( others_money, true );
-                  m_pOthersTrade->pPartner.inv_owner->set_money( our_money, true );
-                }
+		if ( others_zero_trade ) {
+			m_pOthersTrade->pThis.inv_owner->set_money( others_money, true );
+			m_pOthersTrade->pPartner.inv_owner->set_money( our_money, true );
+		}
 	}else
 	{
 		string256				deal_refuse_text; //строка с текстом сообщения-отказа при невозмжности совершить торговую сделку
@@ -817,8 +820,7 @@ void CUITradeWnd::TransferItems(CUIDragDropListEx* pSellList,
 								CTrade* pTrade,
 								bool bBuying)
 {
-	while(pSellList->ItemsCount())
-	{
+	while(pSellList->ItemsCount()){
 		CUICellItem* itm	=	pSellList->RemoveItem(pSellList->GetItemIdx(0),false);
 		auto InvItm = (PIItem)itm->m_pData;
 		if (!bBuying)		InvItm->OnMoveOut(InvItm->m_eItemPlace);
@@ -828,10 +830,10 @@ void CUITradeWnd::TransferItems(CUIDragDropListEx* pSellList,
 		pBuyList->SetItem		(itm);
 	}
 
-        if ( !others_zero_trade ) {
-          pTrade->pThis.inv_owner->set_money ( pTrade->pThis.inv_owner->get_money(), true );
-          pTrade->pPartner.inv_owner->set_money( pTrade->pPartner.inv_owner->get_money(), true );
-        }
+	if ( !others_zero_trade ) {
+		pTrade->pThis.inv_owner->set_money ( pTrade->pThis.inv_owner->get_money(), true );
+		pTrade->pPartner.inv_owner->set_money( pTrade->pPartner.inv_owner->get_money(), true );
+	}
 }
 
 void CUITradeWnd::UpdateLists(EListType mode)
@@ -1082,4 +1084,24 @@ void CUITradeWnd::DropItems(bool b_all)
 
 	SetCurrentItem(NULL);
 	PlaySnd(eInvDropItem);
+}
+
+void CUITradeWnd::PerformDonation() {
+	if (m_uidata->UIOurTradeList.ItemsCount() == 0 || !m_pOthersInvOwner->CanTakeDonations())
+		return;
+
+	auto pSellList	= &m_uidata->UIOurTradeList;
+	auto pBuyList	= &m_uidata->UIOthersTradeList;
+
+	while (pSellList->ItemsCount()) {
+		CUICellItem* itm = pSellList->RemoveItem(pSellList->GetItemIdx(0), false);
+		auto InvItm = (PIItem)itm->m_pData;
+		InvItm->OnMoveOut(InvItm->m_eItemPlace);
+		InvItm->m_highlight_equipped = false; //Убираем подсветку после продажи предмета
+		itm->m_select_equipped = false;
+		m_pOthersTrade->TransferItem(InvItm, true, false);
+		pBuyList->SetItem(itm);
+	}
+
+	SetCurrentItem(NULL);
 }

@@ -61,14 +61,13 @@ bool CTrade::CanTrade()
 	return true;
 }
 
-void CTrade::TransferItem(CInventoryItem* pItem, bool bBuying, bool change_money )
+void CTrade::TransferItem(CInventoryItem* pItem, bool bBuying, bool change_money)
 {
 	// сумма сделки учитывая ценовой коэффициент
 	// актер цену не говорит никогда, все делают за него
 	u32 dwTransferMoney					= GetItemPrice(pItem, bBuying);
 
-	if(bBuying)
-	{
+	if(bBuying){
 		pPartner.inv_owner->on_before_sell	(pItem);
 		pThis.inv_owner->on_before_buy		(pItem);
 	}else
@@ -88,24 +87,24 @@ void CTrade::TransferItem(CInventoryItem* pItem, bool bBuying, bool change_money
 	P.w_u16					(pItem->object().ID());
 	O1->u_EventSend			(P);
 
-        if ( change_money ) {
-          if ( bBuying )
-		pPartner.inv_owner->set_money( pPartner.inv_owner->get_money() + dwTransferMoney, false );
-          else
-		pThis.inv_owner->set_money( pThis.inv_owner->get_money() + dwTransferMoney, false );
-        }
+	if (change_money) {
+		if (bBuying)
+			pPartner.inv_owner->set_money( pPartner.inv_owner->get_money() + dwTransferMoney, false );
+		else
+			pThis.inv_owner->set_money( pThis.inv_owner->get_money() + dwTransferMoney, false );
+	}
 
 	// взять у партнера
 	O2->u_EventGen			(P,GE_TRADE_BUY,O2->ID());
 	P.w_u16					(pItem->object().ID());
 	O2->u_EventSend			(P);
 
-        if ( change_money ) {
-          if ( bBuying )
-		pThis.inv_owner->set_money( pThis.inv_owner->get_money() - dwTransferMoney, false );
-	else
-		pPartner.inv_owner->set_money( pPartner.inv_owner->get_money() - dwTransferMoney, false );
-        }
+	if (change_money) {
+		if (bBuying)
+			pThis.inv_owner->set_money( pThis.inv_owner->get_money() - dwTransferMoney, false );
+		else
+			pPartner.inv_owner->set_money( pPartner.inv_owner->get_money() - dwTransferMoney, false );
+	}
 
 
 	CAI_Trader* pTrader		= NULL;
@@ -124,6 +123,15 @@ void CTrade::TransferItem(CInventoryItem* pItem, bool bBuying, bool change_money
 	{
 		bool bDir = (pThis.type!=TT_ACTOR) && bBuying;
 		Actor()->callback	(GameObject::eTradeSellBuyItem)(pItem->object().lua_game_object(), bDir, dwTransferMoney);
+
+		if (!change_money && pThis.inv_owner->CanTakeDonations()) {
+			int delta_goodwill = dwTransferMoney;//change_money ? dwTransferMoney : pItem->Cost();
+			float goodwill_k = pThis.inv_owner->GetDonateGoodwillK();
+			delta_goodwill *= goodwill_k;
+			RELATION_REGISTRY().ChangeGoodwill(pThis.inv_owner->object_id(), pPartner.inv_owner->object_id(), iFloor(delta_goodwill));
+			//Msg("%s pPartner: [%s] pThis: [%s] goodwill changed on [%d], donated item [%s], goodwill_k [%.4f]",__FUNCTION__,
+			//	pPartner.inv_owner->Name(), pThis.inv_owner->Name(), iFloor(delta_goodwill), pItem->Name(), goodwill_k);
+		}
 	}
 }
 

@@ -77,17 +77,9 @@ void CInventoryOwner::Load					(LPCSTR section)
 	if (pSettings->line_exist(section, "inv_max_volume"))
 		m_inventory->SetMaxVolume(pSettings->r_float(section, "inv_max_volume"));
 
-	if(pSettings->line_exist(section, "need_osoznanie_mode"))
-	{
+	if(pSettings->line_exist(section, "need_osoznanie_mode")){
 		m_need_osoznanie_mode=pSettings->r_bool(section,"need_osoznanie_mode");
 	}
-	else
-	{
-		m_need_osoznanie_mode=FALSE;
-	}
-	//
-	u_BarterMoney = READ_IF_EXISTS(pSettings, r_u32, section, "barter_money", 100000); //отдельный денежный фонд NPC в режиме бартера
-	//
 }
 
 void CInventoryOwner::reload				(LPCSTR section)

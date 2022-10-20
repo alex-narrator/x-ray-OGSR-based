@@ -720,4 +720,8 @@
 	<string id="ui_st_no_power">
 		<text>battery low</text>
 	</string>
+	
+	<string id="ui_st_donate">
+		<text>Подарувати [D]</text>
+	</string>
 </string_table>

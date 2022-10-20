@@ -14,8 +14,8 @@ class CEntityAlive;
 
 //////////////////////////////////////////////////////////////////////////
 
-#define GAME_RELATIONS_SECT "game_relations"
-#define ACTIONS_POINTS_SECT "action_points"
+constexpr auto GAME_RELATIONS_SECT = "game_relations";
+constexpr auto ACTIONS_POINTS_SECT = "action_points";
 
 //////////////////////////////////////////////////////////////////////////
 

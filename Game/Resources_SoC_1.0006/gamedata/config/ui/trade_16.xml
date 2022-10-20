@@ -19,13 +19,17 @@
 		<texture>ui\ui_bottom_background</texture>
 	</bottom_background>
 
-	<button x="360" y="705" width="157" height="48"  hR="255" hB="83" hG="179" highlight_text="1" accel = "kT">
+	<button x="345" y="695" width="110" height="40"  hR="255" hB="83" hG="179" highlight_text="1" accel = "kT" stretch="1">
 		<texture>ui_button_main01</texture>
 		<text font="graffiti22" r="238" g="153" b="26" align="c">ui_st_trade</text>
 	</button>
-	<button x="518" y="705" width="157" height="48"  hR="255" hB="83" hG="179" highlight_text="1" accel = "kQ">
+	<button x="580" y="695" width="110" height="40"  hR="255" hB="83" hG="179" highlight_text="1" accel = "kQ" stretch="1">
 		<texture>ui_button_main01</texture>
 		<text font="graffiti22" r="238" g="153" b="26" align="c">ui_st_leave</text>
+	</button>
+	<button x="460" y="695" width="115" height="40"  hR="255" hB="83" hG="179" highlight_text="1" accel = "kD" stretch="1">>
+		<texture>ui_button_main01</texture>
+		<text font="graffiti22" r="238" g="153" b="26" align="c">ui_st_donate</text>
 	</button>
 
 

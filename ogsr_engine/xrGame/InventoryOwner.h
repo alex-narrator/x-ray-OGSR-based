@@ -98,6 +98,7 @@ public:
 	u32					get_money		() const				{return m_money;}
 	void				set_money		(u32 amount, bool bSendEvent);
 	void SetName( LPCSTR name ) { m_game_name = name; };
+
 protected:
 	u32					m_money;
 	// торговля
@@ -161,6 +162,10 @@ public:
 	CCharacterInfo&						CharacterInfo		() const {VERIFY(m_pCharacterInfo); return *m_pCharacterInfo;}
 	IC const CSpecificCharacter&		SpecificCharacter	() const {return CharacterInfo().m_SpecificCharacter;};
 	bool								InfinitiveMoney		()	{return CharacterInfo().m_SpecificCharacter.MoneyDef().inf_money;}
+	u32									GetBarterMoney		()	{return CharacterInfo().m_SpecificCharacter.MoneyDef().barter_money;}
+
+	float								GetDonateGoodwillK	() { return CharacterInfo().m_SpecificCharacter.DonationDef().goodwill_k; }
+	bool								CanTakeDonations	() { return CharacterInfo().m_SpecificCharacter.DonationDef().can_take; }
 
 	//установка группировки на клиентском и серверном объкте
 	virtual void			SetCommunity	(CHARACTER_COMMUNITY_INDEX);
@@ -220,7 +225,7 @@ public:
 private:
 	CTradeParameters			*m_trade_parameters;
 	CPurchaseList				*m_purchase_list;
-	BOOL						m_need_osoznanie_mode;
+	BOOL						m_need_osoznanie_mode{};
 
 public:
 	IC		CTradeParameters	&trade_parameters		() const;
@@ -236,8 +241,6 @@ public:
 	virtual bool				NeedOsoznanieMode		() {return m_need_osoznanie_mode!=FALSE;}
 
   void SetNextItemSlot( u32 );
-
-  u32 u_BarterMoney; //отдельный денежный фонд NPC в режиме бартера
 
   protected:
 	  //
