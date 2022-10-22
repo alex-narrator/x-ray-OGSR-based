@@ -11,22 +11,10 @@
 #include "level.h"
 #include "string_table.h"
 
-#define BULLET_MANAGER_SECTION "bullet_manager"
+constexpr auto BULLET_MANAGER_SECTION = "bullet_manager";
 
-CCartridge::CCartridge() 
-{
-	m_flags.assign			(cfTracer | cfRicochet);
-	m_ammoSect = NULL;
-	m_kDist = m_kDisp = m_kHit = m_kImpulse = m_kPierce = 1.f;
-	m_kAP = 0.0f;
-	m_kAirRes = 0.0f;
-	m_buckShot = 1;
-	m_impair = 1.f;
-	m_kSpeed = 1.f;
-
-	bullet_material_idx = u16(-1);
-	//
-	m_misfireProbability = 0.f;
+CCartridge::CCartridge() {
+	m_flags.assign(cfTracer | cfRicochet);
 }
 
 void CCartridge::Load(LPCSTR section, u8 LocalAmmoType) 
@@ -34,8 +22,7 @@ void CCartridge::Load(LPCSTR section, u8 LocalAmmoType)
 	m_ammoSect				= section;
 	//Msg("ammo: section [%s], m_ammoSect [%s]", section, *m_ammoSect);
 //
-	if (pSettings->line_exist(section, "ammo_in_box") && pSettings->line_exist(section, "empty_box"))
-	{
+	if (pSettings->line_exist(section, "ammo_in_box") && pSettings->line_exist(section, "empty_box")){
 		m_ammoSect = pSettings->r_string(section, "ammo_in_box");
 	}
 	//
@@ -92,11 +79,9 @@ float CCartridge::Weight() const
 {
 	auto s = m_ammoSect.c_str();
 	float res = 0;
-	if ( s )
-	{		
+	if ( s ){		
 		float box = pSettings->r_float(s, "box_size");
-		if (box > 0)
-		{
+		if (box > 0){
 			float w = pSettings->r_float(s, "inv_weight");
 			res = w / box;
 		}			
@@ -104,19 +89,12 @@ float CCartridge::Weight() const
 	return res;
 }
 
-CWeaponAmmo::CWeaponAmmo(void) 
-{
-	m_weight				= .2f;
-	m_flags.set				(Fbelt, TRUE);
-		//
-	m_ammoSect				= nullptr;
-	m_EmptySect				= nullptr;
-	//
-	m_misfireProbabilityBox = 0.f;
+CWeaponAmmo::CWeaponAmmo(void) {
+	m_weight = .2f;
+	m_flags.set(Fbelt, TRUE);
 }
 
-CWeaponAmmo::~CWeaponAmmo(void)
-{
+CWeaponAmmo::~CWeaponAmmo(void){
 }
 
 void CWeaponAmmo::Load(LPCSTR section) 
@@ -126,17 +104,14 @@ void CWeaponAmmo::Load(LPCSTR section)
 	m_boxSize				= (u16)pSettings->r_s32(section, "box_size");
 	m_boxCurr				= m_boxSize;
 	//
-	if (pSettings->line_exist(section, "ammo_types") && pSettings->line_exist(section, "mag_types"))
-	{
+	if (pSettings->line_exist(section, "ammo_types") && pSettings->line_exist(section, "mag_types")){
 		// load ammo types
 		m_ammoTypes.clear();
 		LPCSTR				_at = pSettings->r_string(section, "ammo_types");
-		if (_at && _at[0])
-		{
+		if (_at && _at[0]){
 			string128		_ammoItem;
 			int				count = _GetItemCount(_at);
-			for (int it = 0; it < count; ++it)
-			{
+			for (int it = 0; it < count; ++it){
 				_GetItem(_at, it, _ammoItem);
 				m_ammoTypes.push_back(_ammoItem);
 			}
@@ -144,12 +119,10 @@ void CWeaponAmmo::Load(LPCSTR section)
 		// load mag types
 		m_magTypes.clear();
 		LPCSTR				_mt = pSettings->r_string(section, "mag_types");
-		if (_mt && _mt[0])
-		{
+		if (_mt && _mt[0]){
 			string128		_magItem;
 			int				count = _GetItemCount(_mt);
-			for (int it = 0; it < count; ++it)
-			{
+			for (int it = 0; it < count; ++it){
 				_GetItem(_mt, it, _magItem);
 				m_magTypes.push_back(_magItem);
 			}
@@ -229,7 +202,6 @@ void CWeaponAmmo::OnH_B_Chield()
 void CWeaponAmmo::OnH_B_Independent(bool just_before_destroy) 
 {
 	if(!Useful()) {
-		
 		if (Local()){
 			DestroyObject	();
 		}
@@ -335,8 +307,7 @@ float CWeaponAmmo::Weight() const
 	if (!m_boxCurr)
 		return res;
 
-	if (IsBoxReloadable())
-	{
+	if (IsBoxReloadable()){
 		float one_cartridge_weight = pSettings->r_float(m_ammoSect, "inv_weight") / pSettings->r_float(m_ammoSect, "box_size");
 		res = (float)m_boxCurr * one_cartridge_weight;
 		res += pSettings->r_float(m_EmptySect, "inv_weight");
@@ -353,8 +324,7 @@ u32 CWeaponAmmo::Cost() const
 	if (!m_boxCurr)
 		return inherited::Cost();
 
-	if (IsBoxReloadable())
-	{
+	if (IsBoxReloadable()){
 		float one_cartridge_cost = pSettings->r_float(m_ammoSect, "cost") / pSettings->r_float(m_ammoSect, "box_size");
 		float res = (float)m_boxCurr * one_cartridge_cost;
 		res += pSettings->r_float(m_EmptySect, "cost");
@@ -468,10 +438,8 @@ void CWeaponAmmo::SpawnAmmo(u32 boxCurr, LPCSTR ammoSect, u32 ParentID)
 		if (boxCurr == 0xffffffff)
 			boxCurr = l_pA->m_boxSize;
 
-		if (boxCurr > 0)
-		{
-			while (boxCurr)
-			{
+		if (boxCurr > 0){
+			while (boxCurr){
 				l_pA->a_elapsed = (u16)(boxCurr > l_pA->m_boxSize ? l_pA->m_boxSize : boxCurr);
 				NET_Packet				P;
 				D->Spawn_Write(P, TRUE);
@@ -482,13 +450,11 @@ void CWeaponAmmo::SpawnAmmo(u32 boxCurr, LPCSTR ammoSect, u32 ParentID)
 				else
 					boxCurr = 0;
 			}
-		}
-		else
-		{
+		}else{
 			NET_Packet				P;
 			D->Spawn_Write(P, TRUE);
 			Level().Send(P, net_flags(TRUE));
 		}
-	};
+	}
 	F_entity_Destroy(D);
 }

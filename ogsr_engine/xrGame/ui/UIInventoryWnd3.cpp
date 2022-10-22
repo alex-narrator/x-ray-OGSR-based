@@ -227,14 +227,20 @@ void CUIInventoryWnd::ActivatePropertiesBox()
 		b_show			= true;
 	}
 
-	if(!CurrentIItem()->IsQuestItem())
-	{
-
+	if(!CurrentIItem()->IsQuestItem()){
 		UIPropertiesBox.AddItem("st_drop", NULL, INVENTORY_DROP_ACTION);
 		b_show			= true;
 
 		if(CurrentItem()->ChildsCount())
 			UIPropertiesBox.AddItem("st_drop_all", (void*)33, INVENTORY_DROP_ACTION);
+
+		if (CurrentIItem()->CanBeDisassembled()) {
+			UIPropertiesBox.AddItem("st_disassemble", NULL, INVENTORY_DISASSEMBLE);
+			b_show = true;
+
+			if (CurrentItem()->ChildsCount())
+				UIPropertiesBox.AddItem("st_disassemble_all", (void*)33, INVENTORY_DISASSEMBLE);
+		}
 	}
 
 	if(b_show)
@@ -315,9 +321,14 @@ void CUIInventoryWnd::ProcessPropertiesBoxClicked	()
 			{
 				void* d = UIPropertiesBox.GetClickedItem()->GetData();
 				bool b_all = (d==(void*)33);
-
 				DropCurrentItem(b_all);
 			}break;
+		case INVENTORY_DISASSEMBLE:
+		{
+			void* d = UIPropertiesBox.GetClickedItem()->GetData();
+			bool b_all = (d == (void*)33);
+			DisassembleItem(b_all);
+		}break;
 		case INVENTORY_EAT_ACTION:
 			EatItem(CurrentIItem());
 			break;

@@ -206,6 +206,8 @@ void CInventoryItem::Load(LPCSTR section)
 	m_fPowerLowThreshold		= READ_IF_EXISTS(pSettings, r_float, section, "power_low_threshold", 0.1f);
 
 	m_uSlotEnabled				= READ_IF_EXISTS(pSettings, r_u32, section, "slot_enabled", NO_ACTIVE_SLOT);
+
+	m_detail_part_section		= READ_IF_EXISTS(pSettings, r_string, section, "detail_parts", nullptr);
 }
 
 
@@ -997,4 +999,26 @@ bool CInventoryItem::CanBeChargedBy(CInventoryItem* item) const {
 
 void CInventoryItem::Recharge() {
 	SetPowerLevel(1.f);
+}
+
+void CInventoryItem::Disassemble() {
+	if (!m_detail_part_section)
+		return;
+
+	auto& inv = m_pCurrentInventory;
+	if (inv && (inv->InSlot(this) || inv->InBelt(this) || inv->InVest(this))) {
+		inv->Ruck(this, true);
+	}
+
+	string128 item;
+	int count = _GetItemCount(m_detail_part_section);
+	for (int i = 0; i < count; i += 2) {
+		_GetItem(m_detail_part_section, i, item);
+		string128 tmp;
+		int item_count = atoi(_GetItem(m_detail_part_section, i + 1, tmp));
+		for (int k = 0; k < item_count; ++k) {
+			Detach(item, true);
+		}
+	}
+	object().DestroyObject();
 }

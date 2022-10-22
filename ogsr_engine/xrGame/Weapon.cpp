@@ -1396,7 +1396,6 @@ bool CWeapon::IsScopeAttached() const{
 	return (CSE_ALifeItemWeapon::eAddonAttachable == m_eScopeStatus &&
 			0 != (m_flagsAddOnState&CSE_ALifeItemWeapon::eWeaponAddonScope)) || 
 			CSE_ALifeItemWeapon::eAddonPermanent == m_eScopeStatus;
-
 }
 
 bool CWeapon::IsSilencerAttached() const{

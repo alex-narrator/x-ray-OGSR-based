@@ -217,9 +217,7 @@ void CUIInventoryWnd::InitInventory()
 	m_b_need_reinit					= false;
 }  
 
-void CUIInventoryWnd::DropCurrentItem(bool b_all)
-{
-
+void CUIInventoryWnd::DropCurrentItem(bool b_all){
 	CActor *pActor			= smart_cast<CActor*>(Level().CurrentEntity());
 	if(!pActor)				return;
 
@@ -237,6 +235,24 @@ void CUIInventoryWnd::DropCurrentItem(bool b_all)
 	SendEvent_Item_Drop		(CurrentIItem());
 	SetCurrentItem			(NULL);
 	UpdateWeightVolume		();
+}
+
+void CUIInventoryWnd::DisassembleItem(bool b_all) {
+	CActor* pActor = smart_cast<CActor*>(Level().CurrentEntity());
+	if (!pActor)				return;
+	if (!CurrentIItem() || CurrentIItem()->IsQuestItem()) 
+		return;
+	if (b_all) {
+		u32 cnt = CurrentItem()->ChildsCount();
+		for (u32 i = 0; i < cnt; ++i) {
+			CUICellItem* itm = CurrentItem()->PopChild();
+			PIItem			iitm = (PIItem)itm->m_pData;
+			iitm->Disassemble();
+		}
+	}
+	CurrentIItem()->Disassemble();
+	SetCurrentItem(NULL);
+	UpdateWeightVolume();
 }
 
 //------------------------------------------

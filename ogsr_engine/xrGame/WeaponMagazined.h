@@ -288,6 +288,9 @@ public:
 	virtual void	SwitchFlashlight		(bool on);
 
 	virtual void	UnloadWeaponFull		();
+
+	virtual void	UnloadAndDetachAllAddons();
+	virtual void	Disassemble				();
 protected:
 	bool			m_bNightVisionEnabled{};
 	bool			m_bNightVisionSwitchedOn{ true };

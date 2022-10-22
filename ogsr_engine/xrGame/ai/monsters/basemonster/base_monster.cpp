@@ -759,7 +759,7 @@ CParticlesObject* CBaseMonster::PlayParticles(const shared_str& name, const Fvec
 	CParticlesObject* ps = CParticlesObject::Create(name.c_str(),auto_remove);
 	
 	// вычислить позицию и направленность партикла
-	Fmatrix	matrix; 
+	Fmatrix	matrix{};
 
 	matrix.identity			();
 	matrix.k.set			(dir);
@@ -1035,7 +1035,7 @@ float CBaseMonster::get_screen_space_coverage_diagonal()
 {
 	Fbox		b		= Visual()->getVisData().box;
 
-	Fmatrix				xform;
+	Fmatrix				xform{};
 	xform.mul			(Device.mFullTransform,XFORM());
 	Fvector2	mn		={flt_max,flt_max},mx={flt_min,flt_min};
 
@@ -1085,8 +1085,7 @@ void CBaseMonster::TrySpawnInventoryItem()
 				  Level().Send(P, net_flags(TRUE));
 				  F_entity_Destroy(object);
 			  }
-
-			  Msg("~ TrySpawnInventoryItem - Monster [%s] spawn monster part [%s] with probability [%.4f] | spawn prob [%.4f]", cName().c_str(), item, probability, spawn_prob);
+			  //Msg("~ TrySpawnInventoryItem - Monster [%s] spawn monster part [%s] with probability [%.4f] | spawn prob [%.4f]", cName().c_str(), item, probability, spawn_prob);
             break;
           }
         }

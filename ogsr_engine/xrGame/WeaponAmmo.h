@@ -8,29 +8,37 @@ public:
 	void Load(LPCSTR section, u8 LocalAmmoType);
 	virtual float Weight() const;
 
-	shared_str	m_ammoSect;
+	shared_str	m_ammoSect{};
 	enum{
 		cfTracer				= (1<<0),
 		cfRicochet				= (1<<1),
 		cfCanBeUnlimited		= (1<<2),
 		cfExplosive				= (1<<3),
 	};
-	float	m_kDist, m_kDisp, m_kHit, m_kImpulse, m_kPierce, m_kAP, m_kAirRes, m_kSpeed;
-	int		m_buckShot;
-	float	m_impair;
+	float	
+		m_kDist{ 1.f }, 
+		m_kDisp{ 1.f }, 
+		m_kHit{ 1.f }, 
+		m_kImpulse{ 1.f }, 
+		m_kPierce{ 1.f }, 
+		m_kAP{}, 
+		m_kAirRes{}, 
+		m_kSpeed{ 1.f };
+	int		m_buckShot{1};
+	float	m_impair{ 1.f };
 	float	fWallmarkSize{};
 	
 	u8		m_u8ColorID{};
 	u8		m_LocalAmmoType{};
 
 	
-	u16		bullet_material_idx;
+	u16		bullet_material_idx{ u16(-1) };
 	Flags8	m_flags;
 
 	shared_str	m_InvShortName;
 	RStringVec	m_ExplodeParticles;
 	//вероятность осечки
-	float		m_misfireProbability;
+	float		m_misfireProbability{};
 };
 
 class CWeaponAmmo :	public CInventoryItemObject {
@@ -65,12 +73,12 @@ public:
 	u16			m_boxCurr;
 	bool		m_tracer;
 	//
-	shared_str	m_ammoSect, m_EmptySect;
+	shared_str	m_ammoSect{}, m_EmptySect{};
 	shared_str	m_InvShortName;
 	//вероятность осечки от патрона
 	float		m_misfireProbability;
 	//вероятность осечки от магазина
-	float		m_misfireProbabilityBox;
+	float		m_misfireProbabilityBox{};
 
 	xr_vector<shared_str>		m_ammoTypes;
 	xr_vector<shared_str>		m_magTypes;

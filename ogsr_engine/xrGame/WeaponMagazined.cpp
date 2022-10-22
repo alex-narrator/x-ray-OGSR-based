@@ -2224,3 +2224,23 @@ void CWeaponMagazined::PlayAnimUnload()
 	PlayHUDMotion("anm_unload", true, GetState());
 	PlaySound(sndUnload, get_LastFP());
 }
+
+void CWeaponMagazined::UnloadAndDetachAllAddons() {
+	UnloadWeaponFull();
+	if (ScopeAttachable() && IsScopeAttached())
+		Detach(GetScopeName().c_str(), true);
+	if (SilencerAttachable() && IsSilencerAttached())
+		Detach(GetSilencerName().c_str(), true);
+	if (GrenadeLauncherAttachable() && IsGrenadeLauncherAttached())
+		Detach(GetGrenadeLauncherName().c_str(), true);
+	if (LaserAttachable() && IsLaserAttached())
+		Detach(GetLaserName().c_str(), true);
+	if (FlashlightAttachable() && IsFlashlightAttached())
+		Detach(GetFlashlightName().c_str(), true);
+}
+
+void CWeaponMagazined::Disassemble() {
+	if (!CanBeDisassembled()) return;
+	UnloadAndDetachAllAddons();
+	inherited::Disassemble();
+}

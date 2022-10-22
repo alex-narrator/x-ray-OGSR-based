@@ -45,7 +45,8 @@ bool CUIEquipParams::Check(CInventoryItem* obj){
 		smart_cast<CScope*>				(obj) ||
 		smart_cast<CInventoryContainer*>(obj) ||
 		smart_cast<CPowerBattery*>		(obj) ||
-		obj->IsPowerConsumer()					) {
+		obj->IsPowerConsumer()				  ||
+		obj->CanBeDisassembled()				) {
 		return true;
 	}else
 		return false;
@@ -258,6 +259,35 @@ void CUIEquipParams::SetInfo(CInventoryItem* obj){
 			item_static->SetAutoDelete(true);
 			item_static->SetWndPos(item_static->GetPosLeft(), _h);
 			strconcat(sizeof(text_to_show), text_to_show, marker_, CStringTable().translate(item->Name()).c_str());
+			item_static->SetText(text_to_show);
+			m_CapInfo.AttachChild(item_static);
+			_h += list_item_h;
+		}
+	}
+
+	if (obj->CanBeDisassembled()) {
+		auto cap_containment_static = xr_new<CUIStatic>(); cap_containment_static->SetAutoDelete(true);
+		CUIXmlInit::InitStatic(uiXml, "equip_params:cap_detail_parts", 0, cap_containment_static);
+		pos_top = cap_containment_static->GetPosTop();
+		cap_containment_static->SetWndPos(cap_containment_static->GetPosLeft(), _h + pos_top);
+		m_CapInfo.AttachChild(cap_containment_static);
+		_h += list_item_h + pos_top;
+
+		string128 item_sect;
+		LPCSTR detail_part_sect = obj->GetDetailPartSection();
+		int count = _GetItemCount(detail_part_sect);
+		for (int i = 0; i < count; i += 2) {
+			_GetItem(detail_part_sect, i, item_sect);
+			string128 tmp;
+			int item_count = atoi(_GetItem(detail_part_sect, i + 1, tmp));
+			auto item_static = xr_new<CUIStatic>();
+			CUIXmlInit::InitStatic(uiXml, "equip_params:list_item", 0, item_static);
+			item_static->SetAutoDelete(true);
+			item_static->SetWndPos(item_static->GetPosLeft(), _h);
+			auto detail_name = pSettings->r_string(item_sect, "inv_name");
+			string64 _txt;
+			sprintf(_txt,"x%d %s", item_count, CStringTable().translate(detail_name).c_str());
+			strconcat(sizeof(text_to_show), text_to_show, marker_, _txt);
 			item_static->SetText(text_to_show);
 			m_CapInfo.AttachChild(item_static);
 			_h += list_item_h;

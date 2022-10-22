@@ -177,6 +177,7 @@ protected:
 
 	void						DropCurrentItem				(bool b_all);
 	void						EatItem						(PIItem itm);
+	void						DisassembleItem				(bool b_all);
 	
 	bool						ToSlot						(CUICellItem* itm, u8 _slot_id, bool force_place);
 	bool						ToSlot						(CUICellItem* itm, bool force_place);

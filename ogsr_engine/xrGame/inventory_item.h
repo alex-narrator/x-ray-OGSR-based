@@ -337,6 +337,10 @@ public:
 	virtual void					Recharge();
 
 	virtual float					GetPowerTTL		() const { return m_fTTLOnPowerConsumption; };
+
+			LPCSTR					GetDetailPartSection() const { return m_detail_part_section; }
+	virtual bool					CanBeDisassembled() const { return m_detail_part_section; }
+	virtual void					Disassemble();
 protected:
 	HitImmunity::HitTypeSVec		m_HitTypeProtection;
 
@@ -346,6 +350,8 @@ protected:
 	float							m_fPowerLevel;
 	float							m_fPowerLowThreshold;
 	float							m_fPowerConsumingUpdateTime;
+
+	LPCSTR							m_detail_part_section{};
 };
 
 #include "inventory_item_inline.h"

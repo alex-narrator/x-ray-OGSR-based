@@ -574,20 +574,30 @@
 		<text>Макс. выносливость</text>
 	</string>
 	<string id="ui_inv_wounds_heal_perc">
-		<text>Заживление ран</text>
+		<text>Загоєння ран</text>
 	</string>
 	<string id="st_power_level">
-		<text>Заряд батареи</text>
+		<text>Заряд батареї</text>
 	</string>	
 	<string id="st_charge">
-		<text>зарядить</text>
+		<text>зарядити</text>
 	</string>
 	<string id="st_power_ttl">
 		<text>Час роботи</text>
 	</string>	
 	<string id="st_time_hour">
 		<text>год.</text>
+	</string>
+
+	<string id="st_disassemble">
+		<text>розібрати</text>
+	</string>
+	<string id="st_disassemble_all">
+		<text>розібрати усе</text>
 	</string>	
+	<string id="st_detail_parts">
+		<text>деталі:</text>
+	</string>
 	
 	<string id="st_move_with_content">
 		<text>перенести с содержимым</text>

@@ -6,42 +6,46 @@
 			<text font="letterica16" r="124" g="119" b="115"></text>
 		</cap_info>	
 		<!-- дочірні статики -->
-		<power_level x="0" y="0" width="91" height="8">
+		<power_level x="0" y="5" width="91" height="8">
 			<text font="letterica16" r="124" g="119" b="115"></text>
 		</power_level>
-		<power_ttl x="0" y="0" width="91" height="8">
+		<power_ttl x="0" y="5" width="91" height="8">
 			<text font="letterica16" r="124" g="119" b="115"></text>
 		</power_ttl>
 		
-		<outfit_helmet_inbuild x="0" y="0" width="91" height="8">
+		<outfit_helmet_inbuild x="0" y="5" width="91" height="8">
 			<text font="letterica16" r="124" g="119" b="115"></text>
 		</outfit_helmet_inbuild>
 		
-		<additional_max_volume x="0" y="0" width="91" height="8">
+		<additional_max_volume x="0" y="5" width="91" height="8">
 			<text font="letterica16" r="124" g="119" b="115"></text>
 		</additional_max_volume>
 		
-		<equipment_cells x="0" y="0" width="91" height="8">
+		<equipment_cells x="0" y="5" width="91" height="8">
 			<text font="letterica16" r="124" g="119" b="115"></text>
 		</equipment_cells>
 		
-		<scope_zoom x="0" y="0" width="91" height="8">
+		<scope_zoom x="0" y="5" width="91" height="8">
 			<text font="letterica16" r="124" g="119" b="115"></text>
 		</scope_zoom>
-		<scope_night_vision x="0" y="0" width="91" height="8">
+		<scope_night_vision x="0" y="5" width="91" height="8">
 			<text font="letterica16" r="124" g="119" b="115"></text>
 		</scope_night_vision>
-		<scope_vision_present x="0" y="0" width="91" height="8">
+		<scope_vision_present x="0" y="5" width="91" height="8">
 			<text font="letterica16" r="124" g="119" b="115"></text>
 		</scope_vision_present>
 		
-		<cap_ammo x="0" y="0" width="91" height="8">
+		<cap_ammo x="0" y="5" width="91" height="8">
 			<text font="letterica16" r="124" g="119" b="115">st_compatible_ammo</text>
 		</cap_ammo>
 		
-		<cap_containment x="0" y="0" width="91" height="8">
+		<cap_containment x="0" y="5" width="91" height="8">
 			<text font="letterica16" r="124" g="119" b="115">st_containment</text>
 		</cap_containment>
+		
+		<cap_detail_parts x="0" y="5" width="91" height="8">
+			<text font="letterica16" r="124" g="119" b="115">st_detail_parts</text>
+		</cap_detail_parts>
 		
 		<list_item x="0" y="0" width="91" height="16">
 			<text font="letterica16" r="124" g="119" b="115"></text>
