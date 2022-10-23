@@ -41,6 +41,8 @@ void CCustomOutfit::Load(LPCSTR section)
 	m_bIsHelmetBuiltIn		= !!READ_IF_EXISTS(pSettings, r_bool, section, "helmet_built_in", false);
 
 	m_VisorTexture			= READ_IF_EXISTS(pSettings, r_string, section, "visor_texture", nullptr);
+
+	bulletproof_display_bone = READ_IF_EXISTS(pSettings, r_string, section, "bulletproof_display_bone", "bip01_spine");
 }
 
 float	CCustomOutfit::HitThruArmour(SHit* pHDS)
@@ -59,6 +61,20 @@ BOOL	CCustomOutfit::BonePassBullet					(int boneID)
 {
 	return m_boneProtection->getBonePassBullet(s16(boneID));
 };
+
+float CCustomOutfit::GetHitTypeProtection(ALife::EHitType hit_type) {
+	if(hit_type != ALife::eHitTypeFireWound)
+		return inherited::GetHitTypeProtection(hit_type);
+	else {
+		float result{};
+		if (pSettings->line_exist(cNameSect(), "bones_koeff_protection")) {
+			LPCSTR bone_params = pSettings->r_string(pSettings->r_string(cNameSect(), "bones_koeff_protection"), bulletproof_display_bone.c_str());
+			string128 tmp;
+			result = atof(_GetItem(bone_params, 1, tmp)) * GetCondition();
+		}
+		return result;
+	}
+}
 
 void	CCustomOutfit::OnMoveToSlot		(EItemPlace prevPlace)
 {

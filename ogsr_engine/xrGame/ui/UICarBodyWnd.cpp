@@ -347,10 +347,10 @@ void CUICarBodyWnd::ActivatePropertiesBox()
 			b_show = true;
 			//reload AmmoBox
 			if (pAmmo->m_boxCurr < pAmmo->m_boxSize && b_actor_inv){
-				if (inv->GetAmmo(*pAmmo->m_ammoSect, true)){
-					strconcat(sizeof(temp), temp, *CStringTable().translate("st_load_ammo_type"), " ",
-						*CStringTable().translate(pSettings->r_string(pAmmo->m_ammoSect, "inv_name_short")));
-					_ammo_sect = *pAmmo->m_ammoSect;
+				if (inv->GetAmmo(pAmmo->m_ammoSect.c_str(), true)){
+					strconcat(sizeof(temp), temp, CStringTable().translate("st_load_ammo_type").c_str(), " ",
+						CStringTable().translate(pSettings->r_string(pAmmo->m_ammoSect, "inv_name_short")).c_str());
+					_ammo_sect = pAmmo->m_ammoSect.c_str();
 					m_pUIPropertiesBox->AddItem(temp, (void*)_ammo_sect, INVENTORY_RELOAD_AMMO_BOX);
 					b_show = true;
 				}
@@ -358,10 +358,10 @@ void CUICarBodyWnd::ActivatePropertiesBox()
 		}
 		else if (pAmmo->IsBoxReloadableEmpty() && b_actor_inv){
 			for (u8 i = 0; i < pAmmo->m_ammoTypes.size(); ++i){
-				if (inv->GetAmmo(*pAmmo->m_ammoTypes[i], true)){
-					strconcat(sizeof(temp), temp, *CStringTable().translate("st_load_ammo_type"), " ",
-						*CStringTable().translate(pSettings->r_string(pAmmo->m_ammoTypes[i], "inv_name_short")));
-					_ammo_sect = *pAmmo->m_ammoTypes[i];
+				if (inv->GetAmmo(pAmmo->m_ammoTypes[i].c_str(), true)){
+					strconcat(sizeof(temp), temp, CStringTable().translate("st_load_ammo_type").c_str(), " ",
+						CStringTable().translate(pSettings->r_string(pAmmo->m_ammoTypes[i], "inv_name_short")).c_str());
+					_ammo_sect = pAmmo->m_ammoTypes[i].c_str();
 					m_pUIPropertiesBox->AddItem(temp, (void*)_ammo_sect, INVENTORY_RELOAD_AMMO_BOX);
 					b_show = true;
 				}
@@ -370,11 +370,11 @@ void CUICarBodyWnd::ActivatePropertiesBox()
 	}
 
 	if (pWeapon){
-		if (inv->InSlot(pWeapon)){
+		if (inv->InSlot(pWeapon) && smart_cast<CWeaponMagazined*>(pWeapon)){
 			for (u32 i = 0; i < pWeapon->m_ammoTypes.size(); ++i){
 				if (pWeapon->TryToGetAmmo(i)){
-					strconcat(sizeof(temp), temp, *CStringTable().translate("st_load_ammo_type"), " ",
-						*CStringTable().translate(pSettings->r_string(pWeapon->m_ammoTypes[i].c_str(), "inv_name_short")));
+					strconcat(sizeof(temp), temp, CStringTable().translate("st_load_ammo_type").c_str(), " ",
+						CStringTable().translate(pSettings->r_string(pWeapon->m_ammoTypes[i].c_str(), "inv_name_short")).c_str());
 					m_pUIPropertiesBox->AddItem(temp, (void*)(__int64)i, INVENTORY_RELOAD_MAGAZINE);
 					b_show = true;
 				}

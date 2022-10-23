@@ -245,7 +245,7 @@ void			CAI_Stalker::Hit					(SHit* pHDS)
 				(pHDS->bone() != BI_NONE)
 			)
 			{
-				Fvector					D;
+				Fvector					D{};
 				float					yaw, pitch;
 				D.getHP					(yaw,pitch);
 

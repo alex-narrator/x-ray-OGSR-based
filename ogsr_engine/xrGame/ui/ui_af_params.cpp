@@ -8,7 +8,6 @@
 
 #include "../inventory_item.h"
 #include "../Artifact.h"
-#include "../CustomOutfit.h"
 #include "../Actor.h"
 #include "../ActorCondition.h"
 

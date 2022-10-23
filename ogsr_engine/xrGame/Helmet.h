@@ -17,6 +17,8 @@ public:
 	//если на персонаже надет костюм
 	float							GetPowerLoss();
 
+	virtual float					GetHitTypeProtection(ALife::EHitType hit_type) override;
+
 	virtual	BOOL					BonePassBullet(int boneID);
 
 	virtual bool					can_be_attached() const override;
@@ -33,6 +35,6 @@ private:
 	SBoneProtections*				m_boneProtection;
 protected:
 	CUIStaticItem*					m_UIVisor{};
-	shared_str						m_VisorTexture{};
+	shared_str						m_VisorTexture{}, bulletproof_display_bone{};
 };
 

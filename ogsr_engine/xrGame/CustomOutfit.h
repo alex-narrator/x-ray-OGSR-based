@@ -19,6 +19,7 @@ public:
 	//если на персонаже надет костюм
 	float							GetPowerLoss		();
 
+	virtual float					GetHitTypeProtection(ALife::EHitType hit_type) override;
 
 	virtual void					OnMoveToSlot		(EItemPlace prevPlace);
 	virtual void					OnMoveToRuck		(EItemPlace prevPlace) override;
@@ -40,9 +41,9 @@ public:
 	bool m_bIsHelmetBuiltIn{};
 
 	virtual void					DrawHUDMask				();
-
 			bool					HasVisor				() const { return m_UIVisor && !!m_VisorTexture && m_bIsHelmetBuiltIn; }
+
 protected:
 	CUIStaticItem*					m_UIVisor{};
-	shared_str						m_VisorTexture{};
+	shared_str						m_VisorTexture{}, bulletproof_display_bone{};
 };

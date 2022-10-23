@@ -20,6 +20,7 @@ void CHelmet::Load(LPCSTR section){
 	inherited::Load(section);
 	m_fPowerLoss	= READ_IF_EXISTS(pSettings, r_float, section, "power_loss", 1.f);
 	m_VisorTexture	= READ_IF_EXISTS(pSettings, r_string, section, "visor_texture", nullptr);
+	bulletproof_display_bone = READ_IF_EXISTS(pSettings, r_string, section, "bulletproof_display_bone", "bip01_head");
 }
 
 float CHelmet::HitThruArmour(SHit* pHDS){
@@ -36,6 +37,20 @@ float CHelmet::HitThruArmour(SHit* pHDS){
 BOOL CHelmet::BonePassBullet(int boneID){
 	return m_boneProtection->getBonePassBullet(s16(boneID));
 };
+
+float CHelmet::GetHitTypeProtection(ALife::EHitType hit_type) {
+	if (hit_type != ALife::eHitTypeFireWound)
+		return inherited::GetHitTypeProtection(hit_type);
+	else {
+		float result{};
+		if (pSettings->line_exist(cNameSect(), "bones_koeff_protection")) {
+			LPCSTR bone_params = pSettings->r_string(pSettings->r_string(cNameSect(), "bones_koeff_protection"), bulletproof_display_bone.c_str());
+			string128 tmp;
+			result = atof(_GetItem(bone_params, 1, tmp)) * GetCondition();
+		}
+		return result;
+	}
+}
 
 void CHelmet::OnMoveToSlot(EItemPlace prevPlace)
 {
