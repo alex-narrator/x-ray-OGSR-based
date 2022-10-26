@@ -314,28 +314,30 @@ void CWeaponMagazined::Reload()
 }
 
 // Real Wolf: Одна реализация на все участки кода.20.01.15
-bool CWeaponMagazined::TryToGetAmmo(u32 id)
-{
-	m_pAmmo = smart_cast<CWeaponAmmo*>(m_pCurrentInventory->GetAmmoByLimit(*m_ammoTypes[id], ParentIsActor(), true));
+bool CWeaponMagazined::TryToGetAmmo(u32 id){
+	if(!m_bDirectReload)
+		m_pAmmo = smart_cast<CWeaponAmmo*>(m_pCurrentInventory->GetAmmoByLimit(*m_ammoTypes[id], ParentIsActor(), true));
 
 	return m_pAmmo && (!HasDetachableMagazine() || AmmoTypeIsMagazine(id) || !iAmmoElapsed);
 }
 
 bool CWeaponMagazined::TryReload() 
 {
-	if(m_pCurrentInventory) 
-	{
-		if (TryToGetAmmo(m_ammoType) || unlimited_ammo() || (IsMisfire() && iAmmoElapsed))
-		{
+	if (m_bDirectReload) {
+		SetPending(TRUE);
+		SwitchState(eReload);
+		return true;
+	}
+
+	if(m_pCurrentInventory) {
+		if (TryToGetAmmo(m_ammoType) || unlimited_ammo() || (IsMisfire() && iAmmoElapsed)){
 			SetPending(TRUE);
 			SwitchState(eReload); 
 			return true;
 		}
 		
-		for(u32 i = 0; i < m_ammoTypes.size(); ++i) 
-		{
-			if (TryToGetAmmo(i))
-			{ 
+		for(u32 i = 0; i < m_ammoTypes.size(); ++i) {
+			if (TryToGetAmmo(i)){ 
 //				m_set_next_ammoType_on_reload = i; // https://github.com/revolucas/CoC-Xray/pull/5/commits/3c45cad1edb388664efbe3bb20a29f92e2d827ca
 				m_ammoType = i;
 				SetPending(TRUE);
@@ -376,11 +378,9 @@ void CWeaponMagazined::ReloadMagazine()
 	m_dwAmmoCurrentCalcFrame = 0;
 
 	//устранить осечку при полной перезарядке
-	if (IsMisfire() && (!HasChamber() || m_magazine.empty()))
-	{
+	if (IsMisfire() && (!HasChamber() || m_magazine.empty())){
 		bMisfire = false;
-		if (smart_cast<CActor*>(this->H_Parent()) && (Level().CurrentViewEntity() == H_Parent()))
-		{
+		if (smart_cast<CActor*>(this->H_Parent()) && (Level().CurrentViewEntity() == H_Parent())){
 			HUD().GetUI()->AddInfoMessage("item_state", "gun_not_jammed");
 		}
 	}
@@ -388,7 +388,7 @@ void CWeaponMagazined::ReloadMagazine()
 	//переменная блокирует использование
 	//только разных типов патронов
 	//	static bool l_lockType = false;
-	if (!m_bLockType) {
+	if (!m_bLockType && !m_bDirectReload) {
 		m_pAmmo = NULL;
 	}
 
@@ -399,28 +399,27 @@ void CWeaponMagazined::ReloadMagazine()
 		m_set_next_ammoType_on_reload = u32(-1);
 	}
 
-	if (!unlimited_ammo())
-	{
+	if (!unlimited_ammo() && !m_bDirectReload) {
 		//попытаться найти в инвентаре патроны текущего типа
 		m_pAmmo = smart_cast<CWeaponAmmo*>(m_pCurrentInventory->GetAmmoByLimit(*m_ammoTypes[m_ammoType], ParentIsActor(), HasDetachableMagazine() && !IsSingleReloading()));
 
-		if (!m_pAmmo && !m_bLockType)
-		{
-			for (u32 i = 0; i < m_ammoTypes.size(); ++i)
-			{
+		if (!m_pAmmo && !m_bLockType) {
+			for (u32 i = 0; i < m_ammoTypes.size(); ++i) {
 				//проверить патроны всех подходящих типов
 				m_pAmmo = smart_cast<CWeaponAmmo*>(m_pCurrentInventory->GetAmmoByLimit(*m_ammoTypes[m_ammoType], ParentIsActor(), HasDetachableMagazine() && !IsSingleReloading()));
 
-				if (m_pAmmo)
-				{
+				if (m_pAmmo) {
 					m_ammoType = i;
 					break;
 				}
 			}
 		}
 	}
-	else
+	else{
 		m_ammoType = m_ammoType;
+		if (m_bDirectReload)
+			m_bDirectReload = false;
+	}
 
 	//нет патронов для перезарядки
 	if (!m_pAmmo && !unlimited_ammo()) return;
@@ -431,8 +430,7 @@ void CWeaponMagazined::ReloadMagazine()
 		m_magazine.empty() && HasDetachableMagazine() && !unlimited_ammo())	//разрядить пустой магазин
 		UnloadMagazine();
 
-	if (HasDetachableMagazine() && !unlimited_ammo())
-	{
+	if (HasDetachableMagazine() && !unlimited_ammo()){
 		bool b_attaching_magazine = AmmoTypeIsMagazine(m_ammoType);
 		int mag_size = b_attaching_magazine ? m_pAmmo->m_boxSize : 0;
 
@@ -446,10 +444,8 @@ void CWeaponMagazined::ReloadMagazine()
 	if (m_DefaultCartridge.m_LocalAmmoType != m_ammoType)
 		m_DefaultCartridge.Load(*m_ammoTypes[m_ammoType], u8(m_ammoType));
 	CCartridge l_cartridge = m_DefaultCartridge;
-	while (iAmmoElapsed < iMagazineSize)
-	{
-		if (!unlimited_ammo())
-		{
+	while (iAmmoElapsed < iMagazineSize){
+		if (!unlimited_ammo()){
 			if (!m_pAmmo->Get(l_cartridge)) break;
 		}
 		++iAmmoElapsed;
@@ -463,8 +459,8 @@ void CWeaponMagazined::ReloadMagazine()
 	if (m_pAmmo && !m_pAmmo->m_boxCurr && OnServer())
 		m_pAmmo->SetDropManual(TRUE);
 
-	if (iMagazineSize > iAmmoElapsed && !HasDetachableMagazine() && !unlimited_ammo()) //дозарядить оружие до полного магазина
-	{
+	//дозарядить оружие до полного магазина
+	if (iMagazineSize > iAmmoElapsed && !HasDetachableMagazine() && !unlimited_ammo()){
 		m_bLockType = true;
 		ReloadMagazine();
 		m_bLockType = false;
@@ -1470,8 +1466,7 @@ void CWeaponMagazined::PlayAnimReload()
 	VERIFY(GetState() == eReload);
 	if (IsPartlyReloading())
 		PlayHUDMotion({ "anim_reload_partly", "anm_reload_partly", "anim_reload", "anm_reload" }, true, GetState());
-	else if (IsSingleReloading())
-	{
+	else if (IsSingleReloading()){
 		if(AnimationExist("anim_reload_single"))
 			PlayHUDMotion("anim_reload_single", true, GetState());
 		else

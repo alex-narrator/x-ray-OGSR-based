@@ -115,4 +115,5 @@ protected:
 
 	ref_sound					sounds[eInvSndMax];
 	void						PlaySnd(eInventorySndAction a);
+	bool						m_bShowAllInv{};
 };

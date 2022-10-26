@@ -13,8 +13,8 @@
 #include "UIScrollBar.h"
 #include <dinput.h>
 
-#define CB_HEIGHT 23.0f
-#define BTN_SIZE  23.0f
+constexpr auto CB_HEIGHT = 23.0f;
+constexpr auto BTN_SIZE = 23.0f;
 
 CUIComboBox::CUIComboBox()
 {

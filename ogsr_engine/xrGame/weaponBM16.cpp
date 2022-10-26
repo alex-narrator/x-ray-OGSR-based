@@ -197,6 +197,7 @@ void CWeaponBM16::PlayAnimShutter()
 		case 1: PlayHUDMotion({ "anim_draw_1", "anim_draw", "anm_show_1" }, true, GetState()); break;
 		case 2: PlayHUDMotion({ "anim_draw_2", "anim_draw", "anm_show_2" }, true, GetState()); break;
 		}
+	PlaySound(sndShutter, get_LastFP());
 }
 
 void CWeaponBM16::PlayAnimOnItemTake()

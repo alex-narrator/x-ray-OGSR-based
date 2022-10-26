@@ -1294,9 +1294,9 @@ void  CInventory::AddAvailableItems(TIItemContainer& items_container, bool for_t
 	
 	if(m_bSlotsUseful){
 		for(const auto& slot : m_slots){
-			if(slot.m_pIItem && (!for_trade || slot.m_pIItem->CanTrade())  ){
-				if(!slot.m_bPersistent || slot.m_pIItem->GetSlot()==GRENADE_SLOT )
-					items_container.push_back(slot.m_pIItem);
+			if(slot.m_pIItem && !slot.m_bPersistent && 
+				(!for_trade || slot.m_pIItem->CanTrade())){
+				items_container.push_back(slot.m_pIItem);
 			}
 		}
 	}		

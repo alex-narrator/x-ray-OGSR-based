@@ -3,19 +3,21 @@
 
 #include "xrUIXmlParser.h"
 #include "UIXmlInit.h"
-#include "../string_table.h"
+#include "string_table.h"
 
-#include "../actor.h"
-#include "../uigamesp.h"
-#include "../hudmanager.h"
+#include "actor.h"
+#include "uigamesp.h"
+#include "hudmanager.h"
 
-#include "../CustomOutfit.h"
+#include "CustomOutfit.h"
 
-#include "../weapon.h"
+#include "Weapon.h"
 
-#include "../eatable_item.h"
-#include "../inventory.h"
+#include "eatable_item.h"
+#include "inventory.h"
 #include "Artifact.h"
+
+#include "PowerBattery.h"
 
 #include "UIInventoryUtilities.h"
 using namespace InventoryUtilities;
@@ -298,9 +300,9 @@ void CUIInventoryWnd::Init()
 	AttachChild							(UIExitButton);
 	xml_init.Init3tButton				(uiXml, "exit_button", 0, UIExitButton);
 
-	UIRepackAmmoButton					= xr_new<CUI3tButton>(); UIRepackAmmoButton->SetAutoDelete(true);
-	AttachChild							(UIRepackAmmoButton);
-	xml_init.Init3tButton				(uiXml, "repack_ammo_button", 0, UIRepackAmmoButton);
+	UIOrganizeButton					= xr_new<CUI3tButton>(); UIOrganizeButton->SetAutoDelete(true);
+	AttachChild							(UIOrganizeButton);
+	xml_init.Init3tButton				(uiXml, "organize_button", 0, UIOrganizeButton);
 
 //Load sounds
 
@@ -459,6 +461,7 @@ void CUIInventoryWnd::Show()
 		if (psActorFlags.test(AF_AMMO_FROM_BELT)) {
 			Actor()->SetRuckAmmoPlacement(true); //установим флаг перезарядки из рюкзака
 		}
+		Actor()->RepackAmmo();
 	}
 }
 
@@ -559,6 +562,12 @@ void CUIInventoryWnd::DetachAddon(const char* addon_name)
 			m_iCurrentActiveSlot				= pActor->inventory().GetActiveSlot();
 			pActor->inventory().Activate		(NO_ACTIVE_SLOT);
 	}
+}
+
+void CUIInventoryWnd::ChargeDevice(PIItem item_to_charge) {
+	auto battery = smart_cast<CPowerBattery*>(CurrentIItem());
+	battery->Charge(item_to_charge);
+	SetCurrentItem(nullptr);
 }
 
 void	CUIInventoryWnd::SendEvent_Item_Drop(PIItem	pItem)

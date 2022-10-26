@@ -383,20 +383,25 @@ void CWeaponShotgun::PlayAnimShutter()
 	PlaySound(sndShutter, get_LastFP());
 }
 
-bool CWeaponShotgun::HaveCartridgeInInventory( u8 cnt ) {
-  if ( unlimited_ammo() ) return true;
-  if ( !m_pCurrentInventory ) return false;
+bool CWeaponShotgun::HaveCartridgeInInventory(u8 cnt) {
+  if (unlimited_ammo()) return true;
+  if (!m_pCurrentInventory) return false;
 
-  m_pAmmo = smart_cast<CWeaponAmmo*>(m_pCurrentInventory->GetAmmoByLimit(*m_ammoTypes[m_ammoType], ParentIsActor(), false));
+  if (m_bDirectReload) {
+	  m_bDirectReload = false;
+  }
+  else {
+	  m_pAmmo = smart_cast<CWeaponAmmo*>(m_pCurrentInventory->GetAmmoByLimit(*m_ammoTypes[m_ammoType], ParentIsActor(), false));
 
-  if (!m_pAmmo){
-	  for (u32 i = 0; i < m_ammoTypes.size(); ++i){
-		  //проверить патроны всех подходящих типов
-		  m_pAmmo = smart_cast<CWeaponAmmo*>(m_pCurrentInventory->GetAmmoByLimit(*m_ammoTypes[i], ParentIsActor(), false));
+	  if (!m_pAmmo) {
+		  for (u32 i = 0; i < m_ammoTypes.size(); ++i) {
+			  //проверить патроны всех подходящих типов
+			  m_pAmmo = smart_cast<CWeaponAmmo*>(m_pCurrentInventory->GetAmmoByLimit(*m_ammoTypes[i], ParentIsActor(), false));
 
-		  if (m_pAmmo){
-			  m_ammoType = i;
-			  break;
+			  if (m_pAmmo) {
+				  m_ammoType = i;
+				  break;
+			  }
 		  }
 	  }
   }

@@ -30,6 +30,7 @@
 #include "UICellItemFactory.h"
 #include "UIPropertiesBox.h"
 #include "UIListBoxItem.h"
+#include "UICheckButton.h"
 
 #include "string_table.h"
 
@@ -78,6 +79,8 @@ struct CUITradeInternal{
 	CUIItemInfo			UIItemInfo;
 
 	SDrawStaticStruct*	UIDealMsg;
+
+	CUICheckButton*		m_pUIShowAllInv;
 };
 
 bool others_zero_trade;
@@ -187,6 +190,10 @@ void CUITradeWnd::Init()
 
 	AttachChild							(&m_uidata->UIPerformDonationButton);
 	xml_init.Init3tButton				(uiXml, "button", 2, &m_uidata->UIPerformDonationButton);
+
+	m_uidata->m_pUIShowAllInv			= xr_new<CUICheckButton>(); m_uidata->m_pUIShowAllInv->SetAutoDelete(true);
+	AttachChild							(m_uidata->m_pUIShowAllInv);
+	xml_init.InitCheck					(uiXml, "show_all_inv", 0, m_uidata->m_pUIShowAllInv);
 
 	m_pUIPropertiesBox					= xr_new<CUIPropertiesBox>(); m_pUIPropertiesBox->SetAutoDelete(true);
 	AttachChild(m_pUIPropertiesBox);
@@ -405,14 +412,20 @@ void CUITradeWnd::ActivatePropertiesBox()
 
 void CUITradeWnd::SendMessage(CUIWindow *pWnd, s16 msg, void *pData)
 {
-	if(pWnd == &m_uidata->UIToTalkButton && msg == BUTTON_CLICKED){
-		SwitchToTalk();
-	}
-	else if(pWnd == &m_uidata->UIPerformTradeButton && msg == BUTTON_CLICKED){
-		PerformTrade();
-	}
-	else if (pWnd == &m_uidata->UIPerformDonationButton && msg == BUTTON_CLICKED) {
-		PerformDonation();
+	if (msg == BUTTON_CLICKED) {
+		if (pWnd == &m_uidata->UIToTalkButton) {
+			SwitchToTalk();
+		}
+		else if (pWnd == &m_uidata->UIPerformTradeButton) {
+			PerformTrade();
+		}
+		else if (pWnd == &m_uidata->UIPerformDonationButton) {
+			PerformDonation();
+		}
+		else if (m_uidata->m_pUIShowAllInv == pWnd) {
+			m_bShowAllInv = !m_bShowAllInv;
+			UpdateLists(e1st);
+		}
 	}
 	else if (pWnd == m_pUIPropertiesBox && msg == PROPERTY_CLICKED){
 		if (m_pUIPropertiesBox->GetClickedItem())
@@ -542,8 +555,11 @@ void CUITradeWnd::Show()
 	ResetAll						();
 	m_uidata->UIDealMsg				= NULL;
 
-	if (auto pActor = Actor())
-		if (psActorFlags.test(AF_AMMO_FROM_BELT)) Actor()->SetRuckAmmoPlacement(true); //установим флаг перезарядки из рюкзака
+	if (Actor()) {
+		if (psActorFlags.test(AF_AMMO_FROM_BELT)) 
+			Actor()->SetRuckAmmoPlacement(true); //установим флаг перезарядки из рюкзака
+		Actor()->RepackAmmo();
+	}
 	m_uidata->UIPerformDonationButton.SetVisible(m_pOthersInvOwner->CanTakeDonations());
 	PlaySnd(eInvSndOpen);
 }
@@ -567,8 +583,11 @@ void CUITradeWnd::Hide()
 	m_uidata->UIOthersBagList.ClearAll	(true);
 	m_uidata->UIOthersTradeList.ClearAll(true);
 
-	if (auto pActor = Actor())
-		if (psActorFlags.test(AF_AMMO_FROM_BELT)) Actor()->SetRuckAmmoPlacement(false); //сбросим флаг перезарядки из рюкзака
+	if (Actor()) {
+		if (psActorFlags.test(AF_AMMO_FROM_BELT)) 
+			Actor()->SetRuckAmmoPlacement(false); //сбросим флаг перезарядки из рюкзака
+	}
+	m_bShowAllInv = false;
 }
 
 void CUITradeWnd::StartTrade()
@@ -853,7 +872,12 @@ void CUITradeWnd::UpdateLists(EListType mode)
 
 	if(mode==eBoth||mode==e1st){
 		ruck_list.clear					();
-   		m_pInv->AddAvailableItems		(ruck_list, true);
+		if (m_bShowAllInv)
+   			m_pInv->AddAvailableItems		(ruck_list, true);
+		else {
+			for (const auto& item : m_pInv->m_ruck)
+				ruck_list.push_back(item);
+		}
 		std::sort						(ruck_list.begin(),ruck_list.end(),InventoryUtilities::GreaterRoomInRuck);
 		FillList						(ruck_list, m_uidata->UIOurBagList, true);
 	}

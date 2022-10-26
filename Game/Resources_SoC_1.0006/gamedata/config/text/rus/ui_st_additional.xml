@@ -250,9 +250,14 @@
 		<text>Скорость выглядывания</text>
 	</string>
 	
-	<string id="ui_inv_repack_ammo">
-		<text>Упорядочить патроны [E]</text>
+	<string id="ui_inv_organize">
+		<text>Упорядкувати речі [E]</text>
 	</string>
+	
+	<string id="ui_inv_show_all_inv">
+		<text>показати все</text>
+	</string>
+	
 <!-- опции видео -->	
 	<string id="ui_mm_detail_scale">
 		<text>Высота травы</text>

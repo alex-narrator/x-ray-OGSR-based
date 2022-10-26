@@ -1080,21 +1080,17 @@ bool CWeapon::Action(s32 cmd, u32 flags)
 			return true;
 		case kWPN_NEXT: 
 			{
-				if(IsPending() || OnClient()) 
-				{
+				if(IsPending() || OnClient()) {
 					return false;
 				}
 									
-				if (flags & CMD_START)
-				{
+				if (flags & CMD_START){
 					bool manually = psActorFlags.test(AF_NO_AUTO_RELOAD);
 
-					if (GetNextAmmoType(manually) != u32(-1) && TryToGetAmmo(GetNextAmmoType(manually)))
-					{
+					if (GetNextAmmoType(manually) != u32(-1) && TryToGetAmmo(GetNextAmmoType(manually))){
 						m_set_next_ammoType_on_reload = GetNextAmmoType(manually);
 
-						if (OnServer())
-						{
+						if (OnServer()){
 							if (!manually) Reload();
 
 //							Msg("m_set_next_ammoType_on_reload [%d]", m_set_next_ammoType_on_reload);
@@ -2397,6 +2393,22 @@ bool CWeapon::IsLaserOn() const {
 
 bool CWeapon::IsFlashlightOn() const {
 	return m_bIsFlashlightOn;
+}
+
+void CWeapon::DirectReload(CWeaponAmmo* ammo) {
+	m_bDirectReload = true;
+	m_pAmmo = ammo;
+	for (u32 i = 0; i < m_ammoTypes.size(); ++i) {
+		if (m_ammoTypes[i] == ammo->cNameSect() && 
+			TryToGetAmmo(i) &&
+			(iAmmoElapsed < iMagazineSize || IsMisfire() || HasDetachableMagazine())) {
+			m_ammoType = i;
+			m_set_next_ammoType_on_reload = u32(-1);
+			Reload();
+			return;
+		}
+	}
+	m_bDirectReload = false;
 }
 
 void CWeapon::SaveAttachableParams()

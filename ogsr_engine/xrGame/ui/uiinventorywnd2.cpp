@@ -1,10 +1,10 @@
 #include "stdafx.h"
 #include "UIInventoryWnd.h"
-#include "../level.h"
-#include "../actor.h"
-#include "../ActorCondition.h"
-#include "../hudmanager.h"
-#include "../inventory.h"
+#include "level.h"
+#include "actor.h"
+#include "ActorCondition.h"
+#include "hudmanager.h"
+#include "inventory.h"
 #include "UIInventoryUtilities.h"
 
 #include "UICellItem.h"
@@ -12,11 +12,14 @@
 #include "UIDragDropListEx.h"
 #include "UI3tButton.h"
 
-#include "../game_object_space.h"
-#include "../script_callback_ex.h"
-#include "../script_game_object.h"
-#include "../CustomDetector.h"
-#include "../player_hud.h"
+#include "game_object_space.h"
+#include "script_callback_ex.h"
+#include "script_game_object.h"
+#include "CustomDetector.h"
+#include "player_hud.h"
+
+#include "WeaponMagazined.h"
+#include "WeaponMagazinedWGrenade.h"
 
 CUICellItem* CUIInventoryWnd::CurrentItem()
 {
@@ -52,9 +55,10 @@ void CUIInventoryWnd::SendMessage(CUIWindow *pWnd, s16 msg, void *pData)
 		GetHolder()->StartStopMenu			(this,true);
 	}
 	else
-	if (UIRepackAmmoButton == pWnd && BUTTON_CLICKED == msg)
+	if (UIOrganizeButton == pWnd && BUTTON_CLICKED == msg)
 	{
 		Actor()->RepackAmmo();
+		InitInventory_delayed();
 	}
 
 	CUIWindow::SendMessage(pWnd, msg, pData);
@@ -525,6 +529,39 @@ bool CUIInventoryWnd::OnItemDrop(CUICellItem* itm)
 	case iwSlot:
 	{
           auto item = CurrentIItem();
+
+		  if (auto _item_in_slot = new_owner->GetItemIdx(0)) {
+			  auto _iitem_in_slot = (PIItem)_item_in_slot->m_pData;
+
+			  if (_iitem_in_slot->CanAttach(item)) {
+				  AttachAddon(_iitem_in_slot);
+				  return true;
+			  }
+			  if (_iitem_in_slot->CanBeChargedBy(item)) {
+				  ChargeDevice(_iitem_in_slot);
+				  return true;
+			  }
+			  auto wpn = smart_cast<CWeaponMagazined*>(_iitem_in_slot);
+			  auto ammo = item->cast_weapon_ammo();
+			  if (wpn && ammo) {
+				  for (const auto& ammo_sect : wpn->m_ammoTypes) {
+					  if (item->object().cNameSect() == ammo_sect) {
+						  wpn->DirectReload(ammo);
+						  return true;
+					  }
+				  }
+				  if (wpn->IsGrenadeLauncherAttached()) {
+					  auto wpn_gl = smart_cast<CWeaponMagazinedWGrenade*>(wpn);
+					  for (const auto& ammo_sect : wpn_gl->m_ammoTypes2) {
+						  if (item->object().cNameSect() == ammo_sect) {
+							  wpn_gl->PerformSwitchGL();
+							  wpn_gl->DirectReload(ammo);
+							  return true;
+						  }
+					  }
+				  }
+			  }
+		  }
 
           bool     can_put  = false;
           Ivector2 max_size = new_owner->CellSize();

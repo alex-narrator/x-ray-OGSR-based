@@ -384,9 +384,7 @@ void CUIInventoryWnd::ProcessPropertiesBoxClicked	()
 			}
 		}break;
 		case INVENTORY_CHARGE_DEVICE:
-			auto battery = smart_cast<CPowerBattery*>(CurrentIItem());
-			battery->Charge((PIItem)(UIPropertiesBox.GetClickedItem()->GetData()));
-			SetCurrentItem(nullptr);
+			ChargeDevice((PIItem)(UIPropertiesBox.GetClickedItem()->GetData()));
 			break;
 		}
 	}

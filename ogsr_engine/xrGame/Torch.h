@@ -76,6 +76,7 @@ public:
 	virtual void	setup_physic_shell		();
 
 	virtual void	afterDetach				();
+	virtual void	afterAttach				();
 	virtual void	renderable_Render		();
 
 	// alpet: управление светом фонаря

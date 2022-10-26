@@ -529,6 +529,8 @@ public:
 	LPCSTR					GetCurrentAmmo_ShortName	();
 	float					GetAmmoInMagazineWeight		(const decltype(m_magazine)& mag) const;
 
+		bool				m_bDirectReload{};
+	virtual void			DirectReload				(CWeaponAmmo*);
 
 protected:
 	u32						m_ef_main_weapon_type{ u32(-1) };

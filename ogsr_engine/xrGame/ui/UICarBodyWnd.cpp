@@ -21,6 +21,7 @@
 #include "../alife_registry_wrappers.h"
 #include "UI3tButton.h"
 #include "UIListBoxItem.h"
+#include "UICheckButton.h"
 #include "../InventoryBox.h"
 #include "../game_object_space.h"
 #include "../script_callback_ex.h"
@@ -147,13 +148,17 @@ void CUICarBodyWnd::Init()
 	AttachChild						(m_pUIExitButton);
 	xml_init.Init3tButton			(uiXml, "exit_button", 0, m_pUIExitButton);
 
-	m_pUIRepackAmmoButton			= xr_new<CUI3tButton>(); m_pUIRepackAmmoButton->SetAutoDelete(true);
-	AttachChild						(m_pUIRepackAmmoButton);
-	xml_init.Init3tButton			(uiXml, "repack_ammo_button", 0, m_pUIRepackAmmoButton);
+	m_pUIOrganizeButton				= xr_new<CUI3tButton>(); m_pUIOrganizeButton->SetAutoDelete(true);
+	AttachChild						(m_pUIOrganizeButton);
+	xml_init.Init3tButton			(uiXml, "organize_button", 0, m_pUIOrganizeButton);
 
 	m_pUIMoveAllFromRuckButton		= xr_new<CUI3tButton>(); m_pUIMoveAllFromRuckButton->SetAutoDelete(true);
 	AttachChild						(m_pUIMoveAllFromRuckButton);
 	xml_init.Init3tButton			(uiXml, "move_all_from_ruck_button", 0, m_pUIMoveAllFromRuckButton);
+
+	m_pUIShowAllInv					= xr_new<CUICheckButton>(); m_pUIShowAllInv->SetAutoDelete(true);
+	AttachChild						(m_pUIShowAllInv);
+	xml_init.InitCheck				(uiXml, "show_all_inv", 0, m_pUIShowAllInv);
 
 	BindDragDropListEnents			(m_pUIOurBagList);
 	BindDragDropListEnents			(m_pUIOthersBagList);
@@ -276,7 +281,7 @@ void CUICarBodyWnd::Hide()
 			Actor()->SetRuckAmmoPlacement(false); //сбросим флаг перезарядки из рюкзака
 		}
 	}
-
+	m_bShowAllInv = false;
 	PlaySnd(eInvSndClose);
 }
 
@@ -287,7 +292,13 @@ void CUICarBodyWnd::UpdateLists()
 	m_pUIOthersBagList->ClearAll				(true);
 
 	ruck_list.clear								();
-	m_pActorInventoryOwner->inventory().AddAvailableItems	(ruck_list, true);
+	if (m_bShowAllInv) 
+		m_pActorInventoryOwner->inventory().AddAvailableItems(ruck_list, true);
+	else{
+		for (const auto& item : m_pActorInventoryOwner->inventory().m_ruck)
+			ruck_list.push_back(item);
+	}
+		
 	std::sort									(ruck_list.begin(),ruck_list.end(),InventoryUtilities::GreaterRoomInRuck);
 
 	//Наш рюкзак
@@ -484,12 +495,16 @@ void CUICarBodyWnd::SendMessage(CUIWindow *pWnd, s16 msg, void *pData)
 		else if (m_pUIExitButton == pWnd){
 			GetHolder()->StartStopMenu(this, true);
 		}
-		else if (m_pUIRepackAmmoButton == pWnd){
+		else if (m_pUIOrganizeButton == pWnd){
 			Actor()->RepackAmmo();
 			UpdateLists_delayed();
 		}
 		else if (m_pUIMoveAllFromRuckButton == pWnd){
 			MoveAllFromRuck();
+		}
+		else if (m_pUIShowAllInv == pWnd) {
+			m_bShowAllInv = !m_bShowAllInv;
+			UpdateLists_delayed();
 		}
 	}
 	else if(pWnd == m_pUIPropertiesBox && msg == PROPERTY_CLICKED){
@@ -629,8 +644,8 @@ void CUICarBodyWnd::Show()
 		if (psActorFlags.test(AF_AMMO_FROM_BELT)) {
 			Actor()->SetRuckAmmoPlacement(true); //установим флаг перезарядки из рюкзака
 		}
+		Actor()->RepackAmmo();
 	}
-
 	PlaySnd(eInvSndOpen);
 }
 
@@ -946,10 +961,10 @@ bool CUICarBodyWnd::CanMoveToOther(PIItem pItem, CGameObject* owner_to) const {
 }
 
 void CUICarBodyWnd::UpdateWeightVolume(bool only_for_actor) {
-	InventoryUtilities::UpdateWeight(*m_pUIOurWeightWnd, true);
-	InventoryUtilities::UpdateVolume(m_pActorGO, *m_pUIOurVolWnd, true);
+	InventoryUtilities::UpdateWeight(*m_pUIOurWeightWnd);
+	InventoryUtilities::UpdateVolume(m_pActorGO, *m_pUIOurVolWnd);
 	if (only_for_actor) return;
-	InventoryUtilities::UpdateVolume(m_pOtherGO, *m_pUIOthersVolWnd, true);
+	InventoryUtilities::UpdateVolume(m_pOtherGO, *m_pUIOthersVolWnd);
 }
 
 float CUICarBodyWnd::GetStackVolume(CUICellItem* ci) const {

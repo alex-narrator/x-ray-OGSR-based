@@ -9,6 +9,7 @@ class CUIItemInfo;
 class CUICharacterInfo;
 class CUIPropertiesBox;
 class CUI3tButton;
+class CUICheckButton;
 class CUICellItem;
 class IInventoryBox;
 class CInventoryOwner;
@@ -75,8 +76,10 @@ protected:
 	CUIPropertiesBox*		m_pUIPropertiesBox;
 	CUI3tButton*			m_pUITakeAll;
 	CUI3tButton*			m_pUIExitButton;
-	CUI3tButton*			m_pUIRepackAmmoButton;
+	CUI3tButton*			m_pUIOrganizeButton;
 	CUI3tButton*			m_pUIMoveAllFromRuckButton;
+
+	CUICheckButton*			m_pUIShowAllInv;
 
 public:
 	CUICellItem*			m_pCurrentCellItem;
@@ -131,4 +134,5 @@ protected:
 	void						UpdateWeightVolume	(bool only_for_actor = false);
 	float						GetStackVolume		(CUICellItem* ci) const;
 	bool						CanTakeStack		(CUICellItem* ci, CGameObject* owner_to) const;
+	bool						m_bShowAllInv{};
 };

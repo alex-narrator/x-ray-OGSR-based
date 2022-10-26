@@ -147,7 +147,8 @@ BOOL CTorch::net_Spawn(CSE_Abstract* DC)
 		return				(FALSE);
 
 	//включить/выключить фонарик
-	Switch(torch->m_active);
+//	Switch(torch->m_active);
+	m_switched_on = torch->m_active;
 	VERIFY(!torch->m_active || (torch->ID_Parent != 0xffff));
 
 	return					(TRUE);
@@ -192,7 +193,7 @@ void CTorch::UpdateCL()
 	}
 
 	CBoneInstance			&BI = smart_cast<IKinematics*>(Visual())->LL_GetBoneInstance(guid_bone);
-	Fmatrix					M;
+	Fmatrix					M{};
 
 	if (H_Parent()) 
 	{
@@ -228,7 +229,7 @@ void CTorch::UpdateCL()
 				m_prev_hp.y = angle_inertion_var(m_prev_hp.y, -actor->cam_FirstEye()->pitch, TORCH_INERTION_SPEED_MIN, TORCH_INERTION_SPEED_MAX, TORCH_INERTION_CLAMP, Device.fTimeDelta);
 			}
 
-			Fvector			dir,right,up;	
+			Fvector			dir{}, right, up;
 			dir.setHP		(m_prev_hp.x+m_delta_h,m_prev_hp.y);
 			Fvector::generate_orthonormal_basis_normalized(dir,up,right);
 
@@ -316,7 +317,7 @@ void CTorch::UpdateCL()
 	// возвращает в формате BGR
 	u32 clr					= lanim->CalculateBGR(Device.fTimeGlobal,frame); 
 
-	Fcolor					fclr;
+	Fcolor					fclr{};
 	fclr.set( (float)color_get_B( clr ) / 255.f, (float)color_get_G( clr ) / 255.f, (float)color_get_R( clr ) / 255.f, 1.f );
 	fclr.mul_rgb( fBrightness );
 	light_render->set_color	(fclr);
@@ -353,11 +354,16 @@ bool  CTorch::can_be_attached		() const{
 	return pA ? (pA->GetTorch() == this) : true;
 }
 
-void CTorch::afterDetach			()
-{
+void CTorch::afterDetach(){
 	inherited::afterDetach	();
-	Switch					(false);
+	Switch(false);
 }
+
+void CTorch::afterAttach(){
+	inherited::afterAttach();
+	Switch(m_switched_on);
+}
+
 void CTorch::renderable_Render()
 {
 	inherited::renderable_Render();
