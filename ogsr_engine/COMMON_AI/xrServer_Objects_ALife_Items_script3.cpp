@@ -48,3 +48,14 @@ void CSE_ALifeItemNightVisionDevice::script_register(lua_State* L)
 		)
 	];
 }
+
+void CSE_ALifeItemVest::script_register(lua_State* L)
+{
+	module(L)[
+		luabind_class_item1(
+			CSE_ALifeItemVest,
+			"cse_alife_item_vest",
+			CSE_ALifeItem
+		)
+	];
+}

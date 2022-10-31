@@ -781,8 +781,7 @@ void CSE_ALifeItemWeaponMagazinedWGL::STATE_Write		(NET_Packet& P)
 ////////////////////////////////////////////////////////////////////////////
 CSE_ALifeItemAmmo::CSE_ALifeItemAmmo		(LPCSTR caSection) : CSE_ALifeItem(caSection)
 {
-	if (pSettings->line_exist(caSection, "ammo_types") && pSettings->line_exist(caSection, "mag_types"))
-	{
+	if (pSettings->line_exist(caSection, "ammo_types") && pSettings->line_exist(caSection, "mag_types")){
 		a_elapsed = 0;
 		m_boxSize = (u16)pSettings->r_s32(caSection, "box_size");
 	}
@@ -1225,4 +1224,43 @@ void CSE_ALifeItemEatable::UPDATE_Write(NET_Packet& tNetPacket)
 {
 	inherited::UPDATE_Write(tNetPacket);
 	tNetPacket.w_s32(m_portions_num);
+}
+
+////////////////////////////////////////////////////////////////////////////
+// CSE_ALifeItemVest
+////////////////////////////////////////////////////////////////////////////
+CSE_ALifeItemVest::CSE_ALifeItemVest(LPCSTR caSection) : CSE_ALifeItem(caSection) {
+	if (pSettings->line_exist(caSection, "plate_installed")) {
+		m_bIsPlateInstalled = true;
+		m_cur_plate = pSettings->r_u8(s_name, "plate_installed");
+	}
+}
+
+CSE_ALifeItemVest::~CSE_ALifeItemVest(){
+}
+
+void CSE_ALifeItemVest::STATE_Read(NET_Packet& tNetPacket, u16 size){
+	inherited::STATE_Read(tNetPacket, size);
+}
+
+void CSE_ALifeItemVest::STATE_Write(NET_Packet& tNetPacket){
+	inherited::STATE_Write(tNetPacket);
+}
+
+void CSE_ALifeItemVest::UPDATE_Read(NET_Packet& tNetPacket){
+	inherited::UPDATE_Read(tNetPacket);
+
+	if (m_wVersion > 118) {
+		u8 _data = tNetPacket.r_u8();
+		m_bIsPlateInstalled = !!(_data & 0x1);
+		tNetPacket.r_u8(m_cur_plate);
+	}
+}
+
+void CSE_ALifeItemVest::UPDATE_Write(NET_Packet& tNetPacket)
+{
+	inherited::UPDATE_Write(tNetPacket);
+
+	tNetPacket.w_u8(m_bIsPlateInstalled ? 1 : 0);
+	tNetPacket.w_u8(m_cur_plate);
 }

@@ -1491,6 +1491,8 @@ void CActor::UpdateActiveItemEffects()
 				if (item != inventory().ActiveItem()) {//що взяте в руки те випромінює на повну
 					if (GetOutfit()) //костюм захищає від радіації речей
 						radiation_restore_speed *= (1.f - GetOutfit()->GetHitTypeProtection(ALife::eHitTypeRadiation));
+					if (GetVest() && inventory().InRuck(item)) //бронежилет захищає від радіації речей у рюкзаку
+						radiation_restore_speed *= (1.f - GetVest()->GetHitTypeProtection(ALife::eHitTypeRadiation));
 					if (GetBackpack() && inventory().InRuck(item)) //рюкзак захищає від радіації речей у рюкзаку
 						radiation_restore_speed *= (1.f - GetBackpack()->GetHitTypeProtection(ALife::eHitTypeRadiation));
 					if (GetHelmet() && inventory().InRuck(item)) //шолом захищає від радіації речей у рюкзаку
@@ -1506,6 +1508,11 @@ void CActor::UpdateActiveItemEffects()
 			auto outfit = GetOutfit();
 			if (outfit && !fis_zero(outfit->GetCondition())) {
 				m_ActorRestoreParam[i] += outfit->GetItemEffect(CInventoryItem::ItemEffects(i));
+			}
+			//vest
+			auto vest = GetVest();
+			if (vest && !fis_zero(vest->GetCondition())) {
+				m_ActorRestoreParam[i] += vest->GetItemEffect(CInventoryItem::ItemEffects(i));
 			}
 			//helmet
 			auto helmet = GetHelmet();
@@ -1947,6 +1954,22 @@ bool CActor::IsHitToHead(SHit* pHDS) const {
 		return true;
 	auto pK = smart_cast<IKinematics*>(Visual());
 	return is_bone_head(*pK, pHDS->bone());
+}
+
+bool CActor::IsHitToVest(SHit* pHDS) const {
+
+	switch (pHDS->type())
+	{
+	case ALife::eHitTypeFireWound:
+	case ALife::eHitTypeWound:
+	case ALife::eHitTypeWound_2:
+	{
+		//вважаємо що зношувати бронік треба тільки тоді як хіт потрапляє у броню
+		return GetVest() && GetVest()->IsBoneArmored(pHDS->bone());
+	}break;
+	default:
+		return true;
+	}
 }
 
 #include "SimpleDetectorSHOC.h"

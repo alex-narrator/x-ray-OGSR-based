@@ -272,8 +272,7 @@ void	CInventoryItem::Hit					(SHit* pHDS)
 
 	bool is_rad_hit = pHDS->type() == ALife::eHitTypeRadiation;
 
-	if (is_rad_hit && !fis_zero(m_fRadiationAccumFactor))
-	{
+	if (is_rad_hit && !fis_zero(m_fRadiationAccumFactor)){
 		m_ItemEffect[eRadiationRestoreSpeed] += m_fRadiationAccumFactor * pHDS->damage();
 		clamp<float>(m_ItemEffect[eRadiationRestoreSpeed], -m_fRadiationAccumLimit, m_fRadiationAccumLimit);
 		//Msg("! item [%s] current m_fRadiationRestoreSpeed [%.3f]", object().cName().c_str(), m_fRadiationRestoreSpeed);

@@ -201,12 +201,17 @@ void			CAI_Stalker::Hit					(SHit* pHDS)
 	//хит может меняться в зависимости от ранга (новички получают больше хита, чем ветераны)
 	HDS.power						*= m_fRankImmunity;
 	if (m_boneHitProtection && HDS.hit_type == ALife::eHitTypeFireWound){
-		float						BoneArmour = m_boneHitProtection->getBoneArmour(HDS.bone()) * (1 - pHDS->ap);
-		float						NewHitPower = HDS.damage() - BoneArmour;
-		if (NewHitPower < HDS.power*m_boneHitProtection->m_fHitFrac) 
-			HDS.power = HDS.power*m_boneHitProtection->m_fHitFrac;
-		else
-			HDS.power				= NewHitPower;
+		float						BoneArmour = m_boneHitProtection->getBoneArmour(HDS.bone());
+
+		Msg("%s %s take hit power [%.4f], hitted bone %s, bone armor [%.4f], hit AP [%.4f], visual name %s",
+			__FUNCTION__, Name(), HDS.power, smart_cast<IKinematics*>(Visual())->LL_BoneName_dbg(pHDS->boneID), BoneArmour, pHDS->ap, Visual()->getDebugName().c_str());
+
+		if (pHDS->ap < BoneArmour) { //броню не пробито, хіт тільки від умовного удару в броню
+			HDS.power *= m_boneHitProtection->m_fHitFrac;
+
+			Msg("%s %s armor is not pierced, result hit power [%.4f]", 
+				__FUNCTION__, Name(), HDS.power);
+		}
 
 		if (wounded())
 			HDS.power				= 1000.f;

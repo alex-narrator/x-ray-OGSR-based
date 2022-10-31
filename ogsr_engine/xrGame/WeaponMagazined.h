@@ -108,12 +108,12 @@ public:
 	virtual void	net_Destroy		();
 	virtual void	net_Export		( CSE_Abstract* E );
 
-	virtual void	OnH_A_Chield		();
+	virtual void	OnH_A_Chield	();
 
-	virtual bool	Attach(PIItem pIItem, bool b_send_event);
-	virtual bool	Detach(const char* item_section_name, bool b_spawn_item, float item_condition = 1.f);
-	virtual bool	CanAttach(PIItem pIItem);
-	virtual bool	CanDetach(const char* item_section_name);
+	virtual bool	Attach			(PIItem pIItem, bool b_send_event);
+	virtual bool	Detach			(const char* item_section_name, bool b_spawn_item, float item_condition = 1.f);
+	virtual bool	CanAttach		(PIItem pIItem);
+	virtual bool	CanDetach		(const char* item_section_name);
 
 	virtual void	InitAddons();
 //	virtual void	InitZoomParams	(LPCSTR section, bool useTexture);

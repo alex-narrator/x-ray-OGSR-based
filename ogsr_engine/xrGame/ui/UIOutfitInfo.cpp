@@ -9,6 +9,7 @@
 #include "CustomOutfit.h"
 #include "Backpack.h"
 #include "Helmet.h"
+#include "Vest.h"
 #include "../string_table.h"
 
 CUIOutfitInfo::CUIOutfitInfo()
@@ -114,6 +115,7 @@ void CUIOutfitInfo::Update()
 	auto outfit		= Actor()->GetOutfit();
 	auto backpack	= Actor()->GetBackpack();
 	auto helmet		= Actor()->GetHelmet();
+	auto vest		= Actor()->GetVest();
 
 	m_listWnd->Clear(false); // clear existing items and do not scroll to top
 
@@ -132,6 +134,8 @@ void CUIOutfitInfo::Update()
 			else {
 				if (outfit)
 					_val = outfit->GetItemEffect(CInventoryItem::ItemEffects(i));
+				if (vest)
+					_val += vest->GetItemEffect(CInventoryItem::ItemEffects(i));
 				if (backpack)
 					_val += backpack->GetItemEffect(CInventoryItem::ItemEffects(i));
 				if (helmet)
@@ -144,9 +148,10 @@ void CUIOutfitInfo::Update()
 		}
 		else 
 		{
-			if (outfit) {
+			if (outfit)
 				_val = outfit->GetHitTypeProtection(ALife::EHitType(i - _hit_type_protection_index));
-			}
+			if (vest)
+				_val += vest->GetHitTypeProtection(ALife::EHitType(i - _hit_type_protection_index));
 			if (backpack)
 				_val += backpack->GetHitTypeProtection(ALife::EHitType(i - _hit_type_protection_index));
 			if (helmet)

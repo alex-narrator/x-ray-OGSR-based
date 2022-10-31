@@ -193,6 +193,8 @@ inv_grid_y         = 17
 cost				= 500	;30
 default_to_ruck		= false
 
+bones_koeff_protection = actor_vest_medium
+
 [vest_medium]:vest
 description			= vest_descr_medium
 inv_name			= Vest_medium
@@ -203,6 +205,7 @@ inv_grid_x         = 16
 inv_grid_y         = 17
 vest_width 			= 3
 vest_height 		= 2
+plates 				= plate_class_2,plate_class_3
 
 [vest_adv]:vest
 description			= vest_descr_adv
@@ -214,6 +217,7 @@ inv_grid_x         = 14
 inv_grid_y         = 17
 vest_width 			= 4
 vest_height 		= 2
+plates 				= plate_class_3
 
 [vest_heavy]:vest
 description			= vest_descr_heavy
@@ -225,6 +229,7 @@ inv_grid_x         = 12
 inv_grid_y         = 17
 vest_width 			= 4
 vest_height 		= 3
+plates 				= plate_class_3,plate_class_4
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;EQUIPMENT MODULES;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -292,6 +297,49 @@ inv_grid_height    = 1
 inv_grid_x         = 11
 inv_grid_y         = 11
 slot_enabled 		= 10
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;VEST PLATES;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+[plate_class_2]:identity_immunities
+GroupControlSection	= spawn_group
+discovery_dependency = 
+$spawn 				= "devices\quest_items\quest_case_02"
+;$prefetch 			= 32
+class				= II_ATTCH
+cform				= skeleton
+visual				= physics\anomaly\artefact_plenka.ogf
+
+description         = plate_class_2_desc
+inv_name			= plate_class_2_name
+inv_name_short		= plate_class_2_name_short
+inv_weight			= 4
+inv_grid_width     = 1
+inv_grid_height    = 1
+inv_grid_x         = 8
+inv_grid_y         = 14
+icon_group = 2
+cost				= 4000
+
+bones_koeff_protection = actor_plate_class_2
+
+[plate_class_3]:plate_class_2
+description         = plate_class_3_desc
+inv_name			= plate_class_3_name
+inv_name_short		= plate_class_3_name_short
+cost				= 6000
+bones_koeff_protection = actor_plate_class_3
+
+[plate_class_4]:plate_class_2
+description         = plate_class_4_desc
+inv_name			= plate_class_4_name
+inv_name_short		= plate_class_4_name_short
+inv_grid_width     = 1
+inv_grid_height    = 1
+inv_grid_x         = 9
+inv_grid_y         = 14
+cost				= 8000
+bones_koeff_protection = actor_plate_class_4
 
 ;---------------------------------------------------------------------------------------------
 ;		ШЛЕМЫ

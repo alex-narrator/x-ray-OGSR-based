@@ -12,6 +12,7 @@
 #include "UIInventoryWnd.h"
 #include "Weapon.h"
 #include "WeaponAmmo.h"
+#include "Vest.h"
 #include "../CustomOutfit.h"
 #include "UICellCustomItems.h"
 
@@ -384,8 +385,9 @@ void CUICellItem::ColorizeItems( std::initializer_list<CUIDragDropListEx*> args 
 
 	  auto Wpn = smart_cast<CWeaponMagazined*>(inventoryitem);
 	  auto Ammo = smart_cast<CWeaponAmmo*>(inventoryitem);
+	  auto Vest = smart_cast<CVest*>(inventoryitem);
 	  bool is_power_consumer = inventoryitem->IsPowerConsumer();
-	  if (!Wpn && !Ammo && !is_power_consumer)
+	  if (!Wpn && !Ammo && !Vest && !is_power_consumer)
 		  return;
 
 	  if (Wpn) {
@@ -405,6 +407,9 @@ void CUICellItem::ColorizeItems( std::initializer_list<CUIDragDropListEx*> args 
 			  std::copy(Ammo->m_ammoTypes.begin(), Ammo->m_ammoTypes.end(), std::back_inserter(ColorizeSects));
 		  if (Ammo->IsBoxReloadable())
 			  ColorizeSects.push_back(Ammo->m_ammoSect);
+	  }
+	  else if (Vest) {
+		  std::copy(Vest->m_plates.begin(), Vest->m_plates.end(), std::back_inserter(ColorizeSects));
 	  }
 	  else if (is_power_consumer) {
 		  std::copy(inventoryitem->m_power_sources.begin(), inventoryitem->m_power_sources.end(), std::back_inserter(ColorizeSects));

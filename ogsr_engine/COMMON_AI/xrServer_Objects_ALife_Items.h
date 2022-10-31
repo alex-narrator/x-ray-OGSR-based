@@ -374,6 +374,16 @@ public:
 	};
 };
 
+SERVER_ENTITY_DECLARE_BEGIN(CSE_ALifeItemVest, CSE_ALifeItem)
+	bool							m_bIsPlateInstalled{};
+	u8								m_cur_plate{};
+	CSE_ALifeItemVest				(LPCSTR caSection);
+	virtual							~CSE_ALifeItemVest();
+
+	SERVER_ENTITY_DECLARE_END
+		add_to_type_list(CSE_ALifeItemVest)
+#define script_type_list save_type_list(CSE_ALifeItemVest)
+
 // KRodin: Закомментировал, попытка предотвратить повторную регистрацию cse_alife_item в луабинде.
 // По идее, оно и не нужно, ведь у класса CSE_InventoryContainer нету метода ::script_register()
 //add_to_type_list(CSE_InventoryContainer)

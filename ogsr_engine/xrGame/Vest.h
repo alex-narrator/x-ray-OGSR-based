@@ -1,5 +1,6 @@
 #pragma once
 #include "inventory_item_object.h"
+struct SBoneProtections;
 class CVest :
     public CInventoryItemObject
 {
@@ -7,17 +8,44 @@ private:
     typedef	CInventoryItemObject inherited;
 public:
                                 CVest               ();
-	virtual                     ~CVest              () = default;
+	virtual                     ~CVest              ();
     virtual     void            Load                (LPCSTR section);
     virtual     bool            can_be_attached     () const;
 
     virtual     void			OnMoveToSlot        (EItemPlace prevPlace);
     virtual     void			OnMoveToRuck        (EItemPlace prevPlace);
 
+    virtual     BOOL	        net_Spawn		    (CSE_Abstract* DC);
+	virtual     void	        net_Export		    (CSE_Abstract* E);
+
     u32							GetVestWidth        () const { return m_iVestWidth; }
     u32							GetVestHeight       () const { return m_iVestHeight; }
+
+    virtual float				GetHitTypeProtection(ALife::EHitType hit_type) override;
+            float				HitThruArmour       (SHit* pHDS);
+            float				GetPowerLoss        ();
+
+            bool                IsBoneArmored       (u16 bone) const;
+
+    virtual bool	            Attach			    (PIItem pIItem, bool b_send_event);
+	virtual bool	            Detach			    (const char* item_section_name, bool b_spawn_item, float item_condition = 1.f);
+	virtual bool	            CanAttach		    (PIItem pIItem);
+	virtual bool	            CanDetach		    (const char* item_section_name);
+
+    xr_vector<shared_str>		m_plates{};
+            u8                  m_cur_plate{};
+    const shared_str            GetPlateName        () const { return m_plates[m_cur_plate]; }
+            bool                IsPlateInstalled    () const { return m_bIsPlateInstalled; }
+    const shared_str            CurrProtectSect     () const;
+            //перезавантаження параметрів балістичного захисту та власних імунітетів жилету
+            void                ReloadParams        ();
 protected:
     u32							m_iVestWidth{};
     u32							m_iVestHeight{};
+    shared_str					bulletproof_display_bone{};
+private:
+    float						m_fPowerLoss{};
+    SBoneProtections*           m_boneProtection;
+    bool                        m_bIsPlateInstalled{};
 };
 

@@ -4,6 +4,7 @@
 #include "customoutfit.h"
 #include "Backpack.h"
 #include "Helmet.h"
+#include "Vest.h"
 #include "inventory.h"
 #include "wound.h"
 #include "level.h"
@@ -295,6 +296,7 @@ float CEntityCondition::HitOutfitEffect(SHit* pHDS)
 
 	auto pOutfit	= pInvOwner->GetOutfit();
 	auto pHelmet	= pInvOwner->GetHelmet();
+	auto pVest		= pInvOwner->GetVest();
 	auto pBackPack	= pInvOwner->GetBackpack();
 
 	if (pInvOwner->IsHitToHead(pHDS)) {
@@ -319,6 +321,14 @@ float CEntityCondition::HitOutfitEffect(SHit* pHDS)
 			pBackPack->Hit(pHDS);
 			pHDS->power = new_hit_power; //рюкзак може захистити костюм від пошкоджень
 		}
+		if (pVest && pInvOwner->IsHitToVest(pHDS)) {
+			if (pHDS->hit_type == ALife::eHitTypeFireWound)
+				new_hit_power = pVest->HitThruArmour(pHDS);
+			else
+				new_hit_power *= (1.0f - pVest->GetHitTypeProtection(pHDS->type()));
+			pVest->Hit(pHDS);
+			pHDS->power = new_hit_power;
+		}
 		if (pOutfit) {
 			if (pHDS->hit_type == ALife::eHitTypeFireWound)
 				new_hit_power = pOutfit->HitThruArmour(pHDS);
@@ -338,15 +348,13 @@ float CEntityCondition::HitPowerEffect(float power_loss)
 	CInventoryOwner* pInvOwner		 = smart_cast<CInventoryOwner*>(m_object);
 	if(!pInvOwner)					 return new_power_loss;
 
-	CCustomOutfit* pOutfit			= (CCustomOutfit*)pInvOwner->inventory().m_slots[OUTFIT_SLOT].m_pIItem;
-//	if(!pOutfit)					return power_loss;
-
-//	float new_power_loss			= power_loss*pOutfit->GetPowerLoss();
-	if(pOutfit)
+	if(auto pOutfit = pInvOwner->GetOutfit())
 		new_power_loss *= pOutfit->GetPowerLoss();
 
-	auto pHelmet = pInvOwner->GetHelmet();
-	if(pHelmet)
+	if (auto pVest = pInvOwner->GetVest())
+		new_power_loss *= pVest->GetPowerLoss();
+
+	if(auto pHelmet = pInvOwner->GetHelmet())
 		new_power_loss *= pHelmet->GetPowerLoss();
 
 	return							new_power_loss;

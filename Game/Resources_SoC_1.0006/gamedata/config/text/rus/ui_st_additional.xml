@@ -7,7 +7,7 @@
 		<text>л</text>
 	</string>
 	<string id="st_rad">
-		<text>мР/ч</text>
+		<text>мР/год</text>
 	</string>
 	<string id="ui_st_money_regional">
 		<text>грн</text>
@@ -16,36 +16,36 @@
 		<text>м</text>
 	</string>	
 	<string id="st_rpm_units">
-		<text>выс./мин</text>
+		<text>пос./хв</text>
 	</string>
 	<string id="st_detach">
-		<text>отсоединить</text>
+		<text>зняти</text>
 	</string>
 	<string id="st_dispertion_units">
 		<text>MOA</text>
 	</string>
 	<string id="ui_st_pda_account_unavailable">
-		<text>[счёт недоступен]</text>
+		<text>[рахунок недоступний]</text>
 	</string>
 	
 	<string id="ui_inv_psy_health">
-		<text>Пси-здоровье</text>
+		<text>Псі-здоров'я</text>
 	</string>
 	<string id="ui_inv_alcohol">
-		<text>Опьянение</text>
+		<text>Сп'яніння</text>
 	</string>
 	<string id="ui_inv_walk_accel">
-		<text>Скорость</text>
+		<text>Швидкість</text>
 	</string>
 	<string id="ui_inv_jump_speed">
-		<text>Прыжок</text>
+		<text>Стрибок</text>
 	</string>
 	<string id="ui_inv_volume">
-		<text>Объём</text>
+		<text>Обсяг</text>
 	</string>
 	
 	<string id="st_quick_slot_empty">
-		<text>Карман пуст</text>
+		<text>Кишеня порожня</text>
 	</string>
 	<string id="ui_quick_slot_use_str_0">
 		<text>[$$ACTION_USE_QUICK_SLOT_0$$]</text>
@@ -95,10 +95,10 @@
 	</string>
 	
 	<string id="kb_kick">
-		<text>Пинок</text>
+		<text>Стусан</text>
 	</string>
 	<string id="kb_additional_action">
-		<text>Дополнительное действие</text>
+		<text>Додаткова дія</text>
 	</string>
 	<string id="kb_weapon7">
 		<text>Артефакт</text>
@@ -107,41 +107,41 @@
 		<text>Детектор</text>
 	</string>
 	<string id="kb_use_quick_slot_0">
-		<text>Карман 1</text>
+		<text>Кишеня 1</text>
 	</string>
 	<string id="kb_use_quick_slot_1">
-		<text>Карман 2</text>
+		<text>Кишеня 2</text>
 	</string>
 	<string id="kb_use_quick_slot_2">
-		<text>Карман 3</text>
+		<text>Кишеня 3</text>
 	</string>
 	<string id="kb_use_quick_slot_3">
-		<text>Карман 4</text>
+		<text>Кишеня 4</text>
 	</string>
 	<string id="kb_check_active_item">
-		<text>Проверить предмет в руках</text>
+		<text>Перевірити предмет у руках</text>
 	</string>
 	<string id="kb_check_gear">
-		<text>Проверить снаряжение</text>
+		<text>Перевірити спорядження</text>
 	</string>
 	<string id="kb_check_devices">
-		<text>Проверить приборы</text>
+		<text>Перевірити прилади</text>
 	</string>
 	<string id="kb_ext_1">
-		<text>Автоприцеливание</text>
+		<text>Автоприцілювання</text>
 	</string>
 	<string id="kb_quick_throw_grenade">
-		<text>Быстрый бросок гранаты</text>
+		<text>Швидкий кидок гранати</text>
 	</string>
 	<string id="kb_quick_knife_stab">
-		<text>Быстрый удар ножом</text>
+		<text>Швидкий удар ножем</text>
 	</string>
 	
 	<string id="st_not_enough_money_to_trade">
-		<text>недостаточно денег</text>
+		<text>бракує грошей</text>
 	</string>
 	<string id="st_not_enough_money_to_barter">
-		<text>недостаточно товаров</text>
+		<text>бракує товарів</text>
 	</string>
 	<string id="ui_st_barter">
 		<text>Бартер [T]</text>
@@ -494,89 +494,89 @@
 	
 	
 	<string id="game_object_throw_drop">
-	    <text>Отбросить [$$ACTION_USE$$]\n Отпустить [$$ACTION_ADDITIONAL_ACTION$$]+[$$ACTION_USE$$]</text>
+	    <text>Відкинути [$$ACTION_USE$$]\n Відпустити [$$ACTION_ADDITIONAL_ACTION$$]+[$$ACTION_USE$$]</text>
     </string>
 	<string id="hands_not_free">
-	    <text>Руки заняты</text>
+	    <text>Руки зайняті</text>
     </string>
 	<string id="no_place_available">
-	    <text>Нет места</text>
+	    <text>Немає місця</text>
     </string>
 	
 	<string id="gun_not_jammed">
-		<text>Осечка устранена</text>
+		<text>Затримку усунено</text>
 	</string>
 	
 	<string id="st_next_ammo_type">
-		<text>Зарядить</text>
+		<text>Зарядити</text>
 	</string>
 	<string id="st_load_ammo_type">
-		<text>зарядить</text>
+		<text>зарядити</text>
 	</string>
 	
 	<string id="st_damage">
-		<text>Урон:</text>
+		<text>Пошкодження:</text>
 	</string>
 	<string id="st_fire_distance">
-		<text>Эффективная дистанция:</text>
+		<text>Ефективна дистанція:</text>
 	</string>
 	<string id="st_rpm">
-		<text>Скорострельность:</text>
+		<text>Швидкострільність:</text>
 	</string>
 	<string id="st_dispertion">
-		<text>Разброс:</text>
+		<text>Розкид:</text>
 	</string>	
 	<string id="st_bulkiness">
-		<text>Громоздкость:</text>
+		<text>Громіздкість:</text>
 	</string>	
 	
 	<string id="st_compatible_ammo">
-		<text>патроны:</text>
+		<text>набої:</text>
 	</string>
 	<string id="st_compatible_magazine">
-		<text>магазины:</text>
+		<text>магазини:</text>
 	</string>
 	<string id="st_compatible_addon">
-		<text>обвес:</text>
+		<text>обвіси:</text>
 	</string>
 	<string id="st_current_ammo_type">
-		<text>Заряжен:</text>
+		<text>Заряджено:</text>
 	</string>
 	<string id="st_not_loaded">
-		<text>[не заряжен]</text>
+		<text>[не заряджено]</text>
 	</string>
 	<string id="st_current_scope">
 		<text>Оптика:</text>
 	</string>
 	<string id="st_inbuild_helmet">
-		<text>Встроеный шлем:</text>
+		<text>Вбудований шолом:</text>
 	</string>
 	<string id="st_cells_available">
-		<text>Місткість:</text>
+		<text>Місткість підсумків:</text>
 	</string>
-	<string id="st_has_drop_pouch">
-		<text>Сбросник:</text>
-	</string>
+	<string id="st_installed_plate">
+		<text>Бронеплита:</text>
+	</string>	
 	<string id="st_scope_zoom">
-		<text>Кратность:</text>
+		<text>Кратність:</text>
 	</string>
 	<string id="st_scope_night_vision">
-		<text>Ночное видение:</text>
+		<text>Нічне бачення:</text>
 	</string>
 	<string id="st_scope_vision_present">
-		<text>Захват цели:</text>
+		<text>Захоплення цілі:</text>
 	</string>
 	<string id="st_yes">
-		<text>да</text>
+		<text>так</text>
 	</string>
 	<string id="st_no">
-		<text>нет</text>
+		<text>ні</text>
 	</string>
 	<string id="ui_inv_portions_count">
-		<text>Порций</text>
+		<text>Порцій</text>
 	</string>
 	<string id="ui_inv_max_power">
-		<text>Макс. выносливость</text>
+		<text>Макс. витривалість</text>
 	</string>
 	<string id="ui_inv_wounds_heal_perc">
 		<text>Загоєння ран</text>
@@ -604,104 +604,92 @@
 		<text>деталі:</text>
 	</string>
 	
-	<string id="st_move_with_content">
-		<text>перенести с содержимым</text>
-	</string>
 	<string id="ui_inv_move_all_from_ruck">
-		<text>Выложить всё из рюкзака</text>
+		<text>Викласти все з рюкзака</text>
 	</string>
 	<string id="st_volume">
-		<text>объём</text>
+		<text>обсяг</text>
 	</string>
 	
 	<string id="st_pda_change_spot_hint">
-		<text>Изменить текст метки</text>
+		<text>Змінити текст мітки</text>
 	</string>
 	<string id="st_pda_delete_spot">
-		<text>Удалить метку</text>
+		<text>Видалити мітку</text>
 	</string>
 
 	<string id="st_move">
 		<text>перенести</text>
 	</string>
 	<string id="st_move_all">
-		<text>перенести все</text>
+		<text>перенести усе</text>
 	</string>
 
 	<string id="st_move_to_slot_0">
-		<text>в ножны</text>
+		<text>у ножни</text>
 	</string>
 	<string id="st_move_to_slot_1">
-		<text>на плечо</text>
+		<text>на плече</text>
 	</string>
-	<string id="st_attach_addon_to_wpn_in_slot_1">
-		<text>прикрепить %s к %s на плече</text>
+	<string id="st_attach_addon_to_item_in_slot_1">
+		<text>встановити %s на %s на плечі</text>
 	</string>
 	<string id="st_move_to_slot_2">
 		<text>за спину</text>
 	</string>
-	<string id="st_attach_addon_to_wpn_in_slot_2">
-		<text>прикрепить %s к %s за спиной</text>
+	<string id="st_attach_addon_to_item_in_slot_2">
+		<text>встановити %s на %s за спиною</text>
 	</string>
 	<string id="st_move_to_slot_3">
-		<text>в подсумок</text>
+		<text>у підсумок</text>
 	</string>
 	<string id="st_move_to_slot_4">
-		<text>в кобуру</text>
+		<text>у кобуру</text>
 	</string>
-	<string id="st_attach_addon_to_wpn_in_slot_4">
-		<text>прикрепить %s к %s в кобуре</text>
+	<string id="st_attach_addon_to_item_in_slot_4">
+		<text>встановити %s на %s у кобурі</text>
 	</string>
+	<string id="st_attach_addon_to_item_in_slot_18">
+		<text>встановити %s у %s</text>
+	</string>	
 
 	<string id="st_move_to_slot_7">
-		<text>экипировать</text>
+		<text>екіпірувати</text>
 	</string>
 	<string id="st_move_to_slot_8">
-		<text>экипировать</text>
+		<text>екіпірувати</text>
 	</string>
 	<string id="st_move_to_slot_9">
 		<text>на голову</text>
 	</string>
 	<string id="st_move_to_slot_10">
-		<text>в подсумок</text>
+		<text>у підсумок</text>
 	</string>
 	<string id="st_move_to_slot_11">
-		<text>надеть</text>
+		<text>надягнути</text>
 	</string>
 	
-	<string id="st_move_to_slot_12">
-		<text>в карман 1</text>
+	<string id="st_attach_addon_to_item_in_slot_12">
+		<text>встановити %s на %s у кишені 1</text>
 	</string>
-	<string id="st_attach_addon_to_wpn_in_slot_12">
-		<text>прикрепить %s к %s в кармане 1</text>
-	</string>
-	<string id="st_move_to_slot_13">
-		<text>в карман 2</text>
+	<string id="st_attach_addon_to_item_in_slot_13">
+		<text>встановити %s на %s у кишені 2</text>
 	</string>	
-	<string id="st_attach_addon_to_wpn_in_slot_13">
-		<text>прикрепить %s к %s в кармане 2</text>
-	</string>	
-	<string id="st_move_to_slot_14">
-		<text>в карман 3</text>
-	</string>	
-	<string id="st_attach_addon_to_wpn_in_slot_14">
-		<text>прикрепить %s к %s в кармане 3</text>
-	</string>	
-	<string id="st_move_to_slot_15">
-		<text>в карман 4</text>
-	</string>	
-	<string id="st_attach_addon_to_wpn_in_slot_15">
-		<text>прикрепить %s к %s в кармане 4</text>
+	<string id="st_attach_addon_to_item_in_slot_14">
+		<text>встановити %s на %s у кишені 3</text>
+	</string>		
+	<string id="st_attach_addon_to_item_in_slot_15">
+		<text>встановити %s на %s у кишені 4</text>
 	</string>	
 	
 	<string id="st_move_to_slot_16">
-		<text>надеть</text>
+		<text>надягнути</text>
 	</string>	
 	<string id="st_move_to_slot_17">
-		<text>надеть</text>
+		<text>надягнути</text>
 	</string>	
 	<string id="st_move_to_slot_18">
-		<text>надеть</text>
+		<text>надягнути</text>
 	</string>		
 	
 	<string id="st_to_quick_slot">
@@ -722,14 +710,14 @@
 	</string>
 
 	<string id="inventory_item_use_or_drag">
-		<text>Поднять предмет [$$ACTION_USE$$] \n Перетащить предмет [SHIFT+$$ACTION_USE$$]</text>
+		<text>Підняти [$$ACTION_USE$$] \n перетягнути [SHIFT+$$ACTION_USE$$]</text>
 	</string>
 	<string id="game_object_drag">
-		<text>Перетащить предмет [$$ACTION_ADDITIONAL_ACTION$$]+[$$ACTION_USE$$]</text>
+		<text>Перетягнути [$$ACTION_ADDITIONAL_ACTION$$]+[$$ACTION_USE$$]</text>
 	</string>
 
 	<string id="st_press_any_key">
-		<text>Нажмите любую клавишу для перехода к игре</text>
+		<text>Натисніть будь яку клавішу для переходу до гри</text>
 	</string>
 	
 	<string id="ui_st_no_power">

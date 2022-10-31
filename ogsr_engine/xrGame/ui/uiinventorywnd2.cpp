@@ -530,7 +530,8 @@ bool CUIInventoryWnd::OnItemDrop(CUICellItem* itm)
 	{
           auto item = CurrentIItem();
 
-		  if (auto _item_in_slot = new_owner->GetItemIdx(0)) {
+		  auto _item_in_slot = new_owner->ItemsCount() ? new_owner->GetItemIdx(0) : nullptr;
+		  if (_item_in_slot) {
 			  auto _iitem_in_slot = (PIItem)_item_in_slot->m_pData;
 
 			  if (_iitem_in_slot->CanAttach(item)) {

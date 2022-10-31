@@ -1396,13 +1396,11 @@ void CInventory::IterateAmmo( bool bSearchRuck, std::function<bool( const PIItem
 			if (ammo && item->Useful() && callback(item))
 				break;
 		}
-
 		for (const auto& item : m_belt) {
 			const auto* ammo = smart_cast<CWeaponAmmo*>(item);
 			if (ammo && item->Useful() && callback(item))
 				break;
 		}
-
 		for (u32 i = 0; i < m_slots.size(); ++i){
 			const auto item = m_slots[i].m_pIItem;
 			const auto* ammo = smart_cast<CWeaponAmmo*>(item);

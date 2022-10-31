@@ -15,6 +15,7 @@
 #include "UICellItem.h"
 #include "UIListBoxItem.h"
 #include "CustomOutfit.h"
+#include "Vest.h"
 #include "string_table.h"
 #include <regex>
 
@@ -37,6 +38,7 @@ void CUIInventoryWnd::ActivatePropertiesBox()
 	auto pOutfit		= smart_cast<CCustomOutfit*>	(CurrentIItem());
 	auto pWeapon		= smart_cast<CWeapon*>			(CurrentIItem());
 	auto pAmmo			= smart_cast<CWeaponAmmo*>		(CurrentIItem());
+	auto pVest			= smart_cast<CVest*>			(CurrentIItem());
 
 	string1024			temp;
     
@@ -86,6 +88,12 @@ void CUIInventoryWnd::ActivatePropertiesBox()
 	if(pOutfit  && !bAlreadyDressed )
 	{
 		UIPropertiesBox.AddItem("st_dress_outfit",  NULL, INVENTORY_TO_SLOT_ACTION);
+		b_show = true;
+	}
+
+	if (pVest && pVest->IsPlateInstalled() && pVest->m_plates.size()) {
+		sprintf(temp, "%s %s", CStringTable().translate("st_detach").c_str(), CStringTable().translate(pSettings->r_string(pVest->GetPlateName().c_str(), "inv_name_short")).c_str());
+		UIPropertiesBox.AddItem(temp, (void*)pVest->GetPlateName().c_str(), INVENTORY_DETACH_ADDON);
 		b_show = true;
 	}
 
@@ -198,7 +206,7 @@ void CUIInventoryWnd::ActivatePropertiesBox()
 		//attach addon
 		if (tgt->CanAttach(CurrentIItem())) {
 			string128 trans_str;
-			strconcat(sizeof(trans_str), trans_str, "st_attach_addon_to_wpn_in_slot_", std::to_string(i).c_str());
+			strconcat(sizeof(trans_str), trans_str, "st_attach_addon_to_item_in_slot_", std::to_string(i).c_str());
 			string128 str = { 0 };
 			// В локализации должно быть что-то типа 'Прикрепить %s к %s в таком-то слоте'
 			std::snprintf(str, sizeof(str), CStringTable().translate(trans_str).c_str(), CurrentIItem()->m_nameShort.c_str(), tgt->m_nameShort.c_str());

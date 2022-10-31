@@ -774,6 +774,7 @@ public:
 			//визначаємо чи треба передати хіт до рюкзака та його вмісту
 	virtual	bool	IsHitToBackPack			(SHit* pHDS) const;
 	virtual	bool	IsHitToHead				(SHit* pHDS) const;
+	virtual	bool	IsHitToVest				(SHit* pHDS) const;
 
 			bool	HasDetectorWorkable		();
 			bool	HasPDAWorkable			();

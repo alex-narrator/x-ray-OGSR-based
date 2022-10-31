@@ -519,11 +519,11 @@ void CEntityAlive::UpdateBloodDrops()
 
 	if(m_BloodWounds.empty()) return;
 
-	if(!g_Alive())
-	{
-		m_BloodWounds.clear();
-		return;
-	}
+	//спробуємо не зупиняти кровотечу мерців
+	//if(!g_Alive()){
+	//	m_BloodWounds.clear();
+	//	return;
+	//}
 
 //	WOUND_VECTOR_IT last_it;
 

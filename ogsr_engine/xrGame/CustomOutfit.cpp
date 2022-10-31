@@ -48,13 +48,20 @@ void CCustomOutfit::Load(LPCSTR section)
 float	CCustomOutfit::HitThruArmour(SHit* pHDS)
 {
 	float hit_power = pHDS->power;
-	float BoneArmour = m_boneProtection->getBoneArmour(pHDS->boneID) * GetCondition() * (1 - pHDS->ap);
-	float NewHitPower = hit_power - BoneArmour;
+	float BoneArmour = m_boneProtection->getBoneArmour(pHDS->boneID) * GetCondition();
 
-	if (NewHitPower < hit_power * m_boneProtection->m_fHitFrac) 
-		return hit_power * m_boneProtection->m_fHitFrac;
+	Msg("%s %s take hit power [%.4f], hitted bone %s, bone armor [%.4f], hit AP [%.4f]",
+		__FUNCTION__, Name(), hit_power,
+		smart_cast<IKinematics*>(smart_cast<CActor*> (m_pCurrentInventory->GetOwner())->Visual())->LL_BoneName_dbg(pHDS->boneID), BoneArmour, pHDS->ap);
 
-	return NewHitPower;
+	if (pHDS->ap < BoneArmour) { //броню не пробито, хіт тільки від умовного удару в броню
+		hit_power *= m_boneProtection->m_fHitFrac;
+
+		Msg("%s %s armor is not pierced, result hit power [%.4f]",
+			__FUNCTION__, Name(), hit_power);
+	}
+
+	return hit_power;
 };
 
 BOOL	CCustomOutfit::BonePassBullet					(int boneID)

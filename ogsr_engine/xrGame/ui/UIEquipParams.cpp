@@ -190,6 +190,19 @@ void CUIEquipParams::SetInfo(CInventoryItem* obj){
 		_h += list_item_h;
 	}
 
+	if (pVest && pVest->m_plates.size()) {
+		auto plate_static = xr_new<CUIStatic>();
+		CUIXmlInit::InitStatic(uiXml, "equip_params:armor_plate", 0, plate_static);
+		plate_static->SetAutoDelete(true);
+		pos_top = plate_static->GetPosTop();
+		plate_static->SetWndPos(plate_static->GetPosLeft(), _h + pos_top);
+		sprintf_s(temp_text, " %s", pVest->IsPlateInstalled() ? pVest->GetPlateName().c_str() : CStringTable().translate("st_no").c_str());
+		strconcat(sizeof(text_to_show), text_to_show, CStringTable().translate("st_installed_plate").c_str(), temp_text);
+		plate_static->SetText(text_to_show);
+		m_CapInfo.AttachChild(plate_static);
+		_h += list_item_h;
+	}
+
 	//сумісні набої магазинів
 	auto pAmmo = smart_cast<CWeaponAmmo*>(obj);
 	if (pAmmo && (pAmmo->IsBoxReloadable() || pAmmo->IsBoxReloadableEmpty())) {

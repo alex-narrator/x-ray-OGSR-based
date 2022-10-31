@@ -30,6 +30,7 @@ class CWeapon;
 class CCustomOutfit;
 class CBackpack;
 class CHelmet;
+class CVest;
 struct SHit;
 
 class CInventoryOwner : public CAttachmentOwner {							
@@ -152,9 +153,11 @@ public:
 	virtual CCustomOutfit*					GetOutfit		() const {return nullptr;};
 	virtual CBackpack*						GetBackpack		() const {return nullptr;};
 	virtual CHelmet*						GetHelmet		() const {return nullptr;};
+	virtual CVest*							GetVest			() const {return nullptr;};
 
 	virtual	bool							IsHitToBackPack	(SHit* pHDS) const { return false; };
-	virtual	bool							IsHitToHead	(SHit* pHDS) const { return false; };
+	virtual	bool							IsHitToHead		(SHit* pHDS) const { return false; };
+	virtual	bool							IsHitToVest		(SHit* pHDS) const { return false; };
 
 	//////////////////////////////////////////////////////////////////////////
 	//игровые характеристики персонажа

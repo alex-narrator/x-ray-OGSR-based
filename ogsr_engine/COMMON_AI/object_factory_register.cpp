@@ -298,7 +298,7 @@ void CObjectFactory::register_classes	()
 	//equipment
 	ADD(CWarbelt				,CSE_ALifeItem					,CLSID_WARBELT					,"obj_warbelt");
 	ADD(CBackpack				,CSE_ALifeItem					,CLSID_BACKPACK					,"obj_backpack");
-	ADD(CVest					,CSE_ALifeItem					,CLSID_VEST						,"obj_vest");
+	ADD(CVest					,CSE_ALifeItemVest				,CLSID_VEST						,"obj_vest");
 	ADD(CHelmet					,CSE_ALifeItem					,CLSID_HELMET					,"obj_helmet");
 
 	//power battery
