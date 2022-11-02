@@ -71,7 +71,7 @@ float CVest::GetHitTypeProtection(ALife::EHitType hit_type) {
 		if (pSettings->line_exist(CurrProtectSect(), "bones_koeff_protection")) {
 			LPCSTR bone_params = pSettings->r_string(pSettings->r_string(CurrProtectSect(), "bones_koeff_protection"), bulletproof_display_bone.c_str());
 			string128 tmp;
-			result = atof(_GetItem(bone_params, 1, tmp)) * GetCondition();
+			result = atof(_GetItem(bone_params, 1, tmp)) * !fis_zero(GetCondition());
 		}
 		return result;
 	}
@@ -80,7 +80,7 @@ float CVest::GetHitTypeProtection(ALife::EHitType hit_type) {
 float CVest::HitThruArmour(SHit* pHDS)
 {
 	float hit_power = pHDS->power;
-	float BoneArmour = m_boneProtection->getBoneArmour(pHDS->boneID) * GetCondition();
+	float BoneArmour = m_boneProtection->getBoneArmour(pHDS->boneID) * !fis_zero(GetCondition());
 
 	Msg("%s %s take hit power [%.4f], hitted bone %s, bone armor [%.4f], hit AP [%.4f]",
 		__FUNCTION__, Name(), hit_power,
@@ -106,7 +106,7 @@ float CVest::GetPowerLoss()
 };
 
 bool CVest::IsBoneArmored(u16 bone) const {
-	return !fis_zero(m_boneProtection->getBoneArmour(bone) * GetCondition());
+	return !fis_zero(m_boneProtection->getBoneArmour(bone) && !fis_zero(GetCondition()));
 }
 
 const shared_str CVest::CurrProtectSect() const {
@@ -116,9 +116,11 @@ const shared_str CVest::CurrProtectSect() const {
 void CVest::ReloadParams() {
 	CHitImmunity::LoadImmunities(pSettings->r_string(CurrProtectSect(), "immunities_sect"), pSettings);
 	if (pSettings->line_exist(CurrProtectSect(), "bones_koeff_protection")) {
-		auto pActor = smart_cast<CActor*> (m_pCurrentInventory->GetOwner());
-		if (pActor)
-			m_boneProtection->reload(pSettings->r_string(CurrProtectSect(), "bones_koeff_protection"), smart_cast<IKinematics*>(pActor->Visual()));
+		if (m_pCurrentInventory) {
+			auto pActor = smart_cast<CActor*> (m_pCurrentInventory->GetOwner());
+			if (pActor)
+				m_boneProtection->reload(pSettings->r_string(CurrProtectSect(), "bones_koeff_protection"), smart_cast<IKinematics*>(pActor->Visual()));
+		}
 	}
 }
 
@@ -180,6 +182,7 @@ bool CVest::Detach(const char* item_section_name, bool b_spawn_item, float item_
 		m_cur_plate = 0;
 		b_spawn_item = !fis_zero(GetCondition());
 		if (b_spawn_item) item_condition = GetCondition();
+		SetCondition(b_spawn_item);
 		//
 		ReloadParams();
 	}
@@ -192,6 +195,7 @@ BOOL CVest::net_Spawn(CSE_Abstract* DC){
 	const auto sobj_vest = smart_cast<CSE_ALifeItemVest*>(DC);
 	m_bIsPlateInstalled = sobj_vest->m_bIsPlateInstalled;
 	m_cur_plate = sobj_vest->m_cur_plate;
+	ReloadParams();
 	return bRes;
 }
 

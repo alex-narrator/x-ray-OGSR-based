@@ -339,8 +339,7 @@ public:
 	virtual float					GetPowerTTL		() const { return m_fTTLOnPowerConsumption; };
 
 			LPCSTR					GetDetailPartSection() const { return m_detail_part_section; }
-	virtual bool					CanBeDisassembled() const { return m_detail_part_section; }
-	virtual void					Disassemble();
+	virtual void					Disassemble			();
 protected:
 	HitImmunity::HitTypeSVec		m_HitTypeProtection;
 

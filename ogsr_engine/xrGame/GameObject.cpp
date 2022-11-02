@@ -503,7 +503,8 @@ void CGameObject::spawn_supplies()
 		cur_silencer{},
 		cur_launcher{},
 		cur_laser{},
-		cur_flashlight{};
+		cur_flashlight{},
+		cur_ammo_type{};
 
 	for (u32 k = 0, j; spawn_ini()->r_line("spawn",k,&N,&V); k++) {
 		VERIFY				(xr_strlen(N));
@@ -528,6 +529,9 @@ void CGameObject::spawn_supplies()
 			bLauncher		=	(NULL!=strstr(V,"launcher"));
 			bLaser			=	(NULL!=strstr(V,"laser"));
 			bFlashlight		=	(NULL!=strstr(V,"flashlight"));
+			//preloaded ammo type
+			if (NULL != strstr(V, "ammo="))
+				cur_ammo_type = (u32)atof(strstr(V, "ammo=") + 5);
 			//custom multi-addon to install
 			if (NULL != strstr(V, "scope="))
 				cur_scope = (u32)atof(strstr(V, "scope=") + 6);
@@ -551,6 +555,8 @@ void CGameObject::spawn_supplies()
 
 				CSE_ALifeItemWeapon* W =  smart_cast<CSE_ALifeItemWeapon*>(A);
 				if (W) {
+					W->ammo_type = cur_ammo_type;
+
 					if (W->m_scope_status == CSE_ALifeItemWeapon::eAddonAttachable) {
 						W->m_addon_flags.set(CSE_ALifeItemWeapon::eWeaponAddonScope, bScope);
 						W->m_cur_scope = cur_scope;

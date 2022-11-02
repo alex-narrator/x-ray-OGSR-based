@@ -238,7 +238,7 @@ void CUIInventoryWnd::ActivatePropertiesBox()
 		if(CurrentItem()->ChildsCount())
 			UIPropertiesBox.AddItem("st_drop_all", (void*)33, INVENTORY_DROP_ACTION);
 
-		if (CurrentIItem()->CanBeDisassembled()) {
+		if (CurrentIItem()->GetDetailPartSection()) {
 			UIPropertiesBox.AddItem("st_disassemble", NULL, INVENTORY_DISASSEMBLE);
 			b_show = true;
 

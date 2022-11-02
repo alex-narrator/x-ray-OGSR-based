@@ -1338,26 +1338,21 @@ void CWeaponMagazined::LoadZoomParams(LPCSTR section)
 
 void CWeaponMagazined::ApplySilencerKoeffs	()
 {
-	float BHPk = 1.0f, BSk = 1.0f;
-	float FDB_k = 1.0f, CD_k = 1.0f;
+	float BHPk{ 1.0f }, BSk{ 1.0f }, FDB_k{ 1.0f }, CD_k{ 1.0f };
 	
-	if (pSettings->line_exist(GetSilencerName(), "bullet_hit_power_k"))
-	{
+	if (pSettings->line_exist(GetSilencerName(), "bullet_hit_power_k")){
 		BHPk = pSettings->r_float(GetSilencerName(), "bullet_hit_power_k");
 		clamp(BHPk, 0.0f, 1.0f);
 	};
-	if (pSettings->line_exist(GetSilencerName(), "bullet_speed_k"))
-	{
+	if (pSettings->line_exist(GetSilencerName(), "bullet_speed_k")){
 		BSk = pSettings->r_float(GetSilencerName(), "bullet_speed_k");
 		clamp(BSk, 0.0f, 1.0f);
 	};
-	if (pSettings->line_exist(GetSilencerName(), "fire_dispersion_base_k"))
-	{
+	if (pSettings->line_exist(GetSilencerName(), "fire_dispersion_base_k")){
 		FDB_k = pSettings->r_float(GetSilencerName(), "fire_dispersion_base_k");
 //		clamp(FDB_k, 0.0f, 1.0f);
 	};
-	if (pSettings->line_exist(GetSilencerName(), "cam_dispersion_k"))
-	{
+	if (pSettings->line_exist(GetSilencerName(), "cam_dispersion_k")){
 		CD_k = pSettings->r_float(GetSilencerName(), "cam_dispersion_k");
 		clamp(CD_k, 0.0f, 1.0f);
 	};
@@ -2235,7 +2230,7 @@ void CWeaponMagazined::UnloadAndDetachAllAddons() {
 }
 
 void CWeaponMagazined::Disassemble() {
-	if (!CanBeDisassembled()) return;
+	if (!GetDetailPartSection()) return;
 	UnloadAndDetachAllAddons();
 	inherited::Disassemble();
 }

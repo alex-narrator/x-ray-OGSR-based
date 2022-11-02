@@ -44,7 +44,8 @@ void CSE_ALifeObject::spawn_supplies		(LPCSTR ini_string)
 				cur_silencer{},
 				cur_launcher{},
 				cur_laser{},
-				cur_flashlight{};
+				cur_flashlight{},
+				cur_ammo_type{};
 			
 			j					= 1;
 			p					= 1.f;
@@ -59,6 +60,9 @@ void CSE_ALifeObject::spawn_supplies		(LPCSTR ini_string)
 				bLauncher			= (NULL!=strstr(V,"launcher"));
 				bLaser				= (NULL!=strstr(V,"laser"));
 				bFlashlight			= (NULL!=strstr(V,"flashlight"));
+				//preloaded ammo type
+				if (NULL != strstr(V, "ammo="))
+					cur_ammo_type = (u32)atof(strstr(V, "ammo=") + 5);
 				//custom multi-addon to install
 				if (NULL != strstr(V, "scope="))
 					cur_scope = (u32)atof(strstr(V, "scope=") + 6);
@@ -83,6 +87,8 @@ void CSE_ALifeObject::spawn_supplies		(LPCSTR ini_string)
 					//подсоединить аддоны к оружию, если включены соответствующие флажки
 					CSE_ALifeItemWeapon* W =  smart_cast<CSE_ALifeItemWeapon*>(E);
 					if (W) {
+						W->ammo_type = cur_ammo_type;
+
 						if (W->m_scope_status == CSE_ALifeItemWeapon::eAddonAttachable) {
 							W->m_addon_flags.set(CSE_ALifeItemWeapon::eWeaponAddonScope, bScope);
 							W->m_cur_scope = cur_scope;

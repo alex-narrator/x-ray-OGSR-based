@@ -418,7 +418,11 @@ void	CBaseMonster::Hit							(SHit* pHDS)
 		if (!critically_wounded()) 
 			update_critical_wounded( HDS.boneID, HDS.power );
 	
-
+	if (pHDS->type() == ALife::eHitTypeFireWound) {
+		Msg("%s %s take hit power [%.4f], hitted bone [%s], bone armor [%.4f], hit AP [%.4f], visual name [%s], protection_sect [%s]",
+			__FUNCTION__, cName().c_str(), HDS.power, smart_cast<IKinematics*>(Visual())->LL_BoneName_dbg(pHDS->boneID),
+			/*BoneArmour*/0.f, pHDS->ap, Visual()->getDebugName().c_str(), /*smart_cast<IKinematics*>(Visual())->LL_UserData()->r_string("bone_protection", "bones_protection_sect")*/nullptr);
+	}
 
 //	inherited::Hit(P,dir,who,element,p_in_object_space,impulse,hit_type);
 	inherited::Hit( &HDS );

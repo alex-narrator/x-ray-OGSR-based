@@ -392,10 +392,6 @@ void CSE_ALifeItemNightVisionDevice::UPDATE_Write(NET_Packet& tNetPacket)
 CSE_ALifeItemWeapon::CSE_ALifeItemWeapon	(LPCSTR caSection) : CSE_ALifeItem(caSection)
 {
 	a_current					= 90;
-	a_elapsed					= 0;
-	wpn_flags					= 0;
-	wpn_state					= 0;
-	ammo_type					= 0;
 
 	m_fHitPower					= pSettings->r_float(caSection,"hit_power");
 	m_tHitType					= ALife::g_tfString2HitType(pSettings->r_string(caSection,"hit_type"));
@@ -420,35 +416,39 @@ CSE_ALifeItemWeapon::CSE_ALifeItemWeapon	(LPCSTR caSection) : CSE_ALifeItem(caSe
 	m_ef_weapon_type			= READ_IF_EXISTS(pSettings,r_u32,caSection,"ef_weapon_type",u32(-1));
 	//
 	m_MagazineSize				= pSettings->r_float(caSection, "ammo_mag_size");
+	//preloaded ammo_type
+	if (pSettings->line_exist(caSection, "ammo_type_loaded")) {
+		ammo_type = pSettings->r_u8(s_name, "ammo_type_loaded");
+	}
 	//preinstalled non-permanent addon
 	if (m_scope_status == EWeaponAddonStatus::eAddonAttachable) {
-		if (pSettings->line_exist(caSection, "scope_preinstalled")) {
+		if (pSettings->line_exist(caSection, "scope_installed")) {
 			m_addon_flags.set(eWeaponAddonScope, true);
-			m_cur_scope = pSettings->r_u8(s_name, "scope_preinstalled");
+			m_cur_scope = pSettings->r_u8(s_name, "scope_installed");
 		}
 	}
 	if (m_silencer_status == EWeaponAddonStatus::eAddonAttachable) {
-		if (pSettings->line_exist(caSection, "silencer_preinstalled")) {
+		if (pSettings->line_exist(caSection, "silencer_installed")) {
 			m_addon_flags.set(eWeaponAddonSilencer, true);
-			m_cur_silencer = pSettings->r_u8(s_name, "silencer_preinstalled");
+			m_cur_silencer = pSettings->r_u8(s_name, "silencer_installed");
 		}
 	}
 	if (m_grenade_launcher_status == EWeaponAddonStatus::eAddonAttachable) {
-		if (pSettings->line_exist(caSection, "launcher_preinstalled")) {
+		if (pSettings->line_exist(caSection, "launcher_installed")) {
 			m_addon_flags.set(eWeaponAddonGrenadeLauncher, true);
-			m_cur_glauncher = pSettings->r_u8(s_name, "launcher_preinstalled");
+			m_cur_glauncher = pSettings->r_u8(s_name, "launcher_installed");
 		}
 	}
 	if (m_laser_status == EWeaponAddonStatus::eAddonAttachable) {
-		if (pSettings->line_exist(caSection, "laser_preinstalled")) {
+		if (pSettings->line_exist(caSection, "laser_installed")) {
 			m_addon_flags.set(eWeaponAddonLaser, true);
-			m_cur_laser = pSettings->r_u8(s_name, "laser_preinstalled");
+			m_cur_laser = pSettings->r_u8(s_name, "laser_installed");
 		}
 	}
 	if (m_flashlight_status == EWeaponAddonStatus::eAddonAttachable) {
-		if (pSettings->line_exist(caSection, "flashlight_preinstalled")) {
+		if (pSettings->line_exist(caSection, "flashlight_installed")) {
 			m_addon_flags.set(eWeaponAddonFlashlight, true);
-			m_cur_flashlight = pSettings->r_u8(s_name, "flashlight_preinstalled");
+			m_cur_flashlight = pSettings->r_u8(s_name, "flashlight_installed");
 		}
 	}
 }

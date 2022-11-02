@@ -46,7 +46,7 @@ bool CUIEquipParams::Check(CInventoryItem* obj){
 		smart_cast<CInventoryContainer*>(obj) ||
 		smart_cast<CPowerBattery*>		(obj) ||
 		obj->IsPowerConsumer()				  ||
-		obj->CanBeDisassembled()				) {
+		obj->GetDetailPartSection()				) {
 		return true;
 	}else
 		return false;
@@ -278,7 +278,7 @@ void CUIEquipParams::SetInfo(CInventoryItem* obj){
 		}
 	}
 
-	if (obj->CanBeDisassembled()) {
+	if (obj->GetDetailPartSection()) {
 		auto cap_containment_static = xr_new<CUIStatic>(); cap_containment_static->SetAutoDelete(true);
 		CUIXmlInit::InitStatic(uiXml, "equip_params:cap_detail_parts", 0, cap_containment_static);
 		pos_top = cap_containment_static->GetPosTop();

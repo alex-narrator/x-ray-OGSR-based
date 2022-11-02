@@ -173,11 +173,11 @@ SERVER_ENTITY_DECLARE_BEGIN(CSE_ALifeItemWeapon,CSE_ALifeItem)
 	EWeaponAddonStatus				m_flashlight_status{};
 
 	u32								timestamp{};
-	u8								wpn_flags;
-	u8								wpn_state;
-	u8								ammo_type;
+	u8								wpn_flags{};
+	u8								wpn_state{};
+	u8								ammo_type{};
 	u16								a_current;
-	u16								a_elapsed;
+	u16								a_elapsed{};
 	float							m_fHitPower;
 	ALife::EHitType					m_tHitType;
 	LPCSTR							m_caAmmoSections;

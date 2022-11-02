@@ -48,7 +48,7 @@ void CCustomOutfit::Load(LPCSTR section)
 float	CCustomOutfit::HitThruArmour(SHit* pHDS)
 {
 	float hit_power = pHDS->power;
-	float BoneArmour = m_boneProtection->getBoneArmour(pHDS->boneID) * GetCondition();
+	float BoneArmour = m_boneProtection->getBoneArmour(pHDS->boneID) * !fis_zero(GetCondition());
 
 	Msg("%s %s take hit power [%.4f], hitted bone %s, bone armor [%.4f], hit AP [%.4f]",
 		__FUNCTION__, Name(), hit_power,
@@ -77,7 +77,7 @@ float CCustomOutfit::GetHitTypeProtection(ALife::EHitType hit_type) {
 		if (pSettings->line_exist(cNameSect(), "bones_koeff_protection")) {
 			LPCSTR bone_params = pSettings->r_string(pSettings->r_string(cNameSect(), "bones_koeff_protection"), bulletproof_display_bone.c_str());
 			string128 tmp;
-			result = atof(_GetItem(bone_params, 1, tmp)) * GetCondition();
+			result = atof(_GetItem(bone_params, 1, tmp)) * !fis_zero(GetCondition());
 		}
 		return result;
 	}

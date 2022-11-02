@@ -145,9 +145,7 @@ void CUIOutfitInfo::Update()
 					_val += Actor()->GetTotalArtefactsEffect(i);
 				}
 			}
-		}
-		else 
-		{
+		} else {
 			if (outfit)
 				_val = outfit->GetHitTypeProtection(ALife::EHitType(i - _hit_type_protection_index));
 			if (vest)
@@ -162,16 +160,15 @@ void CUIOutfitInfo::Update()
 			}
 		}
 
-		if (fis_zero(_val)) 
+		if (fis_zero(_val))
 			continue;
 
 		LPCSTR _sn = "%";
 		_val *= 100.0f;
 
-		if (i == _item_radiation_restore_speed)
-		{
+		if (i == _item_radiation_restore_speed){
 			_val /= 100.0f;
-			_sn = *CStringTable().translate("st_rad");
+			_sn = CStringTable().translate("st_rad").c_str();
 		}
 
 		if (i == _item_bleeding_restore_speed || i == _item_alcohol_restore_speed) {
@@ -195,11 +192,9 @@ void CUIOutfitInfo::Update()
 		m_listWnd->AddWindow(_s, false);
 	}
 
-	if (pSettings->line_exist("engine_callbacks", "ui_actor_info_callback"))
-	{
+	if (pSettings->line_exist("engine_callbacks", "ui_actor_info_callback")){
 		const char* callback = pSettings->r_string("engine_callbacks", "ui_actor_info_callback");
-		if (luabind::functor<void> lua_function; ai().script_engine().functor(callback, lua_function))
-		{
+		if (luabind::functor<void> lua_function; ai().script_engine().functor(callback, lua_function)){
 			lua_function(m_listWnd, outfit ? outfit->lua_game_object() : nullptr);
 		}
 	}

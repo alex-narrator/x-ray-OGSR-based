@@ -1,15 +1,17 @@
 #include "stdafx.h"
 #include "ui_af_params.h"
 #include "UIStatic.h"
-#include "../object_broker.h"
+#include "object_broker.h"
 #include "UIXmlInit.h"
 
-#include "../string_table.h"
+#include "string_table.h"
 
-#include "../inventory_item.h"
-#include "../Artifact.h"
-#include "../Actor.h"
-#include "../ActorCondition.h"
+#include "inventory_item.h"
+#include "Artifact.h"
+#include "Actor.h"
+#include "ActorCondition.h"
+
+#include "Vest.h"
 
 constexpr auto AF_PARAMS = "af_params.xml";
 
@@ -20,8 +22,7 @@ CUIArtefactParams::CUIArtefactParams()
 
 CUIArtefactParams::~CUIArtefactParams()
 {
-	for(u32 i=_item_start; i<_max_item_index; ++i)
-	{
+	for(u32 i=_item_start; i<_max_item_index; ++i){
 		CUIStatic* _s			= m_info_items[i];
 		xr_delete				(_s);
 	}
@@ -92,12 +93,10 @@ void CUIArtefactParams::Init()
 	string256					_buff;
 	CUIXmlInit::InitWindow		(uiXml, _base, 0, this);
 
-	for(u32 i=_item_start; i<_max_item_index; ++i)
-	{
+	for(u32 i=_item_start; i<_max_item_index; ++i){
 		strconcat				(sizeof(_buff),_buff, _base, ":static_", af_item_sect_names[i]);
 
-		if (uiXml.NavigateToNode(_buff, 0))
-		{
+		if (uiXml.NavigateToNode(_buff, 0)){
 			m_info_items[i] = xr_new<CUIStatic>();
 			CUIStatic* _s = m_info_items[i];
 			_s->SetAutoDelete(false);
@@ -141,20 +140,19 @@ void CUIArtefactParams::SetInfo(CInventoryItem* obj)
 		}
 
 		if (fis_zero(_val))				continue;
+
 		if (i != _item_additional_weight)
 			_val *= 100.0f;
 
 		LPCSTR _sn = "%";
 
-		if (i == _item_radiation_restore_speed)
-		{
+		if (i == _item_radiation_restore_speed){
 			_val /= 100.0f;
-			_sn = *CStringTable().translate("st_rad");
+			_sn = CStringTable().translate("st_rad").c_str();
 		}
 		//
-		else if (i == _item_additional_weight)
-		{
-			_sn = *CStringTable().translate("st_kg");
+		else if (i == _item_additional_weight){
+			_sn = CStringTable().translate("st_kg").c_str();
 		}
 
 		LPCSTR _color = (_val>0)?"%c[green]":"%c[red]";
