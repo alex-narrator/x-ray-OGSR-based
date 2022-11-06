@@ -17,9 +17,8 @@
 
 CGrenade::CGrenade(void) 
 {
-
 	m_destroy_callback.clear();
-	m_eSoundCheckout = ESoundTypes(SOUND_TYPE_WEAPON_RECHARGING);
+	//m_eSoundCheckout = ESoundTypes(SOUND_TYPE_WEAPON_RECHARGING);
 }
 
 CGrenade::~CGrenade(void) 
@@ -32,7 +31,7 @@ void CGrenade::Load(LPCSTR section)
 	inherited::Load(section);
 	CExplosive::Load(section);
 
-	HUD_SOUND::LoadSound(section,"snd_checkout",sndCheckout,m_eSoundCheckout);
+	//HUD_SOUND::LoadSound(section,"snd_checkout",sndCheckout,m_eSoundCheckout);
 
 	m_grenade_detonation_threshold_hit = READ_IF_EXISTS(pSettings, r_float, section, "detonation_threshold_hit", 100.f);
 }

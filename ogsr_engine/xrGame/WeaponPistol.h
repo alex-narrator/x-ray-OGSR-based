@@ -35,6 +35,9 @@ public:
 	virtual void	PlayAnimReload	() override;
 	virtual void	PlayAnimShoot	() override;
 
+	virtual void	PlayAnimCheckout	() override;
+	virtual void	PlayAnimKick		() override;
+
 	virtual void	UpdateSounds	();
 protected:	
 	virtual bool	AllowFireWhileWorking() {return true;}

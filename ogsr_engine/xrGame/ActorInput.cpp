@@ -275,7 +275,11 @@ void CActor::IR_OnKeyboardPress(int cmd){
 	}break;
 	case kKICK:
 	{
-		ActorKick();
+		const auto hud_item = smart_cast<CHudItem*>(inventory().ActiveItem());
+		if (hud_item && hud_item->GetHUDmode() && !hud_item->IsPending()) {
+			hud_item->OnKick();
+		}else
+			ActorKick();
 	}break;
 	case kQUICK_THROW_GRENADE:
 	{
@@ -284,6 +288,14 @@ void CActor::IR_OnKeyboardPress(int cmd){
 	case kQUICK_KNIFE_STAB:
 	{
 		ActorQuickKnifeStab();
+	}break;
+	case kCHECKACTIVEITEM:
+	{
+		ActorCheckout();
+	}break;
+	case kCHECKGEAR:
+	{
+		ActorCheckGear();
 	}break;
 	}
 }
@@ -704,17 +716,16 @@ void CActor::ActorKick(){
 	if (!O)
 		return;
 
-	if (conditions().IsCantWalk())
-	{
+	if (conditions().IsCantWalk()){
 		HUD().GetUI()->AddInfoMessage("actor_state", "cant_walk");
 		return;
 	}
 
 	float mass_f = GetTotalMass(O);
 
-	CEntityAlive* EA = smart_cast<CEntityAlive*>(O);
-	if (EA && EA->g_Alive() && mass_f > 20.0f) //ability to kick tuskano and rat
-		return;
+	//CEntityAlive* EA = smart_cast<CEntityAlive*>(O);
+	//if (EA && EA->g_Alive() && mass_f > 20.0f) //ability to kick tuskano and rat
+	//	return;
 
 	float kick_impulse = m_fKickImpulse * conditions().GetPowerKoef();
 	Fvector dir = Direction();
@@ -729,25 +740,32 @@ void CActor::ActorKick(){
 	clamp<float>(mass_f, 1.0f, 100.f); // ограничить параметры хита
 
 	// The smaller the mass, the more damage given capped at 60 mass. 60+ mass take 0 damage
-	float hit_power = (100.f * ((mass_f / 100.f) - 0.6f) / (0.f - 0.6f)) * conditions().GetPowerKoef();
-	clamp<float>(hit_power, 0.f, 100.f);
-	hit_power /= 100;
+	//float hit_power = (100.f * ((mass_f / 100.f) - 0.6f) / (0.f - 0.6f)) * conditions().GetPowerKoef();
+	//clamp<float>(hit_power, 0.f, 100.f);
+	//hit_power /= 100;
+
+	float act_item_weight{1.f};
+	if(inventory().ActiveItem() && inventory().ActiveItem()->Weight() > 1.f)
+		act_item_weight = inventory().ActiveItem()->Weight();
+	clamp(act_item_weight, 1.f, act_item_weight);
+	float hit_power = m_fKickPower * conditions().GetPowerKoef() * act_item_weight;
 
 	//shell->applyForce(dir, kick_power * conditions().GetPower());
 	Fvector h_pos = O->Position();
-	SHit hit = SHit(hit_power, dir, this, bone_id, h_pos, kick_impulse, ALife::eHitTypeStrike, 0.f, false);
+	SHit hit = SHit(hit_power, dir, this, bone_id, h_pos, kick_impulse, ALife::/*eHitTypeStrike*/eHitTypePhysicStrike, 0.f, false);
 	O->Hit(&hit);
-	if (EA)
-	{
+	CEntityAlive* EA = smart_cast<CEntityAlive*>(O);
+	if (EA){
 		static float alive_kick_power = 3.f;
 		float real_imp = kick_impulse / mass_f;
 		dir.mul(pow(real_imp, alive_kick_power));
-		if (EA->character_physics_support())
-		{
+		if (EA->character_physics_support()){
 			EA->character_physics_support()->movement()->AddControlVel(dir);
 			EA->character_physics_support()->movement()->ApplyImpulse(dir.normalize(), kick_impulse * alive_kick_power);
 		}
 	}
+
+	Msg("%s hit_power %.4f",__FUNCTION__,hit_power);
 
 	if (!GodMode())
 		conditions().ConditionJump(mass_f / 50);
@@ -779,4 +797,38 @@ void CActor::ActorQuickKnifeStab() {
 	}
 	else
 		pKnife->Action(kWPN_FIRE, CMD_START);
+}
+
+void CActor::ActorCheckout() {
+	if (!inventory().ActiveItem() || g_eHudLaconic == eHudLaconicOff || m_bShowActiveItemInfo)
+		return;
+
+	m_bShowActiveItemInfo = true;
+	m_uActiveItemInfoStartTime = Device.dwTimeGlobal;
+
+	const auto hud_item = smart_cast<CHudItem*>(inventory().ActiveItem());
+	if (!hud_item || !hud_item->GetHUDmode() || hud_item->IsPending()) return;
+
+	const auto wpn = smart_cast<CWeapon*>(inventory().ActiveItem());
+	if (wpn && wpn->IsZoomed())
+		wpn->OnZoomOut();
+
+	hud_item->PlayAnimCheckout();
+}
+
+void CActor::ActorCheckGear() {
+	if (g_eHudLaconic == eHudLaconicOff || m_bShowGearInfo)
+		return;
+
+	m_bShowGearInfo = true;
+	m_uGearInfoStartTime = Device.dwTimeGlobal;
+
+	const auto hud_item = smart_cast<CHudItem*>(inventory().ActiveItem());
+	if (!hud_item || !hud_item->GetHUDmode() || hud_item->IsPending()) return;
+
+	const auto wpn = smart_cast<CWeapon*>(inventory().ActiveItem());
+	if (wpn && wpn->IsZoomed())
+		wpn->OnZoomOut();
+
+	hud_item->PlayAnimCheckGear();
 }

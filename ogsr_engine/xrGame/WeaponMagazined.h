@@ -301,4 +301,6 @@ protected:
 	virtual void	PlayAnimFiremodes();
 	virtual void	switch2_Unload();
 	virtual void	PlayAnimUnload();
+	virtual void	OnKick();
+	virtual void	switch2_Kick();
 };

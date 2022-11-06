@@ -193,6 +193,24 @@ void CWeaponPistol::PlayAnimShoot()
 	}
 }
 
+void CWeaponPistol::PlayAnimCheckout()
+{
+	if (m_opened) {
+		AnimationExist("anm_checkout_empty") ? PlayHUDMotion("anm_checkout_empty", true, GetState()) :	PlayHUDMotion({ "anim_empty", "anm_bore_empty" }, true, GetState());
+		HUD_SOUND::PlaySound(sndCheckout, H_Parent()->Position(), H_Parent(), true);
+	}
+	else
+		inherited::PlayAnimCheckout(); 
+}
+
+void CWeaponPistol::PlayAnimKick()
+{
+	if (m_opened)
+		AnimationExist("anm_kick_empty") ? PlayHUDMotion("anm_kick_empty", true, GetState()) : PlayHUDMotion({ "anim_draw_empty", "anm_show_empty" }, true, GetState());
+	else
+		inherited::PlayAnimKick();
+}
+
 void CWeaponPistol::OnAnimationEnd(u32 state)
 {
 	if((state == eHiding || state == eShutter) && m_opened){

@@ -376,10 +376,7 @@ void CWeaponShotgun::PlayAnimCloseWeapon()
 void CWeaponShotgun::PlayAnimShutter()
 {
 	VERIFY(GetState() == eShutter);
-	if (AnimationExist("anm_shutter"))
-		PlayHUDMotion("anm_shutter", true, GetState());
-	else
-		PlayHUDMotion({ "anm_shots" }, true, GetState());
+	AnimationExist("anm_shutter") ? PlayHUDMotion("anm_shutter", true, GetState()) : PlayHUDMotion({ "anm_shots" }, true, GetState());
 	PlaySound(sndShutter, get_LastFP());
 }
 

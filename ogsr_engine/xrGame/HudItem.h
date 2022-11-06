@@ -84,7 +84,7 @@ protected: //чтоб нельзя было вызвать на прямую
 
 	u32				m_dwStateTime{};
 
-	HUD_SOUND		sndOnItemTake;
+	HUD_SOUND		sndOnItemTake, sndCheckout, sndCheckGear;
 public:
 	virtual void	Load				(LPCSTR section);
 	virtual CHudItem*cast_hud_item		()	 { return this; }
@@ -139,7 +139,13 @@ public:
 	virtual void	PlayAnimIdleMovingCrouch();
 	virtual void	PlayAnimIdleMovingCrouchSlow();
 
-	virtual void	PlayAnimOnItemTake();
+	virtual void	PlayAnimOnItemTake	();
+	virtual void	PlayAnimCheckout	();
+	virtual void	PlayAnimCheckGear	();
+
+	virtual void	OnKick				() {};
+	virtual void	PlayAnimKick		();
+	virtual bool	IsKick				() const { return false; }
 
 	virtual void	UpdateCL			();
 	virtual void	renderable_Render	();

@@ -863,31 +863,61 @@ float CWeaponMagazinedWGrenade::GetWeaponDeterioration()
 	return conditionDecreasePerShotGL;
 }
 //
-void CWeaponMagazinedWGrenade::switch2_Shutter()
-{
-	if (m_bGrenadeMode){
-		PlaySound(sndShutterG, get_LastFP());
-		PlayAnimShutter();
-		SetPending(TRUE);
-	}else
-		inherited::switch2_Shutter();
-}
-//
 void CWeaponMagazinedWGrenade::PlayAnimShutter()
 {
 	VERIFY(GetState() == eShutter);
 	if (m_bGrenadeMode){
-		if (AnimationExist("anm_shutter_g"))
-			PlayHUDMotion("anm_shutter_g", true, GetState());
-		else
-			PlayHUDMotion({ "anm_draw", "anm_show_g" }, true, GetState());
+		AnimationExist("anm_shutter_g") ? PlayHUDMotion("anm_shutter_g", true, GetState()) : PlayHUDMotion({ "anm_draw", "anm_show_g" }, true, GetState());
 	}else{
 		if (IsGrenadeLauncherAttached()){
-			if (AnimationExist("anm_shutter_w_gl"))
-				PlayHUDMotion("anm_shutter_w_gl", true, GetState());
-			else
-				PlayHUDMotion({ "anim_draw", "anm_show_w_gl" }, true, GetState());
+			AnimationExist("anm_shutter_w_gl") ? PlayHUDMotion("anm_shutter_w_gl", true, GetState()) : PlayHUDMotion({ "anim_draw", "anm_show_w_gl" }, true, GetState());
 		}else
 			inherited::PlayAnimShutter();
+	}
+}
+
+void CWeaponMagazinedWGrenade::PlayAnimCheckout()
+{
+	if (m_bGrenadeMode) {
+		AnimationExist("anm_checkout_g") ? PlayHUDMotion("anm_checkout_g", true, GetState()) : PlayHUDMotion("anm_bore_g", true, GetState());
+		HUD_SOUND::PlaySound(sndCheckout, H_Parent()->Position(), H_Parent(), true);
+	}
+	else {
+		if (IsGrenadeLauncherAttached()) {
+			AnimationExist("anm_checkout_w_gl") ? PlayHUDMotion("anm_checkout_w_gl", true, GetState()) : PlayHUDMotion("anm_bore_w_gl", true, GetState());
+			HUD_SOUND::PlaySound(sndCheckout, H_Parent()->Position(), H_Parent(), true);
+		}else
+			inherited::PlayAnimCheckout();
+	}
+}
+
+void CWeaponMagazinedWGrenade::PlayAnimCheckGear()
+{
+	VERIFY(GetState() == eShutter);
+	if (m_bGrenadeMode) {
+		AnimationExist("anm_check_gear_g") ? PlayHUDMotion("anm_check_gear_g", true, GetState()) : PlayHUDMotion({ "anm_draw", "anm_show_g" }, true, GetState());
+		HUD_SOUND::PlaySound(sndCheckGear, H_Parent()->Position(), H_Parent(), true);
+	}
+	else {
+		if (IsGrenadeLauncherAttached()) {
+			AnimationExist("anm_check_gear_w_gl") ? PlayHUDMotion("anm_check_gear_w_gl", true, GetState()) : PlayHUDMotion({ "anim_draw", "anm_show_w_gl" }, true, GetState());
+			HUD_SOUND::PlaySound(sndCheckGear, H_Parent()->Position(), H_Parent(), true);
+		}
+		else
+			inherited::PlayAnimCheckGear();
+	}
+}
+
+void CWeaponMagazinedWGrenade::PlayAnimKick()
+{
+	if (m_bGrenadeMode) {
+		AnimationExist("anm_kick_g") ? PlayHUDMotion("anm_kick_g", true, GetState()) : PlayHUDMotion({ "anm_draw", "anm_show_g" }, true, GetState());
+	}
+	else {
+		if (IsGrenadeLauncherAttached()) {
+			AnimationExist("anm_kick_w_gl") ? PlayHUDMotion("anm_kick_w_gl", true, GetState()) : PlayHUDMotion({ "anim_draw", "anm_show_w_gl" }, true, GetState());
+		}
+		else
+			inherited::PlayAnimKick();
 	}
 }

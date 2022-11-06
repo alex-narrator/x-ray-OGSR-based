@@ -199,7 +199,7 @@ void CUIInventoryWnd::InitInventory()
 		m_pUIBeltList->SetItem		(itm);
 	}
 
-//	std::sort(m_pInv->m_vest.begin(), m_pInv->m_vest.end(), InventoryUtilities::GreaterRoomInRuck);
+	std::sort(m_pInv->m_vest.begin(), m_pInv->m_vest.end(), InventoryUtilities::GreaterRoomInRuck);
 	for (const auto& item : m_pInv->m_vest){
 		CUICellItem* itm = create_cell_item(item);
 		m_pUIVestList->SetItem(itm);

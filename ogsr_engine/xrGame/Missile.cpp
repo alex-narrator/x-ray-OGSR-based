@@ -333,6 +333,12 @@ void CMissile::PlayAnimIdle()
 void CMissile::OnStateSwitch(u32 S, u32 oldState)
 {
 	inherited::OnStateSwitch(S, oldState);
+	switch (S)
+	{
+	case eKick:
+		switch2_Kick();
+		break;
+	}
 	State(S, oldState);
 }
 
@@ -393,6 +399,11 @@ void CMissile::OnAnimationEnd(u32 state)
 		SwitchState(eIdle);
 	}
 	break;
+	case eKick:
+		if (auto actor = smart_cast<CActor*>(H_Parent()))
+			actor->ActorKick();
+		SwitchState(eIdle);
+		break;
 	default: 
 		inherited::OnAnimationEnd(state);
 	}
@@ -773,4 +784,15 @@ void CMissile::QuickThrow() {
 	m_constpower	= true;
 	m_throw			= true;
 	SwitchState		(eThrowStart);
+}
+
+void CMissile::OnKick()
+{
+	SwitchState(eKick);
+}
+//
+void CMissile::switch2_Kick()
+{
+	PlayAnimKick();
+	SetPending(TRUE);
 }

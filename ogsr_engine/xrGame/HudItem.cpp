@@ -59,7 +59,10 @@ void CHudItem::Load(LPCSTR section)
 		hud_recalc_koef = READ_IF_EXISTS(pSettings, r_float, hud_sect, "hud_recalc_koef", 1.35f); //На калаше при 1.35 вроде норм смотрится, другим стволам возможно придется подбирать другие значения.
 	}
 
-	HUD_SOUND::LoadSound(section, !!pSettings->line_exist(section, "snd_on_item_take") ? "snd_on_item_take" : "snd_draw", sndOnItemTake, SOUND_TYPE_ITEM_TAKING);
+	HUD_SOUND::LoadSound(section, !!pSettings->line_exist(section, "snd_on_item_take") ? "snd_on_item_take"	: "snd_draw", sndOnItemTake, SOUND_TYPE_ITEM_TAKING);
+	HUD_SOUND::LoadSound(section, !!pSettings->line_exist(section, "snd_check_gear") ? "snd_check_gear" : "snd_draw", sndCheckGear, SOUND_TYPE_ITEM_USING);
+	if(!!pSettings->line_exist(section, "snd_checkout"))
+		HUD_SOUND::LoadSound(section, "snd_checkout", sndCheckout, SOUND_TYPE_ITEM_USING);
 
 	m_animation_slot	= pSettings->r_u32(section,"animation_slot");
 
@@ -381,6 +384,8 @@ void CHudItem::on_a_hud_attach()
 u32 CHudItem::PlayHUDMotion(const char* M, const bool bMixIn, const u32 state, const bool randomAnim)
 {
 	//Msg("~~[%s] Playing motion [%s] for [%s]", __FUNCTION__, M.c_str(), HudSection().c_str());
+	HUD_SOUND::StopSound(sndCheckout);
+
 	u32 anim_time = PlayHUDMotion_noCB(M, bMixIn, randomAnim);
 	if (anim_time > 0)
 	{
@@ -551,13 +556,23 @@ void CHudItem::PlayAnimIdleSprint()
 	PlayHUDMotion({ "anm_idle_sprint", "anm_idle", "anim_idle_sprint", "anim_idle" }, true, GetState());
 }
 
-void CHudItem::PlayAnimOnItemTake()
-{
-	if (AnimationExist("anm_on_item_take"))
-		PlayHUDMotion("anm_on_item_take", true, GetState());
-	else
-		PlayHUDMotion({ "anim_draw", "anm_show" }, true, GetState());
+void CHudItem::PlayAnimOnItemTake(){
+	AnimationExist("anm_on_item_take") ? PlayHUDMotion("anm_on_item_take", true, GetState()) : PlayHUDMotion({ "anim_draw", "anm_show" }, true, GetState(), false);
 	HUD_SOUND::PlaySound(sndOnItemTake, object().H_Parent()->Position(), object().H_Parent(), true);
+}
+
+void CHudItem::PlayAnimCheckout(){
+	AnimationExist("anm_checkout") ? PlayHUDMotion("anm_checkout", true, GetState()) : PlayHUDMotion({ "anim_idle", "anm_bore" }, true, GetState(), false);
+	HUD_SOUND::PlaySound(sndCheckout, object().H_Parent()->Position(), object().H_Parent(), true);
+}
+
+void CHudItem::PlayAnimCheckGear(){
+	AnimationExist("anm_check_gear") ? PlayHUDMotion("anm_check_gear", true, GetState()) :	PlayHUDMotion({ "anim_draw", "anm_show" }, true, GetState(), false);
+	HUD_SOUND::PlaySound(sndCheckGear, object().H_Parent()->Position(), object().H_Parent(), true);
+}
+
+void CHudItem::PlayAnimKick() {
+	AnimationExist("anm_kick") ? PlayHUDMotion("anm_kick", true, GetState()) : PlayHUDMotion({ "anim_draw", "anm_show" }, true, GetState(), false);
 }
 
 void CHudItem::OnMovementChanged(ACTOR_DEFS::EMoveCommand cmd)

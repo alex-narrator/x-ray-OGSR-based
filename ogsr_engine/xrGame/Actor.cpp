@@ -402,10 +402,14 @@ void CActor::Load	(LPCSTR section )
 
 	m_news_to_show = READ_IF_EXISTS( pSettings, r_u32, section, "news_to_show", NEWS_TO_SHOW );
 
-	m_fThrowImpulse		= READ_IF_EXISTS(pSettings, r_float, "actor_capture", "throw_impulse",		5.0f);	//сила с которой актор отбрасывает предмет
-	m_fKickImpulse		= READ_IF_EXISTS(pSettings, r_float, "actor_capture", "kick_impulse",		250.f);	//сила с которой актор пинает предмет
+	m_fThrowImpulse		= READ_IF_EXISTS(pSettings, r_float, "actor_capture", "throw_impulse",		5.0f);
+	m_fKickImpulse		= READ_IF_EXISTS(pSettings, r_float, "actor_capture", "kick_impulse",		250.f);
+	m_fKickPower		= READ_IF_EXISTS(pSettings, r_float, "actor_capture", "kick_power",			.1f);
 	m_fHoldingDistance	= READ_IF_EXISTS(pSettings, r_float, "actor_capture", "holding_distance",	.5f);	//расстояние перед актором на котором находится удерживаемый предмет
 	clamp(m_fHoldingDistance, 0.0f, inventory().GetTakeDist());
+
+	m_uActiveItemInfoTTL	= READ_IF_EXISTS(pSettings, r_u32, section, "active_item_info_ttl", 2000);
+	m_uGearInfoTTL			= READ_IF_EXISTS(pSettings, r_u32, section, "gear_info_ttl",		2000);
 }
 
 void CActor::PHHit(SHit& H)
@@ -890,6 +894,17 @@ void CActor::UpdateCL	()
 
 	if (!sndGroggy._feedback()) {
 		RemoveEffector(this, effGroggy);
+	}
+
+	if (m_bShowActiveItemInfo) {
+		if (Device.dwTimeGlobal > m_uActiveItemInfoStartTime + m_uActiveItemInfoTTL) {
+			m_bShowActiveItemInfo = false;
+		}
+	}
+	if (m_bShowGearInfo) {
+		if (Device.dwTimeGlobal > m_uGearInfoStartTime + m_uGearInfoTTL){
+			m_bShowGearInfo = false;
+		}
 	}
 }
 

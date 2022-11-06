@@ -57,7 +57,7 @@ extern ENGINE_API CCustomHUD* g_hud;
 enum EHudLaconicMode
 {
 	eHudLaconicOff,			//отключено
-	eHudLaconicWarning,	//только warning-иконки
+	eHudLaconicWarning,		//только warning-иконки
 	eHudLaconicMotion		//иконка положения персонажа в качестве warning-иконки здоровья
 };
 

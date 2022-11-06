@@ -22,6 +22,9 @@ protected:
 	virtual void		switch2_Showing				();
 			void		switch2_Attacking			(u32 state);
 
+	virtual void		OnKick						();
+	virtual void		switch2_Kick				();
+
 	virtual void		OnMotionMark				(u32 state, const motion_marks& M);
 	virtual void		OnAnimationEnd				(u32 state);
 	virtual void		OnStateSwitch				(u32 S, u32 oldState);

@@ -47,9 +47,9 @@ public:
 
 	virtual void			Deactivate( bool = false );
 	virtual void			GetBriefInfo						(xr_string& str_name, xr_string& icon_sect_name, xr_string& str_count);
-protected:
-	HUD_SOUND				sndCheckout;
-	ESoundTypes				m_eSoundCheckout;
+//protected:
+//	HUD_SOUND				sndCheckout;
+//	ESoundTypes				m_eSoundCheckout;
 private:
 	float					m_grenade_detonation_threshold_hit{};
 	bool					m_thrown{};

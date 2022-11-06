@@ -519,6 +519,9 @@ void CWeaponMagazined::OnStateSwitch(u32 S, u32 oldState)
 	case eUnload:
 		switch2_Unload();
 		break;
+	case eKick:
+		switch2_Kick();
+		break;
 	}
 }
 
@@ -767,6 +770,11 @@ void CWeaponMagazined::OnAnimationEnd(u32 state)
 			HUD_SOUND::StopSound(sndUnload);
 			SwitchState(eShutter);
 			break;	// End of Unload animation
+		case eKick:
+			if (auto actor = smart_cast<CActor*>(H_Parent()))
+				actor->ActorKick();
+			SwitchState(eIdle);
+			break;
 	}
 }
 
@@ -1876,13 +1884,9 @@ void CWeaponMagazined::switch2_Shutter()
 void CWeaponMagazined::PlayAnimShutter()
 {
 	VERIFY(GetState() == eShutter);
-	if(AnimationExist("anm_shutter"))
-		PlayHUDMotion("anm_shutter", true, GetState());
-	else
-		PlayHUDMotion({ "anim_draw", "anm_show" }, true, GetState());
+	AnimationExist("anm_shutter") ? PlayHUDMotion("anm_shutter", true, GetState()) : PlayHUDMotion({ "anim_draw", "anm_show" }, true, GetState(), false);
 	PlaySound(sndShutter, get_LastFP());
 }
-
 void CWeaponMagazined::PlayAnimFiremodes()
 {
 	if (AnimationExist("anm_fire_modes")) {
@@ -1907,6 +1911,19 @@ void CWeaponMagazined::ShutterAction() //передёргивание затво
 		PHGetLinearVell(vel);
 		OnShellDrop(get_LastSP(), vel);
 	}
+}
+
+void CWeaponMagazined::OnKick()
+{
+	SwitchState(eKick);
+}
+//
+void CWeaponMagazined::switch2_Kick()
+{
+	if (IsZoomed())
+		OnZoomOut();
+	PlayAnimKick();
+	SetPending(TRUE);
 }
 
 void CWeaponMagazined::SwitchNightVision(bool vision_on, bool switch_sound)

@@ -97,9 +97,10 @@ public:
 	//считаем что в режиме подствольника стрельба только одиночными
 	virtual bool	HasFireModes() { return m_bHasDifferentFireModes && !IsGrenadeMode(); };
 	//передёргивание затвора
-	virtual void	switch2_Shutter();
-	//передёргивание затвора
-	virtual void	PlayAnimShutter();
+	virtual void	PlayAnimShutter		() override;
+	virtual void	PlayAnimCheckout	() override;
+	virtual void	PlayAnimCheckGear	() override;
+	virtual void	PlayAnimKick		() override;
 	//оружие использует отъёмный магазин
 	virtual bool	HasDetachableMagazine() { return inherited::HasDetachableMagazine() && !IsGrenadeMode(); };
 };

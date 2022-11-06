@@ -822,7 +822,7 @@ void CUIMainIngameWnd::UpdatePickUpItem	()
 		(m_iPickUpItemIconHeight - UIPickUpItemIcon.GetHeight())/2);
 
 	UIPickUpItemIcon.SetColor(color_rgba(255,255,255,192));
-	if (auto wpn = m_pPickUpItem->cast_weapon())
+	if (auto wpn = smart_cast<CWeapon*>(m_pPickUpItem))
 	{
 		auto cell_item = xr_new<CUIWeaponCellItem>(wpn);
 		
@@ -906,15 +906,15 @@ bool CUIMainIngameWnd::IsHUDElementAllowed(EHUDElement element)
 	}break;
 	case eActiveItem: //Информация об предмете в руках (для оружия - кол-во/тип заряженных патронов, режим огня)
 	{
-		return m_pActor->inventory().ActiveItem() && (eHudLaconicOff == g_eHudLaconic || OnKeyboardHold(get_action_dik(kCHECKACTIVEITEM)));
+		return m_pActor->inventory().ActiveItem() && (eHudLaconicOff == g_eHudLaconic || m_pActor->m_bShowActiveItemInfo);
 	}break;
 	case eGear: //Информация о снаряжении - панель артефактов, наполнение квикслотов, общее кол-во патронов к оружию в руках
 	{
-		return eHudLaconicOff == g_eHudLaconic || OnKeyboardHold(get_action_dik(kCHECKGEAR));
+		return eHudLaconicOff == g_eHudLaconic || m_pActor->m_bShowGearInfo;
 	}break;
 	case eArmor: //Иконка состояния брони
 	{
-		return eHudLaconicOff != g_eHudLaconic && m_pActor->GetOutfit() && OnKeyboardHold(get_action_dik(kCHECKGEAR));
+		return eHudLaconicOff != g_eHudLaconic && m_pActor->GetOutfit() && m_pActor->m_bShowGearInfo;
 	}break;
 	default:
 		Msg("! unknown hud element");
