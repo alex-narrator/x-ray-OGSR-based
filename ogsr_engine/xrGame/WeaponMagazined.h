@@ -189,7 +189,7 @@ public:
 	virtual	void	OnNextFireMode		();
 	virtual	void	OnPrevFireMode		();
 	virtual bool	HasFireModes		() { return m_bHasDifferentFireModes; };
-	virtual	int		GetCurrentFireMode	() { return m_bHasDifferentFireModes ? m_aFireModes[m_iCurFireMode] : 1; };
+	virtual	int		GetCurrentFireMode	() const { return m_bHasDifferentFireModes ? m_aFireModes[m_iCurFireMode] : 1; };
 	virtual LPCSTR	GetCurrentFireModeStr	() {return m_sCurFireMode;};
 
 	virtual void	save				(NET_Packet &output_packet);
@@ -214,7 +214,7 @@ protected:
 	virtual void	PlayReloadSound		();
 
 	virtual	int		ShotsFired			() { return m_iShotNum; }
-	virtual float	GetWeaponDeterioration	();
+	virtual float	GetWeaponDeterioration	()  const;
 	//для хранения состояния присоединённого прицела
 	float			m_fAttachedScopeCondition{ 1.f };
 	//для хранения состояния присоединённого гранатомёта

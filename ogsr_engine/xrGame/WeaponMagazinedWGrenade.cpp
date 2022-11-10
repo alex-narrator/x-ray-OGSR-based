@@ -326,7 +326,7 @@ void CWeaponMagazinedWGrenade::state_Fire(float dt)
 
 			fTime			+=	fTimeToFire;
 			//снижаем кондицию оружи при выстреле из ПГ
-			//Msg("GetWeaponDeterioration GL = %f", GetWeaponDeterioration());
+//			Msg("%s GetWeaponDeterioration GL = %f",__FUNCTION__, GetWeaponDeterioration());
 			ChangeCondition(-GetWeaponDeterioration());
 			//
 			++m_iShotNum;
@@ -855,12 +855,8 @@ float CWeaponMagazinedWGrenade::Weight() const {
   return inherited::Weight() + GetAmmoInMagazineWeight( m_magazine2 );
 }
 
-float CWeaponMagazinedWGrenade::GetWeaponDeterioration()
-{
-	if (!m_bGrenadeMode)
-		return inherited::GetWeaponDeterioration();
-
-	return conditionDecreasePerShotGL;
+float CWeaponMagazinedWGrenade::GetWeaponDeterioration() const {
+	return m_bGrenadeMode ? conditionDecreasePerShotGL : inherited::GetWeaponDeterioration();
 }
 //
 void CWeaponMagazinedWGrenade::PlayAnimShutter()

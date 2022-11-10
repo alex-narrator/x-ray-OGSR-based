@@ -12,15 +12,24 @@
 		<fire_distance x="0" y="5" width="91" height="8">
 			<text font="letterica16" r="124" g="119" b="115"></text>
 		</fire_distance>
+		<bullet_speed x="0" y="5" width="91" height="8">
+			<text font="letterica16" r="124" g="119" b="115"></text>
+		</bullet_speed>		
 		<rpm x="0" y="5" width="91" height="8">
 			<text font="letterica16" r="124" g="119" b="115"></text>
 		</rpm>
-		<dispertion x="0" y="5" width="91" height="8">
+		<dispersion x="0" y="5" width="91" height="8">
 			<text font="letterica16" r="124" g="119" b="115"></text>
-		</dispertion>
+		</dispersion>
 		<bulkiness x="0" y="5" width="91" height="8">
 			<text font="letterica16" r="124" g="119" b="115"></text>
 		</bulkiness>
+		<recoil x="0" y="5" width="91" height="8">
+			<text font="letterica16" r="124" g="119" b="115"></text>
+		</recoil>		
+		<resource x="0" y="5" width="91" height="8">
+			<text font="letterica16" r="124" g="119" b="115"></text>
+		</resource>
 		
 		<current_ammo_type x="0" y="5" width="91" height="8">
 			<text font="letterica16" r="124" g="119" b="115"></text>

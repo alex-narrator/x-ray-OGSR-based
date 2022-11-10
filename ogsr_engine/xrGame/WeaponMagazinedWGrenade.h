@@ -93,7 +93,7 @@ public:
 
 	virtual bool	IsGrenadeMode() const { return m_bGrenadeMode; };
 	//получаем износ при выстреле из подствольника
-	virtual float	GetWeaponDeterioration();
+	virtual float	GetWeaponDeterioration() const;
 	//считаем что в режиме подствольника стрельба только одиночными
 	virtual bool	HasFireModes() { return m_bHasDifferentFireModes && !IsGrenadeMode(); };
 	//передёргивание затвора

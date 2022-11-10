@@ -108,13 +108,13 @@ inv_grid_height		= 1
 inv_grid_x			= 18
 inv_grid_y			= 1
 
-condition_shot_dec = 0.1 ;износ глушителя за выстрел
+condition_shot_dec = 0.001 ;износ глушителя за выстрел
 
-bullet_hit_power_k	= 0.8
-bullet_speed_k	 	= 0.8
-fire_dispersion_base_k = 1.25;2
-cam_dispersion_k	= 0.8
-condition_shot_dec_silencer = 10 ;множитель износа оружия при стрельбе с установленным глушителем
+bullet_hit_power_k	= 0.1
+bullet_speed_k	 	= 0.1
+fire_dispersion_base_k = 0
+cam_dispersion_k	= 0
+condition_shot_dec_silencer = 1.5 ;коефіцієнт зношування зброї підчас вогню з встановленим глушником (0,1 = +10%)
 
 [wpn_addon_silencer_svu]:identity_immunities
 GroupControlSection	= spawn_group
@@ -138,13 +138,27 @@ inv_grid_y			= 22
 
 condition_shot_dec = 0.01 ;износ глушителя за выстрел
 
-bullet_hit_power_k	= 0.8
-bullet_speed_k	 	= 0.8
-fire_dispersion_base_k = 1.25;2
-cam_dispersion_k	= 0.8
-condition_shot_dec_silencer = 2 ;множитель износа оружия при стрельбе с установленным глушителем
+bullet_hit_power_k	= 0.1
+bullet_speed_k	 	= 0.1
+fire_dispersion_base_k = 0
+cam_dispersion_k	= 0
+condition_shot_dec_silencer = 0.5 ;коефіцієнт зношування зброї підчас вогню з встановленим глушником (0,1 = +10%)
 
 silencer_flame_particles 	= weapons\generic_weapon01
+
+[wpn_addon_choke]:wpn_addon_silencer
+description		= wpn_addon_choke_descr
+inv_name		= wpn-addon-choke
+inv_name_short	= wpn-addon-choke_short
+
+bullet_hit_power_k		= 0.1
+bullet_speed_k 			= 0.1
+fire_dispersion_base_k 	= -0.5
+cam_dispersion_k 		= 0
+condition_shot_dec 		= 0.001
+condition_shot_dec_silencer = 2 ;коефіцієнт зношування зброї підчас вогню з встановленим глушником (0,1 = +10%)
+
+show_on_model = false
 
 [wpn_addon_grenade_launcher]:identity_immunities
 GroupControlSection	= spawn_group

@@ -39,6 +39,25 @@
 			<text font="letterica16" r="124" g="119" b="115"></text>
 		</scope_vision_present>
 		
+		<silencer_hit_k x="0" y="5" width="91" height="8">
+			<text font="letterica16" r="124" g="119" b="115"></text>
+		</silencer_hit_k>
+		<silencer_bullet_speed_k x="0" y="5" width="91" height="8">
+			<text font="letterica16" r="124" g="119" b="115"></text>
+		</silencer_bullet_speed_k>
+		<silencer_dispersion_k x="0" y="5" width="91" height="8">
+			<text font="letterica16" r="124" g="119" b="115"></text>
+		</silencer_dispersion_k>
+		<silencer_recoil_k x="0" y="5" width="91" height="8">
+			<text font="letterica16" r="124" g="119" b="115"></text>
+		</silencer_recoil_k>
+		<weapon_dec_k x="0" y="5" width="91" height="8">
+			<text font="letterica16" r="124" g="119" b="115"></text>
+		</weapon_dec_k>		
+		<silencer_resource x="0" y="5" width="91" height="8">
+			<text font="letterica16" r="124" g="119" b="115"></text>
+		</silencer_resource>			
+		
 		<cap_ammo x="0" y="5" width="91" height="8">
 			<text font="letterica16" r="124" g="119" b="115">st_compatible_ammo</text>
 		</cap_ammo>

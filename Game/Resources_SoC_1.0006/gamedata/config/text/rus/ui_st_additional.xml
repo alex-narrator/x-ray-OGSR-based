@@ -18,10 +18,19 @@
 	<string id="st_rpm_units">
 		<text>пос./хв</text>
 	</string>
+	<string id="st_bullet_speed_units">
+		<text>м/с</text>
+	</string>	
+	<string id="st_resource_units">
+		<text>пострілів</text>
+	</string>	
+	<string id="st_resource_on_hit_units">
+		<text>ударів</text>
+	</string>	
 	<string id="st_detach">
 		<text>зняти</text>
 	</string>
-	<string id="st_dispertion_units">
+	<string id="st_dispersion_units">
 		<text>MOA</text>
 	</string>
 	<string id="ui_st_pda_account_unavailable">
@@ -517,18 +526,30 @@
 	<string id="st_damage">
 		<text>Пошкодження:</text>
 	</string>
+	<string id="st_bullet_speed">
+		<text>Швидкість кулі:</text>
+	</string>	
 	<string id="st_fire_distance">
 		<text>Ефективна дистанція:</text>
 	</string>
 	<string id="st_rpm">
 		<text>Швидкострільність:</text>
 	</string>
-	<string id="st_dispertion">
+	<string id="st_dispersion">
 		<text>Розкид:</text>
 	</string>	
 	<string id="st_bulkiness">
 		<text>Громіздкість:</text>
-	</string>	
+	</string>
+	<string id="st_recoil">
+		<text>Віддача:</text>
+	</string>
+	<string id="st_weapon_dec">
+		<text>Зношування зброї:</text>
+	</string>
+	<string id="st_resource">
+		<text>Ресурс:</text>
+	</string>
 	
 	<string id="st_compatible_ammo">
 		<text>набої:</text>

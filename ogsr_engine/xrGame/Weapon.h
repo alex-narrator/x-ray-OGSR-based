@@ -384,7 +384,7 @@ protected:
 
 	//трассирование полета пули
 	virtual void			FireTrace			(const Fvector& P, const Fvector& D);
-	virtual float			GetWeaponDeterioration	();
+	virtual float			GetWeaponDeterioration	() const;
 
 	virtual void			FireStart			() {CShootingObject::FireStart();}
 	virtual void			FireEnd				();// {CShootingObject::FireEnd();}
@@ -403,8 +403,8 @@ protected:
 
 public:
 	//текущая дисперсия (в радианах) оружия с учетом используемого патрона
-	float					GetFireDispersion	(bool with_cartridge)			;
-	float					GetFireDispersion	(float cartridge_k)				;
+	float					GetFireDispersion	(bool with_cartridge,	bool with_owner = true)			;
+	float					GetFireDispersion	(float cartridge_k,		bool with_owner = true)			;
 //	const Fvector&			GetRecoilDeltaAngle	();
 	virtual	int				ShotsFired			() { return 0; }
 
@@ -498,7 +498,8 @@ public:
 	virtual	float			Get_PDM_Crouch		()	const	{ return m_fPDM_disp_crouch			; };
 	virtual	float			Get_PDM_Crouch_NA	()	const	{ return m_fPDM_disp_crouch_no_acc	; };
 	//  [8/3/2005]
-	virtual float			GetCondDecPerShotOnHit() const { return conditionDecreasePerShotOnHit; };
+	virtual float			GetCondDecPerShot	() const { return GetWeaponDeterioration();		};
+	virtual float			GetCondDecPerShotOnHit() const { return conditionDecreasePerShotOnHit;	};
 protected:
 	int						iAmmoElapsed{ -1 };		// ammo in magazine, currently
 	int						iMagazineSize{ -1 };		// size (in bullets) of magazine

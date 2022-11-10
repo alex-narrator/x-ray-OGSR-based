@@ -43,6 +43,7 @@ bool CUIEquipParams::Check(CInventoryItem* obj){
 		smart_cast<CCustomOutfit*>		(obj) ||
 		smart_cast<CBackpack*>			(obj) ||
 		smart_cast<CScope*>				(obj) ||
+		smart_cast<CSilencer*>			(obj) ||
 		smart_cast<CInventoryContainer*>(obj) ||
 		smart_cast<CPowerBattery*>		(obj) ||
 		obj->IsPowerConsumer()				  ||
@@ -98,6 +99,94 @@ void CUIEquipParams::SetInfo(CInventoryItem* obj){
 		power_level_static->SetText(text_to_show);
 		m_CapInfo.AttachChild(power_level_static);
 		_h += list_item_h;
+	}
+
+	auto pSilencer = smart_cast<CSilencer*>(obj);
+	if (pSilencer) {
+		float hit_k = READ_IF_EXISTS(pSettings, r_float, item_section, "bullet_hit_power_k", 0.f);
+		if (!fis_zero(hit_k)) {
+			auto _hit_k_static = xr_new<CUIStatic>();
+			CUIXmlInit::InitStatic(uiXml, "equip_params:silencer_hit_k", 0, _hit_k_static);
+			_hit_k_static->SetAutoDelete(true);
+			pos_top = _hit_k_static->GetPosTop();
+			_hit_k_static->SetWndPos(_hit_k_static->GetPosLeft(), _h + pos_top);
+			hit_k *= 100.f;
+			sprintf_s(temp_text, " %s%.1f", hit_k > 0.f ? "+" : "", hit_k);
+			strconcat(sizeof(text_to_show), text_to_show, CStringTable().translate("st_damage").c_str(), temp_text, "%");
+			_hit_k_static->SetText(text_to_show);
+			m_CapInfo.AttachChild(_hit_k_static);
+			_h += list_item_h;
+		}
+		float bullet_speed_k = READ_IF_EXISTS(pSettings, r_float, item_section, "bullet_speed_k", 0.f);
+		if (!fis_zero(bullet_speed_k)) {
+			auto _bullet_speed_k_static = xr_new<CUIStatic>();
+			CUIXmlInit::InitStatic(uiXml, "equip_params:silencer_bullet_speed_k", 0, _bullet_speed_k_static);
+			_bullet_speed_k_static->SetAutoDelete(true);
+			pos_top = _bullet_speed_k_static->GetPosTop();
+			_bullet_speed_k_static->SetWndPos(_bullet_speed_k_static->GetPosLeft(), _h + pos_top);
+			bullet_speed_k *= 100.f;
+			sprintf_s(temp_text, " %s%.1f", bullet_speed_k > 0.f ? "+" : "", bullet_speed_k);
+			strconcat(sizeof(text_to_show), text_to_show, CStringTable().translate("st_bullet_speed").c_str(), temp_text, "%");
+			_bullet_speed_k_static->SetText(text_to_show);
+			m_CapInfo.AttachChild(_bullet_speed_k_static);
+			_h += list_item_h;
+		}
+		float dispersion_k = READ_IF_EXISTS(pSettings, r_float, item_section, "fire_dispersion_base_k", 0.f);
+		if (!fis_zero(dispersion_k)) {
+			auto _dispersion_k_static = xr_new<CUIStatic>();
+			CUIXmlInit::InitStatic(uiXml, "equip_params:silencer_dispersion_k", 0, _dispersion_k_static);
+			_dispersion_k_static->SetAutoDelete(true);
+			pos_top = _dispersion_k_static->GetPosTop();
+			_dispersion_k_static->SetWndPos(_dispersion_k_static->GetPosLeft(), _h + pos_top);
+			dispersion_k *= 100.f;
+			sprintf_s(temp_text, " %s%.1f", dispersion_k > 0.f ? "+" : "", dispersion_k);
+			strconcat(sizeof(text_to_show), text_to_show, CStringTable().translate("st_dispersion").c_str(), temp_text, "%");
+			_dispersion_k_static->SetText(text_to_show);
+			m_CapInfo.AttachChild(_dispersion_k_static);
+			_h += list_item_h;
+		}
+		float recoil_k = READ_IF_EXISTS(pSettings, r_float, item_section, "cam_dispersion_k", 0.f);
+		if (!fis_zero(recoil_k)) {
+			auto _recoil_k_static = xr_new<CUIStatic>();
+			CUIXmlInit::InitStatic(uiXml, "equip_params:silencer_recoil_k", 0, _recoil_k_static);
+			_recoil_k_static->SetAutoDelete(true);
+			pos_top = _recoil_k_static->GetPosTop();
+			_recoil_k_static->SetWndPos(_recoil_k_static->GetPosLeft(), _h + pos_top);
+			recoil_k *= 100.f;
+			sprintf_s(temp_text, " %s%.1f", recoil_k > 0.f ? "+" : "", recoil_k);
+			strconcat(sizeof(text_to_show), text_to_show, CStringTable().translate("st_recoil").c_str(), temp_text, "%");
+			_recoil_k_static->SetText(text_to_show);
+			m_CapInfo.AttachChild(_recoil_k_static);
+			_h += list_item_h;
+		}
+		float weapon_dec_k = READ_IF_EXISTS(pSettings, r_float, item_section, "condition_shot_dec_silencer", 0.f);
+		if (!fis_zero(weapon_dec_k)) {
+			auto _weapon_dec_k_static = xr_new<CUIStatic>();
+			CUIXmlInit::InitStatic(uiXml, "equip_params:weapon_dec_k", 0, _weapon_dec_k_static);
+			_weapon_dec_k_static->SetAutoDelete(true);
+			pos_top = _weapon_dec_k_static->GetPosTop();
+			_weapon_dec_k_static->SetWndPos(_weapon_dec_k_static->GetPosLeft(), _h + pos_top);
+			weapon_dec_k *= 100.f;
+			sprintf_s(temp_text, " %s%.1f", weapon_dec_k > 0.f ? "+" : "", weapon_dec_k);
+			strconcat(sizeof(text_to_show), text_to_show, CStringTable().translate("st_weapon_dec").c_str(), temp_text, "%");
+			_weapon_dec_k_static->SetText(text_to_show);
+			m_CapInfo.AttachChild(_weapon_dec_k_static);
+			_h += list_item_h;
+		}
+		float shot_dec = READ_IF_EXISTS(pSettings, r_float, item_section, "condition_shot_dec", 0.f);
+		if (!fis_zero(shot_dec)) {
+			auto _resource_static = xr_new<CUIStatic>();
+			CUIXmlInit::InitStatic(uiXml, "equip_params:silencer_resource", 0, _resource_static);
+			_resource_static->SetAutoDelete(true);
+			pos_top = _resource_static->GetPosTop();
+			_resource_static->SetWndPos(_resource_static->GetPosLeft(), _h + pos_top);
+			float resource = 1.f / shot_dec;
+			sprintf_s(temp_text, " %.0f %s", resource, CStringTable().translate("st_resource_units").c_str());
+			strconcat(sizeof(text_to_show), text_to_show, CStringTable().translate("st_resource").c_str(), temp_text);
+			_resource_static->SetText(text_to_show);
+			m_CapInfo.AttachChild(_resource_static);
+			_h += list_item_h;
+		}
 	}
 
 	auto pScope = smart_cast<CScope*>(obj);

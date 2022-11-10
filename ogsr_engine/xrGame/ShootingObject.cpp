@@ -17,8 +17,8 @@
 #include "clsid_game.h"
 #include "game_cl_single.h"
 
-#define HIT_POWER_EPSILON 0.05f
-#define WALLMARK_SIZE 0.04f
+constexpr auto HIT_POWER_EPSILON = 0.05f;
+constexpr auto WALLMARK_SIZE = 0.04f;
 
 CShootingObject::CShootingObject(void)
 {
@@ -232,7 +232,7 @@ void CShootingObject::UpdateParticles (CParticlesObject*& pParticles,
 {
 	if(!pParticles)		return;
 
-	Fmatrix particles_pos; 
+	Fmatrix particles_pos{};
 	particles_pos.set	(get_ParticlesXFORM());
 	particles_pos.c.set	(pos);
 	
@@ -303,7 +303,7 @@ void CShootingObject::OnShellDrop	(const Fvector& play_pos,
 
 	CParticlesObject* pShellParticles	= CParticlesObject::Create(*m_sShellParticles,TRUE);
 
-	Fmatrix particles_pos; 
+	Fmatrix particles_pos{};
 	particles_pos.set		(get_ParticlesXFORM());
 	particles_pos.c.set		(play_pos);
 
@@ -357,7 +357,7 @@ void CShootingObject::UpdateFlameParticles	()
 	if(0==m_sFlameParticlesCurrent.size())		return;
 	if(!m_pFlameParticles)				return;
 
-	Fmatrix		pos; 
+	Fmatrix		pos{};
 	pos.set		(get_ParticlesXFORM()	); 
 	pos.c.set	(get_CurrentFirePoint()	);
 

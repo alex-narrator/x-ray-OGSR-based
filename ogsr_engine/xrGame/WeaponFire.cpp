@@ -45,11 +45,9 @@ void random_dir(Fvector& tgt_dir, const Fvector& src_dir, float dispersion)
 	tgt_dir.add			(src_dir,T).normalize();
 }
 
-float CWeapon::GetWeaponDeterioration	()
-{
-	float silencer_dec_k = IsSilencerAttached() && SilencerAttachable() ? conditionDecreasePerShotSilencer : 1.f;
-	//
-	return conditionDecreasePerShot * silencer_dec_k;
+float CWeapon::GetWeaponDeterioration	() const {
+	float silencer_dec_k = IsSilencerAttached() && SilencerAttachable() ? conditionDecreasePerShotSilencer : 0.f;
+	return conditionDecreasePerShot + conditionDecreasePerShot * silencer_dec_k;
 };
 
 void CWeapon::FireTrace		(const Fvector& P, const Fvector& D)
@@ -66,8 +64,7 @@ void CWeapon::FireTrace		(const Fvector& P, const Fvector& D)
 		l_cartridge.m_u8ColorID	= m_u8TracerColorID;
 	//-------------------------------------------------------------
 	//повысить изношенность оружия с учетом влияния конкретного патрона
-//	float Deterioration = GetWeaponDeterioration();
-//	Msg("Deterioration = %f", Deterioration);
+//	Msg("%s Deterioration = %f",__FUNCTION__, GetWeaponDeterioration());
 	if ( Core.Features.test( xrCore::Feature::npc_simplified_shooting ) ) {
 	  CActor *actor = smart_cast<CActor*>( H_Parent() );
 	  if ( actor )

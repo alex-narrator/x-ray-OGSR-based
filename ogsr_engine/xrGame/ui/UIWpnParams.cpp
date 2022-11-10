@@ -86,6 +86,18 @@ void CUIWpnParams::SetInfo(CInventoryItem* obj)
 		m_CapInfo.AttachChild(fire_distance_static);
 		_h += list_item_h + pos_top;
 	}
+	//швидкість кулі
+	if (!pWeaponKnife && !pWeaponBinoc) {
+		auto bullet_speed_static = xr_new<CUIStatic>(); bullet_speed_static->SetAutoDelete(true);
+		CUIXmlInit::InitStatic(uiXml, "wpn_params:bullet_speed", 0, bullet_speed_static);
+		pos_top = bullet_speed_static->GetPosTop();
+		bullet_speed_static->SetWndPos(bullet_speed_static->GetPosLeft(), _h + pos_top);
+		sprintf_s(temp_text, " %.f %s", pSettings->r_float(item_section, "bullet_speed"), CStringTable().translate("st_bullet_speed_units").c_str());
+		strconcat(sizeof(text_to_show), text_to_show, CStringTable().translate("st_bullet_speed").c_str(), temp_text);
+		bullet_speed_static->SetText(text_to_show);
+		m_CapInfo.AttachChild(bullet_speed_static);
+		_h += list_item_h + pos_top;
+	}
 	//швидкострільність
 	if (!pWeaponKnife && !pWeaponBinoc) {
 		auto rpm_static = xr_new<CUIStatic>(); rpm_static->SetAutoDelete(true);
@@ -100,16 +112,29 @@ void CUIWpnParams::SetInfo(CInventoryItem* obj)
 	}
 	//розкид
 	if (!pWeaponKnife && !pWeaponBinoc) {
-		auto dispertion_static = xr_new<CUIStatic>(); dispertion_static->SetAutoDelete(true);
-		CUIXmlInit::InitStatic(uiXml, "wpn_params:dispertion", 0, dispertion_static);
-		pos_top = dispertion_static->GetPosTop();
-		dispertion_static->SetWndPos(dispertion_static->GetPosLeft(), _h + pos_top);
-		float fire_dispertion = pSettings->r_float(item_section, "fire_dispersion_base");
-		fire_dispertion *= 10.f;
-		sprintf_s(temp_text, " %.1f %s", fire_dispertion, CStringTable().translate("st_dispertion_units").c_str());
-		strconcat(sizeof(text_to_show), text_to_show, CStringTable().translate("st_dispertion").c_str(), temp_text);
-		dispertion_static->SetText(text_to_show);
-		m_CapInfo.AttachChild(dispertion_static);
+		auto dispersion_static = xr_new<CUIStatic>(); dispersion_static->SetAutoDelete(true);
+		CUIXmlInit::InitStatic(uiXml, "wpn_params:dispersion", 0, dispersion_static);
+		pos_top = dispersion_static->GetPosTop();
+		dispersion_static->SetWndPos(dispersion_static->GetPosLeft(), _h + pos_top);
+		float fire_dispertion = pWeapon->GetFireDispersion(true, false);
+		fire_dispertion *= 100.f;
+		sprintf_s(temp_text, " %.2f %s", fire_dispertion, CStringTable().translate("st_dispersion_units").c_str());
+		strconcat(sizeof(text_to_show), text_to_show, CStringTable().translate("st_dispersion").c_str(), temp_text);
+		dispersion_static->SetText(text_to_show);
+		m_CapInfo.AttachChild(dispersion_static);
+		_h += list_item_h + pos_top;
+	}
+	if (!pWeaponKnife && !pWeaponBinoc) {
+		auto recoil_static = xr_new<CUIStatic>(); recoil_static->SetAutoDelete(true);
+		CUIXmlInit::InitStatic(uiXml, "wpn_params:recoil", 0, recoil_static);
+		pos_top = recoil_static->GetPosTop();
+		recoil_static->SetWndPos(recoil_static->GetPosLeft(), _h + pos_top);
+		float recoil = pWeapon->camDispersion;
+		recoil *= 10.f;
+		sprintf_s(temp_text, " %.2f", recoil);
+		strconcat(sizeof(text_to_show), text_to_show, CStringTable().translate("st_recoil").c_str(), temp_text);
+		recoil_static->SetText(text_to_show);
+		m_CapInfo.AttachChild(recoil_static);
 		_h += list_item_h + pos_top;
 	}
 	//громіздкість
@@ -122,6 +147,20 @@ void CUIWpnParams::SetInfo(CInventoryItem* obj)
 	bulkiness_static->SetText(text_to_show);
 	m_CapInfo.AttachChild(bulkiness_static);
 	_h += list_item_h + pos_top;
+	//ресурс на відмову
+	if (!pWeaponBinoc) {
+		float shot_dec = pWeaponKnife ? pWeapon->GetCondDecPerShotOnHit() : pWeapon->GetCondDecPerShot();
+		auto recoil_static = xr_new<CUIStatic>(); recoil_static->SetAutoDelete(true);
+		CUIXmlInit::InitStatic(uiXml, "wpn_params:resource", 0, recoil_static);
+		pos_top = recoil_static->GetPosTop();
+		recoil_static->SetWndPos(recoil_static->GetPosLeft(), _h + pos_top);
+		float resource = 1.f / shot_dec;
+		sprintf_s(temp_text, " %.0f %s", resource, pWeaponKnife ? CStringTable().translate("st_resource_on_hit_units").c_str() : CStringTable().translate("st_resource_units").c_str());
+		strconcat(sizeof(text_to_show), text_to_show, CStringTable().translate("st_resource").c_str(), temp_text);
+		recoil_static->SetText(text_to_show);
+		m_CapInfo.AttachChild(recoil_static);
+		_h += list_item_h + pos_top;
+	}
 	//тип спорядженого боєприпасу
 	if (!pWeaponKnife && !pWeaponBinoc && (pWeapon->HasDetachableMagazine() && pWeaponMag->IsMagazineAttached() || pWeapon->GetAmmoElapsed())) {
 		auto current_ammo_type_static = xr_new<CUIStatic>(); current_ammo_type_static->SetAutoDelete(true);

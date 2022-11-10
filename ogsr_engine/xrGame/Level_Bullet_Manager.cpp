@@ -16,8 +16,8 @@
 #	include "debug_renderer.h"
 #endif
 
-#define HIT_POWER_EPSILON 0.05f
-#define WALLMARK_SIZE 0.04f
+constexpr auto HIT_POWER_EPSILON = 0.05f;
+constexpr auto WALLMARK_SIZE = 0.04f;
 
 float CBulletManager::m_fMinBulletSpeed = 2.f;
 
@@ -97,7 +97,7 @@ CBulletManager::~CBulletManager()
 	m_Events.clear			();
 }
 
-#define BULLET_MANAGER_SECTION "bullet_manager"
+constexpr auto BULLET_MANAGER_SECTION = "bullet_manager";
 
 void CBulletManager::Load		()
 {
@@ -228,7 +228,7 @@ bool CBulletManager::CalcBullet (collide::rq_results & rq_storage, xr_vector<ISp
 	//RayQuery() она может поменяться из-за рикошетов
 	//и столкновений с объектами
 	Fvector cur_dir					= bullet->dir;
-	bullet_test_callback_data		bullet_data;
+	bullet_test_callback_data		bullet_data{};
 	bullet_data.pBullet				= bullet;
 	bullet_data.bStopTracing		= true;
 
@@ -301,7 +301,7 @@ bool CBulletManager::CalcBullet (collide::rq_results & rq_storage, xr_vector<ISp
 
 float SqrDistancePointToSegment(const Fvector& pt, const Fvector& orig, const Fvector& dir)
 {
-	Fvector diff;	diff.sub(pt,orig);
+	Fvector diff{};	diff.sub(pt, orig);
 	float fT		= diff.dotproduct(dir);
 
 	if ( fT <= 0.0f ){
@@ -388,7 +388,7 @@ void CBulletManager::Render	()
 		//---------------------------------------------
 
 
-		Fvector center;
+		Fvector center{};
 		center.mad(bullet.pos, bullet.dir,  -length*.5f);
 		tracers.Render(bullet.pos, center, bullet.dir, length, width, bullet.m_u8ColorID);
 	}

@@ -214,7 +214,7 @@ void CWeaponAmmo::OnH_B_Independent(bool just_before_destroy)
 bool CWeaponAmmo::Useful() const
 {
 	// Если IItem еще не полностью использованый, вернуть true
-	return !!m_boxCurr || IsBoxReloadableEmpty();
+	return m_boxCurr || IsBoxReloadableEmpty();
 }
 
 bool CWeaponAmmo::IsBoxReloadable() const
