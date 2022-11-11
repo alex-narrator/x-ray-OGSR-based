@@ -61,8 +61,8 @@ protected:
 	bool					bWorking;
 
 	float					fTimeToFire;
-	float					fTimeToFire2;
-	bool					bCycleDown;
+	//скорострельность привилегированного режима стрельбы
+	float					fTimeToFirePreffered;
 	ALife::EHitType			m_eHitType;
 	Fvector4				fvHitPower;
 	//float					fHitPower;

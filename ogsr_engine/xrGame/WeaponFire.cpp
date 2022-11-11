@@ -14,12 +14,12 @@
 
 #include "level_bullet_manager.h"
 
-#define FLAME_TIME 0.05f
+constexpr auto FLAME_TIME = 0.05f;
 
 
 float _nrand(float sigma)
 {
-#define ONE_OVER_SIGMA_EXP (1.0f / 0.7975f)
+constexpr auto ONE_OVER_SIGMA_EXP = (1.0f / 0.7975f);
 
 	if(sigma == 0) return 0;
 

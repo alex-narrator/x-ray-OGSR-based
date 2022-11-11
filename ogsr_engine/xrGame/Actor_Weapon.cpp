@@ -112,12 +112,12 @@ void CActor::SetWeaponHideState( u32 State, bool bSet, bool now )
 
 static	u16 BestWeaponSlots [] = {
 	ON_BACK_SLOT		,		// 2
-	ON_SHOULDER_SLOT		,		// 1
-	GRENADE_SLOT	,		// 3
-	KNIFE_SLOT		,		// 0
+	ON_SHOULDER_SLOT	,		// 1
+	GRENADE_SLOT		,		// 3
+	KNIFE_SLOT			,		// 0
 };
 
-#define ENEMY_HIT_SPOT	"mp_hit_sector_location"
+constexpr auto ENEMY_HIT_SPOT = "mp_hit_sector_location";
 BOOL	g_bShowHitSectors	= TRUE;
 
 void	CActor::HitSector(CObject* who, CObject* weapon)
@@ -173,8 +173,7 @@ void CActor::on_weapon_shot_start		(CWeapon *weapon)
 		if (effector->IsSingleShot())
 			update_camera(effector);
 
-		effector->SetSingleShoot(use_recoil_compensation);
-
+		effector->SetSingleShoot(/*use_recoil_compensation*/true);
 	};
 
 	effector->SetRndSeed			(GetShotRndSeed());

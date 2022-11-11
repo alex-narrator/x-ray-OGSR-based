@@ -242,13 +242,6 @@ void CWeaponMagazined::Load	(LPCSTR section)
 		}
 		m_iCurFireMode = ModesCount - 1;
 		m_iPrefferedFireMode = READ_IF_EXISTS(pSettings, r_s16,section,"preffered_fire_mode",-1);
-		//
-		if (pSettings->line_exist(section, "preffered_fire_mode"))
-		{
-			fTimeToFirePreffered = READ_IF_EXISTS(pSettings, r_float, section, "preffered_fire_mode_rpm", fTimeToFire); //скорострельность привилегированного режима стрельбы
-			VERIFY(fTimeToFirePreffered > 0.f);
-			fTimeToFirePreffered = 60.f / fTimeToFirePreffered;
-		}
 	}
 	else
 		m_bHasDifferentFireModes = false;

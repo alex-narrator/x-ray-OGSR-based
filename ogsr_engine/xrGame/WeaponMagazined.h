@@ -159,8 +159,6 @@ protected:
 	int				m_iPrefferedFireMode{ -1 };
 	u32				m_fire_zoomout_time = u32(-1);
 
-	//скорострельность привилегированного режима стрельбы
-	float			fTimeToFirePreffered{};
 	//у оружия есть патронник
 	bool			m_bHasChamber{ true };
 	//последний заряженный тип магазина
