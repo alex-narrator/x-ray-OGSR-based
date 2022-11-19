@@ -55,7 +55,7 @@ void CVest::OnMoveToSlot(EItemPlace prevPlace) {
 void CVest::OnMoveToRuck(EItemPlace prevPlace) {
 	inherited::OnMoveToRuck(prevPlace);
 	auto& inv = m_pCurrentInventory;
-	if (inv && prevPlace == eItemPlaceSlot) {
+	if (inv && prevPlace == eItemPlaceSlot && !Level().is_removing_objects()) {
 		auto pActor = smart_cast<CActor*> (inv->GetOwner());
 		if (pActor && inv->IsAllItemsLoaded()) {
 			inv->DropVestToRuck();
