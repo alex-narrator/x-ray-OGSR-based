@@ -1541,14 +1541,13 @@ void CWeaponMagazined::OnZoomIn			()
 	CActor* pActor = smart_cast<CActor*>(H_Parent());
 	if(pActor)
 	{
-		CEffectorCam* ec = pActor->Cameras().GetCamEffector( eCEActorMoving );
-		if ( ec )
-		  pActor->Cameras().RemoveCamEffector( eCEActorMoving );
+		CEffectorCam* ec = pActor->Cameras().GetCamEffector(eCEActorMoving);
+		if (ec)
+			pActor->Cameras().RemoveCamEffector(eCEActorMoving);
 
-		CEffectorZoomInertion* S = smart_cast<CEffectorZoomInertion*>	(pActor->Cameras().GetCamEffector(eCEZoom));
-		if (!S)	
-		{
-			S = (CEffectorZoomInertion*)pActor->Cameras().AddCamEffector(xr_new<CEffectorZoomInertion> ());
+		CEffectorZoomInertion* S = smart_cast<CEffectorZoomInertion*>(pActor->Cameras().GetCamEffector(eCEZoom));
+		if (!S)	{
+			S = (CEffectorZoomInertion*)pActor->Cameras().AddCamEffector(xr_new<CEffectorZoomInertion>());
 			S->Init(this);
 		};
 		S->SetRndSeed(pActor->GetZoomRndSeed());
@@ -1967,7 +1966,7 @@ void CWeaponMagazined::DeteriorateSilencerAttachable(float fDeltaCondition){
 			Detach(GetSilencerName().c_str(), false);
 		else{
 			CCartridge& l_cartridge = m_magazine.back(); //с учетом влияния конкретного патрона
-			m_fAttachedSilencerCondition += fDeltaCondition * l_cartridge.m_impair;
+			m_fAttachedSilencerCondition += fDeltaCondition + (fDeltaCondition * l_cartridge.m_impair);//* l_cartridge.m_impair;
 			clamp(m_fAttachedSilencerCondition, 0.f, 1.f);
 		}
 	}

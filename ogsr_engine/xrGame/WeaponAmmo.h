@@ -15,18 +15,19 @@ public:
 		cfCanBeUnlimited		= (1<<2),
 		cfExplosive				= (1<<3),
 	};
-	float	
-		m_kDist{ 1.f }, 
-		m_kDisp{ 1.f }, 
-		m_kHit{ 1.f }, 
-		m_kImpulse{ 1.f }, 
-		m_kPierce{ 1.f }, 
-		m_kAP{}, 
-		m_kAirRes{}, 
-		m_kSpeed{ 1.f };
+	float	m_kDist			{}, 
+			m_kDisp			{}, 
+			m_kHit			{}, 
+			m_kImpulse		{}, 
+			m_kPierce		{}, 
+			m_kAP			{}, 
+			m_kAirRes		{}, 
+			m_kSpeed		{},
+			m_impair		{},
+			fWallmarkSize	{},
+			m_misfireProbability{};
+	
 	int		m_buckShot{1};
-	float	m_impair{ 1.f };
-	float	fWallmarkSize{};
 	
 	u8		m_u8ColorID{};
 	u8		m_LocalAmmoType{};
@@ -37,8 +38,6 @@ public:
 
 	shared_str	m_InvShortName;
 	RStringVec	m_ExplodeParticles;
-	//вероятность осечки
-	float		m_misfireProbability{};
 };
 
 class CWeaponAmmo :	public CInventoryItemObject {
@@ -63,25 +62,32 @@ public:
 	virtual u32						Cost				() const;
 	bool							Get					(CCartridge &cartridge);
 
-	float		m_kDist, m_kDisp, m_kHit, m_kImpulse, m_kPierce, m_kAP, m_kAirRes, m_kSpeed;
-	int			m_buckShot;
-	float		m_impair;
-	float		fWallmarkSize;
-	u8			m_u8ColorID;
+	float	m_kDist			{}, 
+			m_kDisp			{}, 
+			m_kHit			{}, 
+			m_kImpulse		{}, 
+			m_kPierce		{}, 
+			m_kAP			{}, 
+			m_kAirRes		{}, 
+			m_kSpeed		{},
+			m_impair		{},
+			fWallmarkSize	{},
+			//вірогідність затримки набою
+			m_misfireProbability{},
+			//вірогідність затримки магазину
+			m_misfireProbabilityBox{};
 
-	u16			m_boxSize;
-	u16			m_boxCurr;
-	bool		m_tracer;
+	int		m_buckShot{ 1 };
+
+	u8		m_u8ColorID{};
+
+	u16		m_boxSize{};
+	u16		m_boxCurr{};
+	bool	m_tracer{};
 	//
-	shared_str	m_ammoSect{}, m_EmptySect{};
-	shared_str	m_InvShortName;
-	//вероятность осечки от патрона
-	float		m_misfireProbability;
-	//вероятность осечки от магазина
-	float		m_misfireProbabilityBox{};
+	shared_str	m_ammoSect{}, m_EmptySect{}, m_InvShortName{};
 
-	xr_vector<shared_str>		m_ammoTypes;
-	xr_vector<shared_str>		m_magTypes;
+	xr_vector<shared_str> m_ammoTypes, m_magTypes;
 	virtual bool IsBoxReloadable		() const;
 	virtual bool IsBoxReloadableEmpty	() const;
 	void ReloadBox				(LPCSTR ammo_sect);

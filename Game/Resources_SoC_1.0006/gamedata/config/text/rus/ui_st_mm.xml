@@ -3,40 +3,40 @@
 	<!-- ГЛАВНОЕ МЕНЮ -->
 	<!-- Первый экран (игра не загружена) -->
 	<string id="ui_mm_newgame">
-		<text>Новая игра</text>
+		<text>Новая гра</text>
 	</string>
 	<string id="ui_mm_load_game">
-		<text>Загрузить</text>
+		<text>Завантажити</text>
 	</string>
 	<string id="ui_mm_last_save">
-		<text>Последнее сохранение</text>
+		<text>Останнє збереження</text>
 	</string>
 	<string id="ui_mm_options_n">
-		<text>Настройки</text>
+		<text>Налаштування</text>
 	</string>
 	<string id="ui_mm_credits">
-		<text>Создатели</text>
+		<text>Творці</text>
 	</string>
 	<string id="ui_mm_quit2windows">
-		<text>Выйти в Windows</text>
+		<text>Вийти у Windows</text>
 	</string>
 	<string id="ui_st_want_to_leave_game_q">
-		<text>Вы действительно хотите покинуть ЗОНУ?</text>
+		<text>ВИ дійсвно бажаєте вийти з гри?</text>
 	</string>
 	<!-- Первый экран (игра загружена, недостающие строки) -->
 	<string id="ui_mm_return_game">
-		<text>Продолжить игру</text>
+		<text>Продовжити гру</text>
 	</string>
 	<string id="ui_mm_quit_game">
-		<text>Завершить игру</text>
+		<text>Завершити гру</text>
 	</string>
 	<!-- Первый экран (после смерти, недостающие строки) -->
 	<string id="st_game_over_press_jump">
-		<text>Нажмите [$$ACTION_JUMP$$] для выхода в главное меню</text>
+		<text>Натисніть [$$ACTION_JUMP$$] для виходу у головне меню</text>
 	</string>
 	<!-- Окно выбора сложности -->
 	<string id="ui_mm_novice">
-		<text>Новичок</text>
+		<text>Новачок</text>
 	</string>
 	<string id="ui_mm_stalker">
 		<text>Сталкер</text>
@@ -45,95 +45,95 @@
 		<text>Ветеран</text>
 	</string>
 	<string id="ui_mm_master">
-		<text>Мастер</text>
+		<text>Майстер</text>
 	</string>
 	<string id="ui_mm_back">
 		<text>Назад</text>
 	</string>
 	<!-- Окно загрузки -->
 	<string id="ui_mm_load">
-		<text>Выбрать</text>
+		<text>Обрати</text>
 	</string>
 	<!-- загрузка разное -->
 	<string id="ui_st_load_game_confirm">
-		<text>Загрузка игры приведет к потере несохраненных данных. Желаете продолжить?</text>
+		<text>Завантаження гри призведе до втрати незбережених даних. Бажаєте продовжити?</text>
 	</string>
 	<string id="ui_st_invalid_saved_game">
 		<text>Не совпадает версия сохранённой игры или сохранённая игра испорчена.</text>
 	</string>	
 	<string id="ui_mm_delete_existing_file_q">
-		<text>Вы действительно хотите удалить файл?</text>
+		<text>Ви дійсно бажаєте видалити збереження?</text>
 	</string>
 	<string id="ui_load_press_any_key_to_start">
-		<text>Нажмите любую клавишу для перехода к игре</text>
+		<text>Натисніть будь яку клавішу для переходу до гри</text>
 	</string>
 	<!-- Окно сохранения -->
 	<string id="ui_mm_save_game">
-		<text>Сохранить</text>
+		<text>Зберегти</text>
 	</string>
 	<string id="ui_mm_save">
-		<text>Сохранить</text>
+		<text>Зберегти</text>
 	</string>
 	<string id="ui_st_file_exist_owerwrite_q">
-		<text>Файл с таким именем уже существует. Перезаписать?</text>
+		<text>Збереження з таким ім'ям вже існує. Бажаєте перезаписати?</text>
 	</string>
 	<string id="ui_st_file_name_is_empty">
-		<text>Имя файла пустое</text>
+		<text>І'мя збереження не може бути порожнім</text>
 	</string>
 	<!-- Запрос на прерывание игры -->
 	<string id="ui_mm_quit_game_message">
-		<text>Завершить текущую игру?</text>
+		<text>Завершити поточну гру?</text>
 	</string>
 	<!-- Запрос на выход в Windows -->
 	<string id="ui_mm_quit_windows_message">
-		<text>Выйти из игры?</text>
+		<text>Вийти з гри?</text>
 	</string>
 	<!-- Общие -->
 	<string id="ui_mm_cancel">
-		<text>Отмена</text>
+		<text>Скасувати</text>
 	</string>
 	<string id="ui_mm_apply">
-		<text>Применить</text>
+		<text>Застосувати</text>
 	</string>
 	<string id="ui_mm_delete">
-		<text>Удалить</text>
+		<text>Видалити</text>
 	</string>
 	<!-- Окно настроек -->
 	<string id="ui_mm_options">
-		<text>НАСТРОЙКИ</text>
+		<text>НАЛАШТУВАННЯ</text>
 	</string>
 	<!-- Экран "Видео" -->
 	<string id="ui_mm_video">
-		<text>Видео</text>
+		<text>Відео</text>
 	</string>
 	<!-- Пресеты -->
 	<string id="Minimum">
-		<text>минимальные</text>
+		<text>мінімальні</text>
 	</string>
 	<string id="Low">
-		<text>низкие</text>
+		<text>низькі</text>
 	</string>
 	<string id="Default">
-		<text>средние</text>
+		<text>середні</text>
 	</string>
 	<string id="High">
-		<text>высокие</text>
+		<text>високі</text>
 	</string>
 	<string id="Extreme">
-		<text>максимальные</text>
+		<text>максимальні</text>
 	</string>
 	<!-- базовые настройки видео -->
 	<string id="ui_mm_quality_presets">
-		<text>Установки качества</text>
+		<text>Налаштування якості</text>
 	</string>
 	<string id="ui_mm_resolution">
-		<text>Разрешение</text>
+		<text>Роздільна здатність</text>
 	</string>
 	<string id="ui_mm_fps_lock">
-		<text>Лимит FPS</text>
+		<text>Ліміт FPS</text>
 	</string>
 	<string id="ui_mm_always_active">
-		<text>Не вставать на паузу при переключении на другие окна</text>
+		<text>Не вставати на паузу підчас перемикання на інші вікна</text>
 	</string>
 	<string id="ui_mm_gamma">
 		<text>Гамма</text>
@@ -142,57 +142,57 @@
 		<text>Контраст</text>
 	</string>
 	<string id="ui_mm_brightness">
-		<text>Яркость</text>
+		<text>Яскравість</text>
 	</string>
 	<string id="ui_mm_fullscreen">
-		<text>Полный экран</text>
+		<text>Повний екран</text>
 	</string>
 	<string id="ui_mm_advanced">
-		<text>Расширенные</text>
+		<text>Розширені</text>
 	</string>
 
 	<!-- Окно расширенных настроек видео -->
 
 	<string id="qt_off">
-		<text>выкл.</text>
+		<text>вимкнено</text>
 	</string>
 	<string id="qt_low">
-		<text>низкое</text>
+		<text>низьке</text>
 	</string>
 	<string id="qt_medium">
-		<text>среднее</text>
+		<text>середнє</text>
 	</string>
 	<string id="qt_high">
-		<text>высокое</text>
+		<text>високе</text>
 	</string>
 	<string id="qt_extreme">
-		<text>максимальное</text>
+		<text>максимальне</text>
 	</string>
 
 	<string id="st_opt_extreme">
-		<text>макс. высоко</text>
+		<text>екстремально</text>
 	</string>
 	<string id="st_opt_ultra">
-		<text>очень высоко</text>
+		<text>дуже високо</text>
 	</string>
 	<string id="st_opt_high">
-		<text>высоко</text>
+		<text>високо</text>
 	</string>
 	<string id="st_opt_low">
-		<text>низко</text>
+		<text>низько</text>
 	</string>
 	<string id="st_opt_medium">
-		<text>средне</text>
+		<text>середнє</text>
 	</string>
 	<string id="st_opt_off">
-		<text>отключено</text>
+		<text>вимкнено</text>
 	</string>
 
 	<string id="default">
-		<text>по умолчанию</text>
+		<text>за замовчуванням</text>
 	</string>
 	<string id="disabled">
-		<text>Отключено</text>
+		<text>Вимкнено</text>
 	</string>
 
 	<string id="ui_mm_need_restart">

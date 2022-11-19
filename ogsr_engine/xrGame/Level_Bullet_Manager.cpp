@@ -46,16 +46,16 @@ void SBullet::Init(const Fvector& position,
 {
 	flags._storage		= 0;
 	pos 				= position;
-	speed = max_speed	= starting_speed * cartridge.m_kSpeed;
+	speed = max_speed	= starting_speed + (starting_speed * cartridge.m_kSpeed);// * cartridge.m_kSpeed;
 	VERIFY				(speed>0);
 
 	VERIFY(direction.magnitude()>0);
 	dir.normalize		(direction);
 
-	hit_power			= power		* cartridge.m_kHit;
-	hit_impulse			= impulse	* cartridge.m_kImpulse;
+	hit_power			= power + (power * cartridge.m_kHit);//* cartridge.m_kHit;
+	hit_impulse			= impulse + (impulse * cartridge.m_kImpulse);//	* cartridge.m_kImpulse;
 
-	max_dist			= maximum_distance * cartridge.m_kDist;
+	max_dist			= maximum_distance + (maximum_distance * cartridge.m_kDist);// * cartridge.m_kDist;
 	fly_dist			= 0;
 
 	parent_id			= sender_id;

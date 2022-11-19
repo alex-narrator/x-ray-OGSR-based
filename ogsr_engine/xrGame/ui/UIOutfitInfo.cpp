@@ -53,7 +53,7 @@ LPCSTR _imm_names []={
 };
 
 LPCSTR _imm_st_names[]={
-	"ui_inv_health",
+	"ui_inv_health_restore",
 	"ui_inv_radiation",
 	"ui_inv_satiety",
 	"ui_inv_thirst",

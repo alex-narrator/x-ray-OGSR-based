@@ -112,20 +112,6 @@ inv_grid_height		= 1
 inv_grid_x			= 11
 inv_grid_y			= 12
 
-
-k_dist			= 1
-k_disp			= 3
-k_hit			= 1
-k_impulse		= 1
-k_pierce		= 1
-impair			= 1
-buck_shot		= 1
-tracer			= off
-wm_size         = 0.05
-;misfire_probability = 0.5
-
-explosive		= on
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 [ammo_9x18_pbp]:ammo_base
 GroupControlSection	= spawn_group
@@ -161,6 +147,7 @@ tracer			= off
 wm_size         = 0.05
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;насправді це 9x18 мм ПБМ (7Н25) - бо набій ПММ має зависоку енергію для ПМ (а у нас саме ПМ а не ПММ через 8 набоїв у магазині)
 [ammo_9x18_pmm]:ammo_base
 GroupControlSection	= spawn_group
 discovery_dependency = 
@@ -184,16 +171,8 @@ inv_grid_height		= 1
 inv_grid_x			= 12
 inv_grid_y			= 12
 
-k_dist			= 1.5
-k_disp			= 3
-k_hit			= 1.1
-k_impulse		= 1.3
+k_speed 		= 0.75
 k_pierce		= 1.1
-k_ap 			= 1
-impair			= 1.5
-buck_shot		= 1
-tracer			= off
-wm_size         = 0.05
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 [ammo_9x19_fmj]:ammo_base
@@ -219,16 +198,6 @@ inv_grid_height		= 1
 inv_grid_x			= 15
 inv_grid_y			= 12
 
-k_dist			= 1
-k_disp			= 3
-k_hit			= 1
-k_impulse		= 1
-k_pierce		= 1
-impair			= 1
-buck_shot		= 1
-tracer			= on
-wm_size         = 0.05
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 [ammo_9x19_pbp]:ammo_base
 GroupControlSection	= spawn_group
@@ -253,15 +222,10 @@ inv_grid_height		= 1
 inv_grid_x			= 14
 inv_grid_y			= 12
 
-k_dist			= 1
-k_disp			= 3
-k_hit			= 1.1
-k_impulse		= 1.5
+k_speed 		= 0.67
+k_hit			= 0.1
+k_impulse		= 0.5
 k_pierce		= 1.35
-impair			= 1.15
-buck_shot		= 1
-tracer			= on
-wm_size         = 0.05
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 [ammo_5.45x39_fmj]:ammo_base
@@ -287,18 +251,6 @@ inv_grid_height		= 1
 inv_grid_x			= 16
 inv_grid_y			= 11
 
-k_dist			= 1
-k_disp			= 3
-k_hit			= 1
-k_impulse		= 1
-k_pierce		= 1
-impair			= 1
-buck_shot		= 1
-tracer			= on
-wm_size         = 0.05
-
-explosive		= on
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 [ammo_5.45x39_ap]:ammo_base
 GroupControlSection	= spawn_group
@@ -323,15 +275,8 @@ inv_grid_height		= 1
 inv_grid_x			= 12
 inv_grid_y			= 11
 
-k_dist			= 1
-k_disp			= 2.5;3
-k_hit			= 1
-k_impulse		= 0.95
+k_speed 		= 0.02
 k_pierce		= 1.75
-impair			= 1.02
-buck_shot		= 1
-tracer			= on
-wm_size         = 0.05
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 [ammo_5.56x45_ss190]:ammo_base
@@ -357,16 +302,6 @@ inv_grid_height		= 1
 inv_grid_x			= 14
 inv_grid_y			= 11
 
-k_dist			= 1
-k_disp			= 2.5;3
-k_hit			= 1
-k_impulse		= 1
-k_pierce		= 1
-impair			= 1
-buck_shot		= 1
-tracer			= on
-wm_size         = 0.05
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 [ammo_5.56x45_ap]:ammo_base
 GroupControlSection	= spawn_group
@@ -390,16 +325,6 @@ inv_grid_width		= 2
 inv_grid_height		= 1
 inv_grid_x			= 10
 inv_grid_y			= 11
-
-k_dist			= 1
-k_disp			= 2.5;3
-k_hit			= 1
-k_impulse		= 1
-k_pierce		= 1.75
-impair			= 1.05
-buck_shot		= 1
-tracer			= on
-wm_size         = 0.05
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 [ammo_5.7x28_fmj]:ammo_base
@@ -494,16 +419,7 @@ inv_grid_height		= 1
 inv_grid_x			= 15
 inv_grid_y			= 9
 
-k_dist			= 1
-k_disp			= 1.5;3
-k_hit			= 1
-k_impulse		= 1
 k_pierce		= 1.25
-impair			= 1
-buck_shot		= 1
-tracer			= on
-wm_size         = 0.05
-explosive		= on
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 [ammo_7.62x54_ap]:ammo_base
 GroupControlSection	= spawn_group
@@ -528,16 +444,9 @@ inv_grid_height		= 1
 inv_grid_x			= 15
 inv_grid_y			= 10
 
-k_dist			= 1
-k_disp			= 1.5;3
-k_hit			= 1.2
-k_impulse		= 0.95
+k_impulse		= -0.05
 k_pierce		= 2.25
-impair			= 1.05
-buck_shot		= 1
-tracer			= on
-wm_size         = 0.05
-explosive		= on
+k_disp 			= 1.25
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 [ammo_7.62x54_7h14]:ammo_base
 GroupControlSection	= spawn_group
@@ -562,16 +471,7 @@ inv_grid_height		= 1
 inv_grid_x			= 17
 inv_grid_y			= 9
 
-k_dist			= 1.25
-k_disp			= 1
-k_hit			= 1.1
-k_impulse		= 1.2
 k_pierce		= 1.75
-impair			= 1.25
-buck_shot		= 1
-tracer			= on
-wm_size         = 0.05
-explosive		= on
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 [ammo_9x39_pab9]:ammo_base
@@ -597,15 +497,8 @@ inv_grid_height		= 1
 inv_grid_x			= 17
 inv_grid_y			= 10
 
-k_dist			= 1
-k_disp			= 2.5;3
-k_hit			= 1
-k_impulse		= 1.2
-k_pierce		= 1
-impair			= 0.7
-buck_shot		= 1
-tracer			= on
-wm_size         = 0.05
+k_disp 			= 0.87
+k_impulse		= 0.2
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 [ammo_gauss]:ammo_base
@@ -631,18 +524,8 @@ inv_grid_height		= 1
 inv_grid_x			= 4
 inv_grid_y			= 14
 
-k_dist			= 1.1
-k_disp			= 1
-k_hit			= 1.1
-k_impulse		= 10
+k_impulse		= 9
 k_pierce		= 2.5
-impair			= 0.7
-buck_shot		= 1
-tracer			= off
-wm_size         = 0.05
-
-explosive		= on
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 [ammo_9x39_ap]:ammo_base
 GroupControlSection	= spawn_group
@@ -667,15 +550,8 @@ inv_grid_height		= 1
 inv_grid_x			= 5
 inv_grid_y			= 12
 
-k_dist			= 1
-k_disp			= 2.5;3
-k_hit			= 1.2
-k_impulse		= 0.95
-k_pierce		= 2.25;1.25
-impair			= 1.05
-buck_shot		= 1
-tracer			= on
-wm_size         = 0.05
+k_disp 			= 0.87
+k_pierce		= 2.25
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 [ammo_9x39_sp5]:ammo_base
@@ -701,15 +577,7 @@ inv_grid_height		= 1
 inv_grid_x			= 18
 inv_grid_y			= 11
 
-k_dist			= 1.25
-k_disp			= 2;3
-k_hit			= 1.1
-k_impulse		= 1
 k_pierce		= 1.35
-impair			= 1.25
-buck_shot		= 1
-tracer			= on
-wm_size         = 0.05
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 [ammo_11.43x23_fmj]:ammo_base
@@ -735,16 +603,6 @@ inv_grid_height		= 1
 inv_grid_x			= 9
 inv_grid_y			= 12
 
-k_dist			= 1
-k_disp			= 3
-k_hit			= 1
-k_impulse		= 1
-k_pierce		= 1
-impair			= 1
-buck_shot		= 1
-tracer			= off
-wm_size         = 0.05
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 [ammo_11.43x23_hydro]:ammo_base
 GroupControlSection	= spawn_group
@@ -769,15 +627,9 @@ inv_grid_height		= 1
 inv_grid_x			= 7
 inv_grid_y			= 12
 
-k_dist			= 0.95
-k_disp			= 3
-k_hit			= 1.1
-k_impulse		= 1.2
+k_speed 		= 0.26
+k_impulse		= 0.2
 k_pierce		= 1.35
-impair			= 1.15
-buck_shot		= 1
-tracer			= off
-wm_size         = 0.05
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 [ammo_12x70_buck]:ammo_base
@@ -803,15 +655,12 @@ inv_grid_height		= 1
 inv_grid_x			= 13
 inv_grid_y			= 9
 
-k_dist			= 0.75;1
-k_disp			= 10;
-k_hit			= 0.4
-k_impulse		= 0.3
+k_dist 			= -0.2
+k_speed 		= -0.08
+;k_hit 			= -0.5
+k_disp 			= 1.15
 k_pierce		= 0.8
-impair			= 1
 buck_shot		= 10
-tracer			= off
-wm_size         = 0.05
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 [ammo_12x76_dart]:ammo_base
@@ -837,16 +686,10 @@ inv_grid_height		= 1
 inv_grid_x			= 13
 inv_grid_y			= 10
 
-k_dist			= 2.5
-k_disp			= 0.8
-k_hit			= 1.15
+k_disp			= -0.2
 k_impulse		= 1.3
 k_pierce		= 2.25
-impair			= 1.2
-buck_shot		= 1
-tracer			= on
-wm_size         = 0.05
-explosive		= on
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 [ammo_12x76_zhekan]:ammo_base
 GroupControlSection	= spawn_group
@@ -871,17 +714,7 @@ inv_grid_height		= 1
 inv_grid_x			= 11
 inv_grid_y			= 10
 
-k_dist			= 1.5
-k_disp			= 1.0
-k_hit			= 1.0
-k_impulse		= 1.5
-k_pierce		= 1
-impair			= 1.15
-buck_shot		= 1
-tracer			= on
-wm_size         = 0.05
-explosive		= on
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 [ammo_12x76_zhekan_heli]:ammo_12x76_zhekan
 $spawn			= "weapons\ammo\ammo_12x76_zhekan_heli" ; option for Level Editor
 explosive		= on
@@ -909,14 +742,8 @@ inv_grid_height		= 1
 inv_grid_x			= 0
 inv_grid_y			= 36
 
-k_dist			= 1
-k_disp			= 1
-k_hit			= 1
-k_impulse		= 1
-k_pierce		= 0.75
-k_ap			= 0.75
-impair			= 1
-buck_shot		= 1
+k_pierce		= -0.25
+k_ap			= -0.25
 tracer			= on
 wm_size         = 0.07
 
@@ -947,14 +774,8 @@ inv_grid_x			= 15
 inv_grid_y			= 19
 
 
-k_dist			= 1
-k_disp			= 1
-k_hit			= 1
-k_impulse		= 1
-k_pierce		= 1.25
-impair			= 1.15
+k_pierce		= 0.25
 buck_shot		= 0
-tracer			= off
 wm_size         = 0.1
 
 ;могут ли боеприпасы быть неограниченными : 1 - могут, 0 - не могут
@@ -992,15 +813,9 @@ kill_msg_y			= 232
 kill_msg_width		= 21
 kill_msg_height		= 22
 
-k_dist			= 1.3
-k_disp			= 1
-k_hit			= 1
-k_impulse		= 1
-k_pierce		= 1.25
-impair			= 1
+k_dist			= 0.3
+k_pierce		= 0.25
 buck_shot		= 0
-tracer			= off
-wm_size         = 0.05
 
 jump_height = 1
 fake_grenade_name = wpn_fake_missile1
@@ -1008,7 +823,7 @@ fake_grenade_name = wpn_fake_missile1
 ;могут ли боеприпасы быть неограниченными : 1 - могут, 0 - не могут
 can_be_unlimited = true ;false
 
-slot = 12,13,14,15,19,20,26,27
+slot = 12,13,14,15
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 [ammo_vog-25]:ammo_base
@@ -1041,22 +856,16 @@ kill_msg_width		= 21
 kill_msg_height		= 22
 
 
-k_dist			= 1
-k_disp			= 1
-k_hit			= 1
-k_impulse		= 1
-k_pierce		= 1.25
-impair			= 1
+
+k_pierce		= 0.25
 buck_shot		= 0
-tracer			= off
-wm_size         = 0.05
 
 fake_grenade_name = wpn_fake_missile
 
 ;могут ли боеприпасы быть неограниченными : 1 - могут, 0 - не могут
 can_be_unlimited = true ;false
 
-slot = 12,13,14,15,19,20,26,27
+slot = 12,13,14,15
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 [ammo_m209]:ammo_base
@@ -1088,22 +897,15 @@ kill_msg_width		= 19
 kill_msg_height		= 22
 
 
-k_dist			= 1
-k_disp			= 1
-k_hit			= 1
-k_impulse		= 1
-k_pierce		= 1.25
-impair			= 1
+k_pierce		= 0.25
 buck_shot		= 0
-tracer			= off
-wm_size         = 0.05
 
 fake_grenade_name = wpn_fake_missile2
 
 ;могут ли боеприпасы быть неограниченными : 1 - могут, 0 - не могут
 can_be_unlimited = true ;false
 
-slot = 12,13,14,15,19,20,26,27
+slot = 12,13,14,15
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Fake Missiles and Grenades

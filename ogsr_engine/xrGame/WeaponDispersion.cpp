@@ -27,7 +27,7 @@ float CWeapon::GetConditionDispersionFactor() const
 float CWeapon::GetFireDispersion	(bool with_cartridge, bool with_owner)
 {
 	if (!with_cartridge || m_magazine.empty()) 
-		return GetFireDispersion(1.0f);
+		return GetFireDispersion(0.f/*1.0f*/, with_owner);
 	m_fCurrentCartirdgeDisp = m_magazine.back().m_kDisp;
 	return GetFireDispersion	(m_fCurrentCartirdgeDisp, with_owner);
 }
@@ -36,15 +36,14 @@ float CWeapon::GetFireDispersion	(bool with_cartridge, bool with_owner)
 float CWeapon::GetFireDispersion	(float cartridge_k, bool with_owner)
 {
 	//учет базовой дисперсии, состояние оружия и влияение патрона
-	float fire_disp = fireDispersionBase*cartridge_k*GetConditionDispersionFactor();
-	
+	float fire_disp = fireDispersionBase + (fireDispersionBase * cartridge_k);//*cartridge_k*GetConditionDispersionFactor();
+	fire_disp *= GetConditionDispersionFactor();
 	//вычислить дисперсию, вносимую самим стрелком
 	if(with_owner)
 		if (auto pOwner = smart_cast<const CInventoryOwner*>(H_Parent())){
 			const float parent_disp = pOwner->GetWeaponAccuracy();
 			fire_disp += parent_disp;
 		}
-
 	return fire_disp;
 }
 

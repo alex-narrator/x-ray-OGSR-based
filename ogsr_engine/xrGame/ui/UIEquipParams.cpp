@@ -18,6 +18,7 @@
 #include "Addons.h"
 #include "PowerBattery.h"
 #include "InventoryContainer.h"
+#include "Grenade.h"
 
 constexpr auto equip_params = "equip_params.xml";
 
@@ -46,6 +47,7 @@ bool CUIEquipParams::Check(CInventoryItem* obj){
 		smart_cast<CSilencer*>			(obj) ||
 		smart_cast<CInventoryContainer*>(obj) ||
 		smart_cast<CPowerBattery*>		(obj) ||
+		smart_cast<CGrenade*>			(obj) ||
 		obj->IsPowerConsumer()				  ||
 		obj->GetDetailPartSection()				) {
 		return true;
@@ -58,7 +60,7 @@ void CUIEquipParams::SetInfo(CInventoryItem* obj){
 
 	const shared_str& item_section = obj->object().cNameSect();
 
-	string1024	text_to_show;
+	string1024	text_to_show{};
 	char		temp_text[64];
 
 	//динамічний лист інформації
@@ -235,14 +237,13 @@ void CUIEquipParams::SetInfo(CInventoryItem* obj){
 	}
 
 	auto pOutfit = smart_cast<CCustomOutfit*>(obj);
-	if (pOutfit) {
+	if (pOutfit && pOutfit->m_bIsHelmetBuiltIn) {
 		auto inbuild_helmet_static = xr_new<CUIStatic>();
 		CUIXmlInit::InitStatic(uiXml, "equip_params:outfit_helmet_inbuild", 0, inbuild_helmet_static);
 		inbuild_helmet_static->SetAutoDelete(true);
 		pos_top = inbuild_helmet_static->GetPosTop();
 		inbuild_helmet_static->SetWndPos(inbuild_helmet_static->GetPosLeft(), _h + pos_top);
-		sprintf_s(temp_text, " %s", pOutfit->m_bIsHelmetBuiltIn ? CStringTable().translate("st_yes").c_str() : CStringTable().translate("st_no").c_str());
-		strconcat(sizeof(text_to_show), text_to_show, CStringTable().translate("st_inbuild_helmet").c_str(), temp_text);
+		sprintf_s(text_to_show, "%s", CStringTable().translate("st_inbuild_helmet").c_str());
 		inbuild_helmet_static->SetText(text_to_show);
 		m_CapInfo.AttachChild(inbuild_helmet_static);
 		_h += list_item_h;
@@ -294,52 +295,218 @@ void CUIEquipParams::SetInfo(CInventoryItem* obj){
 
 	//сумісні набої магазинів
 	auto pAmmo = smart_cast<CWeaponAmmo*>(obj);
-	if (pAmmo && (pAmmo->IsBoxReloadable() || pAmmo->IsBoxReloadableEmpty())) {
-		//сумісні набої магазинів - заголовок
-		auto cap_ammo_static = xr_new<CUIStatic>(); cap_ammo_static->SetAutoDelete(true);
-		CUIXmlInit::InitStatic(uiXml, "equip_params:cap_ammo", 0, cap_ammo_static);
-		pos_top = cap_ammo_static->GetPosTop();
-		cap_ammo_static->SetWndPos(cap_ammo_static->GetPosLeft(), _h + pos_top);
-		m_CapInfo.AttachChild(cap_ammo_static);
-		_h += list_item_h + pos_top;
-		//сумісні набої порожніх магазинів - список
-		if (pAmmo->IsBoxReloadableEmpty()) {
-			for (const auto& ammo : pAmmo->m_ammoTypes) {
-				auto ammo_name = pSettings->r_string(ammo, "inv_name");
-				auto ammo_static = xr_new<CUIStatic>();
-				CUIXmlInit::InitStatic(uiXml, "equip_params:list_item", 0, ammo_static);
-				ammo_static->SetAutoDelete(true);
-				ammo_static->SetWndPos(ammo_static->GetPosLeft(), _h);
-				strconcat(sizeof(text_to_show), text_to_show, marker_, CStringTable().translate(ammo_name).c_str());
-				ammo_static->SetText(text_to_show);
-				m_CapInfo.AttachChild(ammo_static);
+	if (pAmmo) {
+		if (pAmmo->IsBoxReloadable() || pAmmo->IsBoxReloadableEmpty()) {
+			//сумісні набої магазинів - заголовок
+			auto cap_ammo_static = xr_new<CUIStatic>(); cap_ammo_static->SetAutoDelete(true);
+			CUIXmlInit::InitStatic(uiXml, "equip_params:cap_ammo", 0, cap_ammo_static);
+			pos_top = cap_ammo_static->GetPosTop();
+			cap_ammo_static->SetWndPos(cap_ammo_static->GetPosLeft(), _h + pos_top);
+			m_CapInfo.AttachChild(cap_ammo_static);
+			_h += list_item_h + pos_top;
+			//сумісні набої порожніх магазинів - список
+			if (pAmmo->IsBoxReloadableEmpty()) {
+				for (const auto& ammo : pAmmo->m_ammoTypes) {
+					auto ammo_name = pSettings->r_string(ammo, "inv_name");
+					auto ammo_static = xr_new<CUIStatic>();
+					CUIXmlInit::InitStatic(uiXml, "equip_params:list_item", 0, ammo_static);
+					ammo_static->SetAutoDelete(true);
+					ammo_static->SetWndPos(ammo_static->GetPosLeft(), _h);
+					strconcat(sizeof(text_to_show), text_to_show, marker_, CStringTable().translate(ammo_name).c_str());
+					ammo_static->SetText(text_to_show);
+					m_CapInfo.AttachChild(ammo_static);
+					_h += list_item_h;
+				}
+			}
+			//сумісні набої заряджених магазинів - список
+			if (pAmmo->IsBoxReloadable()) {
+				xr_vector<shared_str> m_ammoTypes;
+				m_ammoTypes.clear();
+				LPCSTR _at = pSettings->r_string(pSettings->r_string(item_section, "empty_box"), "ammo_types");
+				if (_at && _at[0]) {
+					string128		_ammoItem;
+					int				count = _GetItemCount(_at);
+					for (int it = 0; it < count; ++it) {
+						_GetItem(_at, it, _ammoItem);
+						m_ammoTypes.push_back(_ammoItem);
+					}
+				}
+				for (const auto& ammo : m_ammoTypes) {
+					auto ammo_name = pSettings->r_string(ammo, "inv_name");
+					auto ammo_static = xr_new<CUIStatic>();
+					CUIXmlInit::InitStatic(uiXml, "equip_params:list_item", 0, ammo_static);
+					ammo_static->SetAutoDelete(true);
+					ammo_static->SetWndPos(ammo_static->GetPosLeft(), _h);
+					strconcat(sizeof(text_to_show), text_to_show, marker_, CStringTable().translate(ammo_name).c_str());
+					ammo_static->SetText(text_to_show);
+					m_CapInfo.AttachChild(ammo_static);
+					_h += list_item_h;
+				}
+			}
+		}
+		else {
+			//дальність вогню
+			if (!fis_zero(pAmmo->m_kDist)) {
+				auto fire_distance_static = xr_new<CUIStatic>();
+				CUIXmlInit::InitStatic(uiXml, "equip_params:fire_distance", 0, fire_distance_static);
+				fire_distance_static->SetAutoDelete(true);
+				pos_top = fire_distance_static->GetPosTop();
+				fire_distance_static->SetWndPos(fire_distance_static->GetPosLeft(), _h + pos_top);
+				float add_dist = pAmmo->m_kDist * 100.f;
+				sprintf_s(temp_text, " %s%.1f%s", add_dist > 1.f ? "+" : "", add_dist, "%");
+				strconcat(sizeof(text_to_show), text_to_show, CStringTable().translate("st_fire_distance").c_str(), temp_text);
+				fire_distance_static->SetText(text_to_show);
+				m_CapInfo.AttachChild(fire_distance_static);
+				_h += list_item_h;
+			}
+			//розкид
+			if (!fis_zero(pAmmo->m_kDisp)) {
+				auto dispersion_static = xr_new<CUIStatic>();
+				CUIXmlInit::InitStatic(uiXml, "equip_params:dispersion", 0, dispersion_static);
+				dispersion_static->SetAutoDelete(true);
+				pos_top = dispersion_static->GetPosTop();
+				dispersion_static->SetWndPos(dispersion_static->GetPosLeft(), _h + pos_top);
+				float add_disp = pAmmo->m_kDisp * 100.f;
+				sprintf_s(temp_text, " %s%.1f%s", add_disp > 1.f ? "+" : "", add_disp, "%");
+				strconcat(sizeof(text_to_show), text_to_show, CStringTable().translate("st_dispersion").c_str(), temp_text);
+				dispersion_static->SetText(text_to_show);
+				m_CapInfo.AttachChild(dispersion_static);
+				_h += list_item_h;
+			}
+			//ушкодження
+			if (!fis_zero(pAmmo->m_kHit)) {
+				auto damage_static = xr_new<CUIStatic>();
+				CUIXmlInit::InitStatic(uiXml, "equip_params:damage", 0, damage_static);
+				damage_static->SetAutoDelete(true);
+				pos_top = damage_static->GetPosTop();
+				damage_static->SetWndPos(damage_static->GetPosLeft(), _h + pos_top);
+				float add_hit = pAmmo->m_kHit * 100.f;
+				sprintf_s(temp_text, " %s%.1f%s", add_hit > 1.f ? "+" : "", add_hit, "%");
+				strconcat(sizeof(text_to_show), text_to_show, CStringTable().translate("st_damage").c_str(), temp_text);
+				damage_static->SetText(text_to_show);
+				m_CapInfo.AttachChild(damage_static);
+				_h += list_item_h;
+			}
+			//швидкість кулі
+			if (!fis_zero(pAmmo->m_kSpeed)) {
+				auto bullet_speed_static = xr_new<CUIStatic>();
+				CUIXmlInit::InitStatic(uiXml, "equip_params:bullet_speed", 0, bullet_speed_static);
+				bullet_speed_static->SetAutoDelete(true);
+				pos_top = bullet_speed_static->GetPosTop();
+				bullet_speed_static->SetWndPos(bullet_speed_static->GetPosLeft(), _h + pos_top);
+				float add_speed = pAmmo->m_kSpeed * 100.f;
+				sprintf_s(temp_text, " %s%.f%s", add_speed > 1.f ? "+" : "", add_speed, "%");
+				strconcat(sizeof(text_to_show), text_to_show, CStringTable().translate("st_bullet_speed").c_str(), temp_text);
+				bullet_speed_static->SetText(text_to_show);
+				m_CapInfo.AttachChild(bullet_speed_static);
+				_h += list_item_h;
+			}
+			//бронебійність
+			if (!fis_zero(pAmmo->m_kAP)) {
+				auto ap_static = xr_new<CUIStatic>();
+				CUIXmlInit::InitStatic(uiXml, "equip_params:ap", 0, ap_static);
+				ap_static->SetAutoDelete(true);
+				pos_top = ap_static->GetPosTop();
+				ap_static->SetWndPos(ap_static->GetPosLeft(), _h + pos_top);
+				sprintf_s(temp_text, " %.1f", pAmmo->m_kAP);
+				strconcat(sizeof(text_to_show), text_to_show, CStringTable().translate("st_ap").c_str(), temp_text);
+				ap_static->SetText(text_to_show);
+				m_CapInfo.AttachChild(ap_static);
+				_h += list_item_h;
+			}
+			//зношування зброї
+			if (!fis_zero(pAmmo->m_impair)) {
+				auto bullet_speed_static = xr_new<CUIStatic>();
+				CUIXmlInit::InitStatic(uiXml, "equip_params:impair", 0, bullet_speed_static);
+				bullet_speed_static->SetAutoDelete(true);
+				pos_top = bullet_speed_static->GetPosTop();
+				bullet_speed_static->SetWndPos(bullet_speed_static->GetPosLeft(), _h + pos_top);
+				float add_impar = pAmmo->m_impair * 100.f;
+				sprintf_s(temp_text, " %s%.f%s", add_impar > 1.f ? "+" : "", add_impar, "%");
+				strconcat(sizeof(text_to_show), text_to_show, CStringTable().translate("st_weapon_dec").c_str(), temp_text);
+				bullet_speed_static->SetText(text_to_show);
+				m_CapInfo.AttachChild(bullet_speed_static);
+				_h += list_item_h;
+			}
+			//кількість шротин у набої
+			if (pAmmo->m_buckShot > 1) {
+				auto buck_static = xr_new<CUIStatic>();
+				CUIXmlInit::InitStatic(uiXml, "equip_params:buck", 0, buck_static);
+				buck_static->SetAutoDelete(true);
+				pos_top = buck_static->GetPosTop();
+				buck_static->SetWndPos(buck_static->GetPosLeft(), _h + pos_top);
+				sprintf_s(text_to_show, "%s %d", CStringTable().translate("st_buck_count").c_str(), pAmmo->m_buckShot);
+				buck_static->SetText(text_to_show);
+				m_CapInfo.AttachChild(buck_static);
 				_h += list_item_h;
 			}
 		}
-		//сумісні набої заряджених магазинів - список
-		if (pAmmo->IsBoxReloadable()) {
-			xr_vector<shared_str> m_ammoTypes;
-			m_ammoTypes.clear();
-			LPCSTR _at = pSettings->r_string(pSettings->r_string(item_section, "empty_box"), "ammo_types");
-			if (_at && _at[0]) {
-				string128		_ammoItem;
-				int				count = _GetItemCount(_at);
-				for (int it = 0; it < count; ++it) {
-					_GetItem(_at, it, _ammoItem);
-					m_ammoTypes.push_back(_ammoItem);
-				}
-			}
-			for (const auto& ammo : m_ammoTypes) {
-				auto ammo_name = pSettings->r_string(ammo, "inv_name");
-				auto ammo_static = xr_new<CUIStatic>();
-				CUIXmlInit::InitStatic(uiXml, "equip_params:list_item", 0, ammo_static);
-				ammo_static->SetAutoDelete(true);
-				ammo_static->SetWndPos(ammo_static->GetPosLeft(), _h);
-				strconcat(sizeof(text_to_show), text_to_show, marker_, CStringTable().translate(ammo_name).c_str());
-				ammo_static->SetText(text_to_show);
-				m_CapInfo.AttachChild(ammo_static);
-				_h += list_item_h;
-			}
+	}
+
+	auto pGrenade = smart_cast<CGrenade*>(obj);
+	if (pGrenade || pSettings->line_exist(item_section, "fake_grenade_name")) {
+		const shared_str& explosive_sect = pGrenade ? item_section : pSettings->r_string(item_section, "fake_grenade_name");
+		//хіт вибуху
+		auto explosion_hit_static = xr_new<CUIStatic>();
+		CUIXmlInit::InitStatic(uiXml, "equip_params:explosion_hit", 0, explosion_hit_static);
+		explosion_hit_static->SetAutoDelete(true);
+		pos_top = explosion_hit_static->GetPosTop();
+		explosion_hit_static->SetWndPos(explosion_hit_static->GetPosLeft(), _h + pos_top);
+		sprintf_s(text_to_show, "%s %.1f", CStringTable().translate("st_explosion_hit").c_str(), pSettings->r_float(explosive_sect, "blast"));
+		explosion_hit_static->SetText(text_to_show);
+		m_CapInfo.AttachChild(explosion_hit_static);
+		_h += list_item_h;
+		//радіус вибуху
+		auto explosion_radius_static = xr_new<CUIStatic>();
+		CUIXmlInit::InitStatic(uiXml, "equip_params:explosion_radius", 0, explosion_radius_static);
+		explosion_radius_static->SetAutoDelete(true);
+		pos_top = explosion_radius_static->GetPosTop();
+		explosion_radius_static->SetWndPos(explosion_radius_static->GetPosLeft(), _h + pos_top);
+		sprintf_s(text_to_show, "%s %.1f %s", CStringTable().translate("st_explosion_radius").c_str(), pSettings->r_float(explosive_sect, "blast_r"), CStringTable().translate("st_m").c_str());
+		explosion_radius_static->SetText(text_to_show);
+		m_CapInfo.AttachChild(explosion_radius_static);
+		_h += list_item_h;
+		//хіт уламків
+		auto frags_hit_static = xr_new<CUIStatic>();
+		CUIXmlInit::InitStatic(uiXml, "equip_params:frags_hit", 0, frags_hit_static);
+		frags_hit_static->SetAutoDelete(true);
+		pos_top = frags_hit_static->GetPosTop();
+		frags_hit_static->SetWndPos(frags_hit_static->GetPosLeft(), _h + pos_top);
+		sprintf_s(text_to_show, "%s %.1f", CStringTable().translate("st_frags_hit").c_str(), pSettings->r_float(explosive_sect, "frag_hit"));
+		frags_hit_static->SetText(text_to_show);
+		m_CapInfo.AttachChild(frags_hit_static);
+		_h += list_item_h;
+		//радіус уламків
+		auto frags_radius_static = xr_new<CUIStatic>();
+		CUIXmlInit::InitStatic(uiXml, "equip_params:frags_radius", 0, frags_radius_static);
+		frags_radius_static->SetAutoDelete(true);
+		pos_top = frags_radius_static->GetPosTop();
+		frags_radius_static->SetWndPos(frags_radius_static->GetPosLeft(), _h + pos_top);
+		sprintf_s(text_to_show, "%s %.1f %s", CStringTable().translate("st_frags_radius").c_str(), pSettings->r_float(explosive_sect, "frags_r"), CStringTable().translate("st_m").c_str());
+		frags_radius_static->SetText(text_to_show);
+		m_CapInfo.AttachChild(frags_radius_static);
+		_h += list_item_h;
+		//хіт уламків
+		auto frags_count_static = xr_new<CUIStatic>();
+		CUIXmlInit::InitStatic(uiXml, "equip_params:frags_count", 0, frags_count_static);
+		frags_count_static->SetAutoDelete(true);
+		pos_top = frags_count_static->GetPosTop();
+		frags_count_static->SetWndPos(frags_count_static->GetPosLeft(), _h + pos_top);
+		sprintf_s(text_to_show, "%s %d", CStringTable().translate("st_frags_count").c_str(), pSettings->r_u8(explosive_sect, "frags")*2);
+		frags_count_static->SetText(text_to_show);
+		m_CapInfo.AttachChild(frags_count_static);
+		_h += list_item_h;
+		//дистанція зведення
+		if (pSettings->line_exist(explosive_sect, "safe_dist_to_explode")) {
+			auto safe_dist_static = xr_new<CUIStatic>();
+			CUIXmlInit::InitStatic(uiXml, "equip_params:safe_dist", 0, safe_dist_static);
+			safe_dist_static->SetAutoDelete(true);
+			pos_top = safe_dist_static->GetPosTop();
+			safe_dist_static->SetWndPos(safe_dist_static->GetPosLeft(), _h + pos_top);
+			sprintf_s(text_to_show, "%s %.1f %s", CStringTable().translate("st_safe_dist").c_str(), pSettings->r_float(explosive_sect, "safe_dist_to_explode"), CStringTable().translate("st_m").c_str());
+			safe_dist_static->SetText(text_to_show);
+			m_CapInfo.AttachChild(safe_dist_static);
+			_h += list_item_h;
 		}
 	}
 

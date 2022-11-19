@@ -805,25 +805,19 @@ void CActor::UpdateCL	()
 	cam_Update(float(Device.dwTimeDelta)/1000.0f, currentFOV());
 	Device.Statistic->TEST1.End		();
 
-	if(Level().CurrentEntity() && this->ID()==Level().CurrentEntity()->ID() )
-	{
+	if(Level().CurrentEntity() && this->ID()==Level().CurrentEntity()->ID() ){
 		psHUD_Flags.set( HUD_CROSSHAIR_RT2, true );
 		psHUD_Flags.set( HUD_DRAW_RT, true );
 	}
-	if(pWeapon )
-	{
-		if(pWeapon->IsZoomed())
-		{
-			float full_fire_disp = pWeapon->GetFireDispersion(true);
-
-			CEffectorZoomInertion* S = smart_cast<CEffectorZoomInertion*>	(Cameras().GetCamEffector(eCEZoom));
-			if(S) S->SetParams(full_fire_disp);
-
+	if(pWeapon){
+		if(pWeapon->IsZoomed()){
+			//float full_fire_disp = pWeapon->GetFireDispersion(true);
+			CEffectorZoomInertion* S = smart_cast<CEffectorZoomInertion*>(Cameras().GetCamEffector(eCEZoom));
+			if(S) S->SetParams(/*full_fire_disp*/pWeapon->GetControlInertionFactor());
 			m_bZoomAimingMode = true;
 		}
 
-		if(Level().CurrentEntity() && this->ID()==Level().CurrentEntity()->ID() )
-		{
+		if(Level().CurrentEntity() && this->ID()==Level().CurrentEntity()->ID() ){
 			float fire_disp_full = pWeapon->GetFireDispersion(true);
 
 			if (!Device.m_SecondViewport.IsSVPFrame()) //--#SM+#-- +SecondVP+ Чтобы перекрестие не скакало из за смены FOV (Sin!) [fix for crosshair shaking while SecondVP]

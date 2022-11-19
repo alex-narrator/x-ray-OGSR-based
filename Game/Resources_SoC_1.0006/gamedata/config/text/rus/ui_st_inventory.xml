@@ -19,10 +19,10 @@
 		<text>прицепить глушитель к винтовке</text>
 	</string>
 	<string id="st_base_cost">
-		<text>цена</text>
+		<text>вартість</text>
 	</string>
 	<string id="st_condition">
-		<text>состояние</text>
+		<text>стан</text>
 	</string>
 	<string id="st_detach_gl">
 		<text>отсоединить гранатомет</text>
@@ -34,43 +34,43 @@
 		<text>отсоединить глушитель</text>
 	</string>
 	<string id="st_dress_outfit">
-		<text>надеть</text>
+		<text>вдягти</text>
 	</string>
 	<string id="st_drop">
-		<text>выбросить</text>
+		<text>викинути</text>
 	</string>
 	<string id="st_drop_all">
-		<text>выбросить все</text>
+		<text>викинути все</text>
 	</string>
 	<string id="st_eat">
-		<text>съесть</text>
+		<text>з'їсти</text>
 	</string>
 	<string id="st_move_on_belt">
 		<text>на пояс</text>
 	</string>
 	<string id="st_move_to_bag">
-		<text>в рюкзак</text>
+		<text>до рюкзаку</text>
 	</string>
 	<string id="st_move_to_slot">
-		<text>в слот</text>
+		<text>у слот</text>
 	</string>
 	<string id="st_sell_item">
-		<text>продать предмет</text>
+		<text>продати предмет</text>
 	</string>
 	<string id="st_undress_outfit">
-		<text>снять</text>
+		<text>зняти</text>
 	</string>
 	<string id="st_unload_magazine">
-		<text>разрядить</text>
+		<text>розрядити</text>
 	</string>
 	<string id="st_use">
-		<text>использовать</text>
+		<text>використати</text>
 	</string>
 	<string id="st_weight">
-		<text>вес</text>
+		<text>вага</text>
 	</string>
 	<string id="ui_inv_accuracy">
-		<text>Точность</text>
+		<text>Точність</text>
 	</string>
 	<string id="ui_inv_bag">
 		<text>Рюкзак</text>
@@ -79,25 +79,25 @@
 		<text>Пояс</text>
 	</string>
 	<string id="ui_inv_cancel">
-		<text>Отмена</text>
+		<text>Скасувати</text>
 	</string>
 	<string id="ui_inv_clear">
-		<text>Очистить</text>
+		<text>Очистити</text>
 	</string>
 	<string id="ui_inv_damage">
-		<text>Повреждение</text>
+		<text>Пошкодження</text>
 	</string>
 	<string id="ui_inv_description">
-		<text>Описание</text>
+		<text>Опис</text>
 	</string>
 	<string id="ui_inv_drop">
-		<text>Выложить</text>
+		<text>Викласти</text>
 	</string>
 	<string id="ui_inv_equipment">
-		<text>Оборудование</text>
+		<text>Обладнання</text>
 	</string>
 	<string id="ui_inv_exit">
-		<text>Выход</text>
+		<text>Вихід</text>
 	</string>
 	<string id="ui_inv_granades_rifle">
 		<text>Купить гранаты для подствольника (E)</text>
@@ -112,40 +112,40 @@
 		<text>Список вещей</text>
 	</string>
 	<string id="ui_inv_money">
-		<text>Деньги</text>
+		<text>Гроші</text>
 	</string>
 	<string id="ui_inv_ok">
 		<text>OK</text>
 	</string>
 	<string id="ui_inv_outfit_burn_protection">
-		<text>Ожог</text>
+		<text>Опік</text>
 	</string>
 	<string id="ui_inv_outfit_chemical_burn_protection">
-		<text>Хим. ожог</text>
+		<text>Хім. опік</text>
 	</string>
 	<string id="ui_inv_outfit_explosion_protection">
-		<text>Взрыв</text>
+		<text>Вибух</text>
 	</string>
 	<string id="ui_inv_outfit_fire_wound_protection">
-		<text>Пулестойкость</text>
+		<text>Кулестійкість</text>
 	</string>
 	<string id="ui_inv_outfit_params">
-		<text>Параметры</text>
+		<text>Параметри</text>
 	</string>
 	<string id="ui_inv_outfit_radiation_protection">
-		<text>Радиация</text>
+		<text>Радіація</text>
 	</string>
 	<string id="ui_inv_outfit_shock_protection">
-		<text>Электрошок</text>
+		<text>Електрошок</text>
 	</string>
 	<string id="ui_inv_outfit_strike_protection">
 		<text>Удар</text>
 	</string>
 	<string id="ui_inv_outfit_telepatic_protection">
-		<text>Телепат.</text>
+		<text>Телепатія</text>
 	</string>
 	<string id="ui_inv_outfit_wound_protection">
-		<text>Разрыв</text>
+		<text>Розрыв</text>
 	</string>
 	<string id="ui_inv_outfits">
 		<text>Костюмы</text>
@@ -163,7 +163,7 @@
 		<text>Скорострельность</text>
 	</string>
 	<string id="ui_inv_rest">
-		<text>Отдохнуть</text>
+		<text>Відпочити</text>
 	</string>
 	<string id="ui_inv_rifles">
 		<text>Автоматы</text>
@@ -178,13 +178,13 @@
 		<text>Снайперское</text>
 	</string>
 	<string id="ui_inv_time">
-		<text>Время</text>
+		<text>Час</text>
 	</string>
 	<string id="ui_inv_total_money">
 		<text>Всего денег</text>
 	</string>
 	<string id="ui_inv_weight">
-		<text>Вес</text>
+		<text>Вага</text>
 	</string>
 	<string id="ui_inv_ammo_pistol">
 		<text>Купить базовые патроны для пистолета (Q)</text>

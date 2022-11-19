@@ -28,24 +28,21 @@ void CCartridge::Load(LPCSTR section, u8 LocalAmmoType)
 	//
 	m_LocalAmmoType			= LocalAmmoType;
 
-	m_kDist					= pSettings->r_float(m_ammoSect, "k_dist");
-	m_kDisp					= pSettings->r_float(m_ammoSect, "k_disp");
-	m_kHit					= pSettings->r_float(m_ammoSect, "k_hit");
-	m_kImpulse				= pSettings->r_float(m_ammoSect, "k_impulse");
-	m_kPierce				= pSettings->r_float(m_ammoSect, "k_pierce");
-	m_kAP					= READ_IF_EXISTS(pSettings, r_float, m_ammoSect, "k_ap", 0.0f);
-	m_kSpeed				= READ_IF_EXISTS(pSettings, r_float, m_ammoSect, "k_bullet_speed", 1.0f);
+	m_kDist					= READ_IF_EXISTS(pSettings, r_float, m_ammoSect, "k_dist",		0.f);//pSettings->r_float(m_ammoSect, "k_dist");
+	m_kDisp					= READ_IF_EXISTS(pSettings, r_float, m_ammoSect, "k_disp",		0.f);//pSettings->r_float(m_ammoSect, "k_disp");
+	m_kHit					= READ_IF_EXISTS(pSettings, r_float, m_ammoSect, "k_hit",		0.f);//pSettings->r_float(m_ammoSect, "k_hit");
+	m_kImpulse				= READ_IF_EXISTS(pSettings, r_float, m_ammoSect, "k_impulse",	0.f);//pSettings->r_float(m_ammoSect, "k_impulse");
+	m_kPierce				= READ_IF_EXISTS(pSettings, r_float, m_ammoSect, "k_pierce",	1.0f);//pSettings->r_float(m_ammoSect, "k_pierce");
+	m_kAP					= READ_IF_EXISTS(pSettings, r_float, m_ammoSect, "k_ap",		0.f);
+	m_kSpeed				= READ_IF_EXISTS(pSettings, r_float, m_ammoSect, "k_speed",		0.f);
 	m_u8ColorID				= READ_IF_EXISTS(pSettings, r_u8, m_ammoSect, "tracer_color_ID", 0);
 	
-	if (pSettings->line_exist(m_ammoSect, "k_air_resistance"))
-		m_kAirRes				=  pSettings->r_float(m_ammoSect, "k_air_resistance");
-	else
-		m_kAirRes				= pSettings->r_float(BULLET_MANAGER_SECTION, "air_resistance_k");
+	m_kAirRes				= READ_IF_EXISTS(pSettings, r_float, m_ammoSect, "k_air_resistance", pSettings->r_float(BULLET_MANAGER_SECTION, "air_resistance_k"));
 
-	m_flags.set				(cfTracer, pSettings->r_bool(m_ammoSect, "tracer"));
-	m_buckShot				= pSettings->r_s32(m_ammoSect, "buck_shot");
-	m_impair				= pSettings->r_float(m_ammoSect, "impair");
-	fWallmarkSize			= pSettings->r_float(m_ammoSect, "wm_size");
+	m_flags.set				(cfTracer, READ_IF_EXISTS(pSettings, r_bool, m_ammoSect, "tracer", false)/*pSettings->r_bool(m_ammoSect, "tracer")*/);
+	m_buckShot				= READ_IF_EXISTS(pSettings, r_s32, m_ammoSect, "buck_shot", 1);//pSettings->r_s32(m_ammoSect, "buck_shot");
+	m_impair				= READ_IF_EXISTS(pSettings, r_float, m_ammoSect, "impair", 0.f); //pSettings->r_float(m_ammoSect, "impair");
+	fWallmarkSize			= READ_IF_EXISTS(pSettings, r_float, m_ammoSect, "wm_size", 0.05f);//pSettings->r_float(m_ammoSect, "wm_size");
 
 	m_flags.set( cfCanBeUnlimited, TRUE );
 
@@ -72,7 +69,7 @@ void CCartridge::Load(LPCSTR section, u8 LocalAmmoType)
 
 	m_InvShortName			= CStringTable().translate( pSettings->r_string(m_ammoSect, "inv_name_short"));
 	//
-	m_misfireProbability	= READ_IF_EXISTS(pSettings, r_float, m_ammoSect, "misfire_probability", 0.0f);
+	m_misfireProbability	= READ_IF_EXISTS(pSettings, r_float, m_ammoSect, "misfire_probability", 0.f);
 }
 
 float CCartridge::Weight() const
@@ -138,8 +135,7 @@ void CWeaponAmmo::Load(LPCSTR section)
 	//
 	m_ammoSect = section;
 
-	if (pSettings->line_exist(section, "ammo_in_box") && pSettings->line_exist(section, "empty_box"))
-	{
+	if (pSettings->line_exist(section, "ammo_in_box") && pSettings->line_exist(section, "empty_box")){
 		m_ammoSect = pSettings->r_string(section, "ammo_in_box");
 		m_EmptySect = pSettings->r_string(section, "empty_box");
 
@@ -152,24 +148,21 @@ void CWeaponAmmo::Load(LPCSTR section)
 	m_InvShortName = CStringTable().translate(pSettings->r_string(m_ammoSect, "inv_name_short"));
 	//
 
-	m_kDist					= pSettings->r_float(m_ammoSect, "k_dist");
-	m_kDisp					= pSettings->r_float(m_ammoSect, "k_disp");
-	m_kHit					= pSettings->r_float(m_ammoSect, "k_hit");
-	m_kImpulse				= pSettings->r_float(m_ammoSect, "k_impulse");
-	m_kPierce				= pSettings->r_float(m_ammoSect, "k_pierce");
-	m_kAP					= READ_IF_EXISTS(pSettings, r_float, m_ammoSect, "k_ap", 0.0f);
-	m_kSpeed				= READ_IF_EXISTS(pSettings, r_float, m_ammoSect, "k_bullet_speed", 1.0f);
+	m_kDist					= READ_IF_EXISTS(pSettings, r_float, m_ammoSect, "k_dist",		0.f);//pSettings->r_float(m_ammoSect, "k_dist");
+	m_kDisp					= READ_IF_EXISTS(pSettings, r_float, m_ammoSect, "k_disp",		0.f); //pSettings->r_float(m_ammoSect, "k_disp");
+	m_kHit					= READ_IF_EXISTS(pSettings, r_float, m_ammoSect, "k_hit",		0.f);//pSettings->r_float(m_ammoSect, "k_hit");
+	m_kImpulse				= READ_IF_EXISTS(pSettings, r_float, m_ammoSect, "k_impulse",	0.f);//pSettings->r_float(m_ammoSect, "k_impulse");
+	m_kPierce				= READ_IF_EXISTS(pSettings, r_float, m_ammoSect, "k_pierce",	1.0f);//pSettings->r_float(m_ammoSect, "k_pierce");
+	m_kAP					= READ_IF_EXISTS(pSettings, r_float, m_ammoSect, "k_ap",		0.0f);
+	m_kSpeed				= READ_IF_EXISTS(pSettings, r_float, m_ammoSect, "k_speed",		0.f);
 	m_u8ColorID				= READ_IF_EXISTS(pSettings, r_u8, m_ammoSect, "tracer_color_ID", 0);
 
-	if (pSettings->line_exist(m_ammoSect, "k_air_resistance"))
-		m_kAirRes				=  pSettings->r_float(m_ammoSect, "k_air_resistance");
-	else
-		m_kAirRes				= pSettings->r_float(BULLET_MANAGER_SECTION, "air_resistance_k");
+	m_kAirRes				= READ_IF_EXISTS(pSettings, r_float, m_ammoSect, "k_air_resistance", pSettings->r_float(BULLET_MANAGER_SECTION, "air_resistance_k"));
 
-	m_tracer				= !!pSettings->r_bool(m_ammoSect, "tracer");
-	m_buckShot				= pSettings->r_s32(m_ammoSect, "buck_shot");
-	m_impair				= pSettings->r_float(m_ammoSect, "impair");
-	fWallmarkSize			= pSettings->r_float(m_ammoSect,"wm_size");
+	m_tracer				= READ_IF_EXISTS(pSettings, r_bool, m_ammoSect, "tracer", false);//!!pSettings->r_bool(m_ammoSect, "tracer");
+	m_buckShot				= READ_IF_EXISTS(pSettings, r_s32, m_ammoSect, "buck_shot", 1);
+	m_impair				= READ_IF_EXISTS(pSettings, r_float, m_ammoSect, "impair", 0.f);
+	fWallmarkSize			= READ_IF_EXISTS(pSettings, r_float, m_ammoSect, "wm_size", 0.05f);//pSettings->r_float(m_ammoSect,"wm_size");
 
 	R_ASSERT				(fWallmarkSize>0);	
 	//
@@ -410,13 +403,8 @@ void CWeaponAmmo::SpawnAmmo(u32 boxCurr, LPCSTR ammoSect, u32 ParentID)
 	if (OnClient())					return;
 
 	CSE_Abstract* D = F_entity_Create(ammoSect);
-
-	if (D->m_tClassID == CLSID_OBJECT_AMMO ||
-		D->m_tClassID == CLSID_OBJECT_A_M209 ||
-		D->m_tClassID == CLSID_OBJECT_A_VOG25 ||
-		D->m_tClassID == CLSID_OBJECT_A_OG7B)
-	{
-		CSE_ALifeItemAmmo* l_pA = smart_cast<CSE_ALifeItemAmmo*>(D);
+	CSE_ALifeItemAmmo* l_pA = smart_cast<CSE_ALifeItemAmmo*>(D);
+	if (l_pA){
 		R_ASSERT(l_pA);
 		l_pA->m_boxSize = (u16)pSettings->r_s32(ammoSect, "box_size");
 		D->s_name = ammoSect;

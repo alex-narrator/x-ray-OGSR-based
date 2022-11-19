@@ -129,11 +129,11 @@ void CWeaponKnife::KnifeStrike(u32 state, const Fvector& pos, const Fvector& dir
 	{
 		CCartridge						cartridge;
 		cartridge.m_buckShot = 1;
-		cartridge.m_impair = 1;
-		cartridge.m_kDisp = 1;
-		cartridge.m_kHit = 1;
-		cartridge.m_kImpulse = 1;
-		cartridge.m_kPierce = 1;
+		cartridge.m_impair = 0.f;
+		cartridge.m_kDisp = 0.f;
+		cartridge.m_kHit = 0.f;
+		cartridge.m_kImpulse = 0.f;
+		cartridge.m_kPierce = 0.f;
 		cartridge.m_flags.set(CCartridge::cfTracer, FALSE);
 		cartridge.m_flags.set(CCartridge::cfRicochet, FALSE);
 		cartridge.fWallmarkSize = fWallmarkSize;

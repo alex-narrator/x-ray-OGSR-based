@@ -33,6 +33,29 @@
 	<string id="st_dispersion_units">
 		<text>MOA</text>
 	</string>
+	
+	<string id="st_explosion_hit">
+		<text>Ушкодження вибухом:</text>
+	</string>	
+	<string id="st_explosion_radius">
+		<text>Радіус вибуху:</text>
+	</string>	
+	<string id="st_frags_hit">
+		<text>Ушкодження уламками:</text>
+	</string>	
+	<string id="st_frags_radius">
+		<text>Радіус розльоту уламків:</text>
+	</string>	
+	<string id="st_frags_count">
+		<text>Кількість уламків:</text>
+	</string>
+	<string id="st_safe_dist">
+		<text>Дистанція зведення:</text>
+	</string>	
+	
+	
+	
+	
 	<string id="ui_st_pda_account_unavailable">
 		<text>[рахунок недоступний]</text>
 	</string>
@@ -527,7 +550,7 @@
 		<text>Пошкодження:</text>
 	</string>
 	<string id="st_bullet_speed">
-		<text>Швидкість кулі:</text>
+		<text>Дульна швидкість:</text>
 	</string>	
 	<string id="st_fire_distance">
 		<text>Ефективна дистанція:</text>
@@ -550,6 +573,12 @@
 	<string id="st_resource">
 		<text>Ресурс:</text>
 	</string>
+	<string id="st_ap">
+		<text>Бронебійність:</text>
+	</string>
+	<string id="st_buck_count">
+		<text>Кількість шротин:</text>
+	</string>
 	
 	<string id="st_compatible_ammo">
 		<text>набої:</text>
@@ -570,7 +599,7 @@
 		<text>Оптика:</text>
 	</string>
 	<string id="st_inbuild_helmet">
-		<text>Вбудований шолом:</text>
+		<text>Вбудований шолом</text>
 	</string>
 	<string id="st_cells_available">
 		<text>Місткість підсумків:</text>
@@ -721,13 +750,13 @@
 	</string>
 	
 	<string id="kb_cam_1">
-		<text>Вид от первого лица</text>
+		<text>Вид від першої особи</text>
 	</string>
 	<string id="kb_cam_2">
-		<text>Вид от третьего лица</text>
+		<text>Вид від третьої особи</text>
 	</string>
 	<string id="kb_cam_3">
-		<text>Вид от третьего лица (freelook)</text>
+		<text>Вид від третьої особи (вільна камера)</text>
 	</string>
 
 	<string id="inventory_item_use_or_drag">
@@ -738,7 +767,7 @@
 	</string>
 
 	<string id="st_press_any_key">
-		<text>Натисніть будь яку клавішу для переходу до гри</text>
+		<text>Натисніть будь-яку клавішу щоб перейти до гри</text>
 	</string>
 	
 	<string id="ui_st_no_power">

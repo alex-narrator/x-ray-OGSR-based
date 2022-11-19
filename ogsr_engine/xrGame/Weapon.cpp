@@ -283,10 +283,10 @@ void CWeapon::Load		(LPCSTR section)
 	camDispertionFrac			= READ_IF_EXISTS(pSettings, r_float, section, "cam_dispertion_frac",	0.7f);
 	//  [8/2/2005]
 	//m_fParentDispersionModifier = READ_IF_EXISTS(pSettings, r_float, section, "parent_dispersion_modifier",1.0f);
-	m_fPDM_disp_base			= READ_IF_EXISTS(pSettings, r_float, section, "PDM_disp_base",	1.0f);
+	m_fPDM_disp_base			= READ_IF_EXISTS(pSettings, r_float, section, "PDM_disp_base",			1.0f);
 	m_fPDM_disp_vel_factor		= READ_IF_EXISTS(pSettings, r_float, section, "PDM_disp_vel_factor",	1.0f);
 	m_fPDM_disp_accel_factor	= READ_IF_EXISTS(pSettings, r_float, section, "PDM_disp_accel_factor",	1.0f);
-	m_fPDM_disp_crouch			= READ_IF_EXISTS(pSettings, r_float, section, "PDM_disp_crouch",	1.0f);
+	m_fPDM_disp_crouch			= READ_IF_EXISTS(pSettings, r_float, section, "PDM_disp_crouch",		1.0f);
 	m_fPDM_disp_crouch_no_acc	= READ_IF_EXISTS(pSettings, r_float, section, "PDM_disp_crouch_no_acc",	1.0f);
 	//  [8/2/2005]
 	camRecoilCompensation		= !!READ_IF_EXISTS(pSettings, r_bool, section, "cam_recoil_compensation", false);
@@ -1216,13 +1216,8 @@ void CWeapon::SpawnAmmo(u32 boxCurr, LPCSTR ammoSect, u32 ParentID)
 	if (!ammoSect) ammoSect = m_ammoTypes.front().c_str();
 	
 	CSE_Abstract *D					= F_entity_Create(ammoSect);
-
-	if (D->m_tClassID==CLSID_OBJECT_AMMO	||
-		D->m_tClassID==CLSID_OBJECT_A_M209	||
-		D->m_tClassID==CLSID_OBJECT_A_VOG25	||
-		D->m_tClassID==CLSID_OBJECT_A_OG7B)
-	{	
-		CSE_ALifeItemAmmo *l_pA		= smart_cast<CSE_ALifeItemAmmo*>(D);
+	CSE_ALifeItemAmmo* l_pA = smart_cast<CSE_ALifeItemAmmo*>(D);
+	if (l_pA){	
 		R_ASSERT					(l_pA);
 		l_pA->m_boxSize				= (u16)pSettings->r_s32(ammoSect, "box_size");
 		D->s_name					= ammoSect;

@@ -405,6 +405,7 @@ public:
 	//текущая дисперсия (в радианах) оружия с учетом используемого патрона
 	float					GetFireDispersion	(bool with_cartridge,	bool with_owner = true)			;
 	float					GetFireDispersion	(float cartridge_k,		bool with_owner = true)			;
+	float					GetStartBulletSpeed	() { return m_fStartBulletSpeed; }
 //	const Fvector&			GetRecoilDeltaAngle	();
 	virtual	int				ShotsFired			() { return 0; }
 
