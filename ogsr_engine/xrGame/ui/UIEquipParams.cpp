@@ -281,16 +281,35 @@ void CUIEquipParams::SetInfo(CInventoryItem* obj){
 	}
 
 	if (pVest && pVest->m_plates.size()) {
-		auto plate_static = xr_new<CUIStatic>();
-		CUIXmlInit::InitStatic(uiXml, "equip_params:armor_plate", 0, plate_static);
-		plate_static->SetAutoDelete(true);
-		pos_top = plate_static->GetPosTop();
-		plate_static->SetWndPos(plate_static->GetPosLeft(), _h + pos_top);
-		sprintf_s(temp_text, " %s", pVest->IsPlateInstalled() ? pVest->GetPlateName().c_str() : CStringTable().translate("st_no").c_str());
-		strconcat(sizeof(text_to_show), text_to_show, CStringTable().translate("st_installed_plate").c_str(), temp_text);
-		plate_static->SetText(text_to_show);
-		m_CapInfo.AttachChild(plate_static);
-		_h += list_item_h;
+		if (pVest->IsPlateInstalled()) {
+			auto plate_static = xr_new<CUIStatic>();
+			CUIXmlInit::InitStatic(uiXml, "equip_params:armor_plate", 0, plate_static);
+			plate_static->SetAutoDelete(true);
+			pos_top = plate_static->GetPosTop();
+			plate_static->SetWndPos(plate_static->GetPosLeft(), _h + pos_top);
+			sprintf_s(temp_text, " %s", pVest->GetPlateName().c_str());
+			strconcat(sizeof(text_to_show), text_to_show, CStringTable().translate("st_installed_plate").c_str(), temp_text);
+			plate_static->SetText(text_to_show);
+			m_CapInfo.AttachChild(plate_static);
+			_h += list_item_h;
+		}
+		auto cap_plates_static = xr_new<CUIStatic>(); cap_plates_static->SetAutoDelete(true);
+		CUIXmlInit::InitStatic(uiXml, "equip_params:cap_plates", 0, cap_plates_static);
+		pos_top = cap_plates_static->GetPosTop();
+		cap_plates_static->SetWndPos(cap_plates_static->GetPosLeft(), _h + pos_top);
+		m_CapInfo.AttachChild(cap_plates_static);
+		_h += list_item_h + pos_top;
+		for (const auto& plate : pVest->m_plates) {
+			auto plate_name = pSettings->r_string(plate, "inv_name");
+			auto item_static = xr_new<CUIStatic>();
+			CUIXmlInit::InitStatic(uiXml, "equip_params:list_item", 0, item_static);
+			item_static->SetAutoDelete(true);
+			item_static->SetWndPos(item_static->GetPosLeft(), _h);
+			strconcat(sizeof(text_to_show), text_to_show, marker_, CStringTable().translate(plate_name).c_str());
+			item_static->SetText(text_to_show);
+			m_CapInfo.AttachChild(item_static);
+			_h += list_item_h;
+		}
 	}
 
 	//сумісні набої магазинів

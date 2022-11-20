@@ -32,7 +32,7 @@ void CWarbelt::OnMoveToSlot(EItemPlace prevPlace){
 void CWarbelt::OnMoveToRuck(EItemPlace prevPlace) {
 	inherited::OnMoveToRuck(prevPlace);
 	auto& inv = m_pCurrentInventory;
-	if (inv && prevPlace == eItemPlaceSlot && !Level().is_removing_objects()) {
+	if (inv && prevPlace == eItemPlaceSlot) {
 		auto pActor = smart_cast<CActor*> (inv->GetOwner());
 		if (pActor && inv->IsAllItemsLoaded()) {
 			inv->DropBeltToRuck();

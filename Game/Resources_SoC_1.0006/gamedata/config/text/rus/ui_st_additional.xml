@@ -53,7 +53,9 @@
 		<text>Дистанція зведення:</text>
 	</string>	
 	
-	
+	<string id="st_plates">
+		<text>Сумісні плити:</text>
+	</string>	
 	
 	
 	<string id="ui_st_pda_account_unavailable">

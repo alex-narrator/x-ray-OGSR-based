@@ -1690,13 +1690,13 @@ bool CInventory::OwnerIsActor() const {
 }
 
 void CInventory::DropBeltToRuck(bool skip_volume_check){
-	while (!m_belt.empty())
-		Ruck(m_belt.back(), skip_volume_check);
+	for(const auto& item : m_belt)
+		Ruck(item, skip_volume_check);
 }
 
 void CInventory::DropVestToRuck(bool skip_volume_check) {
-	while (!m_vest.empty())
-		Ruck(m_vest.back(), skip_volume_check);
+	for (const auto& item : m_vest)
+		Ruck(item, skip_volume_check);
 }
 
 void CInventory::DropSlotsToRuck(u32 min_slot, u32 max_slot) {
