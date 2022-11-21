@@ -1970,6 +1970,14 @@ void CWeapon::OnDrawUI()
 			ZoomTexture()->SetRect	(0,0,UI_BASE_WIDTH, UI_BASE_HEIGHT);
 			ZoomTexture()->Render	();
 
+			if (m_bRangeMeter && !IsSecondScopeMode()) {
+				CGameFont* F = HUD().Font().pFontGraffiti19Russian;
+				F->SetAligment(CGameFont::alCenter);
+				F->OutSetI(m_vRangeMeterOffset.x, m_vRangeMeterOffset.y);
+				float range = HUD().GetCurrentRayQuery().range;
+				F->SetColor(m_uRangeMeterColor);
+				F->OutNext("%4.1f %s", range, CStringTable().translate("st_m").c_str());
+			}
 //			m_UILens.Draw();
 		}
 	}

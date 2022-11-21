@@ -65,7 +65,7 @@ void CUIWpnParams::SetInfo(CInventoryItem* obj)
 	//ушкодження
 	if (!pWeaponBinoc) {
 		auto damage_static = xr_new<CUIStatic>(); damage_static->SetAutoDelete(true);
-		CUIXmlInit::InitStatic(uiXml, "wpn_params:damage", 0, damage_static);
+		CUIXmlInit::InitStatic(uiXml, "wpn_params:list_item", 0, damage_static);
 		pos_top = damage_static->GetPosTop();
 		damage_static->SetWndPos(damage_static->GetPosLeft(), _h + pos_top);
 		sprintf_s(temp_text, " %.2f", pWeapon->GetHitPowerForActor());
@@ -77,7 +77,7 @@ void CUIWpnParams::SetInfo(CInventoryItem* obj)
 	//дальність вогню
 	if (!pWeaponBinoc) {
 		auto fire_distance_static = xr_new<CUIStatic>(); fire_distance_static->SetAutoDelete(true);
-		CUIXmlInit::InitStatic(uiXml, "wpn_params:fire_distance", 0, fire_distance_static);
+		CUIXmlInit::InitStatic(uiXml, "wpn_params:list_item", 0, fire_distance_static);
 		pos_top = fire_distance_static->GetPosTop();
 		fire_distance_static->SetWndPos(fire_distance_static->GetPosLeft(), _h + pos_top);
 		sprintf_s(temp_text, " %.1f %s", pSettings->r_float(item_section, "fire_distance"), CStringTable().translate("st_m").c_str());
@@ -89,7 +89,7 @@ void CUIWpnParams::SetInfo(CInventoryItem* obj)
 	//швидкість кулі
 	if (!pWeaponKnife && !pWeaponBinoc) {
 		auto bullet_speed_static = xr_new<CUIStatic>(); bullet_speed_static->SetAutoDelete(true);
-		CUIXmlInit::InitStatic(uiXml, "wpn_params:bullet_speed", 0, bullet_speed_static);
+		CUIXmlInit::InitStatic(uiXml, "wpn_params:list_item", 0, bullet_speed_static);
 		pos_top = bullet_speed_static->GetPosTop();
 		bullet_speed_static->SetWndPos(bullet_speed_static->GetPosLeft(), _h + pos_top);
 		sprintf_s(temp_text, " %.f %s", pWeapon->GetStartBulletSpeed(), CStringTable().translate("st_bullet_speed_units").c_str());
@@ -101,7 +101,7 @@ void CUIWpnParams::SetInfo(CInventoryItem* obj)
 	//швидкострільність
 	if (!pWeaponKnife && !pWeaponBinoc) {
 		auto rpm_static = xr_new<CUIStatic>(); rpm_static->SetAutoDelete(true);
-		CUIXmlInit::InitStatic(uiXml, "wpn_params:rpm", 0, rpm_static);
+		CUIXmlInit::InitStatic(uiXml, "wpn_params:list_item", 0, rpm_static);
 		pos_top = rpm_static->GetPosTop();
 		rpm_static->SetWndPos(rpm_static->GetPosLeft(), _h + pos_top);
 		sprintf_s(temp_text, " %.f %s", pSettings->r_float(item_section, "rpm"), CStringTable().translate("st_rpm_units").c_str());
@@ -113,7 +113,7 @@ void CUIWpnParams::SetInfo(CInventoryItem* obj)
 	//розкид
 	if (!pWeaponKnife && !pWeaponBinoc) {
 		auto dispersion_static = xr_new<CUIStatic>(); dispersion_static->SetAutoDelete(true);
-		CUIXmlInit::InitStatic(uiXml, "wpn_params:dispersion", 0, dispersion_static);
+		CUIXmlInit::InitStatic(uiXml, "wpn_params:list_item", 0, dispersion_static);
 		pos_top = dispersion_static->GetPosTop();
 		dispersion_static->SetWndPos(dispersion_static->GetPosLeft(), _h + pos_top);
 		float fire_dispertion = pWeapon->GetFireDispersion(true, false);
@@ -126,7 +126,7 @@ void CUIWpnParams::SetInfo(CInventoryItem* obj)
 	}
 	if (!pWeaponKnife && !pWeaponBinoc) {
 		auto recoil_static = xr_new<CUIStatic>(); recoil_static->SetAutoDelete(true);
-		CUIXmlInit::InitStatic(uiXml, "wpn_params:recoil", 0, recoil_static);
+		CUIXmlInit::InitStatic(uiXml, "wpn_params:list_item", 0, recoil_static);
 		pos_top = recoil_static->GetPosTop();
 		recoil_static->SetWndPos(recoil_static->GetPosLeft(), _h + pos_top);
 		float recoil = pWeapon->camDispersion;
@@ -139,7 +139,7 @@ void CUIWpnParams::SetInfo(CInventoryItem* obj)
 	}
 	//громіздкість
 	auto bulkiness_static = xr_new<CUIStatic>(); bulkiness_static->SetAutoDelete(true);
-	CUIXmlInit::InitStatic(uiXml, "wpn_params:bulkiness", 0, bulkiness_static);
+	CUIXmlInit::InitStatic(uiXml, "wpn_params:list_item", 0, bulkiness_static);
 	pos_top = bulkiness_static->GetPosTop();
 	bulkiness_static->SetWndPos(bulkiness_static->GetPosLeft(), _h + pos_top);
 	sprintf_s(temp_text, " %.1f", pWeapon->GetControlInertionFactor());
@@ -152,7 +152,7 @@ void CUIWpnParams::SetInfo(CInventoryItem* obj)
 		float shot_dec = pWeaponKnife ? pWeapon->GetCondDecPerShotOnHit() : pWeapon->GetCondDecPerShot();
 		if (!fis_zero(shot_dec)) {
 			auto recoil_static = xr_new<CUIStatic>(); recoil_static->SetAutoDelete(true);
-			CUIXmlInit::InitStatic(uiXml, "wpn_params:resource", 0, recoil_static);
+			CUIXmlInit::InitStatic(uiXml, "wpn_params:list_item", 0, recoil_static);
 			pos_top = recoil_static->GetPosTop();
 			recoil_static->SetWndPos(recoil_static->GetPosLeft(), _h + pos_top);
 			float resource = 1.f / shot_dec;
@@ -196,34 +196,46 @@ void CUIWpnParams::SetInfo(CInventoryItem* obj)
 		scope_zoom_static->SetAutoDelete(true);
 		scope_zoom_static->SetWndPos(scope_zoom_static->GetPosLeft(), _h);
 		if (pWeapon->IsScopeDynamicZoom()) {
-			sprintf_s(temp_text, " %.1f-%.1fx", pWeapon->GetMinScopeZoomFactor(), pWeapon->GetScopeZoomFactor());
+			sprintf_s(text_to_show, "%s%s %.1f-%.1fx", marker_, CStringTable().translate("st_scope_zoom").c_str(), pWeapon->GetMinScopeZoomFactor(), pWeapon->GetScopeZoomFactor());
 		}
 		else
-			sprintf_s(temp_text, " %.1fx", pWeapon->GetScopeZoomFactor());
-		strconcat(sizeof(text_to_show), text_to_show, marker_, CStringTable().translate("st_scope_zoom").c_str(), temp_text);
+			sprintf_s(text_to_show, "%s%s %.1fx", marker_, CStringTable().translate("st_scope_zoom").c_str(), pWeapon->GetScopeZoomFactor());
 		scope_zoom_static->SetText(text_to_show);
 		m_CapInfo.AttachChild(scope_zoom_static);
 		_h += list_item_h;
 		//нічне бачення
-		auto scope_night_vision_static = xr_new<CUIStatic>();
-		CUIXmlInit::InitStatic(uiXml, "wpn_params:list_item", 0, scope_night_vision_static);
-		scope_night_vision_static->SetAutoDelete(true);
-		scope_night_vision_static->SetWndPos(scope_night_vision_static->GetPosLeft(), _h);
-		sprintf_s(temp_text, " %s", pWeaponMag->IsNightVisionEnabled() ? CStringTable().translate("st_yes").c_str() : CStringTable().translate("st_no").c_str());
-		strconcat(sizeof(text_to_show), text_to_show, marker_, CStringTable().translate("st_scope_night_vision").c_str(), temp_text);
-		scope_night_vision_static->SetText(text_to_show);
-		m_CapInfo.AttachChild(scope_night_vision_static);
-		_h += list_item_h;
+		if (pWeaponMag->IsNightVisionEnabled()) {
+			auto scope_night_vision_static = xr_new<CUIStatic>();
+			CUIXmlInit::InitStatic(uiXml, "wpn_params:list_item", 0, scope_night_vision_static);
+			scope_night_vision_static->SetAutoDelete(true);
+			scope_night_vision_static->SetWndPos(scope_night_vision_static->GetPosLeft(), _h);
+			sprintf_s(text_to_show, "%s%s", marker_, CStringTable().translate("st_scope_night_vision").c_str());
+			scope_night_vision_static->SetText(text_to_show);
+			m_CapInfo.AttachChild(scope_night_vision_static);
+			_h += list_item_h;
+		}
 		//автозахоплення цілей
-		auto scope_vision_present_static = xr_new<CUIStatic>();
-		CUIXmlInit::InitStatic(uiXml, "wpn_params:list_item", 0, scope_vision_present_static);
-		scope_vision_present_static->SetAutoDelete(true);
-		scope_vision_present_static->SetWndPos(scope_vision_present_static->GetPosLeft(), _h);
-		sprintf_s(temp_text, " %s", pWeaponMag->IsVisionPresent() ? CStringTable().translate("st_yes").c_str() : CStringTable().translate("st_no").c_str());
-		strconcat(sizeof(text_to_show), text_to_show, marker_, CStringTable().translate("st_scope_vision_present").c_str(), temp_text);
-		scope_vision_present_static->SetText(text_to_show);
-		m_CapInfo.AttachChild(scope_vision_present_static);
-		_h += list_item_h;
+		if (pWeaponMag->IsVisionPresent()) {
+			auto scope_vision_present_static = xr_new<CUIStatic>();
+			CUIXmlInit::InitStatic(uiXml, "wpn_params:list_item", 0, scope_vision_present_static);
+			scope_vision_present_static->SetAutoDelete(true);
+			scope_vision_present_static->SetWndPos(scope_vision_present_static->GetPosLeft(), _h);
+			sprintf_s(text_to_show, "%s%s", marker_, CStringTable().translate("st_scope_vision_present").c_str());
+			scope_vision_present_static->SetText(text_to_show);
+			m_CapInfo.AttachChild(scope_vision_present_static);
+			_h += list_item_h;
+		}
+		//далекомір
+		if (pWeaponMag->HasRangeMeter()) {
+			auto scope_range_meter_static = xr_new<CUIStatic>();
+			CUIXmlInit::InitStatic(uiXml, "wpn_params:list_item", 0, scope_range_meter_static);
+			scope_range_meter_static->SetAutoDelete(true);
+			scope_range_meter_static->SetWndPos(scope_range_meter_static->GetPosLeft(), _h);
+			sprintf_s(text_to_show, "%s%s", marker_, CStringTable().translate("st_scope_range_meter").c_str());
+			scope_range_meter_static->SetText(text_to_show);
+			m_CapInfo.AttachChild(scope_range_meter_static);
+			_h += list_item_h;
+		}
 	}
 	if (!pWeaponKnife && !pWeaponBinoc) {
 		//сумісні набої - заголовок

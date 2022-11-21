@@ -1250,6 +1250,7 @@ void CWeaponMagazined::LoadZoomParams(LPCSTR section)
 		m_bScopeDynamicZoom		= false;
 		m_bVision				= false;
 		m_bNightVisionEnabled	= false;
+		m_bRangeMeter			= false;
 
 		if (IsScopeBroken())
 		{
@@ -1314,6 +1315,13 @@ void CWeaponMagazined::LoadZoomParams(LPCSTR section)
 
 		if (pSettings->line_exist(section, "snd_zoom_change"))
 			HUD_SOUND::LoadSound(section, "snd_zoom_change", sndZoomChange, SOUND_TYPE_ITEM_USING);
+	}
+
+	m_bRangeMeter = READ_IF_EXISTS(pSettings, r_bool, section, "range_meter", false);
+	if (m_bRangeMeter) {
+		Fvector2 fvec_def{ 0.f, 0.05f };
+		m_vRangeMeterOffset = READ_IF_EXISTS(pSettings, r_fvector2, section, "range_meter_offset", fvec_def);
+		m_uRangeMeterColor	= READ_IF_EXISTS(pSettings, r_color, section, "range_meter_color", color_argb(255, 255, 255, 255));
 	}
 
 	LPCSTR scope_tex_name = READ_IF_EXISTS(pSettings, r_string, section, "scope_texture", nullptr);
@@ -2111,15 +2119,15 @@ bool CWeaponMagazined::IsHitToAddon(SHit* pHDS){
 	return result;
 }
 
-bool CWeaponMagazined::IsSilencerBroken(){
+bool CWeaponMagazined::IsSilencerBroken() const {
 	return fis_zero(m_fAttachedSilencerCondition) || IsSilencerAttached() && !SilencerAttachable() && fis_zero(GetCondition());
 }
 
-bool CWeaponMagazined::IsScopeBroken(){
+bool CWeaponMagazined::IsScopeBroken() const {
 	return fis_zero(m_fAttachedScopeCondition) || IsScopeAttached() && !ScopeAttachable() && fis_zero(GetCondition());
 }
 
-bool CWeaponMagazined::IsGrenadeLauncherBroken(){
+bool CWeaponMagazined::IsGrenadeLauncherBroken() const {
 	return fis_zero(m_fAttachedGrenadeLauncherCondition) || IsGrenadeLauncherAttached() && !GrenadeLauncherAttachable() && fis_zero(GetCondition());
 }
 

@@ -193,8 +193,15 @@ void CUIEquipParams::SetInfo(CInventoryItem* obj){
 
 	auto pScope = smart_cast<CScope*>(obj);
 	if (pScope) {
+		auto cap_scope_static = xr_new<CUIStatic>(); cap_scope_static->SetAutoDelete(true);
+		CUIXmlInit::InitStatic(uiXml, "equip_params:cap_scope", 0, cap_scope_static);
+		pos_top = cap_scope_static->GetPosTop();
+		cap_scope_static->SetWndPos(cap_scope_static->GetPosLeft(), _h + pos_top);
+		m_CapInfo.AttachChild(cap_scope_static);
+		_h += list_item_h + pos_top;
+
 		auto scope_zoom_static = xr_new<CUIStatic>();
-		CUIXmlInit::InitStatic(uiXml, "equip_params:scope_zoom", 0, scope_zoom_static);
+		CUIXmlInit::InitStatic(uiXml, "equip_params:list_item", 0, scope_zoom_static);
 		scope_zoom_static->SetAutoDelete(true);
 		pos_top = scope_zoom_static->GetPosTop();
 		scope_zoom_static->SetWndPos(scope_zoom_static->GetPosLeft(), _h + pos_top);
@@ -203,37 +210,51 @@ void CUIEquipParams::SetInfo(CInventoryItem* obj){
 		if (has_zoom_dynamic) {
 			float zoom_step_count = READ_IF_EXISTS(pSettings, r_u32, item_section, "zoom_step_count", 3);
 			float min_zoom_factor = READ_IF_EXISTS(pSettings, r_float, item_section, "min_scope_zoom_factor", zoom_factor / zoom_step_count);
-			sprintf_s(temp_text, " %.1f-%.1fx", min_zoom_factor, zoom_factor);
+			sprintf_s(text_to_show, "%s%s %.1f-%.1fx", marker_, CStringTable().translate("st_scope_zoom").c_str(), min_zoom_factor, zoom_factor);
 		}else
-			sprintf_s(temp_text, " %.1fx", zoom_factor);
-		strconcat(sizeof(text_to_show), text_to_show, CStringTable().translate("st_scope_zoom").c_str(), temp_text);
+			sprintf_s(text_to_show, "%s%s %.1fx", marker_, CStringTable().translate("st_scope_zoom").c_str(), zoom_factor);
 		scope_zoom_static->SetText(text_to_show);
 		m_CapInfo.AttachChild(scope_zoom_static);
 		_h += list_item_h;
 
 		bool has_night_vision = !!READ_IF_EXISTS(pSettings, r_bool, item_section, "night_vision", false);
-		auto scope_night_vision_static = xr_new<CUIStatic>();
-		CUIXmlInit::InitStatic(uiXml, "equip_params:scope_night_vision", 0, scope_night_vision_static);
-		scope_night_vision_static->SetAutoDelete(true);
-		pos_top = scope_night_vision_static->GetPosTop();
-		scope_night_vision_static->SetWndPos(scope_night_vision_static->GetPosLeft(), _h + pos_top);
-		sprintf_s(temp_text, " %s", has_night_vision ? CStringTable().translate("st_yes").c_str() : CStringTable().translate("st_no").c_str());
-		strconcat(sizeof(text_to_show), text_to_show, CStringTable().translate("st_scope_night_vision").c_str(), temp_text);
-		scope_night_vision_static->SetText(text_to_show);
-		m_CapInfo.AttachChild(scope_night_vision_static);
-		_h += list_item_h;
+		if (has_night_vision) {
+			auto scope_night_vision_static = xr_new<CUIStatic>();
+			CUIXmlInit::InitStatic(uiXml, "equip_params:list_item", 0, scope_night_vision_static);
+			scope_night_vision_static->SetAutoDelete(true);
+			pos_top = scope_night_vision_static->GetPosTop();
+			scope_night_vision_static->SetWndPos(scope_night_vision_static->GetPosLeft(), _h + pos_top);
+			sprintf_s(text_to_show, "%s%s", marker_, CStringTable().translate("st_scope_night_vision").c_str());
+			scope_night_vision_static->SetText(text_to_show);
+			m_CapInfo.AttachChild(scope_night_vision_static);
+			_h += list_item_h;
+		}
 
 		bool vision_present = !!READ_IF_EXISTS(pSettings, r_bool, item_section, "vision_present", false);
-		auto scope_vision_present_static = xr_new<CUIStatic>();
-		CUIXmlInit::InitStatic(uiXml, "equip_params:scope_vision_present", 0, scope_vision_present_static);
-		scope_vision_present_static->SetAutoDelete(true);
-		pos_top = scope_vision_present_static->GetPosTop();
-		scope_vision_present_static->SetWndPos(scope_vision_present_static->GetPosLeft(), _h + pos_top);
-		sprintf_s(temp_text, " %s", vision_present ? CStringTable().translate("st_yes").c_str() : CStringTable().translate("st_no").c_str());
-		strconcat(sizeof(text_to_show), text_to_show, CStringTable().translate("st_scope_vision_present").c_str(), temp_text);
-		scope_vision_present_static->SetText(text_to_show);
-		m_CapInfo.AttachChild(scope_vision_present_static);
-		_h += list_item_h;
+		if (vision_present) {
+			auto scope_vision_present_static = xr_new<CUIStatic>();
+			CUIXmlInit::InitStatic(uiXml, "equip_params:list_item", 0, scope_vision_present_static);
+			scope_vision_present_static->SetAutoDelete(true);
+			pos_top = scope_vision_present_static->GetPosTop();
+			scope_vision_present_static->SetWndPos(scope_vision_present_static->GetPosLeft(), _h + pos_top);
+			sprintf_s(text_to_show, "%s%s", marker_, CStringTable().translate("st_scope_vision_present").c_str());
+			scope_vision_present_static->SetText(text_to_show);
+			m_CapInfo.AttachChild(scope_vision_present_static);
+			_h += list_item_h;
+		}
+
+		bool has_range_meter = !!READ_IF_EXISTS(pSettings, r_bool, item_section, "range_meter", false);
+		if (has_range_meter) {
+			auto scope_range_meter_static = xr_new<CUIStatic>();
+			CUIXmlInit::InitStatic(uiXml, "equip_params:list_item", 0, scope_range_meter_static);
+			scope_range_meter_static->SetAutoDelete(true);
+			pos_top = scope_range_meter_static->GetPosTop();
+			scope_range_meter_static->SetWndPos(scope_range_meter_static->GetPosLeft(), _h + pos_top);
+			sprintf_s(text_to_show, "%s%s", marker_, CStringTable().translate("st_scope_range_meter").c_str());
+			scope_range_meter_static->SetText(text_to_show);
+			m_CapInfo.AttachChild(scope_range_meter_static);
+			_h += list_item_h;
+		}
 	}
 
 	auto pOutfit = smart_cast<CCustomOutfit*>(obj);
@@ -367,7 +388,7 @@ void CUIEquipParams::SetInfo(CInventoryItem* obj){
 			//дальність вогню
 			if (!fis_zero(pAmmo->m_kDist)) {
 				auto fire_distance_static = xr_new<CUIStatic>();
-				CUIXmlInit::InitStatic(uiXml, "equip_params:fire_distance", 0, fire_distance_static);
+				CUIXmlInit::InitStatic(uiXml, "equip_params:list_item", 0, fire_distance_static);
 				fire_distance_static->SetAutoDelete(true);
 				pos_top = fire_distance_static->GetPosTop();
 				fire_distance_static->SetWndPos(fire_distance_static->GetPosLeft(), _h + pos_top);
@@ -381,7 +402,7 @@ void CUIEquipParams::SetInfo(CInventoryItem* obj){
 			//розкид
 			if (!fis_zero(pAmmo->m_kDisp)) {
 				auto dispersion_static = xr_new<CUIStatic>();
-				CUIXmlInit::InitStatic(uiXml, "equip_params:dispersion", 0, dispersion_static);
+				CUIXmlInit::InitStatic(uiXml, "equip_params:list_item", 0, dispersion_static);
 				dispersion_static->SetAutoDelete(true);
 				pos_top = dispersion_static->GetPosTop();
 				dispersion_static->SetWndPos(dispersion_static->GetPosLeft(), _h + pos_top);
@@ -395,7 +416,7 @@ void CUIEquipParams::SetInfo(CInventoryItem* obj){
 			//ушкодження
 			if (!fis_zero(pAmmo->m_kHit)) {
 				auto damage_static = xr_new<CUIStatic>();
-				CUIXmlInit::InitStatic(uiXml, "equip_params:damage", 0, damage_static);
+				CUIXmlInit::InitStatic(uiXml, "equip_params:list_item", 0, damage_static);
 				damage_static->SetAutoDelete(true);
 				pos_top = damage_static->GetPosTop();
 				damage_static->SetWndPos(damage_static->GetPosLeft(), _h + pos_top);
@@ -409,7 +430,7 @@ void CUIEquipParams::SetInfo(CInventoryItem* obj){
 			//швидкість кулі
 			if (!fis_zero(pAmmo->m_kSpeed)) {
 				auto bullet_speed_static = xr_new<CUIStatic>();
-				CUIXmlInit::InitStatic(uiXml, "equip_params:bullet_speed", 0, bullet_speed_static);
+				CUIXmlInit::InitStatic(uiXml, "equip_params:list_item", 0, bullet_speed_static);
 				bullet_speed_static->SetAutoDelete(true);
 				pos_top = bullet_speed_static->GetPosTop();
 				bullet_speed_static->SetWndPos(bullet_speed_static->GetPosLeft(), _h + pos_top);
@@ -423,7 +444,7 @@ void CUIEquipParams::SetInfo(CInventoryItem* obj){
 			//бронебійність
 			if (!fis_zero(pAmmo->m_kAP)) {
 				auto ap_static = xr_new<CUIStatic>();
-				CUIXmlInit::InitStatic(uiXml, "equip_params:ap", 0, ap_static);
+				CUIXmlInit::InitStatic(uiXml, "equip_params:list_item", 0, ap_static);
 				ap_static->SetAutoDelete(true);
 				pos_top = ap_static->GetPosTop();
 				ap_static->SetWndPos(ap_static->GetPosLeft(), _h + pos_top);
@@ -436,7 +457,7 @@ void CUIEquipParams::SetInfo(CInventoryItem* obj){
 			//зношування зброї
 			if (!fis_zero(pAmmo->m_impair)) {
 				auto bullet_speed_static = xr_new<CUIStatic>();
-				CUIXmlInit::InitStatic(uiXml, "equip_params:impair", 0, bullet_speed_static);
+				CUIXmlInit::InitStatic(uiXml, "equip_params:list_item", 0, bullet_speed_static);
 				bullet_speed_static->SetAutoDelete(true);
 				pos_top = bullet_speed_static->GetPosTop();
 				bullet_speed_static->SetWndPos(bullet_speed_static->GetPosLeft(), _h + pos_top);
@@ -450,7 +471,7 @@ void CUIEquipParams::SetInfo(CInventoryItem* obj){
 			//кількість шротин у набої
 			if (pAmmo->m_buckShot > 1) {
 				auto buck_static = xr_new<CUIStatic>();
-				CUIXmlInit::InitStatic(uiXml, "equip_params:buck", 0, buck_static);
+				CUIXmlInit::InitStatic(uiXml, "equip_params:list_item", 0, buck_static);
 				buck_static->SetAutoDelete(true);
 				pos_top = buck_static->GetPosTop();
 				buck_static->SetWndPos(buck_static->GetPosLeft(), _h + pos_top);
@@ -467,7 +488,7 @@ void CUIEquipParams::SetInfo(CInventoryItem* obj){
 		const shared_str& explosive_sect = pGrenade ? item_section : pSettings->r_string(item_section, "fake_grenade_name");
 		//хіт вибуху
 		auto explosion_hit_static = xr_new<CUIStatic>();
-		CUIXmlInit::InitStatic(uiXml, "equip_params:explosion_hit", 0, explosion_hit_static);
+		CUIXmlInit::InitStatic(uiXml, "equip_params:list_item", 0, explosion_hit_static);
 		explosion_hit_static->SetAutoDelete(true);
 		pos_top = explosion_hit_static->GetPosTop();
 		explosion_hit_static->SetWndPos(explosion_hit_static->GetPosLeft(), _h + pos_top);
@@ -477,7 +498,7 @@ void CUIEquipParams::SetInfo(CInventoryItem* obj){
 		_h += list_item_h;
 		//радіус вибуху
 		auto explosion_radius_static = xr_new<CUIStatic>();
-		CUIXmlInit::InitStatic(uiXml, "equip_params:explosion_radius", 0, explosion_radius_static);
+		CUIXmlInit::InitStatic(uiXml, "equip_params:list_item", 0, explosion_radius_static);
 		explosion_radius_static->SetAutoDelete(true);
 		pos_top = explosion_radius_static->GetPosTop();
 		explosion_radius_static->SetWndPos(explosion_radius_static->GetPosLeft(), _h + pos_top);
@@ -487,7 +508,7 @@ void CUIEquipParams::SetInfo(CInventoryItem* obj){
 		_h += list_item_h;
 		//хіт уламків
 		auto frags_hit_static = xr_new<CUIStatic>();
-		CUIXmlInit::InitStatic(uiXml, "equip_params:frags_hit", 0, frags_hit_static);
+		CUIXmlInit::InitStatic(uiXml, "equip_params:list_item", 0, frags_hit_static);
 		frags_hit_static->SetAutoDelete(true);
 		pos_top = frags_hit_static->GetPosTop();
 		frags_hit_static->SetWndPos(frags_hit_static->GetPosLeft(), _h + pos_top);
@@ -497,7 +518,7 @@ void CUIEquipParams::SetInfo(CInventoryItem* obj){
 		_h += list_item_h;
 		//радіус уламків
 		auto frags_radius_static = xr_new<CUIStatic>();
-		CUIXmlInit::InitStatic(uiXml, "equip_params:frags_radius", 0, frags_radius_static);
+		CUIXmlInit::InitStatic(uiXml, "equip_params:list_item", 0, frags_radius_static);
 		frags_radius_static->SetAutoDelete(true);
 		pos_top = frags_radius_static->GetPosTop();
 		frags_radius_static->SetWndPos(frags_radius_static->GetPosLeft(), _h + pos_top);
@@ -507,7 +528,7 @@ void CUIEquipParams::SetInfo(CInventoryItem* obj){
 		_h += list_item_h;
 		//хіт уламків
 		auto frags_count_static = xr_new<CUIStatic>();
-		CUIXmlInit::InitStatic(uiXml, "equip_params:frags_count", 0, frags_count_static);
+		CUIXmlInit::InitStatic(uiXml, "equip_params:list_item", 0, frags_count_static);
 		frags_count_static->SetAutoDelete(true);
 		pos_top = frags_count_static->GetPosTop();
 		frags_count_static->SetWndPos(frags_count_static->GetPosLeft(), _h + pos_top);
@@ -518,7 +539,7 @@ void CUIEquipParams::SetInfo(CInventoryItem* obj){
 		//дистанція зведення
 		if (pSettings->line_exist(explosive_sect, "safe_dist_to_explode")) {
 			auto safe_dist_static = xr_new<CUIStatic>();
-			CUIXmlInit::InitStatic(uiXml, "equip_params:safe_dist", 0, safe_dist_static);
+			CUIXmlInit::InitStatic(uiXml, "equip_params:list_item", 0, safe_dist_static);
 			safe_dist_static->SetAutoDelete(true);
 			pos_top = safe_dist_static->GetPosTop();
 			safe_dist_static->SetWndPos(safe_dist_static->GetPosLeft(), _h + pos_top);

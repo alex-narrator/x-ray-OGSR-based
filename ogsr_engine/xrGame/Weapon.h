@@ -282,12 +282,16 @@ protected:
 	bool			m_bHasScopeSecond{};
 	bool			m_bScopeSecondMode{};
 
-	bool m_bUseScopeZoom			= false;
-	bool m_bUseScopeGrenadeZoom		= false;
-	bool m_bUseScopeDOF = true;
-	bool m_bForceScopeDOF = false;
-	bool m_bScopeShowIndicators = true;
-	bool m_bIgnoreScopeTexture = false;
+	bool			m_bRangeMeter{};
+	Fvector2		m_vRangeMeterOffset{};
+	u32				m_uRangeMeterColor{};
+
+	bool m_bUseScopeZoom		{};
+	bool m_bUseScopeGrenadeZoom	{};
+	bool m_bUseScopeDOF			{};
+	bool m_bForceScopeDOF		{};
+	bool m_bScopeShowIndicators	{true};
+	bool m_bIgnoreScopeTexture	{};
 
 	float m_fMinZoomK			= def_min_zoom_k;
 	float m_fZoomStepCount		= def_zoom_step_count;
@@ -331,6 +335,12 @@ public:
 
 	virtual bool			HasScopeSecond			() const;
 	virtual bool			IsSecondScopeMode		() const;
+
+	virtual bool			IsSilencerBroken		() const { return false; };
+	virtual bool			IsScopeBroken			() const { return false; };
+	virtual bool			IsGrenadeLauncherBroken	() const { return false; };
+
+	virtual bool			HasRangeMeter			() const { return m_bRangeMeter && !IsScopeBroken(); };
 
 public:
 	IC		LPCSTR			strap_bone0			() const {return m_strap_bone0;}

@@ -32,15 +32,9 @@
 			<text font="letterica16" r="124" g="119" b="115">st_plates</text>
 		</cap_plates>
 		
-		<scope_zoom x="0" y="5" width="91" height="8">
-			<text font="letterica16" r="124" g="119" b="115"></text>
-		</scope_zoom>
-		<scope_night_vision x="0" y="5" width="91" height="8">
-			<text font="letterica16" r="124" g="119" b="115"></text>
-		</scope_night_vision>
-		<scope_vision_present x="0" y="5" width="91" height="8">
-			<text font="letterica16" r="124" g="119" b="115"></text>
-		</scope_vision_present>
+		<cap_scope x="0" y="5" width="91" height="8">
+			<text font="letterica16" r="124" g="119" b="115">st_current_scope</text>
+		</cap_scope>
 		
 		<silencer_hit_k x="0" y="5" width="91" height="8">
 			<text font="letterica16" r="124" g="119" b="115"></text>
@@ -61,47 +55,6 @@
 			<text font="letterica16" r="124" g="119" b="115"></text>
 		</silencer_resource>
 
-		<fire_distance x="0" y="5" width="91" height="8">
-			<text font="letterica16" r="124" g="119" b="115"></text>
-		</fire_distance>
-		<dispersion x="0" y="5" width="91" height="8">
-			<text font="letterica16" r="124" g="119" b="115"></text>
-		</dispersion>	
-		<damage x="0" y="5" width="91" height="8">
-			<text font="letterica16" r="124" g="119" b="115"></text>
-		</damage>		
-		<ap x="0" y="5" width="91" height="8">
-			<text font="letterica16" r="124" g="119" b="115"></text>
-		</ap>			
-		<bullet_speed x="0" y="5" width="91" height="8">
-			<text font="letterica16" r="124" g="119" b="115"></text>
-		</bullet_speed>			
-		<impair x="0" y="5" width="91" height="8">
-			<text font="letterica16" r="124" g="119" b="115"></text>
-		</impair>	
-		<buck x="0" y="5" width="91" height="8">
-			<text font="letterica16" r="124" g="119" b="115"></text>
-		</buck>		
-		
-		<explosion_hit x="0" y="5" width="91" height="8">
-			<text font="letterica16" r="124" g="119" b="115"></text>
-		</explosion_hit>
-		<explosion_radius x="0" y="5" width="91" height="8">
-			<text font="letterica16" r="124" g="119" b="115"></text>
-		</explosion_radius>		
-		<frags_hit x="0" y="5" width="91" height="8">
-			<text font="letterica16" r="124" g="119" b="115"></text>
-		</frags_hit>
-		<frags_radius x="0" y="5" width="91" height="8">
-			<text font="letterica16" r="124" g="119" b="115"></text>
-		</frags_radius>	
-		<frags_count x="0" y="5" width="91" height="8">
-			<text font="letterica16" r="124" g="119" b="115"></text>
-		</frags_count>	
-		<safe_dist x="0" y="5" width="91" height="8">
-			<text font="letterica16" r="124" g="119" b="115"></text>
-		</safe_dist>			
-		
 		<cap_ammo x="0" y="5" width="91" height="8">
 			<text font="letterica16" r="124" g="119" b="115">st_compatible_ammo</text>
 		</cap_ammo>

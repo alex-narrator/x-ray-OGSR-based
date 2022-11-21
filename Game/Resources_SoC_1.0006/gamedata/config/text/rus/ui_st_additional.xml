@@ -610,14 +610,17 @@
 		<text>Бронеплита:</text>
 	</string>	
 	<string id="st_scope_zoom">
-		<text>Кратність:</text>
+		<text>кратність</text>
 	</string>
 	<string id="st_scope_night_vision">
-		<text>Нічне бачення:</text>
+		<text>нічне бачення</text>
 	</string>
 	<string id="st_scope_vision_present">
-		<text>Захоплення цілі:</text>
+		<text>захоплення цілі</text>
 	</string>
+	<string id="st_scope_range_meter">
+		<text>далекомір</text>
+	</string>	
 	<string id="st_yes">
 		<text>так</text>
 	</string>

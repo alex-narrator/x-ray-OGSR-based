@@ -504,6 +504,20 @@ void CUITradeWnd::SendMessage(CUIWindow *pWnd, s16 msg, void *pData)
 				}break;
 			}
 		}
+
+		// refresh if nessesary
+		switch (m_pUIPropertiesBox->GetClickedItem()->GetTAG())
+		{
+		case INVENTORY_RELOAD_MAGAZINE:
+		case INVENTORY_UNLOAD_MAGAZINE:
+		case INVENTORY_RELOAD_AMMO_BOX:
+		case INVENTORY_UNLOAD_AMMO_BOX:
+		case INVENTORY_DETACH_ADDON:
+		{
+			SetCurrentItem(nullptr);
+			UpdateLists(e1st);
+		}break;
+		}
 	}
 
 	CUIWindow::SendMessage(pWnd, msg, pData);

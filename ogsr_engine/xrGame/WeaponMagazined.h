@@ -272,9 +272,9 @@ public:
 	virtual void	ChangeAttachedScopeCondition			(float);
 	virtual void	ChangeAttachedGrenadeLauncherCondition	(float);
 
-	virtual bool	IsSilencerBroken();
-	virtual bool	IsScopeBroken();
-	virtual bool	IsGrenadeLauncherBroken();
+	virtual bool	IsSilencerBroken		() const;
+	virtual bool	IsScopeBroken			() const;
+	virtual bool	IsGrenadeLauncherBroken	() const;
 
 	virtual	void	Hit(SHit* pHDS);
 	virtual bool	IsHitToAddon(SHit* pHDS);
