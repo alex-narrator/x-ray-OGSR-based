@@ -44,9 +44,9 @@ void CActor::OnEvent		(NET_Packet& P, u16 type)
 				break;
 			}
 
-			CFoodItem* pFood = smart_cast<CFoodItem*>(O);
-			if(pFood)
-				pFood->m_eItemPlace = eItemPlaceRuck;
+			//CFoodItem* pFood = smart_cast<CFoodItem*>(O);
+			//if(pFood)
+			//	pFood->m_eItemPlace = eItemPlaceRuck;
 
 			CGameObject* _GO = smart_cast<CGameObject*>(O);
 			

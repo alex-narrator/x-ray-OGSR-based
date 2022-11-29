@@ -4,21 +4,22 @@
 #include "xrUIXmlParser.h"
 #include "UIXmlInit.h"
 
-#include "../Entity.h"
-#include "../HUDManager.h"
-#include "../WeaponAmmo.h"
-#include "../Actor.h"
-#include "../Trade.h"
-#include "../UIGameSP.h"
+#include "Entity.h"
+#include "HUDManager.h"
+#include "WeaponAmmo.h"
+#include "Actor.h"
+#include "Trade.h"
+#include "UIGameSP.h"
 #include "UIInventoryUtilities.h"
-#include "../inventoryowner.h"
-#include "../eatable_item.h"
+#include "inventoryowner.h"
+#include "eatable_item.h"
 #include "Weapon.h"
 #include "WeaponMagazined.h"
 #include "WeaponMagazinedWGrenade.h"
-#include "../inventory.h"
-#include "../level.h"
-#include "../string_table.h"
+#include "Vest.h"
+#include "inventory.h"
+#include "level.h"
+#include "string_table.h"
 #include "../character_info.h"
 #include "UIMultiTextStatic.h"
 #include "UI3tButton.h"
@@ -266,6 +267,9 @@ void CUITradeWnd::ActivatePropertiesBox()
 	auto pWeapon		= smart_cast<CWeapon*>		(CurrentIItem());
 	auto pAmmo			= smart_cast<CWeaponAmmo*>	(CurrentIItem());
 	auto pEatableItem	= smart_cast<CEatableItem*> (CurrentIItem());
+	auto pVest			= smart_cast<CVest*>		(CurrentIItem());
+
+	LPCSTR detach_tip = CurrentIItem()->GetDetachMenuTip();
 
 	bool b_actor_inv = CurrentItem()->OwnerList() == &m_uidata->UIOurBagList;
 	auto inv = m_pInv;
@@ -278,6 +282,12 @@ void CUITradeWnd::ActivatePropertiesBox()
 	LPCSTR _action	= nullptr;
 
 	if (b_actor_inv) {
+		if (pVest && pVest->IsPlateInstalled() && pVest->m_plates.size()) {
+			sprintf(temp, "%s %s", CStringTable().translate(detach_tip).c_str(), CStringTable().translate(pSettings->r_string(pVest->GetPlateName().c_str(), "inv_name_short")).c_str());
+			m_pUIPropertiesBox->AddItem(temp, (void*)pVest->GetPlateName().c_str(), INVENTORY_DETACH_ADDON);
+			b_show = true;
+		}
+
 		if (pAmmo) {
 			LPCSTR _ammo_sect;
 
@@ -322,27 +332,27 @@ void CUITradeWnd::ActivatePropertiesBox()
 			}
 			//
 			if (pWeapon->GrenadeLauncherAttachable() && pWeapon->IsGrenadeLauncherAttached()) {
-				sprintf(temp, "%s %s", CStringTable().translate("st_detach").c_str(), CStringTable().translate(pSettings->r_string(pWeapon->GetGrenadeLauncherName().c_str(), "inv_name_short")).c_str());
+				sprintf(temp, "%s %s", CStringTable().translate(detach_tip).c_str(), CStringTable().translate(pSettings->r_string(pWeapon->GetGrenadeLauncherName().c_str(), "inv_name_short")).c_str());
 				m_pUIPropertiesBox->AddItem(temp, (void*)pWeapon->GetGrenadeLauncherName().c_str(), INVENTORY_DETACH_ADDON);
 				b_show = true;
 			}
 			if (pWeapon->ScopeAttachable() && pWeapon->IsScopeAttached()) {
-				sprintf(temp, "%s %s", CStringTable().translate("st_detach").c_str(), CStringTable().translate(pSettings->r_string(pWeapon->GetScopeName().c_str(), "inv_name_short")).c_str());
+				sprintf(temp, "%s %s", CStringTable().translate(detach_tip).c_str(), CStringTable().translate(pSettings->r_string(pWeapon->GetScopeName().c_str(), "inv_name_short")).c_str());
 				m_pUIPropertiesBox->AddItem(temp, (void*)pWeapon->GetScopeName().c_str(), INVENTORY_DETACH_ADDON);
 				b_show = true;
 			}
 			if (pWeapon->SilencerAttachable() && pWeapon->IsSilencerAttached()) {
-				sprintf(temp, "%s %s", CStringTable().translate("st_detach").c_str(), CStringTable().translate(pSettings->r_string(pWeapon->GetSilencerName().c_str(), "inv_name_short")).c_str());
+				sprintf(temp, "%s %s", CStringTable().translate(detach_tip).c_str(), CStringTable().translate(pSettings->r_string(pWeapon->GetSilencerName().c_str(), "inv_name_short")).c_str());
 				m_pUIPropertiesBox->AddItem(temp, (void*)pWeapon->GetSilencerName().c_str(), INVENTORY_DETACH_ADDON);
 				b_show = true;
 			}
 			if (pWeapon->LaserAttachable() && pWeapon->IsLaserAttached()) {
-				sprintf(temp, "%s %s", CStringTable().translate("st_detach").c_str(), CStringTable().translate(pSettings->r_string(pWeapon->GetLaserName().c_str(), "inv_name_short")).c_str());
+				sprintf(temp, "%s %s", CStringTable().translate(detach_tip).c_str(), CStringTable().translate(pSettings->r_string(pWeapon->GetLaserName().c_str(), "inv_name_short")).c_str());
 				m_pUIPropertiesBox->AddItem(temp, (void*)pWeapon->GetLaserName().c_str(), INVENTORY_DETACH_ADDON);
 				b_show = true;
 			}
 			if (pWeapon->FlashlightAttachable() && pWeapon->IsFlashlightAttached()) {
-				sprintf(temp, "%s %s", CStringTable().translate("st_detach").c_str(), CStringTable().translate(pSettings->r_string(pWeapon->GetFlashlightName().c_str(), "inv_name_short")).c_str());
+				sprintf(temp, "%s %s", CStringTable().translate(detach_tip).c_str(), CStringTable().translate(pSettings->r_string(pWeapon->GetFlashlightName().c_str(), "inv_name_short")).c_str());
 				m_pUIPropertiesBox->AddItem(temp, (void*)pWeapon->GetFlashlightName().c_str(), INVENTORY_DETACH_ADDON);
 				b_show = true;
 			}

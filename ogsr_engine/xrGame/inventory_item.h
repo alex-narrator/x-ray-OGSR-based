@@ -142,11 +142,11 @@ public:
 	u32							m_cost;
 	float						m_weight;
 	float						m_volume;
-	shared_str					m_Description;
-	CUIInventoryCellItem*		m_cell_item;
+	shared_str					m_Description{};
+	CUIInventoryCellItem*		m_cell_item{};
 
-	shared_str					m_name;
-	shared_str					m_nameShort;
+	shared_str					m_name{};
+	shared_str					m_nameShort{};
 	shared_str					m_nameComplex;
 
 	EItemPlace					m_eItemPlace;
@@ -203,7 +203,7 @@ const xr_vector<u8>&			GetSlots			(){ return m_slots;      }
 protected:
 	xr_vector<u8>				m_slots;
 	LPCSTR						m_slots_sect;
-	float						m_fCondition;
+	float						m_fCondition{1.f};
 
 	float						m_fControlInertionFactor;
 	shared_str					m_icon_name;
@@ -275,21 +275,21 @@ public:
 	virtual CGameObject			*cast_game_object			()  {return 0;};
 
  private:
-        u8   loaded_belt_index;
-        void SetLoadedBeltIndex( u8 );
+			u8					loaded_belt_index{ (u8)(-1) };
+			void				SetLoadedBeltIndex( u8 );
 
  public:
-        u8   GetLoadedBeltIndex() { return loaded_belt_index; };
-	bool m_highlight_equipped;
-	bool m_always_ungroupable;
+			u8					GetLoadedBeltIndex() { return loaded_belt_index; };
+			bool				m_highlight_equipped{};
+			bool				m_always_ungroupable{};
 
-			bool				m_bBreakOnZeroCondition;
+			bool				m_bBreakOnZeroCondition{};
 	virtual void				TryBreakToPieces	(bool);
 	virtual bool				WillBeBroken		();
-			bool				b_brake_item;
+			bool				b_brake_item{};
 	//проміжок часу до повного розряджання
-			float				m_fTTLOnDecrease;
-			float				m_fLastTimeCalled;
+			float				m_fTTLOnDecrease{};
+			float				m_fLastTimeCalled{};
 	virtual void				UpdateConditionDecrease();
 	virtual void				UpdatePowerConsumption();
 	virtual bool				NeedForcedDescriptionUpdate() const;
@@ -303,23 +303,25 @@ public:
 	enum ItemEffects {
 		//restore
 		eHealthRestoreSpeed,
-		eRadiationRestoreSpeed,
-		eSatietyRestoreSpeed,
-		eThirstRestoreSpeed,
 		ePowerRestoreSpeed,
-		eBleedingRestoreSpeed,
+		eMaxPowerRestoreSpeed,
+		eSatietyRestoreSpeed,
+		eRadiationRestoreSpeed,
 		ePsyHealthRestoreSpeed,
 		eAlcoholRestoreSpeed,
+		eThirstRestoreSpeed,
+		eWoundsHealSpeed,
 		//additional
 		eAdditionalWalkAccel,
 		eAdditionalJumpSpeed,
 		eAdditionalWeight,
-//		eAdditionalVolume,
+		eAdditionalVolume,
+
 		eEffectMax,
 	};
 
-	virtual float					GetItemEffect		(ItemEffects effect);
-	virtual float					GetHitTypeProtection(ALife::EHitType hit_type);
+	virtual float					GetItemEffect		(int) const;
+	virtual float					GetHitTypeProtection(int);
 
 	xr_vector<shared_str>			m_power_sources{};
 	virtual bool					IsPowerConsumer		() const;
@@ -340,17 +342,22 @@ public:
 
 			LPCSTR					GetDetailPartSection() const { return m_detail_part_section; }
 	virtual void					Disassemble			();
+
+			LPCSTR					GetAttachMenuTip() const { return m_sAttachMenuTip; };
+			LPCSTR					GetDetachMenuTip() const { return m_sDetachMenuTip; };
 protected:
 	HitImmunity::HitTypeSVec		m_HitTypeProtection;
 
-	svector<float, ItemEffects::eEffectMax> m_ItemEffect;
+	svector<float, eEffectMax>		m_ItemEffect;
 
 	float							m_fTTLOnPowerConsumption{};
-	float							m_fPowerLevel;
+	float							m_fPowerLevel{1.f};
 	float							m_fPowerLowThreshold;
 	float							m_fPowerConsumingUpdateTime;
 
 	LPCSTR							m_detail_part_section{};
+	LPCSTR							m_sAttachMenuTip{};
+	LPCSTR							m_sDetachMenuTip{};
 };
 
 #include "inventory_item_inline.h"

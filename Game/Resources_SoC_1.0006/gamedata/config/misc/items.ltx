@@ -62,7 +62,7 @@ eat_health = 0.05
 eat_satiety = 0.2
 eat_power = 0
 eat_radiation = 0
-wounds_heal_perc = 0
+eat_wounds_heal = 0
 eat_portions_num = 2
 
 menu_use_tip 	= st_eat
@@ -113,7 +113,7 @@ eat_health = 0.1
 eat_satiety = 0.3
 eat_power = 0
 eat_radiation = 0
-wounds_heal_perc = 0
+eat_wounds_heal = 0
 eat_portions_num = -1
 
 menu_use_tip 	= st_eat
@@ -176,7 +176,7 @@ eat_health = 0.15
 eat_satiety = 0.4
 eat_power = 0
 eat_radiation = 0
-wounds_heal_perc = 0
+eat_wounds_heal = 0
 eat_portions_num = -1
 
 menu_use_tip = st_eat
@@ -262,7 +262,7 @@ eat_satiety		= -0.01
 eat_power		= 0
 ;eat_radiation	= -0.3
 eat_alcohol		= 0.066
-wounds_heal_perc 	= 0
+eat_wounds_heal 	= 0
 eat_portions_num 	= 5
 
 menu_use_tip = st_drink
@@ -347,7 +347,7 @@ eat_health = 0
 eat_satiety = 0
 eat_power = 0
 eat_radiation = -1.0
-wounds_heal_perc = 0
+eat_wounds_heal = 0
 eat_portions_num = 1
 
 use_sound 		= interface\inv_pills
@@ -361,7 +361,7 @@ hud = wpn_vodka_hud
 default_to_ruck = true
 belt = true
 vest = true
-slot = 12,13,14,15,19,20,26,27
+slot = 12,13,14,15
 
 
 [medkit]:identity_immunities
@@ -384,13 +384,16 @@ inv_grid_y			= 30
 cost				= 150
 
 ; eatable item
-eat_health			= 0.6
-eat_satiety			= 0
-eat_power			= 0.0
-eat_radiation		= -0.1
-wounds_heal_perc	= 0.3
+;eat_health			= 0.6
+;eat_satiety			= 0
+;eat_power			= 0.0
+;eat_radiation		= -0.1
+;eat_wounds_heal	= 0.3
 eat_portions_num	= 1
-eat_max_power		= 0.1
+;eat_max_power		= 0.1
+
+boost_health = 1
+boost_time = 10
 
 use_sound 		= interface\inv_medkit
 
@@ -429,7 +432,7 @@ eat_health			= 1.0
 eat_satiety			= 0
 eat_power			= 0.0
 eat_radiation		= -0.1
-wounds_heal_perc	= 1.0
+eat_wounds_heal	= 1.0
 eat_portions_num	= 1
 eat_max_power		= 0.1
 
@@ -470,7 +473,7 @@ eat_health			= 1.0
 eat_satiety			= 0
 eat_power			= 0.0
 eat_radiation		= -1.0
-wounds_heal_perc	= 0.3
+eat_wounds_heal	= 0.3
 eat_portions_num	= 1
 eat_max_power		= 0.1
 
@@ -507,9 +510,20 @@ eat_satiety			= 0
 eat_power			= 1.0
 eat_alcohol			= 0
 eat_radiation		= 0
-wounds_heal_perc	= 0
+eat_wounds_heal	= 0
 eat_portions_num	= 1
 eat_max_power		= 0.2
+
+boost_jump_speed = 3
+boost_burn_protection = 0.3
+boost_fire_wound_protection = 0.1
+boost_max_weight = 2
+boost_satiety = 1
+boost_power = 2
+
+boost_burn_protection = 0.2
+
+boost_time = 5
 
 attach_angle_offset		= 0.000000, 0.000000, 0.000000
 attach_position_offset	= 0.087266, -0.078540, 0.052360
@@ -518,7 +532,7 @@ auto_attach				= false
 
 use_sound 		= interface\inv_softdrink
 
-default_to_ruck = true
+default_to_ruck 	= true
 belt = true
 vest = true
 slot = 12,13,14,15
@@ -549,7 +563,7 @@ eat_health = 	0.1
 eat_satiety = 	0
 eat_power = 	0.0
 eat_radiation = 0.0
-wounds_heal_perc = 1.0
+eat_wounds_heal = 1.0
 eat_portions_num = 1	;100
 
 use_sound 		= interface\inv_bandage

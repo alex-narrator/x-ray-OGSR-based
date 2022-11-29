@@ -117,35 +117,35 @@
 	<string id="ui_inv_ok">
 		<text>OK</text>
 	</string>
-	<string id="ui_inv_outfit_burn_protection">
+	<string id="ui_inv_burn_protection">
 		<text>Опік</text>
 	</string>
-	<string id="ui_inv_outfit_chemical_burn_protection">
+	<string id="ui_inv_chemical_burn_protection">
 		<text>Хім. опік</text>
 	</string>
-	<string id="ui_inv_outfit_explosion_protection">
+	<string id="ui_inv_explosion_protection">
 		<text>Вибух</text>
 	</string>
-	<string id="ui_inv_outfit_fire_wound_protection">
+	<string id="ui_inv_fire_wound_protection">
 		<text>Кулестійкість</text>
 	</string>
 	<string id="ui_inv_outfit_params">
 		<text>Параметри</text>
 	</string>
-	<string id="ui_inv_outfit_radiation_protection">
+	<string id="ui_inv_radiation_protection">
 		<text>Радіація</text>
 	</string>
-	<string id="ui_inv_outfit_shock_protection">
+	<string id="ui_inv_shock_protection">
 		<text>Електрошок</text>
 	</string>
-	<string id="ui_inv_outfit_strike_protection">
+	<string id="ui_inv_strike_protection">
 		<text>Удар</text>
 	</string>
-	<string id="ui_inv_outfit_telepatic_protection">
+	<string id="ui_inv_telepatic_protection">
 		<text>Телепатія</text>
 	</string>
-	<string id="ui_inv_outfit_wound_protection">
-		<text>Розрыв</text>
+	<string id="ui_inv_wound_protection">
+		<text>Розрив</text>
 	</string>
 	<string id="ui_inv_outfits">
 		<text>Костюмы</text>

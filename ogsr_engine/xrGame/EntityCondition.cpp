@@ -74,6 +74,8 @@ CEntityCondition::CEntityCondition(CEntityAlive *object)
 
 	m_bIsBleeding			= false;
 	m_bCanBeHarmed			= true;
+
+	ClearAllBoosters();
 }
 
 CEntityCondition::~CEntityCondition(void)
@@ -140,7 +142,7 @@ void CEntityCondition::reinit	()
 	m_iWhoID				= NULL;
 
 	ClearWounds				();
-
+	ClearAllBoosters		();
 }
 
 void CEntityCondition::ChangeEntityMorale(float value)
@@ -263,6 +265,11 @@ void CEntityCondition::UpdateCondition()
 	};
 	//-----------------------------------------
 	UpdatePsyHealth				();
+
+	UpdateAlcohol				();
+	UpdateSatiety				();
+
+	UpdateBoosters				();
 
 	UpdateEntityMorale			();
 
@@ -410,6 +417,8 @@ CWound* CEntityCondition::ConditionHit(SHit* pHDS)
 	float hit_power = hit_power_org;
 	hit_power = HitOutfitEffect(pHDS);
 
+	hit_power *= GetBoostedHitTypeProtection(pHDS->hit_type);
+
 	bool bAddWound = true;
 	switch(pHDS->hit_type)
 	{
@@ -511,22 +520,20 @@ void CEntityCondition::UpdatePower()
 {
 }
 
-void CEntityCondition::UpdatePsyHealth(/*float k*/)
+void CEntityCondition::UpdatePsyHealth()
 {
 	if(m_fPsyHealth>0)
 	{
 		m_fDeltaPsyHealth += m_change_v.m_fV_PsyHealth
-//			*k
 			*m_fDeltaTime;
 	}
 }
 
-void CEntityCondition::UpdateRadiation(/*float k*/)
+void CEntityCondition::UpdateRadiation()
 {
 	if(m_fRadiation>0)
 	{
 		m_fDeltaRadiation -= m_change_v.m_fV_Radiation*
-//							k*
 							m_fDeltaTime;
 
 		m_fDeltaHealth -= CanBeHarmed() ? m_change_v.m_fV_RadiationHealth*m_fRadiation*m_fDeltaTime : 0.0f;
@@ -556,8 +563,20 @@ void CEntityCondition::save	(NET_Packet &output_packet)
 		output_packet.w_u8				((u8)m_WoundVector.size());
 		for(WOUND_VECTOR_IT it = m_WoundVector.begin(); m_WoundVector.end() != it; it++)
 			(*it)->save(output_packet);
+
+		output_packet.w_u8((u8)m_boosters.size());
+		BOOSTER_MAP::iterator b = m_boosters.begin(), e = m_boosters.end();
+		for (; b != e; b++)
+		{
+			output_packet.w_u8((u8)b->second.m_BoostType);
+			output_packet.w_float(b->second.f_BoostValue);
+			output_packet.w_float(b->second.f_BoostTime);
+		}
 	}
 }
+
+#include "alife_registry_wrappers.h"
+#include "alife_simulator_header.h"
 
 void CEntityCondition::load	(IReader &input_packet)
 {
@@ -580,6 +599,18 @@ void CEntityCondition::load	(IReader &input_packet)
 				pWound->load(input_packet);
 				m_WoundVector[i] = pWound;
 			}
+
+
+		u8 booster_count = input_packet.r_u8();
+		for (; booster_count > 0; booster_count--)
+		{
+			SBooster B;
+			B.m_BoostType = (eBoostParams)input_packet.r_u8();
+			B.f_BoostValue = input_packet.r_float();
+			B.f_BoostTime = input_packet.r_float();
+			m_boosters[B.m_BoostType] = B;
+			BoostParameters(B);
+		}
 	}
 }
 
@@ -689,4 +720,137 @@ void CEntityCondition::script_register(lua_State *L)
 			.property("max_health"				,				&CEntityCondition::GetMaxHealth,			&set_entity_max_health)
 			//.property("class_name"				,				&get_lua_class_name)
 		];
+}
+
+void CEntityCondition::ApplyInfluence(int type, float value) {
+	if (fis_zero(value)) return;
+	switch (type)
+	{
+	case eHealthInfluence: {
+		ChangeHealth(value);
+	}break;
+	case ePowerInfluence: {
+		ChangePower(value);
+	}break;
+	case eMaxPowerInfluence: {
+		ChangeMaxPower(value);
+	}break;
+	case eSatietyInfluence: {
+		ChangeSatiety(value);
+	}break;
+	case eRadiationInfluence: {
+		ChangeRadiation(value);
+	}break;
+	case ePsyHealthInfluence: {
+		ChangePsyHealth(value);
+	}break;
+	case eAlcoholInfluence: {
+		ChangeAlcohol(value);
+	}break;
+	case eThirstInfluence: {
+		ChangeThirst(value);
+	}break;
+	case eWoundsHealInfluence: {
+		ChangeBleeding(value);
+	}break;
+	default:
+		Msg("%s unknown influence num [%d]", __FUNCTION__, type);
+		break;
+	}
+}
+
+void CEntityCondition::ApplyBooster(SBooster& B) {
+	if (fis_zero(B.f_BoostValue) || fis_zero(B.f_BoostTime)) return;
+
+	BOOSTER_MAP::iterator it = m_boosters.find(B.m_BoostType);
+	if (it != m_boosters.end()) {
+		DisableBoostParameters((*it).second);
+		B.f_BoostValue += (*it).second.f_BoostValue;
+		B.f_BoostTime += (*it).second.f_BoostTime;
+	}
+
+	float limit = B.m_BoostType < eHitTypeProtectionBoosterIndex ? 5.f : 1.f;
+	clamp(B.f_BoostValue, -limit, limit);
+
+	m_boosters[B.m_BoostType] = B;
+	BoostParameters(B);
+}
+//#include "ui/UIInventoryUtilities.h"
+void CEntityCondition::BoostParameters(const SBooster& B) {
+//	Msg("%s param %d value %.4f time %.4f at game time %s", __FUNCTION__, B.m_BoostType, B.f_BoostValue, B.f_BoostTime, InventoryUtilities::GetGameTimeAsString(InventoryUtilities::etpTimeToMinutes).c_str());
+	m_BoostParams[B.m_BoostType] += B.f_BoostValue;
+}
+
+void CEntityCondition::DisableBoostParameters(const SBooster& B) {
+//	Msg("%s param %d value %.4f time %.4f at game time %s", __FUNCTION__, B.m_BoostType, B.f_BoostValue, B.f_BoostTime, InventoryUtilities::GetGameTimeAsString(InventoryUtilities::etpTimeToMinutes).c_str());
+	m_BoostParams[B.m_BoostType] -= B.f_BoostValue;
+}
+
+void CEntityCondition::UpdateBoosters() {
+	for (u8 i = 0; i < eBoostMax; i++){
+		BOOSTER_MAP::iterator it = m_boosters.find((eBoostParams)i);
+		if (it != m_boosters.end()){
+			it->second.f_BoostTime -= m_fDeltaTime / 60.f; //приведення до ігрових хвилин
+			if (it->second.f_BoostTime <= 0.0f){
+				DisableBoostParameters(it->second);
+				m_boosters.erase(it);
+			}
+			else if (it->second.m_BoostType < eRestoreBoostMax)
+				ApplyRestoreBoost(it->second.m_BoostType, it->second.f_BoostValue * m_fDeltaTime);
+		}
+	}
+}
+
+void CEntityCondition::ClearAllBoosters() {
+	m_BoostParams.clear();
+	m_BoostParams.resize(eBoostMax);
+	for (int i = 0; i < eBoostMax; ++i) {
+		m_BoostParams[i] = 0.f;
+	}
+}
+
+float CEntityCondition::GetBoostedHitTypeProtection(int hit_type, bool b_val_only) {
+	int boost_protection = hit_type + eHitTypeProtectionBoosterIndex;
+	return b_val_only ? GetBoostedParams(boost_protection) : (1.f - GetBoostedParams(boost_protection));
+}
+
+float CEntityCondition::GetBoostedParams(int i) {
+	return m_BoostParams[i];
+}
+
+void CEntityCondition::ApplyRestoreBoost(int type, float value) {
+	if (fis_zero(value)) return;
+	switch (type)
+	{
+	case eHealthBoost: {
+		ChangeHealth(GetHealthRestore() * value);
+	}break;
+	case ePowerBoost: {
+		ChangePower(GetPowerRestore() * value);
+	}break;
+	case eMaxPowerBoost: {
+		ChangeMaxPower(GetMaxPowerRestore() * value);
+	}break;
+	case eSatietyBoost: {
+		ChangeSatiety(GetSatietyRestore() * value);
+	}break;
+	case eRadiationBoost: {
+		ChangeRadiation(GetRadiationRestore() * value);
+	}break;
+	case ePsyHealthBoost: {
+		ChangePsyHealth(GetPsyHealthRestore() * value);
+	}break;
+	case eAlcoholBoost: {
+		ChangeAlcohol(GetAlcoholRestore() * value);
+	}break;
+	case eThirstBoost: {
+		ChangeThirst(GetThirstRestore() * value);
+	}break;
+	case eWoundsHealBoost: {
+		ChangeBleeding(GetWoundIncarnation() * value);
+	}break;
+	default:
+		Msg("%s unknown effect num [%d]", __FUNCTION__, type);
+		break;
+	}
 }

@@ -21,7 +21,7 @@ public:
     u32							GetVestWidth        () const { return m_iVestWidth; }
     u32							GetVestHeight       () const { return m_iVestHeight; }
 
-    virtual float				GetHitTypeProtection(ALife::EHitType hit_type) override;
+    virtual float				GetHitTypeProtection(int) override;
             float				HitThruArmour       (SHit* pHDS);
             float				GetPowerLoss        ();
 

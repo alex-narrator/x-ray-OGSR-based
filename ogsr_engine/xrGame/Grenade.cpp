@@ -57,14 +57,11 @@ BOOL CGrenade::net_Spawn(CSE_Abstract* DC)
 	m_thrown							= false;
 	//
 	if (auto se_grenade = smart_cast<CSE_ALifeItemGrenade*>(DC))
-		if (se_grenade->m_dwDestroyTimeMax != NULL) //загружаем значение задержки из серверного объекта
+		if (se_grenade->m_dwDestroyTimeMax) {	//загружаем значение задержки из серверного объекта
 			m_dwDestroyTimeMax = se_grenade->m_dwDestroyTimeMax;
-		else										//попытаемся сгенерировать задержку
-		{
+		}else{											//попытаемся сгенерировать задержку
 			LPCSTR str = pSettings->r_string(cNameSect(), "destroy_time");
-			int cnt = _GetItemCount(str);
-			if (cnt > 1)							//заданы границы рандомной задержки до взрыва
-			{
+			if (_GetItemCount(str) > 1){				//заданы границы рандомной задержки до взрыва
 				Ivector2 m = pSettings->r_ivector2(cNameSect(), "destroy_time");
 				m_dwDestroyTimeMax = ::Random.randI(m.x, m.y);
 			}

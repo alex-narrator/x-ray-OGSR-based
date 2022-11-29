@@ -9,6 +9,60 @@ class CLevel;
 #include "Hit.h"
 #include "Level.h"
 
+enum eInfluenceParams {
+	//instant
+	eHealthInfluence,
+	ePowerInfluence,
+	eMaxPowerInfluence,
+	eSatietyInfluence,
+	eRadiationInfluence,
+	ePsyHealthInfluence,
+	eAlcoholInfluence,
+	eThirstInfluence,
+	eWoundsHealInfluence,
+
+	eInfluenceMax,
+};
+
+enum eBoostParams {
+	//boost
+	eHealthBoost,
+	ePowerBoost,
+	eMaxPowerBoost,
+	eSatietyBoost,
+	eRadiationBoost,
+	ePsyHealthBoost,
+	eAlcoholBoost,
+	eThirstBoost,
+	eWoundsHealBoost,
+
+	eRestoreBoostMax,
+
+	eAdditionalWalkAccelBoost = eRestoreBoostMax,
+	eAdditionalJumpSpeedBoost,
+	eAdditionalWeightBoost,
+
+	eHitTypeProtectionBoosterIndex,
+
+	eBurnImmunityBoost = eHitTypeProtectionBoosterIndex,
+	eShockImmunityBoost,
+	eStrikeImmunityBoost,
+	eWoundImmunityBoost,
+	eRadiationImmunityBoost,
+	eTelepaticImmunityBoost,
+	eChemicalBurnImmunityBoost,
+	eExplosionImmunitBoost,
+	eFireWoundImmunityBoost,
+
+	eBoostMax,
+};
+
+struct SBooster {
+	eBoostParams	m_BoostType{};
+	float			f_BoostValue{};
+	float			f_BoostTime{};
+};
+
 class CEntityCondition;
 class CEntityConditionSimple
 {
@@ -92,9 +146,10 @@ public:
 	void					ClearWounds();
 protected:
 	virtual void			UpdateHealth			();
-	void					UpdateSatiety			(float k=1.0f);
-	virtual void			UpdateRadiation			(/*float k=1.0f*/);
-	virtual void			UpdatePsyHealth			(/*float k=1.0f*/);
+	virtual void			UpdateRadiation			();
+	virtual void			UpdatePsyHealth			();
+	virtual void			UpdateSatiety			(){};
+	virtual void			UpdateAlcohol			(){};
 
 	void					UpdateEntityMorale		();
 
@@ -192,4 +247,35 @@ public:
 	static  void					script_register(lua_State *L);
 	virtual float					GetParamByName		(LPCSTR name);
 	IC SConditionChangeV&			GetChangeValues() { return m_change_v; }
+
+	virtual float GetWoundIncarnation	() { return m_change_v.m_fV_WoundIncarnation; };
+	virtual float GetHealthRestore		() { return m_change_v.m_fV_HealthRestore; };
+	virtual float GetRadiationRestore	() { return m_change_v.m_fV_Radiation; };
+	virtual float GetPsyHealthRestore	() { return m_change_v.m_fV_PsyHealth; };
+	virtual float GetPowerRestore		() { return 1.f; };
+	virtual float GetMaxPowerRestore	() { return 1.f; };
+	virtual float GetSatietyRestore		() { return 1.f; };
+	virtual float GetAlcoholRestore		() { return 1.f; };
+	virtual float GetThirstRestore		() { return 1.f; };
+
+	//застосувати зміни параметрів сутності у абсолюдних значеннях
+	virtual void					ApplyInfluence	(int, float);
+	virtual void					ApplyBooster	(SBooster&);
+
+	virtual void					UpdateBoosters();
+
+	virtual float					GetBoostedParams			(int);
+	virtual float					GetBoostedHitTypeProtection (int, bool = false);
+	virtual void					BoostParameters			(const SBooster&);
+	virtual void					DisableBoostParameters	(const SBooster&);
+
+	virtual void					ClearAllBoosters		();
+	//застосувати зміни параметрів сутності у відносних значеннях
+	virtual void					ApplyRestoreBoost		(int, float);
+
+	typedef							xr_map<eBoostParams, SBooster> BOOSTER_MAP;
+
+protected:
+	BOOSTER_MAP						m_boosters;
+	svector<float, eBoostMax>		m_BoostParams;
 };

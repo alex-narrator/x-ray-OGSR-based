@@ -45,22 +45,8 @@ CInventoryItem::CInventoryItem()
 	m_flags.set			(FCanTake,TRUE);
 	m_flags.set			(FCanTrade,TRUE);
 	m_flags.set			(FUsingCondition,TRUE);
-	m_fCondition		= 1.0f;
-
-	m_name = m_nameShort = NULL;
 
 	m_eItemPlace		= eItemPlaceUndefined;
-	m_Description		= "";
-	m_cell_item			= NULL;
-
-	m_fTTLOnDecrease			= 0.f;
-	m_fLastTimeCalled			= 0.f;
-
-	b_brake_item = false;
-
-	loaded_belt_index = (u8)(-1);
-	m_highlight_equipped = false;
-	m_always_ungroupable = false;
 
 	m_HitTypeProtection.clear();
 	m_HitTypeProtection.resize(ALife::eHitTypeMax);
@@ -70,18 +56,16 @@ CInventoryItem::CInventoryItem()
 
 	m_power_sources.clear();
 
-	m_fPowerLevel = 1.f;
 	m_fPowerConsumingUpdateTime = Level().GetGameDayTimeSec();
 }
 
 CInventoryItem::~CInventoryItem() 
 {
-        ASSERT_FMT( (int)m_slots.size() >= 0, "m_slots.size() returned negative value inside destructor!" ); // alpet: для детекта повреждения объекта
+    ASSERT_FMT( (int)m_slots.size() >= 0, "m_slots.size() returned negative value inside destructor!" ); // alpet: для детекта повреждения объекта
 
 	bool B_GOOD			= (	!m_pCurrentInventory || 
 							(std::find(	m_pCurrentInventory->m_all.begin(),m_pCurrentInventory->m_all.end(), this)==m_pCurrentInventory->m_all.end()) );
-	if(!B_GOOD)
-	{
+	if(!B_GOOD){
 		CObject* p	= object().H_Parent();
 		Msg("inventory ptr is [%s]",m_pCurrentInventory?"not-null":"null");
 		if(p)
@@ -93,6 +77,8 @@ CInventoryItem::~CInventoryItem()
 				p ? p->ID() : -1,
 				Device.dwFrame);
 	}
+
+	sndBreaking.destroy();
 }
 
 void CInventoryItem::Load(LPCSTR section) 
@@ -160,22 +146,23 @@ void CInventoryItem::Load(LPCSTR section)
 
 	//*_restore_speed
 	m_ItemEffect[eHealthRestoreSpeed]					= READ_IF_EXISTS(pSettings, r_float, section, "health_restore_speed",		0.f);
-	m_ItemEffect[eRadiationRestoreSpeed]				= READ_IF_EXISTS(pSettings, r_float, section, "radiation_restore_speed",	0.f);
-	m_ItemEffect[eSatietyRestoreSpeed]					= READ_IF_EXISTS(pSettings, r_float, section, "satiety_restore_speed",		0.f);
 	m_ItemEffect[ePowerRestoreSpeed]					= READ_IF_EXISTS(pSettings, r_float, section, "power_restore_speed",		0.f);
-	m_ItemEffect[eBleedingRestoreSpeed]					= READ_IF_EXISTS(pSettings, r_float, section, "bleeding_restore_speed",		0.f);
+	m_ItemEffect[eMaxPowerRestoreSpeed]					= READ_IF_EXISTS(pSettings, r_float, section, "max_power_restore_speed",	0.f);
+	m_ItemEffect[eSatietyRestoreSpeed]					= READ_IF_EXISTS(pSettings, r_float, section, "satiety_restore_speed",		0.f);
+	m_ItemEffect[eRadiationRestoreSpeed]				= READ_IF_EXISTS(pSettings, r_float, section, "radiation_restore_speed",	0.f);
 	m_ItemEffect[ePsyHealthRestoreSpeed]				= READ_IF_EXISTS(pSettings, r_float, section, "psy_health_restore_speed",	0.f);
 	m_ItemEffect[eAlcoholRestoreSpeed]					= READ_IF_EXISTS(pSettings, r_float, section, "alcohol_restore_speed",		0.f);
 	m_ItemEffect[eThirstRestoreSpeed]					= READ_IF_EXISTS(pSettings, r_float, section, "thirst_restore_speed",		0.f);
+	m_ItemEffect[eWoundsHealSpeed]						= READ_IF_EXISTS(pSettings, r_float, section, "wounds_heal_speed",			0.f);
 	//addition
 	m_ItemEffect[eAdditionalWalkAccel]					= READ_IF_EXISTS(pSettings, r_float, section, "additional_walk_accel",		0.f);
 	m_ItemEffect[eAdditionalJumpSpeed]					= READ_IF_EXISTS(pSettings, r_float, section, "additional_jump_speed",		0.f);
 	m_ItemEffect[eAdditionalWeight]						= READ_IF_EXISTS(pSettings, r_float, section, "additional_max_weight",		0.f);
-//	m_ItemEffect[eAdditionalVolume]						= READ_IF_EXISTS(pSettings, r_float, section, "additional_max_volume",		0.f);
+	m_ItemEffect[eAdditionalVolume]						= READ_IF_EXISTS(pSettings, r_float, section, "additional_max_volume",		0.f);
 	//protection
 	m_HitTypeProtection[ALife::eHitTypeBurn]			= READ_IF_EXISTS(pSettings, r_float, section, "burn_protection",			0.f);
-	m_HitTypeProtection[ALife::eHitTypeStrike]			= READ_IF_EXISTS(pSettings, r_float, section, "strike_protection",			0.f);
 	m_HitTypeProtection[ALife::eHitTypeShock]			= READ_IF_EXISTS(pSettings, r_float, section, "shock_protection",			0.f);
+	m_HitTypeProtection[ALife::eHitTypeStrike]			= READ_IF_EXISTS(pSettings, r_float, section, "strike_protection",			0.f);
 	m_HitTypeProtection[ALife::eHitTypeWound]			= READ_IF_EXISTS(pSettings, r_float, section, "wound_protection",			0.f);
 	m_HitTypeProtection[ALife::eHitTypeRadiation]		= READ_IF_EXISTS(pSettings, r_float, section, "radiation_protection",		0.f);
 	m_HitTypeProtection[ALife::eHitTypeTelepatic]		= READ_IF_EXISTS(pSettings, r_float, section, "telepatic_protection",		0.f);
@@ -208,6 +195,9 @@ void CInventoryItem::Load(LPCSTR section)
 	m_uSlotEnabled				= READ_IF_EXISTS(pSettings, r_u32, section, "slot_enabled", NO_ACTIVE_SLOT);
 
 	m_detail_part_section		= READ_IF_EXISTS(pSettings, r_string, section, "detail_parts", nullptr);
+
+	m_sAttachMenuTip			= READ_IF_EXISTS(pSettings, r_string, section, "menu_attach_tip", "st_attach");
+	m_sDetachMenuTip			= READ_IF_EXISTS(pSettings, r_string, section, "menu_detach_tip", "st_detach");
 }
 
 
@@ -486,8 +476,9 @@ void CInventoryItem::save(NET_Packet &packet)
 	else
           packet.w_u8( (u8)m_eItemPlace );
 
-	if ( m_eItemPlace == eItemPlaceSlot )
-		packet.w_u8( (u8)GetSlot() );
+	if (m_eItemPlace == eItemPlaceSlot) {
+		packet.w_u8((u8)GetSlot());
+	}
 
 	if (object().H_Parent()) {
 		packet.w_u8			(0);
@@ -526,8 +517,9 @@ void CInventoryItem::load(IReader &packet)
 			auto &slots = GetSlots();
             SetSlot( slots.size() ? slots[ 0 ] : NO_ACTIVE_SLOT );
 		}
-		else
-			SetSlot( packet.r_u8() );
+		else {
+			SetSlot(packet.r_u8());
+		}
 
 	u8						tmp = packet.r_u8();
 	if (!tmp)
@@ -915,11 +907,11 @@ bool CInventoryItem::NeedForcedDescriptionUpdate() const {
 		IsPowerConsumer() && IsPowerOn();
 }
 
-float CInventoryItem::GetHitTypeProtection(ALife::EHitType hit_type){
+float CInventoryItem::GetHitTypeProtection(int hit_type){
 	return m_HitTypeProtection[hit_type] * GetCondition();
 }
 
-float CInventoryItem::GetItemEffect(ItemEffects effect) {
+float CInventoryItem::GetItemEffect(int effect) const {
 	//на випромінення радіації стан предмету не впливає (окрім як для артефактів)
 	float condition_k = (effect == eRadiationRestoreSpeed) ? 1.f : GetCondition();
 	return m_ItemEffect[effect] * condition_k;

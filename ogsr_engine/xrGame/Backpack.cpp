@@ -10,11 +10,6 @@ CBackpack::CBackpack(){
 
 CBackpack::~CBackpack(){}
 
-void CBackpack::Load(LPCSTR section){
-	inherited::Load(section);
-	m_fAdditionalVolume = READ_IF_EXISTS(pSettings, r_float, section, "additional_max_volume", 0.f);
-}
-
 void CBackpack::Hit(SHit* pHDS){
 	//Msg("pHDS before hit: [%.2f]", pHDS->power);
 	inherited::Hit(pHDS);
@@ -56,8 +51,4 @@ void CBackpack::HitItemsInBackPack(SHit* pHDS, bool hit_random_item){
 bool  CBackpack::can_be_attached() const{
 	const CActor* pA = smart_cast<const CActor*>(H_Parent());
 	return pA ? (pA->GetBackpack() == this) : true;
-}
-
-float CBackpack::GetAdditionalVolume() const {
-	return m_fAdditionalVolume * GetCondition();
 }

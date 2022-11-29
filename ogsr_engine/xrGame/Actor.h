@@ -210,9 +210,9 @@ public:
 
 public:
 	//свойства артефактов
-	virtual void		UpdateActiveItemEffects	();
+	virtual void		UpdateItemsBoost	();
 
-	virtual float		GetArtefactsProtection	(float, ALife::EHitType);
+	virtual float		GetArtefactsProtection	(float, int);
 
 	virtual void		UpdateArtefactPanel	();
 	virtual void		UpdateSlotPanel		();
@@ -805,23 +805,10 @@ protected:
 			u32		m_uGearInfoStartTime		{};
 
 public:
-	enum ActorRestoreParams {
-		//restore
-		eHealthRestoreSpeed,
-		eRadiationRestoreSpeed,
-		eSatietyRestoreSpeed,
-		eThirstRestoreSpeed,
-		ePowerRestoreSpeed,
-		eBleedingRestoreSpeed,
-		ePsyHealthRestoreSpeed,
-		eAlcoholRestoreSpeed,
-		eRestoreParamMax,
-	};
-
-			float	GetRestoreParam			(ActorRestoreParams param);
-			float	GetTotalArtefactsEffect	(u32 i);
+			float	GetItemBoostedParams		(int);
+			float	GetTotalArtefactsEffect		(int);
 protected:
-	svector<float, ActorRestoreParams::eRestoreParamMax> m_ActorRestoreParam;
+	svector<float, eRestoreBoostMax> m_ActorItemBoostedParam;
 };
 
 extern bool		isActorAccelerated			(u32 mstate, bool ZoomMode);

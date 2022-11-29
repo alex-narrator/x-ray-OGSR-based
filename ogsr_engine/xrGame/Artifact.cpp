@@ -473,11 +473,11 @@ void CArtefact::SwitchAfParticles(bool bOn)
 	}
 }
 
-float	CArtefact::GetHitTypeProtection(ALife::EHitType hit_type){
+float	CArtefact::GetHitTypeProtection(int hit_type){
 	return inherited::GetHitTypeProtection(hit_type) * GetRandomKoef();
 }
 
-float CArtefact::GetItemEffect(ItemEffects effect) {
+float CArtefact::GetItemEffect(int effect) const {
 	return m_ItemEffect[effect] * GetCondition() * GetRandomKoef();
 }
 

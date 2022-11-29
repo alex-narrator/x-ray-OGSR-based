@@ -69,7 +69,7 @@ BOOL	CCustomOutfit::BonePassBullet					(int boneID)
 	return m_boneProtection->getBonePassBullet(s16(boneID));
 };
 
-float CCustomOutfit::GetHitTypeProtection(ALife::EHitType hit_type) {
+float CCustomOutfit::GetHitTypeProtection(int hit_type) {
 	if(hit_type != ALife::eHitTypeFireWound)
 		return inherited::GetHitTypeProtection(hit_type);
 	else {

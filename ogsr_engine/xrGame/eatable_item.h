@@ -1,6 +1,7 @@
 #pragma once
 
 #include "inventory_item.h"
+#include "entity_alive.h"
 
 class CPhysicItem;
 class CEntityAlive;
@@ -49,27 +50,20 @@ protected:
 	LPCSTR					m_sUseMenuTip{};
 	ref_sound				sndUse;
 
+	float					m_fBoostTime{};
+
 public:
 	int						GetStartPortionsNum	() const { return m_iStartPortionsNum; };
 	int						GetPortionsNum		() const { return m_iPortionsNum; };
 
-	enum ItemInfluence {
-		eHealthInfluence,
-		ePowerInfluence,
-		eMaxPowerInfluence,
-		eSatietyInfluence,
-		eRadiationInfluence,
-		ePsyHealthInfluence,
-		eAlcoholInfluence,
-		eThirstInfluence,
-		eWoundsHealPerc,
-		eInfluenceMax,
-	};
+	virtual float			GetItemInfluence(int) const;
+	virtual float			GetItemBoost	(int) const;
+	virtual float			GetItemBoostTime() const;
 
-	virtual float			GetItemInfluence(ItemInfluence influence);
-
-	virtual void			ApplyInfluence	(ItemInfluence influence_num, CEntityAlive* entity_alive, float value);
+	virtual bool			IsInfluencer	() const;
+	virtual bool			IsBooster		() const;
 protected:
-	svector<float, ItemInfluence::eInfluenceMax> m_ItemInfluence;
+	svector<float, eInfluenceMax>	m_ItemInfluence;
+	svector<float, eBoostMax>			m_ItemBoost;
 };
 

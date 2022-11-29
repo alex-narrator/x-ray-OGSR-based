@@ -20,30 +20,35 @@
 			<texture>ui_inv_icon_power_restore_speed</texture>
 			<text font="letterica16" x="20" y="0"/>
 		</static_power_restore_speed>
-
-		<static_bleeding_restore_speed width="194" height="20" complex_mode="1">
-			<texture>ui_inv_icon_bleeding_restore_speed</texture>
+		
+		<static_max_power_restore_speed width="194" height="20" complex_mode="1">
+			<texture>ui_inv_icon_power_restore_speed</texture>
 			<text font="letterica16" x="20" y="0"/>
-		</static_bleeding_restore_speed>
+		</static_max_power_restore_speed>
+
+		<static_wounds_heal_speed width="194" height="20" complex_mode="1">
+			<texture>ui_inv_icon_wounds_heal_speed</texture>
+			<text font="letterica16" x="20" y="0"/>
+		</static_wounds_heal_speed>
 		
 		<static_psy_health_restore_speed width="194" height="20" complex_mode="1">
-			<texture>ui_inv_icon_bleeding_restore_speed</texture>
+			<texture>ui_inv_icon_wounds_heal_speed</texture>
 			<text font="letterica16" x="20" y="0"/>
 		</static_psy_health_restore_speed>
 		
 		<static_alcohol_restore_speed width="194" height="20" complex_mode="1">
-			<texture>ui_inv_icon_bleeding_restore_speed</texture>
+			<texture>ui_inv_icon_wounds_heal_speed</texture>
 			<text font="letterica16" x="20" y="0"/>
 		</static_alcohol_restore_speed>
 
 <!-- добавочные параметры прыжка и скорости ходьбы - BEGIN -->
 		<static_additional_walk_accel width="194" height="20" complex_mode="1">
-			<texture>ui_inv_icon_bleeding_restore_speed</texture>
+			<texture>ui_inv_icon_wounds_heal_speed</texture>
 			<text font="letterica16" x="20" y="0"/>
 		</static_additional_walk_accel>
 
 		<static_additional_jump_speed width="194" height="20" complex_mode="1">
-			<texture>ui_inv_icon_bleeding_restore_speed</texture>
+			<texture>ui_inv_icon_wounds_heal_speed</texture>
 			<text font="letterica16" x="20" y="0"/>
 		</static_additional_jump_speed>
 		
@@ -52,11 +57,11 @@
 			<text font="letterica16" x="20" y="0"/>
 		</static_additional_max_weight>
 		
-<!-- 		<static_additional_max_volume width="194" height="20" complex_mode="1">
-			<texture>ui_inv_icon_bleeding_restore_speed</texture>
+		<static_additional_max_volume width="194" height="20" complex_mode="1">
+			<texture>ui_inv_icon_additional_weight</texture>
 			<text font="letterica16" x="20" y="0"/>
-		</static_additional_max_volume> -->
-<!-- добавочные параметры прыжка и скорости ходьбы - END-->
+		</static_additional_max_volume>
+<!-- добавочные параметры прыжка и скорости ходьбы - END -->
 
 		<static_burn_immunity width="194" height="20" complex_mode="1">
 			<texture>ui_inv_icon_burn_immunity</texture>

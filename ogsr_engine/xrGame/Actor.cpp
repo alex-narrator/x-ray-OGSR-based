@@ -149,8 +149,8 @@ CActor::CActor() : CEntityAlive(),current_ik_cam_shift(0)
 
 	updated					= false;
 
-	m_ActorRestoreParam.clear();
-	m_ActorRestoreParam.resize(eRestoreParamMax);
+	m_ActorItemBoostedParam.clear();
+	m_ActorItemBoostedParam.resize(eRestoreBoostMax);
 }
 
 
@@ -1189,7 +1189,7 @@ void CActor::shedule_Update	(u32 DT)
 //	UpdateSleep									();
 
 	//для усіх предметів що впливають на параметри актора
-	UpdateActiveItemEffects();
+	UpdateItemsBoost();
 	if ( !m_holder )
 	  m_pPhysics_support->in_shedule_Update( DT );
 
@@ -1469,15 +1469,15 @@ void CActor::UpdateQuickSlotPanel(){
 		HUD().GetUI()->UIMainIngameWnd->m_quickSlotPanel->Update();
 }
 
-constexpr auto ARTEFACTS_UPDATE_TIME = 0.100f;
+constexpr auto ITEMS_BOOST_TIME = 0.100f;
 
-void CActor::UpdateActiveItemEffects()
+void CActor::UpdateItemsBoost()
 {
 	static float update_time = 0;
 
 	float f_update_time = 0;
 
-	if(update_time<ARTEFACTS_UPDATE_TIME){
+	if(update_time< ITEMS_BOOST_TIME){
 		update_time += conditions().fdelta_time();
 		return;
 	}
@@ -1489,14 +1489,14 @@ void CActor::UpdateActiveItemEffects()
 	auto cond = &conditions();
 
 	//проходимо по усім рестор_параметрам для актора
-	for (int i = 0; i < eRestoreParamMax; ++i) {
+	for (int i = 0; i < eRestoreBoostMax; ++i) {
 		//nullifying values
-		m_ActorRestoreParam[i] = 0.f;
+		m_ActorItemBoostedParam[i] = 0.f;
 
-		if (i == eRadiationRestoreSpeed) {
+		if (i == eRadiationBoost) {
 			//OBJECTS_RADIOACTIVE - new version
 			for (const auto& item : inventory().m_all) {
-				float radiation_restore_speed = item->GetItemEffect(CInventoryItem::ItemEffects(i));
+				float radiation_restore_speed = item->GetItemEffect(i);
 				if (item != inventory().ActiveItem()) {//що взяте в руки те випромінює на повну
 					if (GetOutfit()) //костюм захищає від радіації речей
 						radiation_restore_speed *= (1.f - GetOutfit()->GetHitTypeProtection(ALife::eHitTypeRadiation));
@@ -1507,41 +1507,40 @@ void CActor::UpdateActiveItemEffects()
 					if (GetHelmet() && inventory().InRuck(item)) //шолом захищає від радіації речей у рюкзаку
 						radiation_restore_speed *= (1.f - GetHelmet()->GetHitTypeProtection(ALife::eHitTypeRadiation));
 				}
-				m_ActorRestoreParam[i] += radiation_restore_speed;
+				m_ActorItemBoostedParam[i] += radiation_restore_speed;
 			}
-		}
-		else {
+		}else{
 			//artefacts
-			m_ActorRestoreParam[i] += GetTotalArtefactsEffect(i);
+			m_ActorItemBoostedParam[i] += GetTotalArtefactsEffect(i);
 			//outfit
 			auto outfit = GetOutfit();
 			if (outfit && !fis_zero(outfit->GetCondition())) {
-				m_ActorRestoreParam[i] += outfit->GetItemEffect(CInventoryItem::ItemEffects(i));
+				m_ActorItemBoostedParam[i] += outfit->GetItemEffect(i);
 			}
 			//vest
 			auto vest = GetVest();
 			if (vest && !fis_zero(vest->GetCondition())) {
-				m_ActorRestoreParam[i] += vest->GetItemEffect(CInventoryItem::ItemEffects(i));
+				m_ActorItemBoostedParam[i] += vest->GetItemEffect(i);
 			}
 			//helmet
 			auto helmet = GetHelmet();
 			if (helmet && !fis_zero(helmet->GetCondition())) {
-				m_ActorRestoreParam[i] += helmet->GetItemEffect(CInventoryItem::ItemEffects(i));
+				m_ActorItemBoostedParam[i] += helmet->GetItemEffect(i);
 			}
 			//backpack
 			auto backpack = GetBackpack();
 			if (backpack && !fis_zero(backpack->GetCondition())) {
-				m_ActorRestoreParam[i] += backpack->GetItemEffect(CInventoryItem::ItemEffects(i));
+				m_ActorItemBoostedParam[i] += backpack->GetItemEffect(i);
 			}
 		}
-		//apllying effect on actor conditions
-		cond->ApplyRestoreEffect(i, m_ActorRestoreParam[i] * f_update_time);
+		//apllying boost on actor *_restore conditions
+		cond->ApplyRestoreBoost(i, m_ActorItemBoostedParam[i] * f_update_time);
 	}
 
 	callback( GameObject::eUpdateArtefactsOnBelt )( f_update_time );
 }
 
-float	CActor::GetArtefactsProtection(float hit_power, ALife::EHitType hit_type) {
+float	CActor::GetArtefactsProtection(float hit_power, int hit_type) {
 	float res_hit_power_k		= 1.0f;
 	float _af_count				= 0.0f;
 
@@ -1992,17 +1991,17 @@ bool CActor::HasPDAWorkable(){
 	return GetPDA() && GetPDA()->IsPowerOn() && !fis_zero(GetPDA()->GetCondition());
 }
 
-float CActor::GetRestoreParam(ActorRestoreParams param) {
-	return m_ActorRestoreParam[param];
+float CActor::GetItemBoostedParams(int type) {
+	return m_ActorItemBoostedParam[type];
 }
 
-float CActor::GetTotalArtefactsEffect(u32 i) {
+float CActor::GetTotalArtefactsEffect(int i) {
 	float res{};
 	auto &placement = psActorFlags.test(AF_ARTEFACTS_FROM_ALL) ? inventory().m_all : inventory().m_belt;
 	for (const auto& item : placement) {
 		auto artefact = smart_cast<CArtefact*>(item);
 		if (artefact && !fis_zero(artefact->GetCondition())) {
-				res += artefact->GetItemEffect(CInventoryItem::ItemEffects(i));
+				res += artefact->GetItemEffect(i);
 		}
 	}
 	return res;

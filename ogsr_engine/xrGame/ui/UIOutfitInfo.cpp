@@ -10,6 +10,7 @@
 #include "Backpack.h"
 #include "Helmet.h"
 #include "Vest.h"
+#include "ActorCondition.h"
 #include "../string_table.h"
 
 CUIOutfitInfo::CUIOutfitInfo()
@@ -18,7 +19,7 @@ CUIOutfitInfo::CUIOutfitInfo()
 
 CUIOutfitInfo::~CUIOutfitInfo()
 {
-	for(u32 i=_item_start; i<_max_item_index; ++i)
+	for(u32 i=0; i<_max_item_index; ++i)
 	{
 		CUIStatic* _s			= m_items[i];
 		xr_delete				(_s);
@@ -27,13 +28,14 @@ CUIOutfitInfo::~CUIOutfitInfo()
 
 LPCSTR _imm_names []={
 	"health_restore_speed",
-	"radiation_restore_speed",
-	"satiety_restore_speed",
-	"thirst_restore_speed",
 	"power_restore_speed",
-	"bleeding_restore_speed",
+	"max_power_restore_speed",
+	"satiety_restore_speed",
+	"radiation_restore_speed",
 	"psy_health_restore_speed",
 	"alcohol_restore_speed",
+	"thirst_restore_speed",
+	"wounds_heal_speed",
 	//
 	"additional_walk_accel",
 	"additional_jump_speed",
@@ -53,14 +55,15 @@ LPCSTR _imm_names []={
 };
 
 LPCSTR _imm_st_names[]={
-	"ui_inv_health_restore",
-	"ui_inv_radiation",
-	"ui_inv_satiety",
-	"ui_inv_thirst",
+	"ui_inv_health_boost",
 	"ui_inv_power",
-	"ui_inv_bleeding",
+	"ui_inv_max_power",
+	"ui_inv_satiety",
+	"ui_inv_radiation",
 	"ui_inv_psy_health",
 	"ui_inv_alcohol",
+	"ui_inv_thirst",
+	"ui_inv_wounds_heal",
 	//
 	"ui_inv_walk_accel",
 	"ui_inv_jump_speed",
@@ -68,15 +71,15 @@ LPCSTR _imm_st_names[]={
 	//"ui_inv_weight",
 	//"ui_inv_volume",
 	//
-	"ui_inv_outfit_burn_protection",
-	"ui_inv_outfit_shock_protection",
-	"ui_inv_outfit_strike_protection",
-	"ui_inv_outfit_wound_protection",
-	"ui_inv_outfit_radiation_protection",
-	"ui_inv_outfit_telepatic_protection",
-	"ui_inv_outfit_chemical_burn_protection",
-	"ui_inv_outfit_explosion_protection",
-	"ui_inv_outfit_fire_wound_protection",
+	"ui_inv_burn_protection",
+	"ui_inv_shock_protection",
+	"ui_inv_strike_protection",
+	"ui_inv_wound_protection",
+	"ui_inv_radiation_protection",
+	"ui_inv_telepatic_protection",
+	"ui_inv_chemical_burn_protection",
+	"ui_inv_explosion_protection",
+	"ui_inv_fire_wound_protection",
 };
 
 void CUIOutfitInfo::InitFromXml(CUIXml& xml_doc)
@@ -91,7 +94,7 @@ void CUIOutfitInfo::InitFromXml(CUIXml& xml_doc)
 	strconcat					(sizeof(_buff),_buff, _base, ":scroll_view");
 	CUIXmlInit::InitScrollView	(xml_doc, _buff, 0, m_listWnd);
 
-	for (u32 i = _item_start; i < _max_item_index; ++i)
+	for (u32 i = 0; i < _max_item_index; ++i)
 	{
 		strconcat(sizeof(_buff), _buff, _base, ":static_", _imm_names[i]);
 
@@ -117,9 +120,11 @@ void CUIOutfitInfo::Update()
 	auto helmet		= Actor()->GetHelmet();
 	auto vest		= Actor()->GetVest();
 
+	auto& cond		= Actor()->conditions();
+
 	m_listWnd->Clear(false); // clear existing items and do not scroll to top
 
-	for (u32 i = _item_start; i < _max_item_index; ++i)
+	for (u32 i = 0; i < _max_item_index; ++i)
 	{
 		CUIStatic* _s = m_items[i];
 
@@ -128,32 +133,37 @@ void CUIOutfitInfo::Update()
 		float _val{};
 
 		if (i < _hit_type_protection_index){
+
+			_val += cond.GetBoostedParams(i);
+
 			if (i < _item_additional_walk_accel){
-				_val = Actor()->GetRestoreParam(CActor::ActorRestoreParams(i));
-			}
-			else {
+				_val += Actor()->GetItemBoostedParams(i);
+			}else{
 				if (outfit)
-					_val = outfit->GetItemEffect(CInventoryItem::ItemEffects(i));
+					_val += outfit->GetItemEffect(i);
 				if (vest)
-					_val += vest->GetItemEffect(CInventoryItem::ItemEffects(i));
+					_val += vest->GetItemEffect(i);
 				if (backpack)
-					_val += backpack->GetItemEffect(CInventoryItem::ItemEffects(i));
+					_val += backpack->GetItemEffect(i);
 				if (helmet)
-					_val += helmet->GetItemEffect(CInventoryItem::ItemEffects(i));
+					_val += helmet->GetItemEffect(i);
 
 				if (!psActorFlags.is(AF_ARTEFACT_DETECTOR_CHECK) || Actor()->HasDetectorWorkable()) {
 					_val += Actor()->GetTotalArtefactsEffect(i);
 				}
 			}
 		} else {
+
+			_val += cond.GetBoostedHitTypeProtection(i - _hit_type_protection_index, true);
+
 			if (outfit)
-				_val = outfit->GetHitTypeProtection(ALife::EHitType(i - _hit_type_protection_index));
+				_val += outfit->GetHitTypeProtection(i - _hit_type_protection_index);
 			if (vest)
-				_val += vest->GetHitTypeProtection(ALife::EHitType(i - _hit_type_protection_index));
+				_val += vest->GetHitTypeProtection(i - _hit_type_protection_index);
 			if (backpack)
-				_val += backpack->GetHitTypeProtection(ALife::EHitType(i - _hit_type_protection_index));
+				_val += backpack->GetHitTypeProtection(i - _hit_type_protection_index);
 			if (helmet)
-				_val += helmet->GetHitTypeProtection(ALife::EHitType(i - _hit_type_protection_index));
+				_val += helmet->GetHitTypeProtection(i - _hit_type_protection_index);
 
 			if (!psActorFlags.is(AF_ARTEFACT_DETECTOR_CHECK) || Actor()->HasDetectorWorkable()) {
 				_val += (1.0f - Actor()->GetArtefactsProtection(1.0f, ALife::EHitType(i - _hit_type_protection_index)));
@@ -166,18 +176,18 @@ void CUIOutfitInfo::Update()
 		LPCSTR _sn = "%";
 		_val *= 100.0f;
 
-		if (i == _item_radiation_restore_speed){
+		if (i == _item_radiation_restore){
 			_val /= 100.0f;
 			_sn = CStringTable().translate("st_rad").c_str();
 		}
 
-		if (i == _item_bleeding_restore_speed || i == _item_alcohol_restore_speed) {
+		if (i == _item_alcohol_restore) {
 			_val *= -1.0f;
 		}
 
 		LPCSTR _color = (_val > 0) ? "%c[green]" : "%c[red]";
 
-		if (i == _item_bleeding_restore_speed || i == _item_radiation_restore_speed || i == _item_alcohol_restore_speed) {
+		if (i == _item_radiation_restore || i == _item_alcohol_restore) {
 			_color = (_val > 0) ? "%c[red]" : "%c[green]";
 		}
 

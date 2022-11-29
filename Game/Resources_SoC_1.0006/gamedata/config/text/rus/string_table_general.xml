@@ -195,7 +195,7 @@
 	<string id="ui_inv_health">
 		<text>Здоров'я</text>
 	</string>
-	<string id="ui_inv_health_restore">
+	<string id="ui_inv_health_boost">
 		<text>Регенерація</text>
 	</string>
 	<string id="ui_inv_radiation">
@@ -207,8 +207,8 @@
 	<string id="ui_inv_power">
 		<text>Витривалість</text>
 	</string>
-	<string id="ui_inv_bleeding">
-		<text>Кровотеча</text>
+	<string id="ui_inv_wounds_heal">
+		<text>Загоєння ран</text>
 	</string>
 	<string id="st_mp_say_to_all">
 		<text>Всем</text>

@@ -30,6 +30,7 @@
 
 #include "CustomOutfit.h"
 #include "Backpack.h"
+#include "EntityCondition.h"
 
 CInventoryOwner::CInventoryOwner			()
 {
@@ -333,28 +334,29 @@ float CInventoryOwner::GetCarryWeight() const
 //максимальный переносимы вес
 float  CInventoryOwner::MaxCarryWeight () const
 {
-	float ret =  inventory().GetMaxWeight();
+	float res =  inventory().GetMaxWeight();
+
+	const auto EA = smart_cast<const CEntityAlive*>(this);
+	res += (res * EA->conditions().GetBoostedParams(eAdditionalWeightBoost));
 
 	auto outfit = GetOutfit();
 	if (outfit && !fis_zero(outfit->GetCondition()))
-		ret += outfit->GetItemEffect(CInventoryItem::eAdditionalWeight);
+		res += outfit->GetItemEffect(CInventoryItem::eAdditionalWeight);
 
 	auto backpack = GetBackpack();
 	if (backpack && !fis_zero(backpack->GetCondition()))
-		ret += backpack->GetItemEffect(CInventoryItem::eAdditionalWeight);
+		res += backpack->GetItemEffect(CInventoryItem::eAdditionalWeight);
 
 	if (inventory().OwnerIsActor()){
 		auto &placement = psActorFlags.test(AF_ARTEFACTS_FROM_ALL) ? inventory().m_all : inventory().m_belt;
 		for (const auto& it : placement) {
 			auto artefact = smart_cast<CArtefact*>(it);
 			if (artefact && !fis_zero(artefact->GetCondition()))
-				ret += artefact->GetItemEffect(CInventoryItem::eAdditionalWeight);
+				res += artefact->GetItemEffect(CInventoryItem::eAdditionalWeight);
 		}
 	}
 
-
-
-	return ret;
+	return res;
 }
 
 float CInventoryOwner::GetCarryVolume() const
@@ -364,13 +366,13 @@ float CInventoryOwner::GetCarryVolume() const
 
 float  CInventoryOwner::MaxCarryVolume() const
 {
-	float ret = inventory().GetMaxVolume();
+	float res = inventory().GetMaxVolume();
 
 	auto backpack = GetBackpack();
 	if (backpack && !fis_zero(backpack->GetCondition()))
-		ret += backpack->GetAdditionalVolume();
+		res += backpack->GetItemEffect(CInventoryItem::eAdditionalVolume);
 
-	return ret;
+	return res;
 }
 
 void CInventoryOwner::spawn_supplies		()

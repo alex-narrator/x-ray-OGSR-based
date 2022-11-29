@@ -237,7 +237,7 @@ float CScriptGameObject::GetCurrentOutfitProtection(int hit_type)
 	if(!o)				return 0.0f;
 
 //	return		1.0f - o->GetDefHitTypeProtection(ALife::EHitType(hit_type));
-	return		/*1.0f - */o->GetHitTypeProtection(ALife::EHitType(hit_type));
+	return		/*1.0f - */o->GetHitTypeProtection(hit_type);
 }
 
 CScriptGameObject *CScriptGameObject::GetFood() const

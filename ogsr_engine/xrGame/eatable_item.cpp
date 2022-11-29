@@ -10,7 +10,6 @@
 #include "eatable_item.h"
 #include "physic_item.h"
 #include "Level.h"
-#include "entity_alive.h"
 #include "EntityCondition.h"
 #include "InventoryOwner.h"
 
@@ -24,6 +23,9 @@ CEatableItem::CEatableItem()
 
 	m_ItemInfluence.clear();
 	m_ItemInfluence.resize(eInfluenceMax);
+
+	m_ItemBoost.clear();
+	m_ItemBoost.resize(eBoostMax);
 }
 
 CEatableItem::~CEatableItem()
@@ -39,17 +41,41 @@ DLL_Pure *CEatableItem::_construct	()
 void CEatableItem::Load(LPCSTR section)
 {
 	inherited::Load(section);
+	//instant
+	m_ItemInfluence[eHealthInfluence]		= READ_IF_EXISTS	(pSettings,r_float,section,"eat_health",						0.0f);
+	m_ItemInfluence[ePowerInfluence]		= READ_IF_EXISTS	(pSettings,r_float,section,"eat_power",							0.0f);
+	m_ItemInfluence[eMaxPowerInfluence]		= READ_IF_EXISTS	(pSettings,r_float,section,"eat_max_power",						0.0f);
+	m_ItemInfluence[eSatietyInfluence]		= READ_IF_EXISTS	(pSettings,r_float,section,"eat_satiety",						0.0f);
+	m_ItemInfluence[eRadiationInfluence]	= READ_IF_EXISTS	(pSettings,r_float,section,"eat_radiation",						0.0f);
+	m_ItemInfluence[ePsyHealthInfluence]	= READ_IF_EXISTS	(pSettings,r_float,section,"eat_psyhealth",						0.0f);
+	m_ItemInfluence[eAlcoholInfluence]		= READ_IF_EXISTS	(pSettings,r_float,section,"eat_alcohol",						0.0f);
+	m_ItemInfluence[eThirstInfluence]		= READ_IF_EXISTS	(pSettings,r_float,section,"eat_thirst",						0.0f);
+	m_ItemInfluence[eWoundsHealInfluence]	= READ_IF_EXISTS	(pSettings,r_float,section,"eat_wounds_heal",					0.0f);
+	//boost
+	m_ItemBoost[eHealthBoost]				= READ_IF_EXISTS	(pSettings,r_float,section,"boost_health",						0.0f);
+	m_ItemBoost[ePowerBoost]				= READ_IF_EXISTS	(pSettings,r_float,section,"boost_power",						0.0f);
+	m_ItemBoost[eMaxPowerBoost]				= READ_IF_EXISTS	(pSettings,r_float,section,"boost_max_power",					0.0f);
+	m_ItemBoost[eSatietyBoost]				= READ_IF_EXISTS	(pSettings,r_float,section,"boost_satiety",						0.0f);
+	m_ItemBoost[eRadiationBoost]			= READ_IF_EXISTS	(pSettings,r_float,section,"boost_radiation",					0.0f);
+	m_ItemBoost[ePsyHealthBoost]			= READ_IF_EXISTS	(pSettings,r_float,section,"boost_psyhealth",					0.0f);
+	m_ItemBoost[eAlcoholBoost]				= READ_IF_EXISTS	(pSettings,r_float,section,"boost_alcohol",						0.0f);
+	m_ItemBoost[eThirstBoost]				= READ_IF_EXISTS	(pSettings,r_float,section,"boost_thirst",						0.0f);
+	m_ItemBoost[eWoundsHealBoost]			= READ_IF_EXISTS	(pSettings,r_float,section,"boost_wounds_heal",					0.0f);
 
-	m_ItemInfluence[eHealthInfluence]		= READ_IF_EXISTS	(pSettings,r_float,section,"eat_health",		0.0f);
-	m_ItemInfluence[ePowerInfluence]		= READ_IF_EXISTS	(pSettings,r_float,section,"eat_power",			0.0f);
-	m_ItemInfluence[eMaxPowerInfluence]		= READ_IF_EXISTS	(pSettings,r_float,section,"eat_max_power",		0.0f);
-	m_ItemInfluence[eSatietyInfluence]		= READ_IF_EXISTS	(pSettings,r_float,section,"eat_satiety",		0.0f);
-	m_ItemInfluence[eRadiationInfluence]	= READ_IF_EXISTS	(pSettings,r_float,section,"eat_radiation",		0.0f);
-	m_ItemInfluence[ePsyHealthInfluence]	= READ_IF_EXISTS	(pSettings,r_float,section,"eat_psyhealth",		0.0f);
-	m_ItemInfluence[eAlcoholInfluence]		= READ_IF_EXISTS	(pSettings,r_float,section,"eat_alcohol",		0.0f);
-	m_ItemInfluence[eThirstInfluence]		= READ_IF_EXISTS	(pSettings,r_float,section,"eat_thirst",		0.0f);
-	m_ItemInfluence[eWoundsHealPerc]		= READ_IF_EXISTS	(pSettings,r_float,section,"wounds_heal_perc",	0.0f);
-	clamp						(m_ItemInfluence[eWoundsHealPerc], 0.f, 1.f);
+	m_ItemBoost[eAdditionalWalkAccelBoost]	= READ_IF_EXISTS	(pSettings,r_float,section,"boost_walk_accel",					0.0f);
+	m_ItemBoost[eAdditionalJumpSpeedBoost]	= READ_IF_EXISTS	(pSettings,r_float,section,"boost_jump_speed",					0.0f);
+	m_ItemBoost[eAdditionalWeightBoost]		= READ_IF_EXISTS	(pSettings,r_float,section,"boost_max_weight",					0.0f);
+
+	m_ItemBoost[eBurnImmunityBoost]			= READ_IF_EXISTS	(pSettings,r_float,section,"boost_burn_protection",				0.0f);
+	m_ItemBoost[eShockImmunityBoost]		= READ_IF_EXISTS	(pSettings,r_float,section,"boost_strike_protection",			0.0f);
+	m_ItemBoost[eStrikeImmunityBoost]		= READ_IF_EXISTS	(pSettings,r_float,section,"boost_shock_protection",			0.0f);
+	m_ItemBoost[eWoundImmunityBoost]		= READ_IF_EXISTS	(pSettings,r_float,section,"boost_wound_protection",			0.0f);
+	m_ItemBoost[eRadiationImmunityBoost]	= READ_IF_EXISTS	(pSettings,r_float,section,"boost_radiation_protection",		0.0f);
+	m_ItemBoost[eTelepaticImmunityBoost]	= READ_IF_EXISTS	(pSettings,r_float,section,"boost_telepatic_protection",		0.0f);
+	m_ItemBoost[eChemicalBurnImmunityBoost]	= READ_IF_EXISTS	(pSettings,r_float,section,"boost_chemical_burn_protection",	0.0f);
+	m_ItemBoost[eExplosionImmunitBoost]		= READ_IF_EXISTS	(pSettings,r_float,section,"boost_explosion_protection",		0.0f);
+	m_ItemBoost[eFireWoundImmunityBoost]	= READ_IF_EXISTS	(pSettings,r_float,section,"boost_fire_wound_protection",		0.0f);
+	m_fBoostTime							= READ_IF_EXISTS	(pSettings,r_float,section,"boost_time",						0.f);
 	
 	m_iStartPortionsNum			= READ_IF_EXISTS	(pSettings, r_s32, section, "eat_portions_num", 1);
 	VERIFY						(m_iPortionsNum < 10000);
@@ -125,7 +151,12 @@ void CEatableItem::UseBy (CEntityAlive* entity_alive)
 	//R_ASSERT		(object().H_Parent()->ID()==entity_alive->ID());
 
 	for (int i = 0; i < eInfluenceMax; ++i) {
-		ApplyInfluence(ItemInfluence(i), entity_alive, GetItemInfluence(ItemInfluence(i)));
+		entity_alive->conditions().ApplyInfluence(i, GetItemInfluence(i));
+	}
+
+	for (int i = 0; i < eBoostMax; ++i) {
+		SBooster B{ (eBoostParams)i, GetItemBoost(i), GetItemBoostTime() };
+		entity_alive->conditions().ApplyBooster(B);
 	}
 	
 	if (pSettings->line_exist(object().cNameSect(), "use_sound")) {
@@ -167,7 +198,7 @@ float CEatableItem::GetOnePortionWeight()
 	float   rest = 0.0f;
 	LPCSTR  sect = object().cNameSect().c_str();
 	float   weight = READ_IF_EXISTS(pSettings, r_float, sect, "inv_weight", 0.100f);
-	s32     portions = pSettings->r_s32(sect, "eat_portions_num");
+	s32     portions = GetStartPortionsNum();//pSettings->r_s32(sect, "eat_portions_num");
 
 	if (portions > 0) {
 		rest = weight / portions;
@@ -187,7 +218,7 @@ float CEatableItem::GetOnePortionVolume()
 
 	LPCSTR  sect = object().cNameSect().c_str();
 	float   volume = READ_IF_EXISTS(pSettings, r_float, sect, "inv_volume", 0.f);
-	s32     portions = pSettings->r_s32(sect, "eat_portions_num");
+	s32     portions = GetStartPortionsNum();//pSettings->r_s32(sect, "eat_portions_num");
 
 	if (portions > 0) {
 		rest = volume / portions;
@@ -203,7 +234,7 @@ u32 CEatableItem::GetOnePortionCost()
 	u32     rest = 0;
 	LPCSTR  sect = object().cNameSect().c_str();
 	u32     cost = READ_IF_EXISTS(pSettings, r_u32, sect, "cost", 1);
-	s32     portions = pSettings->r_s32(sect, "eat_portions_num");
+	s32     portions = GetStartPortionsNum();//pSettings->r_s32(sect, "eat_portions_num");
 
 	if (portions > 0) {
 		rest = cost / portions;
@@ -215,47 +246,35 @@ u32 CEatableItem::GetOnePortionCost()
 	return rest;
 }
 
-float CEatableItem::GetItemInfluence(ItemInfluence influence) {
+float CEatableItem::GetItemInfluence(int influence) const {
 	if (influence == eRadiationInfluence) {
 		return (m_ItemInfluence[influence] + GetItemEffect(eRadiationRestoreSpeed) * m_fSelfRadiationInfluence) * GetCondition();
 	}
 	return m_ItemInfluence[influence] * GetCondition();
 }
 
-void CEatableItem::ApplyInfluence(ItemInfluence influence_num, CEntityAlive* entity_alive, float value) {
-	if (!entity_alive || fis_zero(value)) return;
-	auto econd = &entity_alive->conditions();
-	switch (influence_num)
-	{
-	case eHealthInfluence: {
-		econd->ChangeHealth(value);
-	}break;
-	case ePowerInfluence: {
-		econd->ChangePower(value);
-	}break;
-	case eMaxPowerInfluence: {
-		econd->ChangeMaxPower(value);
-	}break;
-	case eSatietyInfluence: {
-		econd->ChangeSatiety(value);
-	}break;
-	case eRadiationInfluence: {
-		econd->ChangeRadiation(value);
-	}break;
-	case ePsyHealthInfluence: {
-		econd->ChangePsyHealth(value);
-	}break;
-	case eAlcoholInfluence: {
-		econd->ChangeAlcohol(value);
-	}break;
-	case eThirstInfluence: {
-		econd->ChangeThirst(value);
-	}break;
-	case eWoundsHealPerc: {
-		econd->ChangeBleeding(value);
-	}break;
-	default:
-		Msg("%s unknown influence num [%d]", __FUNCTION__, influence_num);
-		break;
+float CEatableItem::GetItemBoost(int boost) const {
+	return m_ItemBoost[boost] * GetCondition();
+}
+
+float CEatableItem::GetItemBoostTime() const {
+	return m_fBoostTime * GetCondition();
+}
+
+bool CEatableItem::IsInfluencer() const {
+	for (int i = 0; i < eInfluenceMax; ++i) {
+		if(!fis_zero(GetItemInfluence(i)))
+			return true;
 	}
+	return false;
+}
+
+bool CEatableItem::IsBooster() const {
+	if (fis_zero(GetItemBoostTime())) return false;
+
+	for (int i = 0; i < eBoostMax; ++i) {
+		if (!fis_zero(GetItemBoost(i)))
+			return true;
+	}
+	return false;
 }

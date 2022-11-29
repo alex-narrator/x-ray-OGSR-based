@@ -241,12 +241,10 @@ void CWeapon::Load		(LPCSTR section)
 	// load ammo classes
 	m_ammoTypes.clear	(); 
 	LPCSTR				S = pSettings->r_string(section,"ammo_class");
-	if (S && S[0]) 
-	{
+	if (S && S[0]) {
 		string128		_ammoItem;
 		int				count		= _GetItemCount	(S);
-		for (int it=0; it<count; ++it)	
-		{
+		for (int it=0; it<count; ++it){
 			_GetItem				(S,it,_ammoItem);
 			m_ammoTypes.push_back	(_ammoItem);
 		}

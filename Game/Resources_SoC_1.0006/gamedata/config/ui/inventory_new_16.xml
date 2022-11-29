@@ -193,32 +193,32 @@
 			<texture>ui_inv_icon_power_restore_speed</texture>
 			<text font="letterica16" x="20" y="0" color="ui_clr_1"/>
 		</static_power_restore_speed>
-		<static_bleeding_restore_speed x="0" y="0" width="226" height="15" complex_mode="1">
-			<texture>ui_inv_icon_bleeding_restore_speed</texture>
+		<static_wounds_heal_speed x="0" y="0" width="226" height="15" complex_mode="1">
+			<texture>ui_inv_icon_wounds_heal_speed</texture>
 			<text font="letterica16" x="20" y="0" color="ui_clr_1"/>
-		</static_bleeding_restore_speed>
+		</static_wounds_heal_speed>
 		<static_psy_health_restore_speed x="0" y="0" width="226" height="15" complex_mode="1">
-			<texture>ui_inv_icon_bleeding_restore_speed</texture>
+			<texture>ui_inv_icon_wounds_heal_speed</texture>
 			<text font="letterica16" x="20" y="0" color="ui_clr_1"/>
 		</static_psy_health_restore_speed>
 		<static_alcohol_restore_speed x="0" y="0" width="226" height="15" complex_mode="1">
-			<texture>ui_inv_icon_bleeding_restore_speed</texture>
+			<texture>ui_inv_icon_wounds_heal_speed</texture>
 			<text font="letterica16" x="20" y="0" color="ui_clr_1"/>
 		</static_alcohol_restore_speed>
 		<static_additional_walk_accel x="0" y="0" width="226" height="15" complex_mode="1">
-			<texture>ui_inv_icon_bleeding_restore_speed</texture>
+			<texture>ui_inv_icon_wounds_heal_speed</texture>
 			<text font="letterica16" x="20" y="0" color="ui_clr_1"/>
 		</static_additional_walk_accel>
 		<static_additional_jump_speed x="0" y="0" width="226" height="15" complex_mode="1">
-			<texture>ui_inv_icon_bleeding_restore_speed</texture>
+			<texture>ui_inv_icon_wounds_heal_speed</texture>
 			<text font="letterica16" x="20" y="0" color="ui_clr_1"/>
 		</static_additional_jump_speed>
 		<static_additional_max_weight x="0" y="0" width="226" height="15" complex_mode="1">
-			<texture>ui_inv_icon_bleeding_restore_speed</texture>
+			<texture>ui_inv_icon_wounds_heal_speed</texture>
 			<text font="letterica16" x="20" y="0" color="ui_clr_1"/>
 		</static_additional_max_weight>
 <!-- 		<static_additional_max_volume x="0" y="0" width="226" height="15" complex_mode="1">
-			<texture>ui_inv_icon_bleeding_restore_speed</texture>
+			<texture>ui_inv_icon_wounds_heal_speed</texture>
 			<text font="letterica16" x="20" y="0" color="ui_clr_1"/>
 		</static_additional_max_volume>	 -->	
 		

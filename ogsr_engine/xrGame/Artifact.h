@@ -102,10 +102,10 @@ public:
 	float							m_fRandomKMin{ 1.f };
 	float							m_fRandomKMax{ 1.f };
 	float							m_fRandomK{ 1.f };
-	float							GetRandomKoef() { return m_fRandomK; };
+	float							GetRandomKoef() const { return m_fRandomK; };
 
-	virtual float					GetHitTypeProtection(ALife::EHitType hit_type);
-	virtual float					GetItemEffect		(ItemEffects effect);
+	virtual float					GetHitTypeProtection(int);
+	virtual float					GetItemEffect		(int) const;
 
 	virtual void					UpdateConditionDecrease() override;
 

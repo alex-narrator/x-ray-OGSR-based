@@ -39,6 +39,8 @@ void CUIInventoryWnd::ActivatePropertiesBox()
 	auto pWeapon		= smart_cast<CWeapon*>			(CurrentIItem());
 	auto pAmmo			= smart_cast<CWeaponAmmo*>		(CurrentIItem());
 	auto pVest			= smart_cast<CVest*>			(CurrentIItem());
+	
+	LPCSTR detach_tip = CurrentIItem()->GetDetachMenuTip();
 
 	string1024			temp;
     
@@ -92,7 +94,7 @@ void CUIInventoryWnd::ActivatePropertiesBox()
 	}
 
 	if (pVest && pVest->IsPlateInstalled() && pVest->m_plates.size()) {
-		sprintf(temp, "%s %s", CStringTable().translate("st_detach").c_str(), CStringTable().translate(pSettings->r_string(pVest->GetPlateName().c_str(), "inv_name_short")).c_str());
+		sprintf(temp, "%s %s", CStringTable().translate(detach_tip).c_str(), CStringTable().translate(pSettings->r_string(pVest->GetPlateName().c_str(), "inv_name_short")).c_str());
 		UIPropertiesBox.AddItem(temp, (void*)pVest->GetPlateName().c_str(), INVENTORY_DETACH_ADDON);
 		b_show = true;
 	}
@@ -149,27 +151,27 @@ void CUIInventoryWnd::ActivatePropertiesBox()
 		}
 		//
 		if(pWeapon->GrenadeLauncherAttachable() && pWeapon->IsGrenadeLauncherAttached()){
-			sprintf(temp, "%s %s", CStringTable().translate("st_detach").c_str(), CStringTable().translate(pSettings->r_string(pWeapon->GetGrenadeLauncherName().c_str(), "inv_name_short")).c_str());
+			sprintf(temp, "%s %s", CStringTable().translate(detach_tip).c_str(), CStringTable().translate(pSettings->r_string(pWeapon->GetGrenadeLauncherName().c_str(), "inv_name_short")).c_str());
 			UIPropertiesBox.AddItem(temp, (void*)pWeapon->GetGrenadeLauncherName().c_str(), INVENTORY_DETACH_ADDON);
 			b_show = true;
 		}
 		if(pWeapon->ScopeAttachable() && pWeapon->IsScopeAttached()){
-			sprintf(temp, "%s %s", CStringTable().translate("st_detach").c_str(), CStringTable().translate(pSettings->r_string(pWeapon->GetScopeName().c_str(), "inv_name_short")).c_str());
+			sprintf(temp, "%s %s", CStringTable().translate(detach_tip).c_str(), CStringTable().translate(pSettings->r_string(pWeapon->GetScopeName().c_str(), "inv_name_short")).c_str());
 			UIPropertiesBox.AddItem(temp, (void*)pWeapon->GetScopeName().c_str(), INVENTORY_DETACH_ADDON);
 			b_show = true;
 		}
 		if(pWeapon->SilencerAttachable() && pWeapon->IsSilencerAttached()){
-			sprintf(temp, "%s %s", CStringTable().translate("st_detach").c_str(), CStringTable().translate(pSettings->r_string(pWeapon->GetSilencerName().c_str(), "inv_name_short")).c_str());
+			sprintf(temp, "%s %s", CStringTable().translate(detach_tip).c_str(), CStringTable().translate(pSettings->r_string(pWeapon->GetSilencerName().c_str(), "inv_name_short")).c_str());
 			UIPropertiesBox.AddItem(temp, (void*)pWeapon->GetSilencerName().c_str(), INVENTORY_DETACH_ADDON);
 			b_show = true;
 		}
 		if (pWeapon->LaserAttachable() && pWeapon->IsLaserAttached()){
-			sprintf(temp, "%s %s", CStringTable().translate("st_detach").c_str(), CStringTable().translate(pSettings->r_string(pWeapon->GetLaserName().c_str(), "inv_name_short")).c_str());
+			sprintf(temp, "%s %s", CStringTable().translate(detach_tip).c_str(), CStringTable().translate(pSettings->r_string(pWeapon->GetLaserName().c_str(), "inv_name_short")).c_str());
 			UIPropertiesBox.AddItem(temp, (void*)pWeapon->GetLaserName().c_str(), INVENTORY_DETACH_ADDON);
 			b_show = true;
 		}
 		if (pWeapon->FlashlightAttachable() && pWeapon->IsFlashlightAttached()){
-			sprintf(temp, "%s %s", CStringTable().translate("st_detach").c_str(), CStringTable().translate(pSettings->r_string(pWeapon->GetFlashlightName().c_str(), "inv_name_short")).c_str());
+			sprintf(temp, "%s %s", CStringTable().translate(detach_tip).c_str(), CStringTable().translate(pSettings->r_string(pWeapon->GetFlashlightName().c_str(), "inv_name_short")).c_str());
 			UIPropertiesBox.AddItem(temp, (void*)pWeapon->GetFlashlightName().c_str(), INVENTORY_DETACH_ADDON);
 			b_show = true;
 		}
@@ -198,28 +200,45 @@ void CUIInventoryWnd::ActivatePropertiesBox()
 	}
 	
 	//присоединение аддонов к оружиям в слотах
-        static std::regex addon_re( R"(\{ADDON\})" );
-        static std::regex wpn_re( R"(\{WPN\})" );
-	for (u8 i = 0; i < SLOTS_TOTAL; ++i) {
-		PIItem tgt = m_pInv->m_slots[i].m_pIItem;
+ //       static std::regex addon_re( R"(\{ADDON\})" );
+ //       static std::regex wpn_re( R"(\{WPN\})" );
+	//for (u8 i = 0; i < SLOTS_TOTAL; ++i) {
+	//	PIItem tgt = m_pInv->m_slots[i].m_pIItem;
+	//	if (!tgt) continue;
+	//	//attach addon
+	//	if (tgt->CanAttach(CurrentIItem())) {
+	//		string128 trans_str;
+	//		strconcat(sizeof(trans_str), trans_str, "st_attach_addon_to_item_in_slot_", std::to_string(i).c_str());
+	//		string128 str = { 0 };
+	//		// В локализации должно быть что-то типа 'Прикрепить %s к %s в таком-то слоте'
+	//		std::snprintf(str, sizeof(str), 
+	//			CStringTable().translate(trans_str).c_str(), 
+	//			CurrentIItem()->m_nameShort.c_str(), 
+	//			tgt->m_nameShort.c_str());
+ //                       std::string s( str );
+ //                       s = std::regex_replace( s, addon_re, CurrentIItem()->m_nameShort.c_str() );
+ //                       s = std::regex_replace( s, wpn_re,   tgt->m_nameShort.c_str() );
+	//		UIPropertiesBox.AddItem( s.c_str(), (void*)tgt, INVENTORY_ATTACH_ADDON );
+	//		b_show = true;
+	//	}
+	//	//charge device
+	//	if (tgt->CanBeChargedBy(CurrentIItem())) {
+	//		sprintf(temp, "%s %s", CStringTable().translate("st_charge").c_str(), tgt->NameShort());
+	//		UIPropertiesBox.AddItem(temp, (void*)tgt, INVENTORY_CHARGE_DEVICE);
+	//	}
+	//}
+	for (const auto& slot : m_pInv->m_slots) {
+		auto tgt = slot.m_pIItem;
 		if (!tgt) continue;
-		//attach addon
 		if (tgt->CanAttach(CurrentIItem())) {
-			string128 trans_str;
-			strconcat(sizeof(trans_str), trans_str, "st_attach_addon_to_item_in_slot_", std::to_string(i).c_str());
-			string128 str = { 0 };
-			// В локализации должно быть что-то типа 'Прикрепить %s к %s в таком-то слоте'
-			std::snprintf(str, sizeof(str), CStringTable().translate(trans_str).c_str(), CurrentIItem()->m_nameShort.c_str(), tgt->m_nameShort.c_str());
-                        std::string s( str );
-                        s = std::regex_replace( s, addon_re, CurrentIItem()->m_nameShort.c_str() );
-                        s = std::regex_replace( s, wpn_re,   tgt->m_nameShort.c_str() );
-			UIPropertiesBox.AddItem( s.c_str(), (void*)tgt, INVENTORY_ATTACH_ADDON );
+			sprintf(temp, "%s %s", CStringTable().translate(CurrentIItem()->GetAttachMenuTip()).c_str(), tgt->NameShort());
+			UIPropertiesBox.AddItem(temp, (void*)tgt, INVENTORY_ATTACH_ADDON);
 			b_show = true;
 		}
-		//charge device
 		if (tgt->CanBeChargedBy(CurrentIItem())) {
 			sprintf(temp, "%s %s", CStringTable().translate("st_charge").c_str(), tgt->NameShort());
 			UIPropertiesBox.AddItem(temp, (void*)tgt, INVENTORY_CHARGE_DEVICE);
+			b_show = true;
 		}
 	}
 
@@ -400,14 +419,16 @@ void CUIInventoryWnd::ProcessPropertiesBoxClicked	()
 
 bool CUIInventoryWnd::TryUseItem(PIItem itm)
 {
-	if (itm->GetSlotsCount() || itm->Belt())
+	if (!itm) return false;
+
+	if (itm->GetSlotsCount() || itm->Belt() || itm->Vest())
 		return false;
 
-	if(smart_cast<CEatableItem*>(itm))
-	{
+	if(smart_cast<CEatableItem*>(itm)){
 		EatItem(itm);
 		return true;
 	}
+
 	return false;
 }
 

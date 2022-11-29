@@ -92,7 +92,7 @@
     <texture id="ui_inv_icon_health_restore_speed" x="498" y="110" width="18" height="18" />
     <texture id="ui_inv_icon_radiation_restore_speed" x="498" y="130" width="18" height="18" />
     <texture id="ui_inv_icon_satiety_restore_speed" x="498" y="150" width="18" height="18" />
-    <texture id="ui_inv_icon_bleeding_restore_speed" x="498" y="170" width="18" height="18" />
+    <texture id="ui_inv_icon_wounds_heal_speed" x="498" y="170" width="18" height="18" />
     <texture id="ui_inv_icon_power_restore_speed" x="498" y="190" width="18" height="18" />
 	<texture id="ui_inv_icon_additional_weight" x="538" y="190" width="18" height="18" />
 

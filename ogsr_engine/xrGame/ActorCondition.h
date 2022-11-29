@@ -37,14 +37,13 @@ public:
 private:
 	CActor*											m_object;
 	void				UpdateTutorialThresholds	();
-	void 				UpdateSatiety				();
-	void				UpdateThirst				();
-	void                UpdateAlcohol				();
-	//виртуальные методы CEntityCondition
-	virtual void		UpdateHealth				();
+	virtual void 		UpdateSatiety				() override;
+	virtual void		UpdateThirst				();
+	virtual void        UpdateAlcohol				() override;
+	virtual void		UpdateHealth				() override;
 	virtual void		UpdatePower					();
-	virtual void		UpdateRadiation				();
-	virtual void		UpdatePsyHealth				();
+	virtual void		UpdateRadiation				() override;
+	virtual void		UpdatePsyHealth				() override;
 public:
 						CActorCondition				(CActor *object);
 	virtual				~CActorCondition			(void);
@@ -184,14 +183,13 @@ public:
 
 	float AlcoholSatiety() { return m_fAlcohol * (1.0f + m_fAlcoholSatietyIntens - GetSatiety()); }
 
-	float GetWoundIncarnation	();
-	float GetHealthRestore		();
-	float GetRadiationRestore	();
-	float GetPsyHealthRestore	();
-	float GetPowerRestore		();
-	float GetSatietyRestore		();
-	float GetAlcoholRestore		();
-	float GetThirstRestore		();
+	virtual float GetWoundIncarnation	() override;
+	virtual float GetHealthRestore		() override;
 
-	void ApplyRestoreEffect		(u32 effect_num, float value);
+	virtual float GetPsyHealthRestore	() override;
+	virtual float GetPowerRestore		() override;
+	virtual float GetMaxPowerRestore	() override;
+	virtual float GetSatietyRestore		() override;
+	virtual float GetAlcoholRestore		() override;
+	virtual float GetThirstRestore		() override;
 };

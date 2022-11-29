@@ -1022,7 +1022,6 @@ void CSE_ALifeItemDocument::UPDATE_Write	(NET_Packet	&tNetPacket)
 CSE_ALifeItemGrenade::CSE_ALifeItemGrenade	(LPCSTR caSection): CSE_ALifeItem(caSection)
 {
 	m_ef_weapon_type	= READ_IF_EXISTS(pSettings,r_u32,caSection,"ef_weapon_type",u32(-1));
-	m_dwDestroyTimeMax	= NULL;
 }
 
 CSE_ALifeItemGrenade::~CSE_ALifeItemGrenade	()
@@ -1190,7 +1189,7 @@ BOOL CSE_ALifeItemCustomOutfit::Net_Relevant		()
 ////////////////////////////////////////////////////////////////////////////
 CSE_ALifeItemEatable::CSE_ALifeItemEatable(LPCSTR caSection) : CSE_ALifeItem(caSection)
 {
-	m_portions_num = pSettings->r_s32(caSection, "eat_portions_num");
+	m_portions_num = READ_IF_EXISTS(pSettings, r_s32, caSection, "eat_portions_num", 1);//pSettings->r_s32(caSection, "eat_portions_num");
 }
 
 CSE_ALifeItemEatable::~CSE_ALifeItemEatable()

@@ -615,6 +615,16 @@ bool CUIInventoryWnd::OnKeyboard(int dik, EUIMessages keyboard_action)
 
 	if (WINDOW_KEY_PRESSED == keyboard_action)
 	{
+		if (is_binded(kDROP, dik)) {
+			DropCurrentItem(false);
+			return true;
+		}
+		if (is_binded(kUSE, dik)) {
+			if (smart_cast<CEatableItem*>(CurrentIItem())) {
+				EatItem(CurrentIItem());
+				return true;
+			}
+		}
 #ifdef DEBUG
 		if(DIK_NUMPAD7 == dik && CurrentIItem())
 		{

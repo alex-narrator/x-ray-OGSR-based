@@ -19,7 +19,7 @@ public:
 	//если на персонаже надет костюм
 	float							GetPowerLoss		();
 
-	virtual float					GetHitTypeProtection(ALife::EHitType hit_type) override;
+	virtual float					GetHitTypeProtection(int) override;
 
 	virtual void					OnMoveToSlot		(EItemPlace prevPlace);
 	virtual void					OnMoveToRuck		(EItemPlace prevPlace) override;

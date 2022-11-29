@@ -20,16 +20,16 @@ protected:
 	CUIScrollView* m_listWnd{};
 
 	enum {
-		_item_start = 0,
 		//restore
-		_item_health_restore_speed = _item_start,
-		_item_radiation_restore_speed,
-		_item_satiety_restore_speed,
-		_item_thirst_restore_speed,
-		_item_power_restore_speed,
-		_item_bleeding_restore_speed,
-		_item_psy_health_restore_speed,
-		_item_alcohol_restore_speed,
+		_item_health_restore,
+		_item_power_restore,
+		_item_max_power_restore,
+		_item_satiety_restore,
+		_item_radiation_restore,
+		_item_psy_health_restore,
+		_item_alcohol_restore,
+		_item_thirst_restore,
+		_item_wounds_heal,
 		//additional
 		_item_additional_walk_accel,
 		_item_additional_jump_speed,

@@ -30,6 +30,9 @@
 	<string id="st_detach">
 		<text>зняти</text>
 	</string>
+	<string id="st_attach">
+		<text>встановити на</text>
+	</string>	
 	<string id="st_dispersion_units">
 		<text>MOA</text>
 	</string>
@@ -51,6 +54,9 @@
 	</string>
 	<string id="st_safe_dist">
 		<text>Дистанція зведення:</text>
+	</string>	
+	<string id="st_destroy_time">
+		<text>Затримка вибуху:</text>
 	</string>	
 	
 	<string id="st_plates">
@@ -633,9 +639,6 @@
 	<string id="ui_inv_max_power">
 		<text>Макс. витривалість</text>
 	</string>
-	<string id="ui_inv_wounds_heal_perc">
-		<text>Загоєння ран</text>
-	</string>
 	<string id="st_power_level">
 		<text>Заряд батареї</text>
 	</string>	
@@ -648,6 +651,22 @@
 	<string id="st_time_hour">
 		<text>год.</text>
 	</string>
+	<string id="st_time_minute">
+		<text>хв.</text>
+	</string>
+	<string id="st_time_second">
+		<text>сек.</text>
+	</string>	
+	
+	<string id="st_influence_header">
+		<text>миттєвий ефект:</text>
+	</string>
+	<string id="st_boost_header">
+		<text>тимчасовий ефект:</text>
+	</string>
+	<string id="ui_inv_boost_time">
+		<text>тривалість</text>
+	</string>	
 
 	<string id="st_disassemble">
 		<text>розібрати</text>

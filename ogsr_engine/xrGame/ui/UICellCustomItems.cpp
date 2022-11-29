@@ -315,7 +315,7 @@ void CUICBackpackCellItem::UpdateItemText() {
 	inherited::UpdateItemText();
 
 	string32				str;
-	sprintf_s(str, "%.0f%s", object()->GetAdditionalVolume(), CStringTable().translate("st_l").c_str());
+	sprintf_s(str, "%.0f%s", object()->GetItemEffect(CInventoryItem::eAdditionalVolume), CStringTable().translate("st_l").c_str());
 
 	float pos_x{ GetWidth() - m_text_add->GetWidth() };
 	float pos_y{ GetHeight() - m_text_add->GetHeight() };

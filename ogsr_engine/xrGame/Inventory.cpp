@@ -1580,14 +1580,12 @@ u32 CInventory::GetSameItemCount(LPCSTR caSection, bool SearchRuck)
 //найти в слотах вещь с указанным именем
 PIItem CInventory::GetFromSlots(const char* name) const
 {
-	for (u32 i = 0; i < m_slots.size(); ++i)
-	{
-		PIItem pIItem = m_slots[i].m_pIItem;
-		if (pIItem && !xr_strcmp(pIItem->object().cNameSect(), name) &&
-			pIItem->Useful())
-			return pIItem;
+	for (const auto& slot : m_slots) {
+		auto item = slot.m_pIItem;
+		if (item && item->Useful() && !xr_strcmp(item->object().cNameSect(), name))
+			return item;
 	}
-	return NULL;
+	return nullptr;
 }
 
 void CInventory::TryAmmoCustomPlacement(CInventoryItem* pIItem)
