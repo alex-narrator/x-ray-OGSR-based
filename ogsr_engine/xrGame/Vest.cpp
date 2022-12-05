@@ -129,6 +129,10 @@ bool CVest::CanAttach(PIItem pIItem)
 	if (m_plates.empty() || fis_zero(GetCondition()))
 		return false;
 
+	auto pActor = smart_cast<CActor*>(Level().CurrentViewEntity());
+	if (pActor && !pActor->HasRequiredTool(pIItem))
+		return false;
+
 	if (!m_bIsPlateInstalled &&
 		std::find(m_plates.begin(), m_plates.end(), pIItem->object().cNameSect()) != m_plates.end())
 		return true;
@@ -139,6 +143,10 @@ bool CVest::CanAttach(PIItem pIItem)
 bool CVest::CanDetach(const char* item_section_name)
 {
 	if (m_plates.empty())
+		return false;
+
+	auto pActor = smart_cast<CActor*>(Level().CurrentViewEntity());
+	if (pActor && !pActor->HasRequiredTool(item_section_name))
 		return false;
 
 	if (m_bIsPlateInstalled &&
@@ -204,4 +212,10 @@ void CVest::net_Export(CSE_Abstract* E) {
 	const auto sobj_vest = smart_cast<CSE_ALifeItemVest*>(E);
 	sobj_vest->m_bIsPlateInstalled = m_bIsPlateInstalled;
 	sobj_vest->m_cur_plate = m_cur_plate;
+}
+
+void CVest::PrepairItem() {
+	if (IsPlateInstalled())
+		Detach(GetPlateName().c_str(), true);
+	inherited::PrepairItem();
 }

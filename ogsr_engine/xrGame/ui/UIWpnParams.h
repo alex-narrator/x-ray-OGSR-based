@@ -24,4 +24,5 @@ public:
 protected:
 	//
 	CUIStatic					m_CapInfo; //метеринський статик листа інформації про зброю
+	CUIStatic*					SetStaticParams			(CUIXml&, const char*, float);
 };

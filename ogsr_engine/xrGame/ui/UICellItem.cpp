@@ -380,15 +380,18 @@ void CUICellItem::ColorizeItems( std::initializer_list<CUIDragDropListEx*> args 
 
   xr_vector<shared_str> ColorizeSects;
 
-  auto WpnMagScanner = [&ColorizeSects](CInventoryItem* inventoryitem) {
+  auto Scanner = [&ColorizeSects](CInventoryItem* inventoryitem) {
 	  ColorizeSects.clear();
 
-	  auto Wpn = smart_cast<CWeaponMagazined*>(inventoryitem);
-	  auto Ammo = smart_cast<CWeaponAmmo*>(inventoryitem);
-	  auto Vest = smart_cast<CVest*>(inventoryitem);
-	  bool is_power_consumer = inventoryitem->IsPowerConsumer();
-	  if (!Wpn && !Ammo && !Vest && !is_power_consumer)
-		  return;
+	  auto Wpn					= smart_cast<CWeaponMagazined*>(inventoryitem);
+	  auto Ammo					= smart_cast<CWeaponAmmo*>(inventoryitem);
+	  auto Vest					= smart_cast<CVest*>(inventoryitem);
+	  bool is_power_consumer	= inventoryitem->IsPowerConsumer();
+	  bool need_tool			= !inventoryitem->m_required_tools.empty();
+	  bool can_be_repaired		= !inventoryitem->m_repair_items.empty();
+
+	  bool b_colorize = (Wpn || Ammo || Vest || is_power_consumer || need_tool || can_be_repaired);
+	  if (!b_colorize) return;
 
 	  if (Wpn) {
 		  std::copy(Wpn->m_ammoTypes.begin(), Wpn->m_ammoTypes.end(), std::back_inserter(ColorizeSects));
@@ -402,17 +405,23 @@ void CUICellItem::ColorizeItems( std::initializer_list<CUIDragDropListEx*> args 
 			  ColorizeSects.push_back(Wpn->GetGrenadeLauncherName());
 		  std::copy(Wpn->m_highlightAddons.begin(), Wpn->m_highlightAddons.end(), std::back_inserter(ColorizeSects));
 	  }
-	  else if (Ammo) {
+	  if (Ammo) {
 		  if (Ammo->IsBoxReloadableEmpty())
 			  std::copy(Ammo->m_ammoTypes.begin(), Ammo->m_ammoTypes.end(), std::back_inserter(ColorizeSects));
 		  if (Ammo->IsBoxReloadable())
 			  ColorizeSects.push_back(Ammo->m_ammoSect);
 	  }
-	  else if (Vest) {
+	  if (Vest) {
 		  std::copy(Vest->m_plates.begin(), Vest->m_plates.end(), std::back_inserter(ColorizeSects));
 	  }
-	  else if (is_power_consumer) {
+	  if (is_power_consumer) {
 		  std::copy(inventoryitem->m_power_sources.begin(), inventoryitem->m_power_sources.end(), std::back_inserter(ColorizeSects));
+	  }
+	  if (need_tool) {
+		  std::copy(inventoryitem->m_required_tools.begin(), inventoryitem->m_required_tools.end(), std::back_inserter(ColorizeSects));
+	  }
+	  if (can_be_repaired) {
+		  std::copy(inventoryitem->m_repair_items.begin(), inventoryitem->m_repair_items.end(), std::back_inserter(ColorizeSects));
 	  }
   };
 
@@ -438,7 +447,7 @@ void CUICellItem::ColorizeItems( std::initializer_list<CUIDragDropListEx*> args 
 			  CUICellItem* CellItem = DdListEx->GetItemIdx(i);
 			  auto invitem = reinterpret_cast<CInventoryItem*>(CellItem->m_pData);
 			  if (invitem) {
-					  WpnMagScanner(invitem);
+					  Scanner(invitem);
 					  if (std::find(ColorizeSects.begin(), ColorizeSects.end(), Sect) != ColorizeSects.end()) {
 						  CellItem->m_select_armament = true;
 						  if (colorize_ammo)
@@ -461,7 +470,7 @@ void CUICellItem::ColorizeItems( std::initializer_list<CUIDragDropListEx*> args 
 	 // ColorizeWeapons(inventoryitem->object().cNameSect());
   //}
 
-  WpnMagScanner(inventoryitem);
+  Scanner(inventoryitem);
   ColorizeAmmoAddons();
   ColorizeWeapons(inventoryitem->object().cNameSect());
 }

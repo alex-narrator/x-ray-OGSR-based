@@ -16,5 +16,6 @@ public:
 
 protected:
 	CUIStatic					m_CapInfo;				//метеринський статик листа інформації
+	CUIStatic*					SetStaticParams			(CUIXml&, const char*, float);
 };
 

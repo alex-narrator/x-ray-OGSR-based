@@ -5,23 +5,6 @@
 		<cap_info x="0" y="0" width="91" height="0">
 			<text font="letterica16" r="124" g="119" b="115"></text>
 		</cap_info>	
-		<!-- дочірні статики -->
-		<current_ammo_type x="0" y="5" width="91" height="8">
-			<text font="letterica16" r="124" g="119" b="115"></text>
-		</current_ammo_type>	
-		<cap_current_scope x="0" y="5" width="91" height="8">
-			<text font="letterica16" r="124" g="119" b="115">st_current_scope</text>
-		</cap_current_scope>
-		
-		<cap_ammo x="0" y="5" width="91" height="8">
-			<text font="letterica16" r="124" g="119" b="115">st_compatible_ammo</text>
-		</cap_ammo>
-		<cap_magazine x="0" y="5" width="91" height="8">
-			<text font="letterica16" r="124" g="119" b="115">st_compatible_magazine</text>
-		</cap_magazine>		
-		<cap_addons x="0" y="5" width="91" height="8">
-			<text font="letterica16" r="124" g="119" b="115">st_compatible_addon</text>
-		</cap_addons>		
 		
 		<list_item x="0" y="0" width="91" height="16">
 			<text font="letterica16" r="124" g="119" b="115"></text>

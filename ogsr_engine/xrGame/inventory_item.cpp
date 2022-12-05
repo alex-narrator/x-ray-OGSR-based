@@ -182,7 +182,7 @@ void CInventoryItem::Load(LPCSTR section)
 
 	if (pSettings->line_exist(section, "power_source")){
 		LPCSTR str = pSettings->r_string(section, "power_source");
-		for (int i = 0, count = _GetItemCount(str); i < count; ++i){
+		for (int i = 0; i < _GetItemCount(str); ++i){
 			string128 power_source_section;
 			_GetItem(str, i, power_source_section);
 			m_power_sources.push_back(power_source_section);
@@ -195,9 +195,32 @@ void CInventoryItem::Load(LPCSTR section)
 	m_uSlotEnabled				= READ_IF_EXISTS(pSettings, r_u32, section, "slot_enabled", NO_ACTIVE_SLOT);
 
 	m_detail_part_section		= READ_IF_EXISTS(pSettings, r_string, section, "detail_parts", nullptr);
+	
+	if (pSettings->line_exist(section, "required_tools")) {
+		LPCSTR str = pSettings->r_string(section, "required_tools");
+		for (int i = 0; i < _GetItemCount(str); ++i) {
+			string128 tool_section;
+			_GetItem(str, i, tool_section);
+			m_required_tools.push_back(tool_section);
+		}
+	}
+
+	if (pSettings->line_exist(section, "repair_items")) {
+		LPCSTR str = pSettings->r_string(section, "repair_items");
+		for (int i = 0; i < _GetItemCount(str); ++i) {
+			string128 repair_section;
+			_GetItem(str, i, repair_section);
+			m_repair_items.push_back(repair_section);
+		}
+	}
+	repair_condition_gain		= READ_IF_EXISTS(pSettings, r_float, section, "repair_condition_gain",		0.f);
+	repair_condition_threshold	= READ_IF_EXISTS(pSettings, r_float, section, "repair_condition_threshold", 0.f);
+	repair_count				= READ_IF_EXISTS(pSettings, r_u32, section, "repair_count", 0);
 
 	m_sAttachMenuTip			= READ_IF_EXISTS(pSettings, r_string, section, "menu_attach_tip", "st_attach");
 	m_sDetachMenuTip			= READ_IF_EXISTS(pSettings, r_string, section, "menu_detach_tip", "st_detach");
+	m_sRepairMenuTip			= READ_IF_EXISTS(pSettings, r_string, section, "menu_repair_tip", "st_repair");
+	m_sDisassembleMenuTip		= READ_IF_EXISTS(pSettings, r_string, section, "menu_repair_tip", "st_disassemble");
 }
 
 
@@ -996,10 +1019,7 @@ void CInventoryItem::Disassemble() {
 	if (!m_detail_part_section)
 		return;
 
-	auto& inv = m_pCurrentInventory;
-	if (inv && (inv->InSlot(this) || inv->InBelt(this) || inv->InVest(this))) {
-		inv->Ruck(this, true);
-	}
+	PrepairItem();
 
 	string128 item;
 	int count = _GetItemCount(m_detail_part_section);
@@ -1012,4 +1032,48 @@ void CInventoryItem::Disassemble() {
 		}
 	}
 	object().DestroyObject();
+}
+
+bool CInventoryItem::CanBeDisassembled() {
+	if (!GetDetailPartSection() || IsQuestItem())
+		return false;
+	auto pActor = smart_cast<CActor*>(Level().CurrentEntity());
+	if (pActor && !pActor->HasRequiredTool(this))
+		return false;
+	return true;
+}
+
+bool CInventoryItem::CanBeRepairedBy(PIItem item) const {
+	if (m_repair_items.empty() || 
+		fis_zero(repair_condition_gain) ||
+		fsimilar(GetCondition(), 1.f, 0.01f))
+		return false;
+	auto pActor = smart_cast<CActor*>(Level().CurrentEntity());
+	if (pActor && !pActor->HasRequiredTool(item))
+		return false;
+	for (const auto& item_sect : m_repair_items) {
+		if (item_sect == item->object().cNameSect() &&
+			GetCondition() >= item->repair_condition_threshold)
+			return true;
+	}
+	return false;
+}
+
+void CInventoryItem::Repair(PIItem target) {
+	target->PrepairItem();
+	target->ChangeCondition(repair_condition_gain);
+	if (!repair_count)
+		return;
+	float cond_lost = (float)(1 / repair_count);
+	ChangeCondition(-cond_lost);
+	if(GetCondition() <= 0.f)
+		object().DestroyObject();
+}
+
+void CInventoryItem::PrepairItem() {
+	auto& inv = m_pCurrentInventory;
+	if (inv) {
+		if (!inv->InRuck(this))
+			inv->Ruck(this, true);
+	}
 }

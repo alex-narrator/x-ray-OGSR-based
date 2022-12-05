@@ -156,6 +156,8 @@ void CUIPropertiesBox::Draw()
 }
 
 bool CUIPropertiesBox::OnKeyboard(int dik, EUIMessages keyboard_action){
+	if (dik == get_action_dik(kADDITIONAL_ACTION))
+		return true;
 	Hide();
 	return true;
 }

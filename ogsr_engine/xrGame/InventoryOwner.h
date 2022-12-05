@@ -148,7 +148,7 @@ public:
 	virtual float GetCarryVolume			() const;
 	virtual float MaxCarryVolume			() const;
 
-	virtual bool IsVolumeUnlimited			() const { return true; };
+	virtual bool IsVolumeUnlimited			() const /*{ return true; }*/;
 
 	virtual CCustomOutfit*					GetOutfit		() const {return nullptr;};
 	virtual CBackpack*						GetBackpack		() const {return nullptr;};

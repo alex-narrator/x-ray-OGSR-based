@@ -64,6 +64,8 @@ protected:
 	void				SendEvent_Item_Drop			(PIItem	pItem);
 	void				EatItem						();
 	void				PerformDonation				();
+	void				DisassembleItem				(bool);
+	void				DetachAddon					(const char* addon_name, bool);
 
 	enum EListType{eNone,e1st,e2nd,eBoth};
 

@@ -943,9 +943,12 @@ bool CWeaponMagazined::Action(s32 cmd, u32 flags)
 
 bool CWeaponMagazined::CanAttach(PIItem pIItem)
 {
+	auto pActor = smart_cast<CActor*>(Level().CurrentViewEntity());
+	if (pActor && !pActor->HasRequiredTool(pIItem))
+		return false;
+
 	auto pScope				= smart_cast<CScope*>			(pIItem);
 	auto pSilencer			= smart_cast<CSilencer*>		(pIItem);
-	auto pGrenadeLauncher	= smart_cast<CGrenadeLauncher*>	(pIItem);
 	auto pLaser				= smart_cast<CLaser*>			(pIItem);
 	auto pFlashlight		= smart_cast<CFlashlight*>		(pIItem);
 
@@ -958,11 +961,6 @@ bool CWeaponMagazined::CanAttach(PIItem pIItem)
 		m_eSilencerStatus == ALife::eAddonAttachable &&
 		(m_flagsAddOnState&CSE_ALifeItemWeapon::eWeaponAddonSilencer) == 0 &&
 		std::find(m_silencers.begin(), m_silencers.end(), pIItem->object().cNameSect()) != m_silencers.end())
-		return true;
-	else if (pGrenadeLauncher &&
-		m_eGrenadeLauncherStatus == ALife::eAddonAttachable &&
-		(m_flagsAddOnState&CSE_ALifeItemWeapon::eWeaponAddonGrenadeLauncher) == 0 &&
-		std::find(m_glaunchers.begin(), m_glaunchers.end(), pIItem->object().cNameSect()) != m_glaunchers.end())
 		return true;
 	else if (pLaser &&
 		m_eLaserStatus == ALife::eAddonAttachable &&
@@ -980,6 +978,10 @@ bool CWeaponMagazined::CanAttach(PIItem pIItem)
 
 bool CWeaponMagazined::CanDetach(const char* item_section_name)
 {
+	auto pActor = smart_cast<CActor*>(Level().CurrentViewEntity());
+	if (pActor && !pActor->HasRequiredTool(item_section_name))
+		return false;
+
 	if (m_eScopeStatus == CSE_ALifeItemWeapon::eAddonAttachable &&
 		0 != (m_flagsAddOnState&CSE_ALifeItemWeapon::eWeaponAddonScope) &&
 		std::find(m_scopes.begin(), m_scopes.end(), item_section_name) != m_scopes.end())
@@ -987,10 +989,6 @@ bool CWeaponMagazined::CanDetach(const char* item_section_name)
 	else if (m_eSilencerStatus == CSE_ALifeItemWeapon::eAddonAttachable &&
 		0 != (m_flagsAddOnState&CSE_ALifeItemWeapon::eWeaponAddonSilencer) &&
 		std::find(m_silencers.begin(), m_silencers.end(), item_section_name) != m_silencers.end())
-		return true;
-	else if (m_eGrenadeLauncherStatus == CSE_ALifeItemWeapon::eAddonAttachable &&
-		0 != (m_flagsAddOnState&CSE_ALifeItemWeapon::eWeaponAddonGrenadeLauncher) &&
-		std::find(m_glaunchers.begin(), m_glaunchers.end(), item_section_name) != m_glaunchers.end())
 		return true;
 	else if (m_eLaserStatus == CSE_ALifeItemWeapon::eAddonAttachable &&
 		0 != (m_flagsAddOnState & CSE_ALifeItemWeapon::eWeaponAddonLaser) &&
@@ -1010,7 +1008,6 @@ bool CWeaponMagazined::Attach(PIItem pIItem, bool b_send_event)
 
 	auto pScope				= smart_cast<CScope*>			(pIItem);
 	auto pSilencer			= smart_cast<CSilencer*>		(pIItem);
-	auto pGrenadeLauncher	= smart_cast<CGrenadeLauncher*>	(pIItem);
 	auto pLaser				= smart_cast<CLaser*>			(pIItem);
 	auto pFlashlight		= smart_cast<CFlashlight*>		(pIItem);
 
@@ -1034,16 +1031,6 @@ bool CWeaponMagazined::Attach(PIItem pIItem, bool b_send_event)
 		result = true;
 		m_fAttachedSilencerCondition = pIItem->GetCondition();
 	}
-	else if (pGrenadeLauncher &&
-		m_eGrenadeLauncherStatus == CSE_ALifeItemWeapon::eAddonAttachable &&
-		(m_flagsAddOnState&CSE_ALifeItemWeapon::eWeaponAddonGrenadeLauncher) == 0)
-	{
-		auto it = std::find(m_glaunchers.begin(), m_glaunchers.end(), pIItem->object().cNameSect());
-		m_cur_glauncher = (u8)std::distance(m_glaunchers.begin(), it);
-		m_flagsAddOnState |= CSE_ALifeItemWeapon::eWeaponAddonGrenadeLauncher;
-		result = true;
-		m_fAttachedGrenadeLauncherCondition = pIItem->GetCondition();
-	}
 	else if (pLaser &&
 		m_eLaserStatus == CSE_ALifeItemWeapon::eAddonAttachable &&
 		(m_flagsAddOnState & CSE_ALifeItemWeapon::eWeaponAddonLaser) == 0)
@@ -1052,7 +1039,6 @@ bool CWeaponMagazined::Attach(PIItem pIItem, bool b_send_event)
 		m_cur_laser = (u8)std::distance(m_lasers.begin(), it);
 		m_flagsAddOnState |= CSE_ALifeItemWeapon::eWeaponAddonLaser;
 		result = true;
-//		m_fAttachedGrenadeLauncherCondition = pIItem->GetCondition();
 	}
 	else if (pFlashlight &&
 		m_eFlashlightStatus == CSE_ALifeItemWeapon::eAddonAttachable &&
@@ -1062,13 +1048,10 @@ bool CWeaponMagazined::Attach(PIItem pIItem, bool b_send_event)
 		m_cur_flashlight = (u8)std::distance(m_flashlights.begin(), it);
 		m_flagsAddOnState |= CSE_ALifeItemWeapon::eWeaponAddonFlashlight;
 		result = true;
-//		m_fAttachedGrenadeLauncherCondition = pIItem->GetCondition();
 	}
 
-	if(result)
-	{
-		if (b_send_event && OnServer())
-		{
+	if(result){
+		if (b_send_event && OnServer()){
 			//уничтожить подсоединенную вещь из инвентаря
 //.			pIItem->Drop					();
 			pIItem->object().DestroyObject	();
@@ -1116,20 +1099,20 @@ bool CWeaponMagazined::Detach(const char* item_section_name, bool b_spawn_item, 
 		InitAddons();
 		return CInventoryItemObject::Detach(item_section_name, b_spawn_item, item_condition);
 	}
-	else if (m_eGrenadeLauncherStatus == CSE_ALifeItemWeapon::eAddonAttachable &&
-		0 != (m_flagsAddOnState & CSE_ALifeItemWeapon::eWeaponAddonGrenadeLauncher) &&
-		std::find(m_glaunchers.begin(), m_glaunchers.end(), item_section_name) != m_glaunchers.end())
-	{
-		m_flagsAddOnState &= ~CSE_ALifeItemWeapon::eWeaponAddonGrenadeLauncher;
-		//
-		m_cur_glauncher = 0;
-		if (b_spawn_item) item_condition = m_fAttachedGrenadeLauncherCondition;
-		m_fAttachedGrenadeLauncherCondition = 1.f;
-		//
-		UpdateAddonsVisibility();
-		InitAddons();
-		return CInventoryItemObject::Detach(item_section_name, b_spawn_item, item_condition);
-	}
+	//else if (m_eGrenadeLauncherStatus == CSE_ALifeItemWeapon::eAddonAttachable &&
+	//	0 != (m_flagsAddOnState & CSE_ALifeItemWeapon::eWeaponAddonGrenadeLauncher) &&
+	//	std::find(m_glaunchers.begin(), m_glaunchers.end(), item_section_name) != m_glaunchers.end())
+	//{
+	//	m_flagsAddOnState &= ~CSE_ALifeItemWeapon::eWeaponAddonGrenadeLauncher;
+	//	//
+	//	m_cur_glauncher = 0;
+	//	if (b_spawn_item) item_condition = m_fAttachedGrenadeLauncherCondition;
+	//	m_fAttachedGrenadeLauncherCondition = 1.f;
+	//	//
+	//	UpdateAddonsVisibility();
+	//	InitAddons();
+	//	return CInventoryItemObject::Detach(item_section_name, b_spawn_item, item_condition);
+	//}
 	else if (m_eLaserStatus == CSE_ALifeItemWeapon::eAddonAttachable &&
 		0 != (m_flagsAddOnState & CSE_ALifeItemWeapon::eWeaponAddonLaser) &&
 		std::find(m_lasers.begin(), m_lasers.end(), item_section_name) != m_lasers.end())
@@ -1245,15 +1228,13 @@ void CWeaponMagazined::LoadZoomParams(LPCSTR section)
 	if (m_UIScopeSecond)
 		xr_delete(m_UIScopeSecond);
 
-	if (!IsScopeAttached() || IsScopeBroken())
-	{
+	if (!IsScopeAttached() || IsScopeBroken()){
 		m_bScopeDynamicZoom		= false;
 		m_bVision				= false;
 		m_bNightVisionEnabled	= false;
 		m_bRangeMeter			= false;
 
-		if (IsScopeBroken())
-		{
+		if (IsScopeBroken()){
 			m_fScopeZoomFactor = m_fIronSightZoomFactor;
 
 			LPCSTR scope_tex_name_broken = READ_IF_EXISTS(pSettings, r_string, section, "scope_texture_broken", nullptr);
@@ -1284,8 +1265,7 @@ void CWeaponMagazined::LoadZoomParams(LPCSTR section)
 	if (m_bVision) binoc_vision_sect = section;
 
 	m_bNightVisionEnabled = !!READ_IF_EXISTS(pSettings, r_bool, section, "night_vision", false);
-	if (m_bNightVisionEnabled)
-	{
+	if (m_bNightVisionEnabled){
 		HUD_SOUND::StopSound(sndNightVisionOn);
 		HUD_SOUND::StopSound(sndNightVisionOff);
 		HUD_SOUND::StopSound(sndNightVisionIdle);
@@ -1674,8 +1654,7 @@ void	CWeaponMagazined::SetQueueSize			(int size)
 float CWeaponMagazined::GetWeaponDeterioration() const {
 	if (!m_bHasDifferentFireModes || m_iPrefferedFireMode == -1 || u32(GetCurrentFireMode()) <= u32(m_iPrefferedFireMode))
 		return inherited::GetWeaponDeterioration();
-	float silencer_dec_k = IsSilencerAttached() && SilencerAttachable() ? conditionDecreasePerShotSilencer : 0.f;
-	return m_iShotNum * (conditionDecreasePerShot + conditionDecreasePerShot * silencer_dec_k);
+	return (inherited::GetWeaponDeterioration() * m_iShotNum);
 }
 
 void CWeaponMagazined::save(NET_Packet &output_packet)
@@ -2165,8 +2144,9 @@ void  CWeaponMagazined::SwitchFlashlight(bool on) {
 	}
 }
 
-void CWeaponMagazined::UnloadWeaponFull() {
-	if (AnimationExist("anm_unload") && 
+void CWeaponMagazined::UnloadWeaponFull(bool skip_animation) {
+	if (!skip_animation && 
+		AnimationExist("anm_unload") &&
 		m_pCurrentInventory && 
 		m_pCurrentInventory->InSlot(this)) {
 		SwitchState(eUnload);
@@ -2190,8 +2170,8 @@ void CWeaponMagazined::PlayAnimUnload()
 	PlaySound(sndUnload, get_LastFP());
 }
 
-void CWeaponMagazined::UnloadAndDetachAllAddons() {
-	UnloadWeaponFull();
+void CWeaponMagazined::UnloadAndDetachAllAddons(bool skip_animation) {
+	UnloadWeaponFull(skip_animation);
 	if (ScopeAttachable() && IsScopeAttached())
 		Detach(GetScopeName().c_str(), true);
 	if (SilencerAttachable() && IsSilencerAttached())
@@ -2204,8 +2184,7 @@ void CWeaponMagazined::UnloadAndDetachAllAddons() {
 		Detach(GetFlashlightName().c_str(), true);
 }
 
-void CWeaponMagazined::Disassemble() {
-	if (!GetDetailPartSection()) return;
-	UnloadAndDetachAllAddons();
-	inherited::Disassemble();
+void CWeaponMagazined::PrepairItem() {
+	UnloadAndDetachAllAddons(true);
+	inherited::PrepairItem();
 }

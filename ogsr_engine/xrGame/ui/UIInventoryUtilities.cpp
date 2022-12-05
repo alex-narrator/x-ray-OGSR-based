@@ -416,6 +416,7 @@ void InventoryUtilities::UpdateVolume(CGameObject* owner, CUIStatic& wnd, bool w
 {
 	auto inv_owner	= smart_cast<CInventoryOwner*>(owner);
 	auto inv_box	= smart_cast<IInventoryBox*>(owner);
+	bool is_volume_unlimited{};
 
 	string128 buf{};
 
@@ -423,10 +424,17 @@ void InventoryUtilities::UpdateVolume(CGameObject* owner, CUIStatic& wnd, bool w
 	if (inv_owner) {
 		total	= inv_owner->GetCarryVolume();
 		max		= inv_owner->MaxCarryVolume();
+		is_volume_unlimited = inv_owner->IsVolumeUnlimited();
 	}
 	else if (inv_box) {
 		total	= inv_box->GetCarryVolume();
 		max		= inv_box->MaxCarryVolume();
+		is_volume_unlimited = inv_box->IsVolumeUnlimited();
+	}
+
+	if (is_volume_unlimited) {
+		wnd.SetText("");
+		return;
 	}
 
 	string16 cl{};

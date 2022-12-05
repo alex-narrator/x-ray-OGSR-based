@@ -8,6 +8,7 @@
 #include "actor.h"
 #include "uigamesp.h"
 #include "hudmanager.h"
+#include "UICellItem.h"
 
 #include "CustomOutfit.h"
 
@@ -522,8 +523,7 @@ void CUIInventoryWnd::AttachAddon(PIItem item_to_upgrade)
 {
 	PlaySnd										(eInvAttachAddon);
 	R_ASSERT									(item_to_upgrade);
-	if (OnClient())
-	{
+	if (OnClient()){
 		NET_Packet								P;
 		item_to_upgrade->object().u_EventGen	(P, GE_ADDON_ATTACH, item_to_upgrade->object().ID());
 		P.w_u32									(CurrentIItem()->object().ID());
@@ -535,32 +535,35 @@ void CUIInventoryWnd::AttachAddon(PIItem item_to_upgrade)
 
 	//спрятать вещь из активного слота в инвентарь на время вызова менюшки
 	CActor *pActor								= smart_cast<CActor*>(Level().CurrentEntity());
-	if(pActor && item_to_upgrade == pActor->inventory().ActiveItem())
-	{
-			m_iCurrentActiveSlot				= pActor->inventory().GetActiveSlot();
-			pActor->inventory().Activate		(NO_ACTIVE_SLOT);
+	if(pActor && item_to_upgrade == pActor->inventory().ActiveItem()){
+		m_iCurrentActiveSlot				= pActor->inventory().GetActiveSlot();
+		pActor->inventory().Activate		(NO_ACTIVE_SLOT);
 	}
 	SetCurrentItem								(NULL);
 }
 
-void CUIInventoryWnd::DetachAddon(const char* addon_name)
+void CUIInventoryWnd::DetachAddon(const char* addon_name, bool for_all)
 {
 	PlaySnd										(eInvDetachAddon);
-	if (OnClient())
-	{
+	if (OnClient()){
 		NET_Packet								P;
 		CurrentIItem()->object().u_EventGen		(P, GE_ADDON_DETACH, CurrentIItem()->object().ID());
 		P.w_stringZ								(addon_name);
 		CurrentIItem()->object().u_EventSend	(P);
 	};
+
+	auto itm = CurrentItem();
+	for (u32 i = 0; i < itm->ChildsCount() && for_all; ++i) {
+		auto child_itm = itm->Child(i);
+		((PIItem)child_itm->m_pData)->Detach(addon_name, true);
+	}
 	CurrentIItem()->Detach						(addon_name, true);
 
 	//спрятать вещь из активного слота в инвентарь на время вызова менюшки
 	CActor *pActor								= smart_cast<CActor*>(Level().CurrentEntity());
-	if(pActor && CurrentIItem() == pActor->inventory().ActiveItem())
-	{
-			m_iCurrentActiveSlot				= pActor->inventory().GetActiveSlot();
-			pActor->inventory().Activate		(NO_ACTIVE_SLOT);
+	if(pActor && CurrentIItem() == pActor->inventory().ActiveItem()){
+		m_iCurrentActiveSlot				= pActor->inventory().GetActiveSlot();
+		pActor->inventory().Activate		(NO_ACTIVE_SLOT);
 	}
 }
 
@@ -568,6 +571,13 @@ void CUIInventoryWnd::ChargeDevice(PIItem item_to_charge) {
 	auto battery = smart_cast<CPowerBattery*>(CurrentIItem());
 	battery->Charge(item_to_charge);
 	SetCurrentItem(nullptr);
+}
+
+void CUIInventoryWnd::RepairItem(PIItem item_to_repair) {
+	CurrentIItem()->Repair(item_to_repair);
+	PlaySnd(eInvAttachAddon);
+	SetCurrentItem(nullptr);
+	InitInventory_delayed();
 }
 
 void	CUIInventoryWnd::SendEvent_Item_Drop(PIItem	pItem)
@@ -657,12 +667,12 @@ void CUIInventoryWnd::UpdateCustomDraw(bool b_full_reinit)
 	Ivector2 vest_capacity{ (int)inv.VestWidth(),(int)inv.VestHeight() };
 	m_pUIVestList->SetCellsCapacity(vest_capacity);
 
-	if (!Actor()->GetBackpack()) {
-		m_pUIBagList->SetCellsAvailable(0);
-	}
-	else {
-		m_pUIBagList->ResetCellsAvailable();
-	}
+	//if (!Actor()->GetBackpack()) {
+	//	m_pUIBagList->SetCellsAvailable(0);
+	//}
+	//else {
+	//	m_pUIBagList->ResetCellsAvailable();
+	//}
 
 	for (u8 i = 0; i < SLOTS_TOTAL; ++i) {
 		auto list = GetSlotList(i);
@@ -671,9 +681,9 @@ void CUIInventoryWnd::UpdateCustomDraw(bool b_full_reinit)
 
 		switch (i)
 		{
-		case HELMET_SLOT:
-			inv.IsSlotAllowed(i) ? list->ResetCellsAvailable() : list->SetCellsAvailable(0);
-		break;
+		//case HELMET_SLOT:
+		//	inv.IsSlotAllowed(i) ? list->ResetCellsAvailable() : list->SetCellsAvailable(0);
+		//break;
 		default:
 		{
 			inv.IsSlotAllowed(i) ?list->ResetCellsCapacity() : list->SetCellsCapacity({});

@@ -285,10 +285,10 @@ public:
 	virtual void	SwitchLaser				(bool on);
 	virtual void	SwitchFlashlight		(bool on);
 
-	virtual void	UnloadWeaponFull		();
+	virtual void	UnloadWeaponFull		(bool = false);
 
-	virtual void	UnloadAndDetachAllAddons();
-	virtual void	Disassemble				();
+	virtual void	UnloadAndDetachAllAddons(bool = false);
+	virtual void	PrepairItem				();
 protected:
 	bool			m_bNightVisionEnabled{};
 	bool			m_bNightVisionSwitchedOn{ true };

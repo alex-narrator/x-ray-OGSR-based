@@ -5,68 +5,7 @@
 		<cap_info x="0" y="0" width="91" height="0">
 			<text font="letterica16" r="124" g="119" b="115"></text>
 		</cap_info>	
-		<!-- дочірні статики -->
-		<power_level x="0" y="5" width="91" height="8">
-			<text font="letterica16" r="124" g="119" b="115"></text>
-		</power_level>
-		<power_ttl x="0" y="5" width="91" height="8">
-			<text font="letterica16" r="124" g="119" b="115"></text>
-		</power_ttl>
-		
-		<outfit_helmet_inbuild x="0" y="5" width="91" height="8">
-			<text font="letterica16" r="124" g="119" b="115"></text>
-		</outfit_helmet_inbuild>
-		
-		<additional_max_volume x="0" y="5" width="91" height="8">
-			<text font="letterica16" r="124" g="119" b="115"></text>
-		</additional_max_volume>
-		
-		<equipment_cells x="0" y="5" width="91" height="8">
-			<text font="letterica16" r="124" g="119" b="115"></text>
-		</equipment_cells>
-		
-		<armor_plate x="0" y="5" width="91" height="8">
-			<text font="letterica16" r="124" g="119" b="115"></text>
-		</armor_plate>
-		<cap_plates x="0" y="5" width="91" height="8">
-			<text font="letterica16" r="124" g="119" b="115">st_plates</text>
-		</cap_plates>
-		
-		<cap_scope x="0" y="5" width="91" height="8">
-			<text font="letterica16" r="124" g="119" b="115">st_current_scope</text>
-		</cap_scope>
-		
-		<silencer_hit_k x="0" y="5" width="91" height="8">
-			<text font="letterica16" r="124" g="119" b="115"></text>
-		</silencer_hit_k>
-		<silencer_bullet_speed_k x="0" y="5" width="91" height="8">
-			<text font="letterica16" r="124" g="119" b="115"></text>
-		</silencer_bullet_speed_k>
-		<silencer_dispersion_k x="0" y="5" width="91" height="8">
-			<text font="letterica16" r="124" g="119" b="115"></text>
-		</silencer_dispersion_k>
-		<silencer_recoil_k x="0" y="5" width="91" height="8">
-			<text font="letterica16" r="124" g="119" b="115"></text>
-		</silencer_recoil_k>
-		<weapon_dec_k x="0" y="5" width="91" height="8">
-			<text font="letterica16" r="124" g="119" b="115"></text>
-		</weapon_dec_k>		
-		<silencer_resource x="0" y="5" width="91" height="8">
-			<text font="letterica16" r="124" g="119" b="115"></text>
-		</silencer_resource>
-
-		<cap_ammo x="0" y="5" width="91" height="8">
-			<text font="letterica16" r="124" g="119" b="115">st_compatible_ammo</text>
-		</cap_ammo>
-		
-		<cap_containment x="0" y="5" width="91" height="8">
-			<text font="letterica16" r="124" g="119" b="115">st_containment</text>
-		</cap_containment>
-		
-		<cap_detail_parts x="0" y="5" width="91" height="8">
-			<text font="letterica16" r="124" g="119" b="115">st_detail_parts</text>
-		</cap_detail_parts>
-		
+	
 		<list_item x="0" y="0" width="91" height="16">
 			<text font="letterica16" r="124" g="119" b="115"></text>
 		</list_item>

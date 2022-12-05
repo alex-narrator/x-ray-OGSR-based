@@ -33,6 +33,9 @@
 	<string id="st_attach">
 		<text>встановити на</text>
 	</string>	
+	<string id="st_repair">
+		<text>відремонтувати</text>
+	</string>		
 	<string id="st_dispersion_units">
 		<text>MOA</text>
 	</string>
@@ -671,12 +674,25 @@
 	<string id="st_disassemble">
 		<text>розібрати</text>
 	</string>
-	<string id="st_disassemble_all">
-		<text>розібрати усе</text>
-	</string>	
 	<string id="st_detail_parts">
-		<text>деталі:</text>
+		<text>складові при розбиранні:</text>
 	</string>
+	<string id="st_required_tools">
+		<text>інструмент для розбирання/ремонту:</text>
+	</string>
+	<string id="st_repair_items">
+		<text>матеріали для ремонту:</text>
+	</string>
+
+	<string id="st_repair_condition_gain">
+		<text>відновлює стану:</text>
+	</string>
+	<string id="st_repair_condition_threshold">
+		<text>мінімальний стан:</text>
+	</string>
+	<string id="st_repair_count">
+		<text>кількість використань:</text>
+	</string>	
 	
 	<string id="ui_inv_move_all_from_ruck">
 		<text>Викласти все з рюкзака</text>

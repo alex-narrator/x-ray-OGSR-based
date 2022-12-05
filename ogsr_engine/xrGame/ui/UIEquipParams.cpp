@@ -28,26 +28,38 @@ CUIEquipParams::~CUIEquipParams(){
 }
 
 void CUIEquipParams::Init() {
-
 	CUIXml uiXml;
 	uiXml.Init(CONFIG_PATH, UI_PATH, equip_params);
-
 	AttachChild(&m_CapInfo);
 	CUIXmlInit::InitStatic(uiXml, "equip_params:cap_info", 0, &m_CapInfo);
 }
 
+CUIStatic* CUIEquipParams::SetStaticParams(CUIXml& _xml, const char* _path, float _h) {
+	CUIStatic* _static = xr_new<CUIStatic>();
+	CUIXmlInit::InitStatic(_xml, _path, 0, _static);
+	_static->SetAutoDelete(true);
+	_static->SetWndPos(_static->GetPosLeft(), _static->GetPosTop() + _h);
+	m_CapInfo.AttachChild(_static);
+	return _static;
+}
+
 bool CUIEquipParams::Check(CInventoryItem* obj){
-	if (smart_cast<CWeaponAmmo*>		(obj) || 
-		smart_cast<CWarbelt*>			(obj) ||
-		smart_cast<CVest*>				(obj) ||
-		smart_cast<CCustomOutfit*>		(obj) ||
-		smart_cast<CScope*>				(obj) ||
-		smart_cast<CSilencer*>			(obj) ||
-		smart_cast<CInventoryContainer*>(obj) ||
-		smart_cast<CPowerBattery*>		(obj) ||
-		smart_cast<CGrenade*>			(obj) ||
-		obj->IsPowerConsumer()				  ||
-		obj->GetDetailPartSection()				) {
+	if (smart_cast<CWeaponAmmo*>		(obj)		|| 
+		smart_cast<CWarbelt*>			(obj)		||
+		smart_cast<CVest*>				(obj)		||
+		smart_cast<CCustomOutfit*>		(obj)		||
+		smart_cast<CScope*>				(obj)		||
+		smart_cast<CSilencer*>			(obj)		||
+		smart_cast<CInventoryContainer*>(obj)		||
+		smart_cast<CPowerBattery*>		(obj)		||
+		smart_cast<CGrenade*>			(obj)		||
+		obj->IsPowerConsumer()						||
+		obj->GetDetailPartSection()					||
+		!obj->m_repair_items.empty()				||
+		!obj->m_required_tools.empty()				||
+		!fis_zero(obj->repair_condition_gain)		||
+		obj->repair_count							||
+		!fis_zero(obj->repair_condition_threshold)	) {
 		return true;
 	}else
 		return false;
@@ -61,44 +73,32 @@ void CUIEquipParams::SetInfo(CInventoryItem* obj){
 	string1024	text_to_show{};
 
 	//динамічний лист інформації
-	CUIXml	uiXml;
-	float	pos_top{};
+	CUIXml	_uiXml;
 
 	//елемент списку
-	uiXml.Init(CONFIG_PATH, UI_PATH, equip_params);
-	auto marker_ = uiXml.ReadAttrib("equip_params:list_item", 0, "marker", "• ");
-	float list_item_h = uiXml.ReadAttribFlt("equip_params:list_item", 0, "height");
+	_uiXml.Init(CONFIG_PATH, UI_PATH, equip_params);
+	auto marker_ = _uiXml.ReadAttrib("equip_params:list_item", 0, "marker", "• ");
+	float list_item_h = _uiXml.ReadAttribFlt("equip_params:list_item", 0, "height");
+	const char* _path = "equip_params:list_item";
 
 	float _h{}, _val{};
 	LPCSTR _param_name{}, _sn = "%";
 
 	auto pBattery = smart_cast<CPowerBattery*>(obj);
 	if (obj->IsPowerConsumer() || pBattery && pBattery->IsCharger()) {
-		auto power_level_static = xr_new<CUIStatic>();
-		CUIXmlInit::InitStatic(uiXml, "equip_params:power_level", 0, power_level_static);
-		power_level_static->SetAutoDelete(true);
-		pos_top = power_level_static->GetPosTop();
-		power_level_static->SetWndPos(power_level_static->GetPosLeft(), _h + pos_top);
 		_val = obj->GetPowerLevel();
 		_val *= 100.f;
 		_param_name = CStringTable().translate("st_power_level").c_str();
 		sprintf_s(text_to_show, "%s %.0f%s", _param_name, _val, _sn);
-		power_level_static->SetText(text_to_show);
-		m_CapInfo.AttachChild(power_level_static);
+		SetStaticParams(_uiXml, _path, _h)->SetText(text_to_show);
 		_h += list_item_h;
 	}
 	if (obj->IsPowerConsumer()) {
-		auto power_level_static = xr_new<CUIStatic>();
-		CUIXmlInit::InitStatic(uiXml, "equip_params:power_ttl", 0, power_level_static);
-		power_level_static->SetAutoDelete(true);
-		pos_top = power_level_static->GetPosTop();
-		power_level_static->SetWndPos(power_level_static->GetPosLeft(), _h + pos_top);
 		_val = obj->GetPowerTTL();
 		_param_name = CStringTable().translate("st_power_ttl").c_str();
 		_sn = CStringTable().translate("st_time_hour").c_str();
 		sprintf_s(text_to_show, "%s %.0f%s", _param_name, _val, _sn);
-		power_level_static->SetText(text_to_show);
-		m_CapInfo.AttachChild(power_level_static);
+		SetStaticParams(_uiXml, _path, _h)->SetText(text_to_show);
 		_h += list_item_h;
 	}
 
@@ -107,105 +107,61 @@ void CUIEquipParams::SetInfo(CInventoryItem* obj){
 	if (pSilencer) {
 		_val = READ_IF_EXISTS(pSettings, r_float, item_section, "bullet_hit_power_k", 0.f);
 		if (!fis_zero(_val)) {
-			auto _hit_k_static = xr_new<CUIStatic>();
-			CUIXmlInit::InitStatic(uiXml, "equip_params:silencer_hit_k", 0, _hit_k_static);
-			_hit_k_static->SetAutoDelete(true);
-			pos_top = _hit_k_static->GetPosTop();
-			_hit_k_static->SetWndPos(_hit_k_static->GetPosLeft(), _h + pos_top);
 			_val *= 100.f;
 			_param_name = CStringTable().translate("st_damage").c_str();
 			sprintf_s(text_to_show, "%s %+.1f%s", _param_name, _val, _sn);
-			_hit_k_static->SetText(text_to_show);
-			m_CapInfo.AttachChild(_hit_k_static);
+			SetStaticParams(_uiXml, _path, _h)->SetText(text_to_show);
 			_h += list_item_h;
 		}
 		_val = READ_IF_EXISTS(pSettings, r_float, item_section, "bullet_speed_k", 0.f);
 		if (!fis_zero(_val)) {
-			auto _bullet_speed_k_static = xr_new<CUIStatic>();
-			CUIXmlInit::InitStatic(uiXml, "equip_params:silencer_bullet_speed_k", 0, _bullet_speed_k_static);
-			_bullet_speed_k_static->SetAutoDelete(true);
-			pos_top = _bullet_speed_k_static->GetPosTop();
-			_bullet_speed_k_static->SetWndPos(_bullet_speed_k_static->GetPosLeft(), _h + pos_top);
 			_val *= 100.f;
 			_param_name = CStringTable().translate("st_bullet_speed").c_str();
 			sprintf_s(text_to_show, "%s %+.1f%s", _param_name, _val, _sn);
-			_bullet_speed_k_static->SetText(text_to_show);
-			m_CapInfo.AttachChild(_bullet_speed_k_static);
+			SetStaticParams(_uiXml, _path, _h)->SetText(text_to_show);
 			_h += list_item_h;
 		}
 		float _val = READ_IF_EXISTS(pSettings, r_float, item_section, "fire_dispersion_base_k", 0.f);
 		if (!fis_zero(_val)) {
-			auto _dispersion_k_static = xr_new<CUIStatic>();
-			CUIXmlInit::InitStatic(uiXml, "equip_params:silencer_dispersion_k", 0, _dispersion_k_static);
-			_dispersion_k_static->SetAutoDelete(true);
-			pos_top = _dispersion_k_static->GetPosTop();
-			_dispersion_k_static->SetWndPos(_dispersion_k_static->GetPosLeft(), _h + pos_top);
 			_val *= 100.f;
 			_param_name = CStringTable().translate("st_dispersion").c_str();
-			sprintf_s(text_to_show, "%s %.1f%s", _param_name, _val, _sn);
-			_dispersion_k_static->SetText(text_to_show);
-			m_CapInfo.AttachChild(_dispersion_k_static);
+			sprintf_s(text_to_show, "%s %+.1f%s", _param_name, _val, _sn);
+			SetStaticParams(_uiXml, _path, _h)->SetText(text_to_show);
 			_h += list_item_h;
 		}
 		_val = READ_IF_EXISTS(pSettings, r_float, item_section, "cam_dispersion_k", 0.f);
 		if (!fis_zero(_val)) {
-			auto _recoil_k_static = xr_new<CUIStatic>();
-			CUIXmlInit::InitStatic(uiXml, "equip_params:silencer_recoil_k", 0, _recoil_k_static);
-			_recoil_k_static->SetAutoDelete(true);
-			pos_top = _recoil_k_static->GetPosTop();
-			_recoil_k_static->SetWndPos(_recoil_k_static->GetPosLeft(), _h + pos_top);
 			_val *= 100.f;
 			_param_name = CStringTable().translate("st_recoil").c_str();
-			sprintf_s(text_to_show, "%s %.1f%s", _param_name, _val, _sn);
-			_recoil_k_static->SetText(text_to_show);
-			m_CapInfo.AttachChild(_recoil_k_static);
+			sprintf_s(text_to_show, "%s %+.1f%s", _param_name, _val, _sn);
+			SetStaticParams(_uiXml, _path, _h)->SetText(text_to_show);
 			_h += list_item_h;
 		}
 		_val = READ_IF_EXISTS(pSettings, r_float, item_section, "condition_shot_dec_silencer", 0.f);
 		if (!fis_zero(_val)) {
-			auto _weapon_dec_k_static = xr_new<CUIStatic>();
-			CUIXmlInit::InitStatic(uiXml, "equip_params:weapon_dec_k", 0, _weapon_dec_k_static);
-			_weapon_dec_k_static->SetAutoDelete(true);
-			pos_top = _weapon_dec_k_static->GetPosTop();
-			_weapon_dec_k_static->SetWndPos(_weapon_dec_k_static->GetPosLeft(), _h + pos_top);
 			_val *= 100.f;
 			_param_name = CStringTable().translate("st_weapon_dec").c_str();
-			sprintf_s(text_to_show, "%s %.1f%s", _param_name, _val, _sn);
-			_weapon_dec_k_static->SetText(text_to_show);
-			m_CapInfo.AttachChild(_weapon_dec_k_static);
+			sprintf_s(text_to_show, "%s %+.1f%s", _param_name, _val, _sn);
+			SetStaticParams(_uiXml, _path, _h)->SetText(text_to_show);
 			_h += list_item_h;
 		}
 		_val = READ_IF_EXISTS(pSettings, r_float, item_section, "condition_shot_dec", 0.f);
 		if (!fis_zero(_val)) {
 			_sn = CStringTable().translate("st_resource_units").c_str();
-			auto _resource_static = xr_new<CUIStatic>();
-			CUIXmlInit::InitStatic(uiXml, "equip_params:silencer_resource", 0, _resource_static);
-			_resource_static->SetAutoDelete(true);
-			pos_top = _resource_static->GetPosTop();
-			_resource_static->SetWndPos(_resource_static->GetPosLeft(), _h + pos_top);
 			_val = 1.f / _val;
 			_param_name = CStringTable().translate("st_resource").c_str();
 			sprintf_s(text_to_show, "%s %.0f %s", _param_name, _val, _sn);
-			_resource_static->SetText(text_to_show);
-			m_CapInfo.AttachChild(_resource_static);
+			SetStaticParams(_uiXml, _path, _h)->SetText(text_to_show);
 			_h += list_item_h;
 		}
 	}
 
 	auto pScope = smart_cast<CScope*>(obj);
 	if (pScope) {
-		auto cap_scope_static = xr_new<CUIStatic>(); cap_scope_static->SetAutoDelete(true);
-		CUIXmlInit::InitStatic(uiXml, "equip_params:cap_scope", 0, cap_scope_static);
-		pos_top = cap_scope_static->GetPosTop();
-		cap_scope_static->SetWndPos(cap_scope_static->GetPosLeft(), _h + pos_top);
-		m_CapInfo.AttachChild(cap_scope_static);
-		_h += list_item_h + pos_top;
+		_param_name = CStringTable().translate("st_current_scope").c_str();
+		SetStaticParams(_uiXml, _path, _h)->SetText(_param_name);
+		_h += list_item_h;
 
-		auto scope_zoom_static = xr_new<CUIStatic>();
-		CUIXmlInit::InitStatic(uiXml, "equip_params:list_item", 0, scope_zoom_static);
-		scope_zoom_static->SetAutoDelete(true);
-		pos_top = scope_zoom_static->GetPosTop();
-		scope_zoom_static->SetWndPos(scope_zoom_static->GetPosLeft(), _h + pos_top);
 		_param_name = CStringTable().translate("st_scope_zoom").c_str();
 		_val = pSettings->r_float(item_section, "scope_zoom_factor");
 		bool has_zoom_dynamic = !!READ_IF_EXISTS(pSettings, r_bool, item_section, "scope_dynamic_zoom", false);
@@ -215,112 +171,69 @@ void CUIEquipParams::SetInfo(CInventoryItem* obj){
 			sprintf_s(text_to_show, "%s%s %.1f-%.1fx", marker_, _param_name, min_zoom_factor, _val);
 		}else
 			sprintf_s(text_to_show, "%s%s %.1fx", marker_, _param_name, _val);
-		scope_zoom_static->SetText(text_to_show);
-		m_CapInfo.AttachChild(scope_zoom_static);
+		SetStaticParams(_uiXml, _path, _h)->SetText(text_to_show);
 		_h += list_item_h;
 
 		bool has_night_vision = !!READ_IF_EXISTS(pSettings, r_bool, item_section, "night_vision", false);
 		if (has_night_vision) {
-			auto scope_night_vision_static = xr_new<CUIStatic>();
-			CUIXmlInit::InitStatic(uiXml, "equip_params:list_item", 0, scope_night_vision_static);
-			scope_night_vision_static->SetAutoDelete(true);
-			pos_top = scope_night_vision_static->GetPosTop();
-			scope_night_vision_static->SetWndPos(scope_night_vision_static->GetPosLeft(), _h + pos_top);
 			_param_name = CStringTable().translate("st_scope_night_vision").c_str();
 			sprintf_s(text_to_show, "%s%s", marker_, _param_name);
-			scope_night_vision_static->SetText(text_to_show);
-			m_CapInfo.AttachChild(scope_night_vision_static);
+			SetStaticParams(_uiXml, _path, _h)->SetText(text_to_show);
 			_h += list_item_h;
 		}
 
 		bool vision_present = !!READ_IF_EXISTS(pSettings, r_bool, item_section, "vision_present", false);
 		if (vision_present) {
-			auto scope_vision_present_static = xr_new<CUIStatic>();
-			CUIXmlInit::InitStatic(uiXml, "equip_params:list_item", 0, scope_vision_present_static);
-			scope_vision_present_static->SetAutoDelete(true);
-			pos_top = scope_vision_present_static->GetPosTop();
-			scope_vision_present_static->SetWndPos(scope_vision_present_static->GetPosLeft(), _h + pos_top);
 			_param_name = CStringTable().translate("st_scope_vision_present").c_str();
 			sprintf_s(text_to_show, "%s%s", marker_, _param_name);
-			scope_vision_present_static->SetText(text_to_show);
-			m_CapInfo.AttachChild(scope_vision_present_static);
+			SetStaticParams(_uiXml, _path, _h)->SetText(text_to_show);
 			_h += list_item_h;
 		}
 
 		bool has_range_meter = !!READ_IF_EXISTS(pSettings, r_bool, item_section, "range_meter", false);
 		if (has_range_meter) {
-			auto scope_range_meter_static = xr_new<CUIStatic>();
-			CUIXmlInit::InitStatic(uiXml, "equip_params:list_item", 0, scope_range_meter_static);
-			scope_range_meter_static->SetAutoDelete(true);
-			pos_top = scope_range_meter_static->GetPosTop();
 			_param_name = CStringTable().translate("st_scope_range_meter").c_str();
-			scope_range_meter_static->SetWndPos(scope_range_meter_static->GetPosLeft(), _h + pos_top);
 			sprintf_s(text_to_show, "%s%s", marker_, _param_name);
-			scope_range_meter_static->SetText(text_to_show);
-			m_CapInfo.AttachChild(scope_range_meter_static);
+			SetStaticParams(_uiXml, _path, _h)->SetText(text_to_show);
 			_h += list_item_h;
 		}
 	}
 
 	auto pOutfit = smart_cast<CCustomOutfit*>(obj);
 	if (pOutfit && pOutfit->m_bIsHelmetBuiltIn) {
-		auto inbuild_helmet_static = xr_new<CUIStatic>();
-		CUIXmlInit::InitStatic(uiXml, "equip_params:outfit_helmet_inbuild", 0, inbuild_helmet_static);
-		inbuild_helmet_static->SetAutoDelete(true);
-		pos_top = inbuild_helmet_static->GetPosTop();
-		inbuild_helmet_static->SetWndPos(inbuild_helmet_static->GetPosLeft(), _h + pos_top);
 		_param_name = CStringTable().translate("st_inbuild_helmet").c_str();
 		sprintf_s(text_to_show, "%s", _param_name);
-		inbuild_helmet_static->SetText(text_to_show);
-		m_CapInfo.AttachChild(inbuild_helmet_static);
+		SetStaticParams(_uiXml, _path, _h)->SetText(text_to_show);
 		_h += list_item_h;
 	}
 
 	auto pWarbelt	= smart_cast<CWarbelt*>(obj);
 	auto pVest		= smart_cast<CVest*>(obj);
 	if (pWarbelt || pVest) {
-		auto belt_cells_static = xr_new<CUIStatic>();
-		CUIXmlInit::InitStatic(uiXml, "equip_params:equipment_cells", 0, belt_cells_static);
-		belt_cells_static->SetAutoDelete(true);
-		pos_top = belt_cells_static->GetPosTop();
 		u32 cells_width		= pWarbelt ? pWarbelt->GetBeltWidth() : pVest->GetVestWidth();
 		u32 cells_height	= pWarbelt ? pWarbelt->GetBeltHeight() : pVest->GetVestHeight();
-		belt_cells_static->SetWndPos(belt_cells_static->GetPosLeft(), _h + pos_top);
 		_param_name = CStringTable().translate("st_cells_available").c_str();
 		sprintf_s(text_to_show, "%s [%dx%d]", _param_name, cells_width, cells_height);
-		belt_cells_static->SetText(text_to_show);
-		m_CapInfo.AttachChild(belt_cells_static);
+		SetStaticParams(_uiXml, _path, _h)->SetText(text_to_show);
 		_h += list_item_h;
 	}
 
 	if (pVest && pVest->m_plates.size()) {
 		if (pVest->IsPlateInstalled()) {
-			auto plate_static = xr_new<CUIStatic>();
-			CUIXmlInit::InitStatic(uiXml, "equip_params:armor_plate", 0, plate_static);
-			plate_static->SetAutoDelete(true);
-			pos_top = plate_static->GetPosTop();
-			plate_static->SetWndPos(plate_static->GetPosLeft(), _h + pos_top);
 			_param_name = CStringTable().translate("st_installed_plate").c_str();
 			sprintf_s(text_to_show, "%s %s", _param_name, pVest->GetPlateName().c_str());
-			plate_static->SetText(text_to_show);
-			m_CapInfo.AttachChild(plate_static);
+			SetStaticParams(_uiXml, _path, _h)->SetText(text_to_show);
 			_h += list_item_h;
 		}
-		auto cap_plates_static = xr_new<CUIStatic>(); cap_plates_static->SetAutoDelete(true);
-		CUIXmlInit::InitStatic(uiXml, "equip_params:cap_plates", 0, cap_plates_static);
-		pos_top = cap_plates_static->GetPosTop();
-		cap_plates_static->SetWndPos(cap_plates_static->GetPosLeft(), _h + pos_top);
-		m_CapInfo.AttachChild(cap_plates_static);
-		_h += list_item_h + pos_top;
+
+		_param_name = CStringTable().translate("st_plates").c_str();
+		SetStaticParams(_uiXml, _path, _h)->SetText(_param_name);
+		_h += list_item_h;
+
 		for (const auto& plate : pVest->m_plates) {
 			auto plate_name = pSettings->r_string(plate, "inv_name");
-			auto item_static = xr_new<CUIStatic>();
-			CUIXmlInit::InitStatic(uiXml, "equip_params:list_item", 0, item_static);
-			item_static->SetAutoDelete(true);
-			item_static->SetWndPos(item_static->GetPosLeft(), _h);
 			sprintf_s(text_to_show, "%s%s", marker_, CStringTable().translate(plate_name).c_str());
-			item_static->SetText(text_to_show);
-			m_CapInfo.AttachChild(item_static);
+			SetStaticParams(_uiXml, _path, _h)->SetText(text_to_show);
 			_h += list_item_h;
 		}
 	}
@@ -330,24 +243,15 @@ void CUIEquipParams::SetInfo(CInventoryItem* obj){
 	if (pAmmo) {
 		if (pAmmo->IsBoxReloadable() || pAmmo->IsBoxReloadableEmpty()) {
 			//сумісні набої магазинів - заголовок
-			auto cap_ammo_static = xr_new<CUIStatic>(); cap_ammo_static->SetAutoDelete(true);
-			CUIXmlInit::InitStatic(uiXml, "equip_params:cap_ammo", 0, cap_ammo_static);
-			pos_top = cap_ammo_static->GetPosTop();
-			cap_ammo_static->SetWndPos(cap_ammo_static->GetPosLeft(), _h + pos_top);
-			m_CapInfo.AttachChild(cap_ammo_static);
-			_h += list_item_h + pos_top;
+			_param_name = CStringTable().translate("st_compatible_ammo").c_str();
+			SetStaticParams(_uiXml, _path, _h)->SetText(_param_name);
+			_h += list_item_h;
 			//сумісні набої порожніх магазинів - список
 			if (pAmmo->IsBoxReloadableEmpty()) {
 				for (const auto& ammo : pAmmo->m_ammoTypes) {
 					auto ammo_name = pSettings->r_string(ammo, "inv_name");
-					auto ammo_static = xr_new<CUIStatic>();
-					CUIXmlInit::InitStatic(uiXml, "equip_params:list_item", 0, ammo_static);
-					ammo_static->SetAutoDelete(true);
-					ammo_static->SetWndPos(ammo_static->GetPosLeft(), _h);
-					strconcat(sizeof(text_to_show), text_to_show, marker_, CStringTable().translate(ammo_name).c_str());
 					sprintf_s(text_to_show, "%s%s", marker_, CStringTable().translate(ammo_name).c_str());
-					ammo_static->SetText(text_to_show);
-					m_CapInfo.AttachChild(ammo_static);
+					SetStaticParams(_uiXml, _path, _h)->SetText(text_to_show);
 					_h += list_item_h;
 				}
 			}
@@ -366,13 +270,8 @@ void CUIEquipParams::SetInfo(CInventoryItem* obj){
 				}
 				for (const auto& ammo : m_ammoTypes) {
 					auto ammo_name = pSettings->r_string(ammo, "inv_name");
-					auto ammo_static = xr_new<CUIStatic>();
-					CUIXmlInit::InitStatic(uiXml, "equip_params:list_item", 0, ammo_static);
-					ammo_static->SetAutoDelete(true);
-					ammo_static->SetWndPos(ammo_static->GetPosLeft(), _h);
 					sprintf_s(text_to_show, "%s%s", marker_, CStringTable().translate(ammo_name).c_str());
-					ammo_static->SetText(text_to_show);
-					m_CapInfo.AttachChild(ammo_static);
+					SetStaticParams(_uiXml, _path, _h)->SetText(text_to_show);
 					_h += list_item_h;
 				}
 			}
@@ -382,104 +281,62 @@ void CUIEquipParams::SetInfo(CInventoryItem* obj){
 			_sn = "%";
 			_val = pAmmo->m_kDist;
 			if (!fis_zero(_val)) {
-				auto fire_distance_static = xr_new<CUIStatic>();
-				CUIXmlInit::InitStatic(uiXml, "equip_params:list_item", 0, fire_distance_static);
-				fire_distance_static->SetAutoDelete(true);
-				pos_top = fire_distance_static->GetPosTop();
-				fire_distance_static->SetWndPos(fire_distance_static->GetPosLeft(), _h + pos_top);
 				_val *= 100.f;
 				_param_name = CStringTable().translate("st_fire_distance").c_str();
 				sprintf_s(text_to_show, "%s %+.1f%s", _param_name, _val, _sn);
-				fire_distance_static->SetText(text_to_show);
-				m_CapInfo.AttachChild(fire_distance_static);
+				SetStaticParams(_uiXml, _path, _h)->SetText(text_to_show);
 				_h += list_item_h;
 			}
 			//розкид
 			_val = pAmmo->m_kDisp;
 			if (!fis_zero(_val)) {
-				auto dispersion_static = xr_new<CUIStatic>();
-				CUIXmlInit::InitStatic(uiXml, "equip_params:list_item", 0, dispersion_static);
-				dispersion_static->SetAutoDelete(true);
-				pos_top = dispersion_static->GetPosTop();
-				dispersion_static->SetWndPos(dispersion_static->GetPosLeft(), _h + pos_top);
 				_val *= 100.f;
 				_param_name = CStringTable().translate("st_dispersion").c_str();
 				sprintf_s(text_to_show, "%s %+.1f%s", _param_name, _val, _sn);
-				dispersion_static->SetText(text_to_show);
-				m_CapInfo.AttachChild(dispersion_static);
+				SetStaticParams(_uiXml, _path, _h)->SetText(text_to_show);
 				_h += list_item_h;
 			}
 			//ушкодження
 			_val = pAmmo->m_kHit;
 			if (!fis_zero(_val)) {
-				auto damage_static = xr_new<CUIStatic>();
-				CUIXmlInit::InitStatic(uiXml, "equip_params:list_item", 0, damage_static);
-				damage_static->SetAutoDelete(true);
-				pos_top = damage_static->GetPosTop();
-				damage_static->SetWndPos(damage_static->GetPosLeft(), _h + pos_top);
 				_val *= 100.f;
 				_param_name = CStringTable().translate("st_damage").c_str();
 				sprintf_s(text_to_show, "%s %+.1f%s", _param_name, _val, _sn);
-				damage_static->SetText(text_to_show);
-				m_CapInfo.AttachChild(damage_static);
+				SetStaticParams(_uiXml, _path, _h)->SetText(text_to_show);
 				_h += list_item_h;
 			}
 			//швидкість кулі
 			_val = pAmmo->m_kSpeed;
 			if (!fis_zero(_val)) {
-				auto bullet_speed_static = xr_new<CUIStatic>();
-				CUIXmlInit::InitStatic(uiXml, "equip_params:list_item", 0, bullet_speed_static);
-				bullet_speed_static->SetAutoDelete(true);
-				pos_top = bullet_speed_static->GetPosTop();
-				bullet_speed_static->SetWndPos(bullet_speed_static->GetPosLeft(), _h + pos_top);
 				_val *= 100.f;
 				_param_name = CStringTable().translate("st_bullet_speed").c_str();
 				sprintf_s(text_to_show, "%s %+.1f%s", _param_name, _val, _sn);
-				bullet_speed_static->SetText(text_to_show);
-				m_CapInfo.AttachChild(bullet_speed_static);
+				SetStaticParams(_uiXml, _path, _h)->SetText(text_to_show);
 				_h += list_item_h;
 			}
 			//бронебійність
 			_val = pAmmo->m_kAP;
 			if (!fis_zero(_val)) {
-				auto ap_static = xr_new<CUIStatic>();
-				CUIXmlInit::InitStatic(uiXml, "equip_params:list_item", 0, ap_static);
-				ap_static->SetAutoDelete(true);
-				pos_top = ap_static->GetPosTop();
-				ap_static->SetWndPos(ap_static->GetPosLeft(), _h + pos_top);
 				_param_name = CStringTable().translate("st_ap").c_str();
 				sprintf_s(text_to_show, "%s %.1f", _param_name, _val);
-				ap_static->SetText(text_to_show);
-				m_CapInfo.AttachChild(ap_static);
+				SetStaticParams(_uiXml, _path, _h)->SetText(text_to_show);
 				_h += list_item_h;
 			}
 			//зношування зброї
 			_val = pAmmo->m_impair;
 			if (!fis_zero(_val)) {
-				auto bullet_speed_static = xr_new<CUIStatic>();
-				CUIXmlInit::InitStatic(uiXml, "equip_params:list_item", 0, bullet_speed_static);
-				bullet_speed_static->SetAutoDelete(true);
-				pos_top = bullet_speed_static->GetPosTop();
-				bullet_speed_static->SetWndPos(bullet_speed_static->GetPosLeft(), _h + pos_top);
 				_val *= 100.f;
 				_param_name = CStringTable().translate("st_weapon_dec").c_str();
 				sprintf_s(text_to_show, "%s %+.1f%s", _param_name, _val, _sn);
-				bullet_speed_static->SetText(text_to_show);
-				m_CapInfo.AttachChild(bullet_speed_static);
+				SetStaticParams(_uiXml, _path, _h)->SetText(text_to_show);
 				_h += list_item_h;
 			}
 			//кількість шротин у набої
 			_val = pAmmo->m_buckShot;
 			if (_val > 1) {
-				auto buck_static = xr_new<CUIStatic>();
-				CUIXmlInit::InitStatic(uiXml, "equip_params:list_item", 0, buck_static);
-				buck_static->SetAutoDelete(true);
-				pos_top = buck_static->GetPosTop();
-				buck_static->SetWndPos(buck_static->GetPosLeft(), _h + pos_top);
 				_param_name = CStringTable().translate("st_buck_count").c_str();
 				sprintf_s(text_to_show, "%s %.0f", _param_name, _val);
-				buck_static->SetText(text_to_show);
-				m_CapInfo.AttachChild(buck_static);
+				SetStaticParams(_uiXml, _path, _h)->SetText(text_to_show);
 				_h += list_item_h;
 			}
 		}
@@ -489,75 +346,40 @@ void CUIEquipParams::SetInfo(CInventoryItem* obj){
 	if (pGrenade || pSettings->line_exist(item_section, "fake_grenade_name")) {
 		const shared_str& explosive_sect = pGrenade ? item_section : pSettings->r_string(item_section, "fake_grenade_name");
 		//хіт вибуху
-		auto explosion_hit_static = xr_new<CUIStatic>();
-		CUIXmlInit::InitStatic(uiXml, "equip_params:list_item", 0, explosion_hit_static);
-		explosion_hit_static->SetAutoDelete(true);
-		pos_top = explosion_hit_static->GetPosTop();
-		explosion_hit_static->SetWndPos(explosion_hit_static->GetPosLeft(), _h + pos_top);
 		_val = pSettings->r_float(explosive_sect, "blast");
 		_param_name = CStringTable().translate("st_explosion_hit").c_str();
 		sprintf_s(text_to_show, "%s %.1f", _param_name, _val);
-		explosion_hit_static->SetText(text_to_show);
-		m_CapInfo.AttachChild(explosion_hit_static);
+		SetStaticParams(_uiXml, _path, _h)->SetText(text_to_show);
 		_h += list_item_h;
 		//радіус вибуху
-		auto explosion_radius_static = xr_new<CUIStatic>();
-		CUIXmlInit::InitStatic(uiXml, "equip_params:list_item", 0, explosion_radius_static);
-		explosion_radius_static->SetAutoDelete(true);
-		pos_top = explosion_radius_static->GetPosTop();
-		explosion_radius_static->SetWndPos(explosion_radius_static->GetPosLeft(), _h + pos_top);
 		_val = pSettings->r_float(explosive_sect, "blast_r");
 		_param_name = CStringTable().translate("st_explosion_radius").c_str();
 		_sn = CStringTable().translate("st_m").c_str();
 		sprintf_s(text_to_show, "%s %.1f %s", _param_name, _val, _sn);
-		explosion_radius_static->SetText(text_to_show);
-		m_CapInfo.AttachChild(explosion_radius_static);
+		SetStaticParams(_uiXml, _path, _h)->SetText(text_to_show);
 		_h += list_item_h;
 		//хіт уламків
-		auto frags_hit_static = xr_new<CUIStatic>();
-		CUIXmlInit::InitStatic(uiXml, "equip_params:list_item", 0, frags_hit_static);
-		frags_hit_static->SetAutoDelete(true);
-		pos_top = frags_hit_static->GetPosTop();
-		frags_hit_static->SetWndPos(frags_hit_static->GetPosLeft(), _h + pos_top);
 		_val = pSettings->r_float(explosive_sect, "frag_hit");
 		_param_name = CStringTable().translate("st_frags_hit").c_str();
 		sprintf_s(text_to_show, "%s %.1f", _param_name, _val);
-		frags_hit_static->SetText(text_to_show);
-		m_CapInfo.AttachChild(frags_hit_static);
+		SetStaticParams(_uiXml, _path, _h)->SetText(text_to_show);
 		_h += list_item_h;
 		//радіус уламків
-		auto frags_radius_static = xr_new<CUIStatic>();
-		CUIXmlInit::InitStatic(uiXml, "equip_params:list_item", 0, frags_radius_static);
-		frags_radius_static->SetAutoDelete(true);
-		pos_top = frags_radius_static->GetPosTop();
-		frags_radius_static->SetWndPos(frags_radius_static->GetPosLeft(), _h + pos_top);
 		_val = pSettings->r_float(explosive_sect, "frags_r");
 		_param_name = CStringTable().translate("st_frags_radius").c_str();
 		_sn = CStringTable().translate("st_m").c_str();
 		sprintf_s(text_to_show, "%s %.1f %s", _param_name, _val, _sn);
-		frags_radius_static->SetText(text_to_show);
-		m_CapInfo.AttachChild(frags_radius_static);
+		SetStaticParams(_uiXml, _path, _h)->SetText(text_to_show);
 		_h += list_item_h;
 		//хіт уламків
-		auto frags_count_static = xr_new<CUIStatic>();
-		CUIXmlInit::InitStatic(uiXml, "equip_params:list_item", 0, frags_count_static);
-		frags_count_static->SetAutoDelete(true);
-		pos_top = frags_count_static->GetPosTop();
-		frags_count_static->SetWndPos(frags_count_static->GetPosLeft(), _h + pos_top);
 		_val = pSettings->r_u8(explosive_sect, "frags") * 2;
 		_param_name = CStringTable().translate("st_frags_count").c_str();
 		sprintf_s(text_to_show, "%s %.0f", _param_name, _val);
-		frags_count_static->SetText(text_to_show);
-		m_CapInfo.AttachChild(frags_count_static);
+		SetStaticParams(_uiXml, _path, _h)->SetText(text_to_show);
 		_h += list_item_h;
 		//затримка до вибуху
 		if (pSettings->line_exist(explosive_sect, "destroy_time")) {
 			LPCSTR str = pSettings->r_string(explosive_sect, "destroy_time");
-			auto safe_dist_static = xr_new<CUIStatic>();
-			CUIXmlInit::InitStatic(uiXml, "equip_params:list_item", 0, safe_dist_static);
-			safe_dist_static->SetAutoDelete(true);
-			pos_top = safe_dist_static->GetPosTop();
-			safe_dist_static->SetWndPos(safe_dist_static->GetPosLeft(), _h + pos_top);
 			_param_name = CStringTable().translate("st_destroy_time").c_str();
 			_sn = CStringTable().translate("st_time_second").c_str();
 			if (_GetItemCount(str) > 1) {
@@ -572,58 +394,53 @@ void CUIEquipParams::SetInfo(CInventoryItem* obj){
 				_val /= 1000.f;
 				sprintf_s(text_to_show, "%s %.1f %s", _param_name, _val, _sn);
 			}
-			safe_dist_static->SetText(text_to_show);
-			m_CapInfo.AttachChild(safe_dist_static);
+			SetStaticParams(_uiXml, _path, _h)->SetText(text_to_show);
 			_h += list_item_h;
 		}
 		//дистанція зведення
 		if (pSettings->line_exist(explosive_sect, "safe_dist_to_explode")) {
-			auto safe_dist_static = xr_new<CUIStatic>();
-			CUIXmlInit::InitStatic(uiXml, "equip_params:list_item", 0, safe_dist_static);
-			safe_dist_static->SetAutoDelete(true);
-			pos_top = safe_dist_static->GetPosTop();
-			safe_dist_static->SetWndPos(safe_dist_static->GetPosLeft(), _h + pos_top);
 			_val = pSettings->r_float(explosive_sect, "safe_dist_to_explode");
 			_param_name = CStringTable().translate("st_safe_dist").c_str();
 			_sn = CStringTable().translate("st_m").c_str();
 			sprintf_s(text_to_show, "%s %.1f %s", _param_name, _val, _sn);
-			safe_dist_static->SetText(text_to_show);
-			m_CapInfo.AttachChild(safe_dist_static);
+			SetStaticParams(_uiXml, _path, _h)->SetText(text_to_show);
 			_h += list_item_h;
 		}
 	}
 
 	auto pContainer = smart_cast<CInventoryContainer*>(obj);
 	if (pContainer && !pContainer->IsEmpty()) {
-		auto cap_containment_static = xr_new<CUIStatic>(); cap_containment_static->SetAutoDelete(true);
-		CUIXmlInit::InitStatic(uiXml, "equip_params:cap_containment", 0, cap_containment_static);
-		pos_top = cap_containment_static->GetPosTop();
-		cap_containment_static->SetWndPos(cap_containment_static->GetPosLeft(), _h + pos_top);
-		m_CapInfo.AttachChild(cap_containment_static);
-		_h += list_item_h + pos_top;
+		_param_name = CStringTable().translate("st_containment").c_str();
+		SetStaticParams(_uiXml, _path, _h)->SetText(_param_name);
+		_h += list_item_h;
 
 		TIItemContainer	container_list;
 		pContainer->AddAvailableItems(container_list);
 
 		for (const auto& item : container_list) {
-			auto item_static = xr_new<CUIStatic>();
-			CUIXmlInit::InitStatic(uiXml, "equip_params:list_item", 0, item_static);
-			item_static->SetAutoDelete(true);
-			item_static->SetWndPos(item_static->GetPosLeft(), _h);
 			sprintf_s(text_to_show, "%s%s", marker_, CStringTable().translate(item->Name()).c_str());
-			item_static->SetText(text_to_show);
-			m_CapInfo.AttachChild(item_static);
+			SetStaticParams(_uiXml, _path, _h)->SetText(text_to_show);
+			_h += list_item_h;
+		}
+	}
+
+	if (!obj->m_required_tools.empty()) {
+		_param_name = CStringTable().translate("st_required_tools").c_str();
+		SetStaticParams(_uiXml, _path, _h)->SetText(_param_name);
+		_h += list_item_h;
+
+		for (const auto& tool_sect : obj->m_required_tools) {
+			auto tool_name = pSettings->r_string(tool_sect, "inv_name");
+			sprintf(text_to_show, "%s%s", marker_, CStringTable().translate(tool_name).c_str());
+			SetStaticParams(_uiXml, _path, _h)->SetText(text_to_show);
 			_h += list_item_h;
 		}
 	}
 
 	if (obj->GetDetailPartSection()) {
-		auto cap_containment_static = xr_new<CUIStatic>(); cap_containment_static->SetAutoDelete(true);
-		CUIXmlInit::InitStatic(uiXml, "equip_params:cap_detail_parts", 0, cap_containment_static);
-		pos_top = cap_containment_static->GetPosTop();
-		cap_containment_static->SetWndPos(cap_containment_static->GetPosLeft(), _h + pos_top);
-		m_CapInfo.AttachChild(cap_containment_static);
-		_h += list_item_h + pos_top;
+		_param_name = CStringTable().translate("st_detail_parts").c_str();
+		SetStaticParams(_uiXml, _path, _h)->SetText(_param_name);
+		_h += list_item_h;
 
 		string128 item_sect;
 		LPCSTR detail_part_sect = obj->GetDetailPartSection();
@@ -632,16 +449,49 @@ void CUIEquipParams::SetInfo(CInventoryItem* obj){
 			_GetItem(detail_part_sect, i, item_sect);
 			string128 tmp;
 			int item_count = atoi(_GetItem(detail_part_sect, i + 1, tmp));
-			auto item_static = xr_new<CUIStatic>();
-			CUIXmlInit::InitStatic(uiXml, "equip_params:list_item", 0, item_static);
-			item_static->SetAutoDelete(true);
-			item_static->SetWndPos(item_static->GetPosLeft(), _h);
 			auto detail_name = pSettings->r_string(item_sect, "inv_name");
 			sprintf(text_to_show,"%sx%d %s", marker_, item_count, CStringTable().translate(detail_name).c_str());
-			item_static->SetText(text_to_show);
-			m_CapInfo.AttachChild(item_static);
+			SetStaticParams(_uiXml, _path, _h)->SetText(text_to_show);
 			_h += list_item_h;
 		}
+	}
+
+	if (!obj->m_repair_items.empty()) {
+		_param_name = CStringTable().translate("st_repair_items").c_str();
+		SetStaticParams(_uiXml, _path, _h)->SetText(_param_name);
+		_h += list_item_h;
+
+		for (const auto& item_sect : obj->m_repair_items) {
+			auto rep_item_name = pSettings->r_string(item_sect, "inv_name");
+			sprintf_s(text_to_show, "%s%s", marker_, CStringTable().translate(rep_item_name).c_str());
+			SetStaticParams(_uiXml, _path, _h)->SetText(text_to_show);
+			_h += list_item_h;
+		}
+	}
+
+	_sn = "%";
+	_val = obj->repair_condition_gain;
+	if (!fis_zero(_val)) {
+		_val *= 100.f;
+		_param_name = CStringTable().translate("st_repair_condition_gain").c_str();
+		sprintf_s(text_to_show, "%s %.0f%s", _param_name, _val, _sn);
+		SetStaticParams(_uiXml, _path, _h)->SetText(text_to_show);
+		_h += list_item_h;
+	}
+	_val = obj->repair_condition_threshold;
+	if (!fis_zero(_val)) {
+		_val *= 100.f;
+		_param_name = CStringTable().translate("st_repair_condition_threshold").c_str();
+		sprintf_s(text_to_show, "%s %.0f%s", _param_name, _val, _sn);
+		SetStaticParams(_uiXml, _path, _h)->SetText(text_to_show);
+		_h += list_item_h;
+	}
+	_val = obj->repair_count;
+	if (!fis_zero(_val)) {
+		_param_name = CStringTable().translate("st_repair_count").c_str();
+		sprintf_s(text_to_show, "%s %.0f", _param_name, _val);
+		SetStaticParams(_uiXml, _path, _h)->SetText(text_to_show);
+		_h += list_item_h;
 	}
 
 	SetHeight(_h);

@@ -324,6 +324,13 @@ public:
 	virtual float					GetHitTypeProtection(int);
 
 	xr_vector<shared_str>			m_power_sources{};
+	xr_vector<shared_str>			m_required_tools{};
+
+	xr_vector<shared_str>			m_repair_items{};
+			float					repair_condition_gain{};
+			float					repair_condition_threshold{};
+			int						repair_count{};
+
 	virtual bool					IsPowerConsumer		() const;
 			void					ChangePowerLevel	(float);
 			void					SetPowerLevel		(float);
@@ -342,9 +349,17 @@ public:
 
 			LPCSTR					GetDetailPartSection() const { return m_detail_part_section; }
 	virtual void					Disassemble			();
+	virtual bool					CanBeDisassembled	();
 
 			LPCSTR					GetAttachMenuTip() const { return m_sAttachMenuTip; };
 			LPCSTR					GetDetachMenuTip() const { return m_sDetachMenuTip; };
+
+			LPCSTR					GetRepairMenuTip() const { return m_sRepairMenuTip; };
+			LPCSTR					GetDisassembleMenuTip() const { return m_sDisassembleMenuTip; };
+
+	virtual bool					CanBeRepairedBy	(PIItem) const;
+	virtual void					Repair			(PIItem);
+	virtual void					PrepairItem		();
 protected:
 	HitImmunity::HitTypeSVec		m_HitTypeProtection;
 
@@ -358,6 +373,8 @@ protected:
 	LPCSTR							m_detail_part_section{};
 	LPCSTR							m_sAttachMenuTip{};
 	LPCSTR							m_sDetachMenuTip{};
+	LPCSTR							m_sRepairMenuTip{};
+	LPCSTR							m_sDisassembleMenuTip{};
 };
 
 #include "inventory_item_inline.h"

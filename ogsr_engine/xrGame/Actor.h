@@ -795,6 +795,9 @@ public:
 			bool	m_bShowActiveItemInfo	{};
 			bool	m_bShowGearInfo			{};
 
+	virtual bool	HasRequiredTool			(PIItem);
+	virtual bool	HasRequiredTool			(const shared_str&);
+
 protected:
 			bool	m_bIsHardHold				{};
 			bool	m_bRuckAmmoPlacement		{};

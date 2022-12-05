@@ -523,8 +523,7 @@ void CWeaponMagazinedWGrenade::OnH_B_Independent(bool just_before_destroy)
 	inherited::OnH_B_Independent(just_before_destroy);
 
 	SetPending(FALSE);
-	if (m_bGrenadeMode)
-	{
+	if (m_bGrenadeMode){
 		SetState		( eIdle );
 //.		SwitchMode	();
 		SetPending(FALSE);
@@ -533,8 +532,11 @@ void CWeaponMagazinedWGrenade::OnH_B_Independent(bool just_before_destroy)
 
 bool CWeaponMagazinedWGrenade::CanAttach(PIItem pIItem)
 {
-	CGrenadeLauncher* pGrenadeLauncher = smart_cast<CGrenadeLauncher*>(pIItem);
-	
+	auto pActor = smart_cast<CActor*>(Level().CurrentViewEntity());
+	if (pActor && !pActor->HasRequiredTool(pIItem))
+		return false;
+
+	auto pGrenadeLauncher = smart_cast<CGrenadeLauncher*>(pIItem);
 	if(pGrenadeLauncher &&
 	   CSE_ALifeItemWeapon::eAddonAttachable == m_eGrenadeLauncherStatus &&
 	   0 == (m_flagsAddOnState&CSE_ALifeItemWeapon::eWeaponAddonGrenadeLauncher) &&
@@ -546,6 +548,10 @@ bool CWeaponMagazinedWGrenade::CanAttach(PIItem pIItem)
 
 bool CWeaponMagazinedWGrenade::CanDetach(const char* item_section_name)
 {
+	auto pActor = smart_cast<CActor*>(Level().CurrentViewEntity());
+	if (pActor && !pActor->HasRequiredTool(item_section_name))
+		return false;
+
 	if(CSE_ALifeItemWeapon::eAddonAttachable == m_eGrenadeLauncherStatus &&
 		0 != (m_flagsAddOnState&CSE_ALifeItemWeapon::eWeaponAddonGrenadeLauncher) &&
 		std::find(m_glaunchers.begin(), m_glaunchers.end(), item_section_name) != m_glaunchers.end())
@@ -556,7 +562,7 @@ bool CWeaponMagazinedWGrenade::CanDetach(const char* item_section_name)
 
 bool CWeaponMagazinedWGrenade::Attach(PIItem pIItem, bool b_send_event)
 {
-	CGrenadeLauncher* pGrenadeLauncher = smart_cast<CGrenadeLauncher*>(pIItem);
+	auto pGrenadeLauncher = smart_cast<CGrenadeLauncher*>(pIItem);
 	
 	if (pGrenadeLauncher &&
 		CSE_ALifeItemWeapon::eAddonAttachable == m_eGrenadeLauncherStatus &&
@@ -569,8 +575,7 @@ bool CWeaponMagazinedWGrenade::Attach(PIItem pIItem, bool b_send_event)
 		m_fAttachedGrenadeLauncherCondition = pIItem->GetCondition();
 
  		//уничтожить подствольник из инвентаря
-		if(b_send_event)
-		{
+		if(b_send_event){
 //.			pIItem->Drop();
 			if (OnServer()) 
 				pIItem->object().DestroyObject	();
@@ -591,8 +596,7 @@ bool CWeaponMagazinedWGrenade::Detach(const char* item_section_name, bool b_spaw
 	{
 		// https://github.com/revolucas/CoC-Xray/pull/5/commits/9ca73da34a58ceb48713b1c67608198c6af26db2
 		// Now we need to unload GL's magazine
-		if (!m_bGrenadeMode)
-		{
+		if (!m_bGrenadeMode){
 			PerformSwitchGL();
 		}
 		UnloadMagazine();

@@ -35,10 +35,12 @@ public:
     xr_vector<shared_str>		m_plates{};
             u8                  m_cur_plate{};
     const shared_str            GetPlateName        () const { return m_plates[m_cur_plate]; }
-            bool                IsPlateInstalled    () const { return m_bIsPlateInstalled; }
+            bool                IsPlateInstalled    () const { return m_bIsPlateInstalled && m_plates.size(); }
     const shared_str            CurrProtectSect     () const;
             //перезавантаження параметрів балістичного захисту та власних імунітетів жилету
             void                ReloadParams        ();
+
+    virtual void	            PrepairItem         ();
 protected:
     u32							m_iVestWidth{};
     u32							m_iVestHeight{};

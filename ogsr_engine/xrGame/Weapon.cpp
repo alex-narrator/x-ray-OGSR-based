@@ -287,7 +287,7 @@ void CWeapon::Load		(LPCSTR section)
 	m_fPDM_disp_crouch			= READ_IF_EXISTS(pSettings, r_float, section, "PDM_disp_crouch",		1.0f);
 	m_fPDM_disp_crouch_no_acc	= READ_IF_EXISTS(pSettings, r_float, section, "PDM_disp_crouch_no_acc",	1.0f);
 	//  [8/2/2005]
-	camRecoilCompensation		= !!READ_IF_EXISTS(pSettings, r_bool, section, "cam_recoil_compensation", false);
+	camRecoilCompensation		= !!READ_IF_EXISTS(pSettings, r_bool, section, "cam_recoil_compensation", /*false*/true);
 
 	fireDispersionConditionFactor = pSettings->r_float(section,"fire_dispersion_condition_factor"); 
 	misfireProbability			  = pSettings->r_float(section,"misfire_probability"); 
@@ -2417,6 +2417,11 @@ void CWeapon::DirectReload(CWeaponAmmo* ammo) {
 		}
 	}
 	m_bDirectReload = false;
+}
+
+float CWeapon::GetCondDecPerShotToShow() const {
+	float silencer_dec_k = IsSilencerAttached() && SilencerAttachable() ? conditionDecreasePerShotSilencer : 0.f;
+	return (conditionDecreasePerShot + conditionDecreasePerShot * silencer_dec_k);
 }
 
 void CWeapon::SaveAttachableParams()

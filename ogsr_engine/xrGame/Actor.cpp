@@ -2038,3 +2038,31 @@ void CActor::TryPlayAnimItemTake() {
 	if (!hud_item || !hud_item->GetHUDmode()) return;
 	hud_item->PlayAnimOnItemTake();
 }
+
+bool CActor::HasRequiredTool(PIItem item) {
+	if (item->m_required_tools.empty())
+		return true;
+	for (const auto& item_sect : item->m_required_tools) {
+		if (inventory().GetItemFromInventory(item_sect.c_str())) {
+			return true;
+		}
+	}
+	return false;
+}
+
+bool CActor::HasRequiredTool(const shared_str& sect) {
+	if (!pSettings->line_exist(sect, "required_tools")) {
+		Msg("%s line not exist",__FUNCTION__);
+		return true;
+	}
+	LPCSTR str = pSettings->r_string(sect, "required_tools");
+	for (int i = 0; i < _GetItemCount(str); ++i) {
+		string128 tool_section;
+		_GetItem(str, i, tool_section);
+		if (inventory().GetItemFromInventory(tool_section)) {
+			Msg("%s has required tool %s for item %s", __FUNCTION__, tool_section, sect.c_str());
+			return true;
+		}
+	}
+	return false;
+}

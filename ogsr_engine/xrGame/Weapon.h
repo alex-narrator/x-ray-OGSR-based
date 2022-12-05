@@ -509,8 +509,8 @@ public:
 	virtual	float			Get_PDM_Crouch		()	const	{ return m_fPDM_disp_crouch			; };
 	virtual	float			Get_PDM_Crouch_NA	()	const	{ return m_fPDM_disp_crouch_no_acc	; };
 	//  [8/3/2005]
-	virtual float			GetCondDecPerShot	() const { return GetWeaponDeterioration();		};
-	virtual float			GetCondDecPerShotOnHit() const { return conditionDecreasePerShotOnHit;	};
+	virtual float			GetCondDecPerShotToShow	() const /*{ return GetWeaponDeterioration();		}*/;
+	virtual float			GetCondDecPerShotOnHit	() const { return conditionDecreasePerShotOnHit;	};
 protected:
 	int						iAmmoElapsed{ -1 };		// ammo in magazine, currently
 	int						iMagazineSize{ -1 };		// size (in bullets) of magazine

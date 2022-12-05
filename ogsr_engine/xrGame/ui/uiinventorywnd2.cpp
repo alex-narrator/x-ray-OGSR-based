@@ -256,6 +256,7 @@ void CUIInventoryWnd::DisassembleItem(bool b_all) {
 	}
 	CurrentIItem()->Disassemble();
 	SetCurrentItem(NULL);
+	PlaySnd(eInvDetachAddon);
 	UpdateWeightVolume();
 }
 
@@ -540,6 +541,10 @@ bool CUIInventoryWnd::OnItemDrop(CUICellItem* itm)
 			  }
 			  if (_iitem_in_slot->CanBeChargedBy(item)) {
 				  ChargeDevice(_iitem_in_slot);
+				  return true;
+			  }
+			  if (_iitem_in_slot->CanBeRepairedBy(item)) {
+				  RepairItem(_iitem_in_slot);
 				  return true;
 			  }
 			  auto wpn = smart_cast<CWeaponMagazined*>(_iitem_in_slot);

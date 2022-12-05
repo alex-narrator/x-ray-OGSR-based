@@ -640,3 +640,7 @@ float CInventoryOwner::deficit(const shared_str& section) const
 bool CInventoryOwner::CanPutInSlot(PIItem item, u32 slot) {
 	return true;
 }
+
+bool CInventoryOwner::IsVolumeUnlimited() const {
+	return !pSettings->line_exist(smart_cast<const CGameObject*>(this)->cNameSect(), "inv_max_volume");
+}
