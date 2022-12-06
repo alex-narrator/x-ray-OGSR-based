@@ -251,14 +251,14 @@ void CArtefact::create_physic_shell	()
 void CArtefact::StartLights()
 {
 	VERIFY(!ph_world->Processing());
-	if(!m_bLightsEnabled) return;
+	if(!IsLightsEnabled()) return;
 
 	//включить световую подсветку от двигателя
 	m_pTrailLight->set_color(m_TrailLightColor.r, 
 		m_TrailLightColor.g, 
 		m_TrailLightColor.b);
 
-	m_pTrailLight->set_range(m_fTrailLightRange);
+	m_pTrailLight->set_range(/*m_fTrailLightRange*/GetTrailLightRange());
 	m_pTrailLight->set_position(Position()); 
 	m_pTrailLight->set_active(true);
 }
@@ -266,14 +266,14 @@ void CArtefact::StartLights()
 void CArtefact::StopLights()
 {
 	VERIFY(!ph_world->Processing());
-	if(!m_bLightsEnabled) return;
+	if(!IsLightsEnabled()) return;
 	m_pTrailLight->set_active(false);
 }
 
 void CArtefact::UpdateLights()
 {
 	VERIFY(!ph_world->Processing());
-	if(!m_bLightsEnabled || !m_pTrailLight->get_active()) return;
+	if(!IsLightsEnabled() || !m_pTrailLight->get_active()) return;
 	m_pTrailLight->set_position(Position());
 }
 
@@ -363,8 +363,7 @@ bool CArtefact::Action(s32 cmd, u32 flags)
 				SwitchState(eActivating);
 				return true;
 			}
-			if (flags&CMD_STOP && m_bCanSpawnZone && GetState()==eActivating)
-			{
+			if (flags&CMD_STOP && m_bCanSpawnZone && GetState()==eActivating){
 				SwitchState(eIdle);
 				return true;
 			}
@@ -431,9 +430,7 @@ void CArtefact::OnAnimationEnd(u32 state)
 			if(!fis_zero(GetCondition())){
 				ActivateArtefact();
 				SetPending(FALSE);
-			}
-			else
-			{
+			}else{
 				HUD().GetUI()->AddInfoMessage("item_state", "failed_to_activate_artefact");
 				SwitchState(eIdle);
 			}
@@ -461,14 +458,11 @@ void CArtefact::SwitchAfParticles(bool bOn)
 	if (m_sParticlesName.size() == 0)
 		return;
 
-	if (bOn)
-	{
+	if (bOn){
 		Fvector dir;
 		dir.set(0, 1, 0);
 		CParticlesPlayer::StartParticles(m_sParticlesName, dir, ID(), -1, false);
-	}
-	else
-	{
+	}else{
 		CParticlesPlayer::StopParticles(m_sParticlesName, BI_NONE, true);
 	}
 }
@@ -627,7 +621,7 @@ void SArtefactActivation::SpawnAnomaly()
 {
 	VERIFY(!ph_world->Processing());
 	string128 tmp;
-	LPCSTR str			= pSettings->r_string("artefact_spawn_zones",*m_af->cNameSect());
+	LPCSTR str			= pSettings->r_string("artefact_spawn_zones",m_af->cNameSect().c_str());
 	VERIFY3(_GetItemCount(str) >= 4,"Bad record format in artefact_spawn_zones",str);
 	float	zone_radius	= (float)atof(_GetItem(str,1,tmp));
 	float	zone_power	= (float)atof(_GetItem(str, 2, tmp));

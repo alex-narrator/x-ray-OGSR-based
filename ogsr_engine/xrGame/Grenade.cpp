@@ -34,6 +34,7 @@ void CGrenade::Load(LPCSTR section)
 	//HUD_SOUND::LoadSound(section,"snd_checkout",sndCheckout,m_eSoundCheckout);
 
 	m_grenade_detonation_threshold_hit = READ_IF_EXISTS(pSettings, r_float, section, "detonation_threshold_hit", 100.f);
+	b_impact_fuze = READ_IF_EXISTS(pSettings, r_bool, section, "impact_fuze", false);
 }
 
 void CGrenade::Hit					(SHit* pHDS)
@@ -508,4 +509,24 @@ void CGrenade::GetBriefInfo(xr_string& str_name, xr_string& icon_sect_name, xr_s
 
 	str_count = stmp;
 	icon_sect_name = cNameSect().c_str();
+}
+
+#include "ai_object_location.h"
+void CGrenade::Contact(CPhysicsShellHolder* obj) {
+	inherited::Contact(obj);
+	if (Initiator() == u16(-1) || !b_impact_fuze) return;
+	if (m_dwDestroyTime <= Level().timeServer()) {
+		VERIFY(!m_pCurrentInventory);
+		Destroy();
+		return;
+	}
+	//recreate usable grenade
+	Fvector pos{ Position() };
+	u32 lvid = UsedAI_Locations() ? ai_location().level_vertex_id() : ai().level_graph().vertex(pos);
+	CSE_Abstract* object = Level().spawn_item(cNameSect().c_str(), pos, lvid, 0xffff, true);
+	NET_Packet P;
+	object->Spawn_Write(P, TRUE);
+	Level().Send(P, net_flags(TRUE));
+	F_entity_Destroy(object);
+	DestroyObject();
 }

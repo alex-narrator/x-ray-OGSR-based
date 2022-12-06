@@ -59,7 +59,7 @@
 		<text>Дистанція зведення:</text>
 	</string>	
 	<string id="st_destroy_time">
-		<text>Затримка вибуху:</text>
+		<text>Затримка вибуху/зведення:</text>
 	</string>	
 	
 	<string id="st_plates">

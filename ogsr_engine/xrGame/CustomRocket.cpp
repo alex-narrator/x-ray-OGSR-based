@@ -314,9 +314,9 @@ void  CCustomRocket::reload		(LPCSTR section)
 
 void CCustomRocket::Contact(const Fvector &pos, const Fvector &normal)
 {
-m_contact.contact=true;
-m_contact.pos.set(pos);
-m_contact.up.set(normal);
+	m_contact.contact=true;
+	m_contact.pos.set(pos);
+	m_contact.up.set(normal);
 }
 void CCustomRocket::PlayContact()
 {

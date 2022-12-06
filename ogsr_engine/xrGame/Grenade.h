@@ -68,10 +68,8 @@ public:
 	using destroy_callback = fastdelegate::FastDelegate<void(CGrenade*)>;
 	void					set_destroy_callback				(destroy_callback callback) 
 																{ m_destroy_callback = callback; }
-	void					DestroyCalbackClear()
-	{
-		m_destroy_callback.clear();
-	}
+	void					DestroyCalbackClear					() { m_destroy_callback.clear(); }
+	virtual void			Contact								(CPhysicsShellHolder* obj);
 private:
 	destroy_callback		m_destroy_callback;
 };

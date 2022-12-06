@@ -60,6 +60,7 @@ void CMissile::reinit		()
 	SetPending			(FALSE);
 	m_fake_missile		= nullptr;
 	SetState			( eHidden );
+	m_contacted			= false;
 }
 
 void CMissile::Load(LPCSTR section) 
@@ -229,7 +230,7 @@ void CMissile::UpdateCL()
 void CMissile::shedule_Update(u32 dt)
 {
 	inherited::shedule_Update(dt);
-	if(!H_Parent() && getVisible() && m_pPhysicsShell) 
+	if(!H_Parent() && getVisible() && m_pPhysicsShell && !b_impact_fuze)
 	{
 		if(m_dwDestroyTime <= Level().timeServer()) 
 		{
@@ -708,10 +709,8 @@ void CMissile::activate_physic_shell()
 void	CMissile::net_Relcase(CObject* O)
 {
 	inherited::net_Relcase(O);
-	if(PPhysicsShell()&&PPhysicsShell()->isActive())
-	{
-		if(O==smart_cast<CObject*>((CPhysicsShellHolder*)PPhysicsShell()->get_CallbackData()))
-		{
+	if(PPhysicsShell()&&PPhysicsShell()->isActive()){
+		if(O==smart_cast<CObject*>((CPhysicsShellHolder*)PPhysicsShell()->get_CallbackData())){
 			PPhysicsShell()->remove_ObjectContactCallback(ExitContactCallback);
 			PPhysicsShell()->set_CallbackData(NULL);
 		}
@@ -756,21 +755,28 @@ void CMissile::OnDrawUI()
 	}	
 }
 
-void	 CMissile::ExitContactCallback(bool& do_colide,bool bo1,dContact& c,SGameMtl * /*material_1*/,SGameMtl * /*material_2*/)
+void	 CMissile::ExitContactCallback(bool& do_colide,bool bo1,dContact& c,SGameMtl * material_1,SGameMtl * material_2)
 {
-	dxGeomUserData	*gd1=NULL,	*gd2=NULL;
-	if(bo1)
-	{
+	dxGeomUserData	*gd1{}, * gd2{};
+	SGameMtl* material{};
+	if(bo1){
 		gd1 =retrieveGeomUserData(c.geom.g1);
 		gd2 =retrieveGeomUserData(c.geom.g2);
-	}
-	else
-	{
+		material = material_2;
+	}else{
 		gd2 =retrieveGeomUserData(c.geom.g1);
 		gd1 =retrieveGeomUserData(c.geom.g2);
+		material = material_1;
 	}
-	if(gd1&&gd2&&(CPhysicsShellHolder*)gd1->callback_data==gd2->ph_ref_object)	
-																				do_colide=false;
+	if (gd1 && gd2 && (CPhysicsShellHolder*)gd1->callback_data == gd2->ph_ref_object) {
+		do_colide = false;
+	}
+	else if (gd1 && material && !material->Flags.is(SGameMtl::flPassable)) {
+		CMissile* l_this = smart_cast<CMissile*>(gd1->ph_ref_object);
+		if (l_this && !l_this->Contacted()) {
+			l_this->Contact(gd2 ? smart_cast<CPhysicsShellHolder*>(gd2->ph_ref_object) : nullptr);
+		}
+	}
 }
 
 void CMissile::GetBriefInfo(xr_string& str_name, xr_string& icon_sect_name, xr_string& str_count)

@@ -32,4 +32,5 @@ public:
 
 protected:
 	virtual size_t GetWeaponTypeForCollision() const override { return Bolt; }
+	virtual void Contact(CPhysicsShellHolder*);
 };

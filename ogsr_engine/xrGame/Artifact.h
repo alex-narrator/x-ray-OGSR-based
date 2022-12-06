@@ -82,6 +82,9 @@ protected:
 	Fcolor							m_TrailLightColor{};
 	float							m_fTrailLightRange{};
 
+	float							GetTrailLightRange	() { return m_fTrailLightRange * GetCondition(); };
+	bool							IsLightsEnabled		() { return m_bLightsEnabled && !fis_zero(GetCondition()); }
+
 	SArtefactDetectorsSupport*		m_detectorObj{};
 	u8 m_af_rank{};
 
