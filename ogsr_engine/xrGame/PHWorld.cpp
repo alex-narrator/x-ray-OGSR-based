@@ -1,5 +1,6 @@
 #include "stdafx.h"
 
+#include "GeometryBits.h"
 #include "PHWorld.h"
 #include "tri-colliderknoopc/dTriList.h"
 #include "PhysicsCommon.h"
@@ -22,7 +23,7 @@ BOOL g_bDebugDumpPhysicsStep				=					0;
 
 void CPHMesh ::Create(dSpaceID space, dWorldID world){
 	Geom = dCreateTriList(space, 0, 0);
-	
+	CPHGeometryBits::init_geom(*this);
 }
 /////////////////////////////////////////////////////////////////////////
 

@@ -241,3 +241,10 @@ void	get_box(CPhysicsShell*	shell,const	Fmatrix& form,	Fvector&	sz,Fvector&	c)
 		sz[i]=hi-lo;c.add(Fvector().mul(ax,(lo+hi)/2));
 	}
 }
+
+void __stdcall destroy_physics_shell(CPhysicsShell*& p)
+{
+	if (p)
+		p->Deactivate();
+	xr_delete(p);
+}

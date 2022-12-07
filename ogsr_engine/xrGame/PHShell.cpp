@@ -1188,6 +1188,7 @@ void CPHShell::GetGlobalTransformDynamic(Fmatrix* m)
 		(*i)->GetGlobalTransformDynamic(&(*i)->mXFORM);
 	m->set((*elements.begin())->mXFORM);
 	m->mulB_43	(m_object_in_root);
+	mXFORM.set(*m);
 	VERIFY2(_valid(*m),"not valide transform");
 }
 void CPHShell::InterpolateGlobalPosition(Fvector* v)
@@ -1507,8 +1508,9 @@ CODEGeom* CPHShell::get_GeomByID(u16 bone_id)
 }
 void	CPHShell::PureStep(float step)
 {
-	CPHObject::Island().Step(step);
-	PhDataUpdate(step);
+	//CPHObject::Island().Step(step);
+	//PhDataUpdate(step);
+	CPHObject::step(step);
 }
 void CPHShell::CollideAll()
 {

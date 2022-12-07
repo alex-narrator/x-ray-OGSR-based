@@ -366,10 +366,12 @@ public:
 protected:
 	void					cam_Set					(EActorCameras style);
 	void					cam_Update				(float dt, float fFOV);
-	void					camUpdateLadder		(float dt);
+	void					camUpdateLadder			(float dt);
 	void					cam_SetLadder			();
 	void					cam_UnsetLadder			();
 	float					currentFOV				();
+
+	void					cam_Lookout				(const Fmatrix& xform, float camera_height);
 
 	// Cameras
 	CCameraBase*			cameras[eacMaxCam];

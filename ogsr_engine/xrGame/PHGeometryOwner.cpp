@@ -403,3 +403,31 @@ void CPHGeometryOwner::clear_cashed_tries()
 		(*i)->clear_cashed_tries();
 	}
 }
+
+void CPHGeometryOwner::add_geom(CODEGeom* g)
+{
+	VERIFY(b_builded);
+	VERIFY(m_group);
+	m_geoms.push_back(g);
+	group_add(*g);
+	// g->add_to_space( m_group );
+}
+
+void CPHGeometryOwner::group_add(CODEGeom& g)
+{
+	if (!m_group)
+	{
+		CreateGroupSpace();
+	}
+	VERIFY(m_group);
+	{
+		g.add_to_space((dSpaceID)m_group);
+	}
+}
+
+void CPHGeometryOwner::CreateGroupSpace()
+{
+	VERIFY(!m_group);
+	m_group = dSimpleSpaceCreate(0);
+	dSpaceSetCleanup(m_group, 0);
+}

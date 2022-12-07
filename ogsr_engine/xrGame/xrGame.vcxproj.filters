@@ -2116,6 +2116,9 @@
     <Filter Include="AI\AScript\ScriptClasses\UI\LoadScreen">
       <UniqueIdentifier>{a98119e5-515e-4cbe-844d-ef75fbe162e4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Core\Client\Objects\physics\Base\CameraCollision">
+      <UniqueIdentifier>{7a7b2cb1-82bc-4398-badf-93c5877de761}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="mt_config.h">
@@ -6125,6 +6128,12 @@
     <ClInclude Include="Helmet.h">
       <Filter>Core\Client\Objects\items &amp; weapons\Outfit</Filter>
     </ClInclude>
+    <ClInclude Include="ActorCameraCollision.h">
+      <Filter>Core\Client\Objects\physics\Base\CameraCollision</Filter>
+    </ClInclude>
+    <ClInclude Include="GeometryBits.h">
+      <Filter>Core\Client\Objects\physics\Base\Objects\PHObject\Geom</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="damage_manager.cpp">
@@ -8953,6 +8962,12 @@
     </ClCompile>
     <ClCompile Include="Helmet.cpp">
       <Filter>Core\Client\Objects\items &amp; weapons\Outfit</Filter>
+    </ClCompile>
+    <ClCompile Include="ActorCameraCollision.cpp">
+      <Filter>Core\Client\Objects\physics\Base\CameraCollision</Filter>
+    </ClCompile>
+    <ClCompile Include="GeometryBits.cpp">
+      <Filter>Core\Client\Objects\physics\Base\Objects\PHObject\Geom</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
