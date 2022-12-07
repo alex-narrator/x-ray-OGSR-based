@@ -291,10 +291,11 @@ void CLevel::cl_Process_Event				(u16 dest, u16 type, NET_Packet& P)
 {
 	//			Msg				("--- event[%d] for [%d]",type,dest);
 	CObject*	 O	= Objects.net_Find	(dest);
-	if (0==O)		{
+	if (!O)		{
 #ifdef DEBUG
 		Msg("* WARNING: c_EVENT[%d] to [%d]: unknown dest",type,dest);
 #endif // DEBUG
+		ProcessGameSpawnsDestroy(dest, type, P);
 		return;
 	}
 	CGameObject* GO = smart_cast<CGameObject*>(O);
@@ -374,6 +375,8 @@ void CLevel::ProcessGameEvents		()
 			}			
 		}
 	}
+	if (!is_removing_objects())
+		Device.seqParallel.push_back(fastdelegate::MakeDelegate(this, &CLevel::ProcessGameSpawns));
 }
 
 void CLevel::OnFrame	()
