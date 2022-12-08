@@ -1277,3 +1277,13 @@ void CPHMovementControl::BlockDamageSet(u64 steps_num)
 	block_damage_step_end = ph_world->StepsNum() + steps_num;
 	UpdateCollisionDamage();//reset all saved values
 }
+
+void CPHMovementControl::CollisionEnable(BOOL enable)
+{
+	if (!m_character || !m_character->b_exist)
+		return;
+	if (enable)
+		m_character->collision_enable();
+	else
+		m_character->collision_disable();
+}

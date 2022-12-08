@@ -679,17 +679,20 @@ void CUIInventoryWnd::UpdateCustomDraw(bool b_full_reinit)
 		if (!list) 
 			continue;
 
-		switch (i)
-		{
-		//case HELMET_SLOT:
-		//	inv.IsSlotAllowed(i) ? list->ResetCellsAvailable() : list->SetCellsAvailable(0);
-		//break;
-		default:
-		{
-			inv.IsSlotAllowed(i) ?list->ResetCellsCapacity() : list->SetCellsCapacity({});
-			list->Show(inv.IsSlotAllowed(i));
-		}break;
-		}
+		inv.IsSlotAllowed(i) ? list->ResetCellsCapacity() : list->SetCellsCapacity({});
+		list->Show(inv.IsSlotAllowed(i));
+
+		//switch (i)
+		//{
+		////case HELMET_SLOT:
+		////	inv.IsSlotAllowed(i) ? list->ResetCellsAvailable() : list->SetCellsAvailable(0);
+		////break;
+		//default:
+		//{
+		//	inv.IsSlotAllowed(i) ?list->ResetCellsCapacity() : list->SetCellsCapacity({});
+		//	list->Show(inv.IsSlotAllowed(i));
+		//}break;
+		//}
 	}
 
 	if(b_full_reinit)

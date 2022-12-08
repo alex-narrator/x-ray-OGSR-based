@@ -37,6 +37,7 @@ public:
 
 
 	CPhysicsShellHolder							();
+	virtual ~CPhysicsShellHolder();
 
 
 

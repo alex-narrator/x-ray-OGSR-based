@@ -190,7 +190,7 @@ public:
 	DWORD				BoxID						( )const	{ return m_dwCurBox;}
 	const Fbox*			Boxes						( )			{return boxes;}
 	float				FootRadius					( )			{if(m_character)return m_character->FootRadius(); else return 0.f;};
-	void				CollisionEnable 			(BOOL enable){if(m_character) if(enable)m_character->collision_enable();else m_character->collision_disable();}
+	void				CollisionEnable 			(BOOL enable);
 	void				SetBox						(DWORD id, const Fbox &BB)	{ boxes[id].set(BB); aabb.set(BB); }
 	void				SetMass						(float M)	{ fMass = M;
 	if(m_character)

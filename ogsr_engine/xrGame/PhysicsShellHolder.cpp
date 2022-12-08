@@ -18,9 +18,13 @@
 #include "CharacterPhysicsSupport.h"
 #include "Actor.h"
 
-CPhysicsShellHolder::CPhysicsShellHolder()
-{
+CPhysicsShellHolder::CPhysicsShellHolder(){
 	init();
+}
+
+CPhysicsShellHolder::~CPhysicsShellHolder(){
+	VERIFY(!m_pPhysicsShell);
+	destroy_physics_shell(m_pPhysicsShell);
 }
 
 void CPhysicsShellHolder::net_Destroy()
@@ -191,10 +195,7 @@ void CPhysicsShellHolder::setup_physic_shell	()
 void CPhysicsShellHolder::deactivate_physics_shell()
 {
 	CParticlesPlayer::DestroyParticles(); //удалить партиклы из ParticlePlayer
-
-	if (m_pPhysicsShell)
-		m_pPhysicsShell->Deactivate	();
-	xr_delete(m_pPhysicsShell);
+	destroy_physics_shell(m_pPhysicsShell);
 }
 void CPhysicsShellHolder::PHSetMaterial(u16 m)
 {

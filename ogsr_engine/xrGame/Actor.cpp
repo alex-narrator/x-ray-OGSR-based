@@ -661,13 +661,6 @@ void CActor::Die(CObject* who)
 
 	start_tutorial			("game_over");
 	xr_delete				(m_sndShockEffector);
-
-	if (actor_camera_shell &&
-		actor_camera_shell->get_ElementByStoreOrder(0)->PhysicsRefObject()
-		==
-		this
-		)
-		destroy_physics_shell(actor_camera_shell);
 }
 
 void	CActor::SwitchOutBorder(bool new_border_state)
