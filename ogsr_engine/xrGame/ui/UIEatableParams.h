@@ -62,4 +62,3 @@ protected:
 	CUIStatic*					influence_header{};
 	CUIStatic*					boost_header{};
 };
-

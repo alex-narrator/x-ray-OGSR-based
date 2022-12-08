@@ -817,4 +817,61 @@
 	<string id="ui_st_donate">
 		<text>Подарувати [D]</text>
 	</string>
+	
+	<string id="st_armor_header">
+		<text>Бронезахист:</text>
+	</string>	
+	
+	<string id="st_armor_class">
+		<text>клас</text>
+	</string>
+	
+	<string id="st_armor_head">
+		<text>Голова</text>
+	</string>
+	<string id="st_armor_jav">
+		<text>Щелепа</text>
+	</string>
+	<string id="st_armor_neck">
+		<text>Шия</text>
+	</string>
+	<string id="st_armor_clavicle">
+		<text>Ключиці</text>
+	</string>
+	<string id="st_armor_spine2">
+		<text>Груди верх</text>
+	</string>
+	<string id="st_armor_spine1">
+		<text>Груди низ</text>
+	</string>
+	<string id="st_armor_spine">
+		<text>Живіт</text>
+	</string>
+	<string id="st_armor_pelvis">
+		<text>Таз</text>
+	</string>
+	<string id="st_armor_upperarm">
+		<text>Плечі</text>
+	</string>
+	<string id="st_armor_forearm">
+		<text>Передпліччя</text>
+	</string>
+	<string id="st_armor_hand">
+		<text>Долоні</text>
+	</string>
+	<string id="st_armor_thigh">
+		<text>Стегна</text>
+	</string>
+	<string id="st_armor_calf">
+		<text>Литки</text>
+	</string>
+	<string id="st_armor_foot">
+		<text>Стопи</text>
+	</string>
+	<string id="st_armor_toe">
+		<text>Пальці ніг</text>
+	</string>	
+	<string id="st_armor_hit_fraction">
+		<text>Заброньова травма</text>
+	</string>		
 </string_table>

@@ -470,6 +470,7 @@
     <ClInclude Include="steering_behaviour_manager.h" />
     <ClInclude Include="steering_behaviour_separation.h" />
     <ClInclude Include="trajectories.h" />
+    <ClInclude Include="ui\UIArmorParams.h" />
     <ClInclude Include="ui\ArtefactDetectorUI.h" />
     <ClInclude Include="ui\UIEatableParams.h" />
     <ClInclude Include="ui\UIHelper.h" />
@@ -1716,6 +1717,7 @@
     <ClCompile Include="sound_memory_manager.cpp" />
     <ClCompile Include="steering_behaviour.cpp" />
     <ClCompile Include="trajectories.cpp" />
+    <ClCompile Include="ui\UIArmorParams.cpp" />
     <ClCompile Include="ui\ArtefactDetectorUI.cpp" />
     <ClCompile Include="ui\UIEatableParams.cpp" />
     <ClCompile Include="ui\UIHelper.cpp" />

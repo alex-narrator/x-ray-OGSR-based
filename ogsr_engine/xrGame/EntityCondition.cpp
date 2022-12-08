@@ -321,8 +321,9 @@ float CEntityCondition::HitOutfitEffect(SHit* pHDS)
 				new_hit_power *= (1.0f - pOutfit->GetHitTypeProtection(pHDS->type()));
 			pOutfit->Hit(pHDS);
 		}
-	} 
-	else {
+		pHDS->power = new_hit_power;
+		pInvOwner->TryGroggyEffect(pHDS);
+	} else {
 		if (pBackPack && pInvOwner->IsHitToBackPack(pHDS)) {
 			new_hit_power *= (1.0f - pBackPack->GetHitTypeProtection(pHDS->type()));
 			pBackPack->Hit(pHDS);
@@ -484,7 +485,14 @@ dsh: обработка перенесена ниже, вместе с eHitTypeF
 		}break;
 	}
 
-	if (bDebug) Msg("%s hitted in %s with %f[%f]", m_object->Name(), smart_cast<IKinematics*>(m_object->Visual())->LL_BoneName_dbg(pHDS->boneID), m_fHealthLost*100.0f, hit_power_org);
+//	if (bDebug) 
+		Msg("%s %s hitted in bone [name %s][idx %d] with %f[%f]", 
+		__FUNCTION__,
+		m_object->Name(), 
+		smart_cast<IKinematics*>(m_object->Visual())->LL_BoneName_dbg(pHDS->boneID), 
+		pHDS->boneID,
+		m_fHealthLost*100.0f, 
+		hit_power_org);
 	//раны добавляются только живому
 	if(bAddWound && GetHealth()>0)
 		return AddWound(hit_power*m_fWoundBoneScale, pHDS->hit_type, pHDS->boneID);

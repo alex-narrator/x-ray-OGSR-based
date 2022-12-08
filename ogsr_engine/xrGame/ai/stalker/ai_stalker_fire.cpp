@@ -203,8 +203,8 @@ void			CAI_Stalker::Hit					(SHit* pHDS)
 	if (m_boneHitProtection && HDS.hit_type == ALife::eHitTypeFireWound){
 		float						BoneArmour = m_boneHitProtection->getBoneArmour(HDS.bone());
 
-		Msg("%s %s take hit power [%.4f], hitted bone [%s], bone armor [%.4f], hit AP [%.4f], visual name [%s], protection_sect [%s]",
-			__FUNCTION__, Name(), HDS.power, smart_cast<IKinematics*>(Visual())->LL_BoneName_dbg(pHDS->boneID), 
+		Msg("%s %s take hit power [%.4f], hitted bone [name %s][idx %d], bone armor [%.4f], hit AP [%.4f], visual name [%s], protection_sect [%s]",
+			__FUNCTION__, Name(), HDS.power, smart_cast<IKinematics*>(Visual())->LL_BoneName_dbg(pHDS->boneID), pHDS->boneID,
 			BoneArmour, pHDS->ap, Visual()->getDebugName().c_str(), smart_cast<IKinematics*>(Visual())->LL_UserData()->r_string("bone_protection", "bones_protection_sect"));
 
 		if (pHDS->ap < BoneArmour) { //броню не пробито, хіт тільки від умовного удару в броню

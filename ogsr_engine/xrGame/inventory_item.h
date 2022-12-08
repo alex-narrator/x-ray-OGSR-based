@@ -360,6 +360,11 @@ public:
 	virtual bool					CanBeRepairedBy	(PIItem) const;
 	virtual void					Repair			(PIItem);
 	virtual void					PrepairItem		();
+
+	virtual LPCSTR					GetBoneName			(int);
+	virtual float					GetArmorByBone		(int);
+	virtual float					GetArmorHitFraction	();
+	virtual bool					HasArmorToDisplay	(int);
 protected:
 	HitImmunity::HitTypeSVec		m_HitTypeProtection;
 

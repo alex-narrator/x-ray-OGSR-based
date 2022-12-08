@@ -1077,3 +1077,55 @@ void CInventoryItem::PrepairItem() {
 			inv->Ruck(this, true);
 	}
 }
+
+LPCSTR CInventoryItem::GetBoneName(int bone_idx) {
+	LPCSTR armor_bones_names[] = {
+	"bip01_head",			//голова
+	"jaw_1",				//щелепа
+	"bip01_neck",			//шия
+	"bip01_l_clavicle",		//ключиці
+	"bip01_spine2",			//груди верх
+	"bip01_spine1",			//груди низ
+	"bip01_spine",			//живіт
+	"bip01_pelvis",			//таз
+	"bip01_l_upperarm",		//плече
+	"bip01_l_forearm",		//передпліччя
+	"bip01_l_hand",			//рука (долоня)
+	"bip01_l_thigh",		//стегно
+	"bip01_l_calf",			//литка
+	"bip01_l_foot",			//стопа
+	"bip01_l_toe0",			//пальці ніг
+	};
+
+	return armor_bones_names[bone_idx];
+}
+
+float CInventoryItem::GetArmorByBone(int bone_idx) {
+	float armor_class{};
+	const auto item_sect = object().cNameSect();
+	if (pSettings->line_exist(item_sect, "bones_koeff_protection")) {
+		const auto bone_params = READ_IF_EXISTS(pSettings, r_string, pSettings->r_string(item_sect, "bones_koeff_protection"), GetBoneName(bone_idx), nullptr);
+		if (bone_params) {
+			string128 tmp;
+			armor_class = atof(_GetItem(bone_params, 1, tmp)) * !fis_zero(GetCondition());
+		}
+	}
+	return armor_class;
+}
+
+float CInventoryItem::GetArmorHitFraction() {
+	float hit_fraction{};
+	auto item_sect = object().cNameSect();
+	if (pSettings->line_exist(item_sect, "bones_koeff_protection")) {
+		hit_fraction = READ_IF_EXISTS(pSettings, r_float, pSettings->r_string(item_sect, "bones_koeff_protection"), "hit_fraction", 0.1f);
+	}
+	return hit_fraction;
+}
+
+bool CInventoryItem::HasArmorToDisplay(int max_bone_idx) {
+	for (int i = 0; i < max_bone_idx; i++) {
+		if(!fis_zero(GetArmorByBone(i)))
+			return true;
+	}
+	return false;
+}

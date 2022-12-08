@@ -27,6 +27,9 @@ public:
 
             bool                IsBoneArmored       (u16 bone) const;
 
+   virtual float				GetArmorByBone      (int);
+   virtual float				GetArmorHitFraction ();
+
     virtual bool	            Attach			    (PIItem pIItem, bool b_send_event);
 	virtual bool	            Detach			    (const char* item_section_name, bool b_spawn_item, float item_condition = 1.f);
 	virtual bool	            CanAttach		    (PIItem pIItem);

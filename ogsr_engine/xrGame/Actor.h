@@ -812,6 +812,8 @@ protected:
 public:
 			float	GetItemBoostedParams		(int);
 			float	GetTotalArtefactsEffect		(int);
+
+	virtual void	TryGroggyEffect				(SHit*);
 protected:
 	svector<float, eRestoreBoostMax> m_ActorItemBoostedParam;
 };

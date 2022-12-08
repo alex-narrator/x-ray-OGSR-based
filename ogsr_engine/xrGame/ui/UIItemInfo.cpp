@@ -16,24 +16,9 @@
 #include "ui_af_params.h"
 #include "UIEquipParams.h"
 #include "UIEatableParams.h"
+#include "UIArmorParams.h"
 
-CUIItemInfo::CUIItemInfo()
-{
-	UIItemImageSize.set			(0.0f,0.0f);
-	UICondProgresBar			= nullptr;
-	UICondition					= nullptr;
-	UICost						= nullptr;
-	UIWeight					= nullptr;
-	UIVolume					= nullptr;
-	UIItemImage					= nullptr;
-	UIDesc						= nullptr;
-	UIWpnParams					= nullptr;
-	UIArtefactParams			= nullptr;
-	UIEquipParams				= nullptr;
-	UIEatableParams				= nullptr;
-	UIName						= nullptr;
-	m_pInvItem					= nullptr;
-	m_b_force_drawing			= false;
+CUIItemInfo::CUIItemInfo(){
 }
 
 CUIItemInfo::~CUIItemInfo()
@@ -42,6 +27,7 @@ CUIItemInfo::~CUIItemInfo()
 	xr_delete(UIArtefactParams);
 	xr_delete(UIEquipParams);
 	xr_delete(UIEatableParams);
+	xr_delete(UIArmorParams);
 }
 
 void CUIItemInfo::Init(LPCSTR xml_name){
@@ -120,6 +106,9 @@ void CUIItemInfo::Init(LPCSTR xml_name){
 
 		UIEatableParams					= xr_new<CUIEatableParams>();
 		UIEatableParams->Init			();
+
+		UIArmorParams					= xr_new<CUIArmorParams>();
+		UIArmorParams->Init				();
 		
 		UIDesc							= xr_new<CUIScrollView>(); 
 		AttachChild						(UIDesc);		
@@ -193,6 +182,7 @@ void CUIItemInfo::InitItem(CInventoryItem* pInvItem)
 		TryAddArtefactInfo	(pInvItem);
 		TryAddEquipInfo		(pInvItem);
 		TryAddEatableInfo	(pInvItem);
+		TryAddArmorInfo		(pInvItem);
 		TryAddCustomInfo	(pInvItem);
 		if(m_desc_info.bShowDescrText)
 		{
@@ -252,6 +242,14 @@ void CUIItemInfo::TryAddEatableInfo(CInventoryItem* obj)
 	if (UIEatableParams->Check(obj)) {
 		UIEatableParams->SetInfo(obj);
 		UIDesc->AddWindow(UIEatableParams, false);
+	}
+}
+
+void CUIItemInfo::TryAddArmorInfo(CInventoryItem* obj)
+{
+	if (UIArmorParams->Check(obj)) {
+		UIArmorParams->SetInfo(obj);
+		UIDesc->AddWindow(UIArmorParams, false);
 	}
 }
 

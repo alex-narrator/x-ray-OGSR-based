@@ -10,6 +10,7 @@ class CUIWpnParams;
 class CUIArtefactParams;
 class CUIEquipParams;
 class CUIEatableParams;
+class CUIArmorParams;
 
 //extern const char * const 		fieldsCaptionColor;
 
@@ -36,23 +37,25 @@ public:
 	void				TryAddArtefactInfo	(CInventoryItem* obj);
 	void				TryAddEquipInfo		(CInventoryItem* obj);
 	void				TryAddEatableInfo	(CInventoryItem* obj);
+	void				TryAddArmorInfo		(CInventoryItem* obj);
 	void				TryAddCustomInfo	(CInventoryItem* obj);
 
 	virtual void		Draw				();
 	virtual void		Update				();
-	bool				m_b_force_drawing;
-	CUIStatic*			UIName;
-	CUIStatic*			UIWeight;
-	CUIStatic*			UIVolume;
-	CUIStatic*			UICost;
-	CUIStatic*			UICondition;
-	CUIScrollView*		UIDesc;
-	CUIProgressBar*		UICondProgresBar;
-	CUIWpnParams*		UIWpnParams;
-	CUIArtefactParams*	UIArtefactParams;
-	CUIEquipParams*		UIEquipParams;
-	CUIEatableParams*	UIEatableParams;
+	bool				m_b_force_drawing{};
+	CUIStatic*			UIName{};
+	CUIStatic*			UIWeight{};
+	CUIStatic*			UIVolume{};
+	CUIStatic*			UICost{};
+	CUIStatic*			UICondition{};
+	CUIScrollView*		UIDesc{};
+	CUIProgressBar*		UICondProgresBar{};
+	CUIWpnParams*		UIWpnParams{};
+	CUIArtefactParams*	UIArtefactParams{};
+	CUIEquipParams*		UIEquipParams{};
+	CUIEatableParams*	UIEatableParams{};
+	CUIArmorParams*		UIArmorParams{};
 
-	Fvector2			UIItemImageSize; 
+	Fvector2			UIItemImageSize{};
 	CUIStatic*			UIItemImage;
 };

@@ -64,17 +64,7 @@ void CVest::OnMoveToRuck(EItemPlace prevPlace) {
 }
 
 float CVest::GetHitTypeProtection(int hit_type) {
-	if (hit_type != ALife::eHitTypeFireWound)
-		return inherited::GetHitTypeProtection(hit_type);
-	else {
-		float result{};
-		if (pSettings->line_exist(CurrProtectSect(), "bones_koeff_protection")) {
-			LPCSTR bone_params = pSettings->r_string(pSettings->r_string(CurrProtectSect(), "bones_koeff_protection"), bulletproof_display_bone.c_str());
-			string128 tmp;
-			result = atof(_GetItem(bone_params, 1, tmp)) * !fis_zero(GetCondition());
-		}
-		return result;
-	}
+	return (hit_type == ALife::eHitTypeFireWound) ? 0.f : inherited::GetHitTypeProtection(hit_type);
 }
 
 float CVest::HitThruArmour(SHit* pHDS)
@@ -218,4 +208,26 @@ void CVest::PrepairItem() {
 	if (IsPlateInstalled())
 		Detach(GetPlateName().c_str(), true);
 	inherited::PrepairItem();
+}
+
+float CVest::GetArmorByBone(int bone_idx) {
+	float armor_class{};
+	const auto item_sect = CurrProtectSect();
+	if (pSettings->line_exist(item_sect, "bones_koeff_protection")) {
+		const auto bone_params = READ_IF_EXISTS(pSettings, r_string, pSettings->r_string(item_sect, "bones_koeff_protection"), GetBoneName(bone_idx), nullptr);
+		if (bone_params) {
+			string128 tmp;
+			armor_class = atof(_GetItem(bone_params, 1, tmp)) * !fis_zero(GetCondition());
+		}
+	}
+	return armor_class;
+}
+
+float CVest::GetArmorHitFraction() {
+	float hit_fraction{};
+	auto item_sect = CurrProtectSect();
+	if (pSettings->line_exist(item_sect, "bones_koeff_protection")) {
+		hit_fraction = READ_IF_EXISTS(pSettings, r_float, pSettings->r_string(item_sect, "bones_koeff_protection"), "hit_fraction", 0.1f);
+	}
+	return hit_fraction;
 }

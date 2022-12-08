@@ -46,17 +46,7 @@ BOOL CHelmet::BonePassBullet(int boneID){
 };
 
 float CHelmet::GetHitTypeProtection(int hit_type) {
-	if (hit_type != ALife::eHitTypeFireWound)
-		return inherited::GetHitTypeProtection(hit_type);
-	else {
-		float result{};
-		if (pSettings->line_exist(cNameSect(), "bones_koeff_protection")) {
-			LPCSTR bone_params = pSettings->r_string(pSettings->r_string(cNameSect(), "bones_koeff_protection"), bulletproof_display_bone.c_str());
-			string128 tmp;
-			result = atof(_GetItem(bone_params, 1, tmp)) * !fis_zero(GetCondition());
-		}
-		return result;
-	}
+	return (hit_type == ALife::eHitTypeFireWound) ? 0.f : inherited::GetHitTypeProtection(hit_type);
 }
 
 void CHelmet::OnMoveToSlot(EItemPlace prevPlace)

@@ -6134,6 +6134,9 @@
     <ClInclude Include="GeometryBits.h">
       <Filter>Core\Client\Objects\physics\Base\Objects\PHObject\Geom</Filter>
     </ClInclude>
+    <ClInclude Include="ui\UIArmorParams.h">
+      <Filter>AI\AScript\ScriptClasses\UI\Common\ItemInfo</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="damage_manager.cpp">
@@ -8968,6 +8971,9 @@
     </ClCompile>
     <ClCompile Include="GeometryBits.cpp">
       <Filter>Core\Client\Objects\physics\Base\Objects\PHObject\Geom</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\UIArmorParams.cpp">
+      <Filter>AI\AScript\ScriptClasses\UI\Common\ItemInfo</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

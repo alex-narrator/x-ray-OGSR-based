@@ -150,6 +150,8 @@ public:
 
 	virtual bool IsVolumeUnlimited			() const /*{ return true; }*/;
 
+	virtual	void TryGroggyEffect			(SHit*){};
+
 	virtual CCustomOutfit*					GetOutfit		() const {return nullptr;};
 	virtual CBackpack*						GetBackpack		() const {return nullptr;};
 	virtual CHelmet*						GetHelmet		() const {return nullptr;};

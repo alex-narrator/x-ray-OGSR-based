@@ -42,7 +42,6 @@ public:
 
 	virtual void					DrawHUDMask				();
 			bool					HasVisor				() const { return m_UIVisor && !!m_VisorTexture && m_bIsHelmetBuiltIn; }
-
 protected:
 	CUIStaticItem*					m_UIVisor{};
 	shared_str						m_VisorTexture{}, bulletproof_display_bone{};

@@ -481,29 +481,6 @@ void	CActor::Hit							(SHit* pHDS)
 		};
 	}
 
-	//groggy effect
-	if (this == Level().CurrentControlEntity() && IsHitToHead(pHDS) && 
-		!fis_zero(m_fGroggyTreshold) && HDS.damage() > m_fGroggyTreshold) {
-		switch (HDS.hit_type)
-		{
-		case ALife::eHitTypeFireWound:
-		case ALife::eHitTypeStrike:
-		case ALife::eHitTypePhysicStrike: 
-		{
-			CEffectorCam* ce = Actor()->Cameras().GetCamEffector((ECamEffectorType)effGroggy);
-			if (!ce && !!m_GroggyEffector) {
-				AddEffector(this, effGroggy, "effector_groggy", HDS.damage());
-			}
-			Fvector point = Position();
-			point.y += CameraHeight();
-			sndGroggy.play_at_pos(this, point);
-		}break;
-		default:
-			break;
-		}
-
-	}
-
 	//slow actor, only when he gets hit
 	hit_slowmo = conditions().HitSlowmo(pHDS);
 
@@ -684,6 +661,13 @@ void CActor::Die(CObject* who)
 
 	start_tutorial			("game_over");
 	xr_delete				(m_sndShockEffector);
+
+	if (actor_camera_shell &&
+		actor_camera_shell->get_ElementByStoreOrder(0)->PhysicsRefObject()
+		==
+		this
+		)
+		destroy_physics_shell(actor_camera_shell);
 }
 
 void	CActor::SwitchOutBorder(bool new_border_state)
@@ -2052,7 +2036,7 @@ bool CActor::HasRequiredTool(PIItem item) {
 
 bool CActor::HasRequiredTool(const shared_str& sect) {
 	if (!pSettings->line_exist(sect, "required_tools")) {
-		Msg("%s line not exist",__FUNCTION__);
+//		Msg("%s line not exist",__FUNCTION__);
 		return true;
 	}
 	LPCSTR str = pSettings->r_string(sect, "required_tools");
@@ -2060,9 +2044,38 @@ bool CActor::HasRequiredTool(const shared_str& sect) {
 		string128 tool_section;
 		_GetItem(str, i, tool_section);
 		if (inventory().GetItemFromInventory(tool_section)) {
-			Msg("%s has required tool %s for item %s", __FUNCTION__, tool_section, sect.c_str());
+//			Msg("%s has required tool %s for item %s", __FUNCTION__, tool_section, sect.c_str());
 			return true;
 		}
 	}
 	return false;
+}
+
+void CActor::TryGroggyEffect(SHit* pHDS) {
+	if (GodMode() ||
+		fis_zero(m_fGroggyTreshold) ||
+		pHDS->damage() < m_fGroggyTreshold)
+		return;
+
+	//groggy effect
+	if (this == Level().CurrentControlEntity()) {
+		switch (pHDS->hit_type)
+		{
+		case ALife::eHitTypeFireWound:
+		case ALife::eHitTypeStrike:
+		case ALife::eHitTypePhysicStrike:
+		{
+			CEffectorCam* ce = Actor()->Cameras().GetCamEffector((ECamEffectorType)effGroggy);
+			if (!ce && !!m_GroggyEffector) {
+				AddEffector(this, effGroggy, "effector_groggy", pHDS->damage());
+			}
+			Fvector point = Position();
+			point.y += CameraHeight();
+			sndGroggy.play_at_pos(this, point);
+		}break;
+		default:
+			break;
+		}
+
+	}
 }
