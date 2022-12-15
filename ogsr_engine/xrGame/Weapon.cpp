@@ -38,7 +38,7 @@
 #include "Torch.h"
 #include "NightVisionDevice.h"
 
-constexpr auto ROTATION_TIME = 0.25f;
+//constexpr auto ROTATION_TIME = 0.25f;
 
 extern ENGINE_API Fvector4 w_states;
 extern ENGINE_API Fvector3 w_timers;
@@ -72,6 +72,7 @@ CWeapon::~CWeapon		()
 	delete_data(m_glaunchers);
 	delete_data(m_lasers);
 	delete_data(m_flashlights);
+	delete_data(m_stocks);
 }
 
 void CWeapon::UpdateXForm	()
@@ -318,6 +319,8 @@ void CWeapon::Load		(LPCSTR section)
 		m_eLaserStatus				= (ALife::EWeaponAddonStatus)pSettings->r_s32(section, "laser_status");
 	if (pSettings->line_exist(section, "flashlight_status"))
 		m_eFlashlightStatus			= (ALife::EWeaponAddonStatus)pSettings->r_s32(section, "flashlight_status");
+	if (pSettings->line_exist(section, "stock_status"))
+		m_eStockStatus				= (ALife::EWeaponAddonStatus)pSettings->r_s32(section, "stock_status");
 
 	m_bZoomEnabled = !!pSettings->r_bool(section,"zoom_enabled");
 	m_bUseScopeZoom = !!READ_IF_EXISTS(pSettings, r_bool, section, "use_scope_zoom", false);
@@ -327,19 +330,17 @@ void CWeapon::Load		(LPCSTR section)
 	m_bScopeShowIndicators = !!READ_IF_EXISTS(pSettings, r_bool, section, "scope_show_indicators", true);
 	m_bIgnoreScopeTexture = !!READ_IF_EXISTS(pSettings, r_bool, section, "ignore_scope_texture", false);
 
-	m_fZoomRotateTime = READ_IF_EXISTS(pSettings, r_float, hud_sect, "zoom_rotate_time", ROTATION_TIME);
+//	m_fZoomRotateTime = READ_IF_EXISTS(pSettings, r_float, hud_sect, "zoom_rotate_time", ROTATION_TIME);
 
 	m_fZoomFactor = CurrentZoomFactor();
 
 	m_highlightAddons.clear();
 
-	if (m_eScopeStatus == ALife::eAddonAttachable)
-	{
-		if (pSettings->line_exist(section, "scope_name"))
-		{
-			LPCSTR str = pSettings->r_string(section, "scope_name");
-			for (int i = 0, count = _GetItemCount(str); i < count; ++i)
-			{
+	LPCSTR str{};
+	if (m_eScopeStatus == ALife::eAddonAttachable){
+		if (pSettings->line_exist(section, "scope_name")){
+			str = pSettings->r_string(section, "scope_name");
+			for (int i = 0, count = _GetItemCount(str); i < count; ++i){
 				string128 scope_section;
 				_GetItem(str, i, scope_section);
 				m_scopes.push_back(scope_section);
@@ -347,14 +348,10 @@ void CWeapon::Load		(LPCSTR section)
 			}
 		}
 	}
-
-	if (m_eSilencerStatus == ALife::eAddonAttachable)
-	{
-		if (pSettings->line_exist(section, "silencer_name"))
-		{
-			LPCSTR str = pSettings->r_string(section, "silencer_name");
-			for (int i = 0, count = _GetItemCount(str); i < count; ++i)
-			{
+	if (m_eSilencerStatus == ALife::eAddonAttachable){
+		if (pSettings->line_exist(section, "silencer_name")){
+			str = pSettings->r_string(section, "silencer_name");
+			for (int i = 0, count = _GetItemCount(str); i < count; ++i){
 				string128 silencer_section;
 				_GetItem(str, i, silencer_section);
 				m_silencers.push_back(silencer_section);
@@ -362,14 +359,10 @@ void CWeapon::Load		(LPCSTR section)
 			}
 		}
 	}
-
-	if (m_eGrenadeLauncherStatus == ALife::eAddonAttachable)
-	{
-		if (pSettings->line_exist(section, "grenade_launcher_name"))
-		{
-			LPCSTR str = pSettings->r_string(section, "grenade_launcher_name");
-			for (int i = 0, count = _GetItemCount(str); i < count; ++i)
-			{
+	if (m_eGrenadeLauncherStatus == ALife::eAddonAttachable){
+		if (pSettings->line_exist(section, "grenade_launcher_name")){
+			str = pSettings->r_string(section, "grenade_launcher_name");
+			for (int i = 0, count = _GetItemCount(str); i < count; ++i){
 				string128 glauncher_section;
 				_GetItem(str, i, glauncher_section);
 				m_glaunchers.push_back(glauncher_section);
@@ -377,14 +370,10 @@ void CWeapon::Load		(LPCSTR section)
 			}
 		}
 	}
-
-	if (m_eLaserStatus == ALife::eAddonAttachable)
-	{
-		if (pSettings->line_exist(section, "laser_name"))
-		{
-			LPCSTR str = pSettings->r_string(section, "laser_name");
-			for (int i = 0, count = _GetItemCount(str); i < count; ++i)
-			{
+	if (m_eLaserStatus == ALife::eAddonAttachable){
+		if (pSettings->line_exist(section, "laser_name")){
+			str = pSettings->r_string(section, "laser_name");
+			for (int i = 0, count = _GetItemCount(str); i < count; ++i){
 				string128 laser_section;
 				_GetItem(str, i, laser_section);
 				m_lasers.push_back(laser_section);
@@ -392,18 +381,25 @@ void CWeapon::Load		(LPCSTR section)
 			}
 		}
 	}
-
-	if (m_eFlashlightStatus == ALife::eAddonAttachable)
-	{
-		if (pSettings->line_exist(section, "flashlight_name"))
-		{
-			LPCSTR str = pSettings->r_string(section, "flashlight_name");
-			for (int i = 0, count = _GetItemCount(str); i < count; ++i)
-			{
+	if (m_eFlashlightStatus == ALife::eAddonAttachable){
+		if (pSettings->line_exist(section, "flashlight_name")){
+			str = pSettings->r_string(section, "flashlight_name");
+			for (int i = 0, count = _GetItemCount(str); i < count; ++i){
 				string128 flashlight_section;
 				_GetItem(str, i, flashlight_section);
 				m_flashlights.push_back(flashlight_section);
 				m_highlightAddons.push_back(flashlight_section);
+			}
+		}
+	}
+	if (m_eStockStatus == ALife::eAddonAttachable) {
+		if (pSettings->line_exist(section, "stock_name")) {
+			str = pSettings->r_string(section, "stock_name");
+			for (int i = 0, count = _GetItemCount(str); i < count; ++i){
+				string128 stock_section;
+				_GetItem(str, i, stock_section);
+				m_stocks.push_back(stock_section);
+				m_highlightAddons.push_back(stock_section);
 			}
 		}
 	}
@@ -534,8 +530,7 @@ void CWeapon::LoadFireParams		(LPCSTR section, LPCSTR prefix)
 	camDispersion		= pSettings->r_float		(section,"cam_dispersion"	); 
 	camDispersion		= deg2rad					(camDispersion);
 
-	if (pSettings->line_exist(section,"cam_dispersion_inc"))
-	{
+	if (pSettings->line_exist(section,"cam_dispersion_inc")){
 		camDispersionInc		= pSettings->r_float		(section,"cam_dispersion_inc"	); 
 		camDispersionInc		= deg2rad					(camDispersionInc);
 	}
@@ -585,10 +580,16 @@ BOOL CWeapon::net_Spawn		(CSE_Abstract* DC)
 	m_cur_laser = E->m_cur_laser;
 
 	if (FlashlightAttachable() && IsFlashlightAttached() && E->m_cur_flashlight >= m_flashlights.size()) {
-		Msg("! [%s]: %s: wrong laser current [%u/%u]", __FUNCTION__, cName().c_str(), E->m_cur_laser, m_flashlights.size() - 1);
+		Msg("! [%s]: %s: wrong laser current [%u/%u]", __FUNCTION__, cName().c_str(), E->m_cur_flashlight, m_flashlights.size() - 1);
 		E->m_cur_flashlight = 0;
 	}
 	m_cur_flashlight = E->m_cur_flashlight;
+
+	if (StockAttachable() && IsStockAttached() && E->m_cur_stock >= m_stocks.size()) {
+		Msg("! [%s]: %s: wrong stock current [%u/%u]", __FUNCTION__, cName().c_str(), E->m_cur_stock, m_stocks.size() - 1);
+		E->m_cur_stock = 0;
+	}
+	m_cur_stock = E->m_cur_stock;
 
 	//
 	iMagazineSize	= E->m_MagazineSize;
@@ -677,8 +678,9 @@ void CWeapon::net_Export( CSE_Abstract* E ) {
   wpn->m_cur_scope		= m_cur_scope;
   wpn->m_cur_silencer	= m_cur_silencer;
   wpn->m_cur_glauncher	= m_cur_glauncher;
-  wpn->m_cur_scope		= m_cur_laser;
-  wpn->m_cur_scope		= m_cur_flashlight;
+  wpn->m_cur_laser		= m_cur_laser;
+  wpn->m_cur_flashlight = m_cur_flashlight;
+  wpn->m_cur_stock		= m_cur_stock;
   //
   wpn->m_MagazineSize	= iMagazineSize;
   //
@@ -1380,29 +1382,30 @@ bool CWeapon::IsGrenadeLauncherAttached() const{
 			0 != (m_flagsAddOnState&CSE_ALifeItemWeapon::eWeaponAddonGrenadeLauncher)) || 
 			CSE_ALifeItemWeapon::eAddonPermanent == m_eGrenadeLauncherStatus;
 }
-
 bool CWeapon::IsScopeAttached() const{
 	return (CSE_ALifeItemWeapon::eAddonAttachable == m_eScopeStatus &&
 			0 != (m_flagsAddOnState&CSE_ALifeItemWeapon::eWeaponAddonScope)) || 
 			CSE_ALifeItemWeapon::eAddonPermanent == m_eScopeStatus;
 }
-
 bool CWeapon::IsSilencerAttached() const{
 	return (CSE_ALifeItemWeapon::eAddonAttachable == m_eSilencerStatus &&
 			0 != (m_flagsAddOnState&CSE_ALifeItemWeapon::eWeaponAddonSilencer)) || 
 			CSE_ALifeItemWeapon::eAddonPermanent == m_eSilencerStatus;
 }
-
 bool CWeapon::IsLaserAttached() const{
 	return (CSE_ALifeItemWeapon::eAddonAttachable == m_eLaserStatus &&
 		0 != (m_flagsAddOnState & CSE_ALifeItemWeapon::eWeaponAddonLaser)) ||
 		CSE_ALifeItemWeapon::eAddonPermanent == m_eLaserStatus;
 }
-
 bool CWeapon::IsFlashlightAttached() const{
 	return (CSE_ALifeItemWeapon::eAddonAttachable == m_eFlashlightStatus &&
 		0 != (m_flagsAddOnState & CSE_ALifeItemWeapon::eWeaponAddonFlashlight)) ||
 		CSE_ALifeItemWeapon::eAddonPermanent == m_eFlashlightStatus;
+}
+bool CWeapon::IsStockAttached() const {
+	return (CSE_ALifeItemWeapon::eAddonAttachable == m_eStockStatus &&
+		0 != (m_flagsAddOnState & CSE_ALifeItemWeapon::eWeaponAddonStock)) ||
+		CSE_ALifeItemWeapon::eAddonPermanent == m_eStockStatus;
 }
 
 bool CWeapon::GrenadeLauncherAttachable() const{
@@ -1419,6 +1422,9 @@ bool CWeapon::LaserAttachable() const{
 }
 bool CWeapon::FlashlightAttachable() const{
 	return (CSE_ALifeItemWeapon::eAddonAttachable == m_eFlashlightStatus);
+}
+bool CWeapon::StockAttachable() const {
+	return (CSE_ALifeItemWeapon::eAddonAttachable == m_eStockStatus);
 }
 
 void CWeapon::UpdateHUDAddonsVisibility()
@@ -2176,21 +2182,19 @@ bool CWeapon::SecondVPEnabled() const
 }
 
 // Чувствительность мышкии с оружием в руках во время прицеливания
-float CWeapon::GetControlInertionFactor() const
+float CWeapon::GetControlInertionFactor()
 {
 	float fInertionFactor = inherited::GetControlInertionFactor();
 
-	if (IsZoomed() && SecondVPEnabled() && !IsRotatingToZoom())
-	{
-		if (m_bScopeDynamicZoom)
-		{
+	if (IsZoomed() && !IsRotatingToZoom()){
+		if (SecondVPEnabled() && m_bScopeDynamicZoom){
 			const float delta_factor_total = 1 - m_fSecondVPZoomFactor;
 			float min_zoom_factor = 1 + delta_factor_total * m_fMinZoomK;
 			float k = (m_fRTZoomFactor - min_zoom_factor) / (m_fSecondVPZoomFactor - min_zoom_factor);
 			return (m_fScopeInertionFactor - fInertionFactor) * k + fInertionFactor;
 		}
 		else
-			return m_fScopeInertionFactor;
+			return (fInertionFactor + fInertionFactor * m_fAimControlInertionK);
 	}
 
 	return fInertionFactor;
@@ -2266,128 +2270,105 @@ u32 CWeapon::GetNextAmmoType(bool looped)
 		return u32(-1);
 }
 //
-int	CWeapon::GetScopeX()
-{
+int	CWeapon::GetScopeX(){
 	int res = pSettings->r_s32(cNameSect(), "scope_x");
-
 	string1024 scope_sect_x;
 	sprintf(scope_sect_x, "%s_x", m_scopes[m_cur_scope].c_str());
-
 	if (pSettings->line_exist(cNameSect(), scope_sect_x))
 		res = pSettings->r_s32(cNameSect(), scope_sect_x);
-
 	return res;
 }
-int	CWeapon::GetScopeY()
-{
+int	CWeapon::GetScopeY(){
 	int res = pSettings->r_s32(cNameSect(), "scope_y");
-
 	string1024 scope_sect_y;
 	sprintf(scope_sect_y, "%s_y", m_scopes[m_cur_scope].c_str());
-
 	if (pSettings->line_exist(cNameSect(), scope_sect_y))
 		res = pSettings->r_s32(cNameSect(), scope_sect_y);
-
 	return res;
 }
 
-int	CWeapon::GetSilencerX()
-{
+int	CWeapon::GetSilencerX(){
 	int res = pSettings->r_s32(cNameSect(), "silencer_x");
-
 	string1024 silencer_sect_x;
 	sprintf(silencer_sect_x, "%s_x", m_silencers[m_cur_silencer].c_str());
-
 	if (pSettings->line_exist(cNameSect(), silencer_sect_x))
 		res = pSettings->r_s32(cNameSect(), silencer_sect_x);
-
 	return res;
 }
-int	CWeapon::GetSilencerY()
-{
+int	CWeapon::GetSilencerY(){
 	int res = pSettings->r_s32(cNameSect(), "silencer_y");
-
 	string1024 silencer_sect_y;
 	sprintf(silencer_sect_y, "%s_y", m_silencers[m_cur_silencer].c_str());
-
 	if (pSettings->line_exist(cNameSect(), silencer_sect_y))
 		res = pSettings->r_s32(cNameSect(), silencer_sect_y);
-
 	return res;
 }
 
-int	CWeapon::GetGrenadeLauncherX()
-{
+int	CWeapon::GetGrenadeLauncherX(){
 	int res = pSettings->r_s32(cNameSect(), "grenade_launcher_x");
-
 	string1024 glauncher_sect_x;
 	sprintf(glauncher_sect_x, "%s_x", m_glaunchers[m_cur_glauncher].c_str());
-
 	if (pSettings->line_exist(cNameSect(), glauncher_sect_x))
 		res = pSettings->r_s32(cNameSect(), glauncher_sect_x);
-
 	return res;
 }
-int	CWeapon::GetGrenadeLauncherY()
-{
+int	CWeapon::GetGrenadeLauncherY(){
 	int res = pSettings->r_s32(cNameSect(), "grenade_launcher_y");
-
 	string1024 glauncher_sect_y;
 	sprintf(glauncher_sect_y, "%s_y", m_glaunchers[m_cur_glauncher].c_str());
-
 	if (pSettings->line_exist(cNameSect(), glauncher_sect_y))
 		res = pSettings->r_s32(cNameSect(), glauncher_sect_y);
-
 	return res;
 }
 
-int	CWeapon::GetLaserX()
-{
+int	CWeapon::GetLaserX(){
 	int res = pSettings->r_s32(cNameSect(), "laser_x");
-
 	string1024 laser_sect_x;
 	sprintf(laser_sect_x, "%s_x", m_lasers[m_cur_laser].c_str());
-
 	if (pSettings->line_exist(cNameSect(), laser_sect_x))
 		res = pSettings->r_s32(cNameSect(), laser_sect_x);
-
 	return res;
 }
-int	CWeapon::GetLaserY()
-{
+int	CWeapon::GetLaserY(){
 	int res = pSettings->r_s32(cNameSect(), "laser_y");
-
 	string1024 laser_sect_y;
 	sprintf(laser_sect_y, "%s_x", m_lasers[m_cur_laser].c_str());
-
 	if (pSettings->line_exist(cNameSect(), laser_sect_y))
 		res = pSettings->r_s32(cNameSect(), laser_sect_y);
-
 	return res;
 }
 
-int	CWeapon::GetFlashlightX()
-{
+int	CWeapon::GetFlashlightX(){
 	int res = pSettings->r_s32(cNameSect(), "flashlight_x");
-
 	string1024 flashlight_sect_x;
 	sprintf(flashlight_sect_x, "%s_x", m_flashlights[m_cur_flashlight].c_str());
-
 	if (pSettings->line_exist(cNameSect(), flashlight_sect_x))
 		res = pSettings->r_s32(cNameSect(), flashlight_sect_x);
-
 	return res;
 }
-int	CWeapon::GetFlashlightY()
-{
+int	CWeapon::GetFlashlightY(){
 	int res = pSettings->r_s32(cNameSect(), "flashlight_y");
-
 	string1024 flashlight_sect_y;
 	sprintf(flashlight_sect_y, "%s_y", m_flashlights[m_cur_flashlight].c_str());
-
 	if (pSettings->line_exist(cNameSect(), flashlight_sect_y))
 		res = pSettings->r_s32(cNameSect(), flashlight_sect_y);
+	return res;
+}
 
+int	CWeapon::GetStockX() {
+	int res = pSettings->r_s32(cNameSect(), "stock_x");
+	string1024 stock_sect_x;
+	sprintf(stock_sect_x, "%s_x", m_stocks[m_cur_stock].c_str());
+	if (pSettings->line_exist(cNameSect(), stock_sect_x))
+		res = pSettings->r_s32(cNameSect(), stock_sect_x);
+	return res;
+}
+int	CWeapon::GetStockY() {
+	int res = pSettings->r_s32(cNameSect(), "stock_y");
+	string1024 stock_sect_y;
+	sprintf(stock_sect_y, "%s_y", m_stocks[m_cur_stock].c_str());
+	if (pSettings->line_exist(cNameSect(), stock_sect_y))
+		res = pSettings->r_s32(cNameSect(), stock_sect_y);
 	return res;
 }
 

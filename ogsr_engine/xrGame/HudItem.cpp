@@ -803,6 +803,10 @@ void CHudItem::UpdateInertion(Fmatrix& trans)
 			_tendto_speed = inertion_data.m_tendto_speed_aim - (inertion_data.m_tendto_speed_aim - inertion_data.m_tendto_speed) * factor;
 			_origin_offset =
 				inertion_data.m_origin_offset_aim - (inertion_data.m_origin_offset_aim - inertion_data.m_origin_offset) * factor;
+			//вплив адонів на інерцію у прицілюванні
+			clamp(m_fAimInertionK, -1.f, 1.f);
+			_origin_offset += (_origin_offset * m_fAimInertionK);
+			_tendto_speed -= (_tendto_speed * m_fAimInertionK);
 		}
 		else
 		{ // Худ в режиме "От бедра"

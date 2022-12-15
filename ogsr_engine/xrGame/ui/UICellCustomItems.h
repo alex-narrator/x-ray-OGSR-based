@@ -99,6 +99,7 @@ public:
 		eLauncher, 
 		eLaser, 
 		eFlashlight, 
+		eStock,
 		eMaxAddon
 	};
 
@@ -110,12 +111,20 @@ protected:
 	void						DestroyIcon					(eAddonType);
 	CUIStatic*					GetIcon						(eAddonType);
 	void						InitAddon					(CUIStatic* s, CIconParams &params, Fvector2 offset, bool b_rotate);
-	void						InitAllAddons				(CUIStatic* s_silencer, CUIStatic* s_scope, CUIStatic* s_launcher, CUIStatic* s_laser, CUIStatic* s_flashlight, bool b_vertical);
+	void						InitAllAddons				(
+		CUIStatic* s_silencer, 
+		CUIStatic* s_scope, 
+		CUIStatic* s_launcher, 
+		CUIStatic* s_laser, 
+		CUIStatic* s_flashlight, 
+		CUIStatic* s_stock,
+		bool b_vertical);
 	bool						is_scope					();
 	bool						is_silencer					();
 	bool						is_launcher					();
 	bool						is_laser					();
 	bool						is_flashlight				();
+	bool						is_stock					();
 public:
 								CUIWeaponCellItem			(CWeapon* itm);
 				virtual			~CUIWeaponCellItem			();

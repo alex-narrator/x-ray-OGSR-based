@@ -44,10 +44,10 @@ inv_name	        	= wpn-ak74							; name in inventory
 inv_name_short			= wpn-ak74
 inv_weight			= 3.3								; weight in inventory
 
-inv_grid_width			= 5	 ; position and size of the icon that will be used to display weapon in the inventory menu
-inv_grid_height			= 2	 ; all icons are on the texture ui_icon_equipment.dds,   
-inv_grid_x				= 5  ; position and size are in terms of 64x64 squares
-inv_grid_y				= 5
+inv_grid_width     = 5
+inv_grid_height    = 2
+inv_grid_x         = 5
+inv_grid_y         = 5
 
 kill_msg_x			= 0
 kill_msg_y			= 28
@@ -72,7 +72,7 @@ fire_dispersion_base			= 0.086;0.2		;угол (в градусах) базовой дисперсии оружия 
 
 ;отдача
 cam_relax_speed         		=5;3.5; 0.15		;скорость возврата в исходное положение
-cam_dispersion          		= 0.15		;увеличения угла (в градусах) с каждым выстрелом
+cam_dispersion          		= 0.5;0.15		;увеличения угла (в градусах) с каждым выстрелом
 cam_dispersion_inc			= 0.3		;увеличениe cam_dispersion с каждым выстрелом
 cam_dispertion_frac			= 0.9		;ствол будет подыматься на cam_dispersion*cam_dispertion_frac +- cam_dispersion*(1-cam_dispertion_frac)
 cam_max_angle				= 10.0	    	;максимальный угол отдачи
@@ -145,6 +145,7 @@ ph_mass						= 5							; physic mass (kg)
 scope_status				= 2							; 0 - no addon
 silencer_status				= 2;0							; 1 - permanent
 grenade_launcher_status		= 2							; 2 - attachable
+stock_status 				= 2
 
 zoom_enabled				= true						; (on,off)zoom mode (right mouse button)
 
@@ -156,14 +157,23 @@ scope_y 					= 3
 ;wpn_addon_scope_y 					= 3
 ;wpn_addon_scope_susat_x 			= 86						; offset in inventory icon
 ;wpn_addon_scope_susat_y 			= 3
-silencer_name  				= wpn_addon_silencer, wpn_addon_choke		; section name for the attachable silencer
+silencer_name  				= wpn_addon_silencer, wpn_addon_muzzle_break		; section name for the attachable silencer
 silencer_x 					= 218						; offset in inventory icon
 silencer_y 					= 13
-;wpn_addon_silencer_long_x 	= 222
-;wpn_addon_silencer_long_y 	= 16				
+wpn_addon_muzzle_break_x 		= 204
+wpn_addon_muzzle_break_y 		= 15				
 grenade_launcher_name 		= wpn_addon_grenade_launcher; section name for the attachable grenade launcher
 grenade_launcher_x 			= 116						; offset in inventory icon
 grenade_launcher_y 			= 23
+
+stock_name = wpn_addon_stock_ak74
+stock_x = -8
+stock_y = 22
+
+silencer_installed = 1
+stock_installed = 0
+
+scope_second = true
 
 ;sounds (name of the sound, volume (0.0 - 1.0), delay (sec))
 snd_draw					= weapons\ak74_draw

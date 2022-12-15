@@ -129,7 +129,7 @@ void CInventoryItem::Load(LPCSTR section)
 	m_flags.set(FAllowSprint,		READ_IF_EXISTS(pSettings, r_bool, section, "sprint_allowed",	TRUE));
 	m_flags.set(FUsingCondition,	READ_IF_EXISTS(pSettings, r_bool, section, "use_condition",		TRUE));
 
-	m_fControlInertionFactor		= READ_IF_EXISTS(pSettings, r_float,section,"control_inertion_factor", 1.0f);
+//	m_fControlInertionFactor		= READ_IF_EXISTS(pSettings, r_float,section,"control_inertion_factor", 1.0f);
 	m_icon_name						= READ_IF_EXISTS(pSettings, r_string,section,"icon_name", NULL);
 
 	m_always_ungroupable			= READ_IF_EXISTS(pSettings, r_bool, section, "always_ungroupable", false );
@@ -849,16 +849,15 @@ void CInventoryItem::OnMoveOut(EItemPlace prevPlace) {
 	OnMoveToRuck(prevPlace);
 };
 
-float	CInventoryItem::GetControlInertionFactor() const
+float	CInventoryItem::GetControlInertionFactor()
 {
-	//значение задано принудительно
-	bool b_manually_set = !!pSettings->line_exist(object().cNameSect(), "control_inertion_factor");
-
 	float weight_k = sqrtf(Weight());
 	//чтобы очень лёгкие предметы не давали огромной чувствительности
 	clamp(weight_k, 1.f, weight_k);
 
-	return b_manually_set ? m_fControlInertionFactor : weight_k;
+	m_fControlInertionFactor = READ_IF_EXISTS(pSettings, r_float, object().cNameSect(), "control_inertion_factor", weight_k);
+
+	return m_fControlInertionFactor;
 }
 
 bool  CInventoryItem::WillBeBroken()

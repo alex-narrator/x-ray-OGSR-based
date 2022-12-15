@@ -217,9 +217,7 @@ void CUIAmmoCellItem::UpdateItemTextCustom(){
 	string32				str;
 	sprintf_s(str, "%d/%d", object()->m_boxCurr, object()->m_boxSize);
 
-	float pos_x{ GetWidth() - m_text_add->GetWidth() };
-	float pos_y{ GetHeight() - m_text_add->GetHeight() };
-	Fvector2 pos{ pos_x, pos_y };
+	Fvector2 pos{ GetWidth() - m_text_add->GetWidth(), GetHeight() - m_text_add->GetHeight() };
 
 	m_text_add->SetWndPos(pos);
 	m_text_add->SetText(str);
@@ -269,9 +267,7 @@ void CUIWarbeltCellItem::UpdateItemText() {
 	string32				str;
 	sprintf_s(str, "[%dx%d]", object()->GetBeltWidth(), object()->GetBeltHeight());
 
-	float pos_x{ GetWidth() - m_text_add->GetWidth() };
-	float pos_y{ GetHeight() - m_text_add->GetHeight() };
-	Fvector2 pos{ pos_x, pos_y };
+	Fvector2 pos{ GetWidth() - m_text_add->GetWidth(), GetHeight() - m_text_add->GetHeight() };
 
 	m_text_add->SetWndPos(pos);
 	m_text_add->SetText(str);
@@ -293,9 +289,7 @@ void CUIVestCellItem::UpdateItemText() {
 	string32				str;
 	sprintf_s(str, "[%dx%d]", object()->GetVestWidth(), object()->GetVestHeight());
 
-	float pos_x{ GetWidth() - m_text_add->GetWidth() };
-	float pos_y{ GetHeight() - m_text_add->GetHeight() };
-	Fvector2 pos{ pos_x, pos_y };
+	Fvector2 pos{ GetWidth() - m_text_add->GetWidth(), GetHeight() - m_text_add->GetHeight() };
 
 	m_text_add->SetWndPos(pos);
 	m_text_add->SetText(str);
@@ -317,9 +311,7 @@ void CUICBackpackCellItem::UpdateItemText() {
 	string32				str;
 	sprintf_s(str, "%.0f%s", object()->GetItemEffect(CInventoryItem::eAdditionalVolume), CStringTable().translate("st_l").c_str());
 
-	float pos_x{ GetWidth() - m_text_add->GetWidth() };
-	float pos_y{ GetHeight() - m_text_add->GetHeight() };
-	Fvector2 pos{ pos_x, pos_y };
+	Fvector2 pos{ GetWidth() - m_text_add->GetWidth(), GetHeight() - m_text_add->GetHeight() };
 
 	m_text_add->SetWndPos(pos);
 	m_text_add->SetText(str);
@@ -354,9 +346,7 @@ void CUIEatableCellItem::UpdateItemText(){
 		string32				str;
 		sprintf_s(str, "%d/%d", object()->GetPortionsNum(), object()->GetStartPortionsNum());
 
-		float pos_x{ GetWidth() - m_text_add->GetWidth() };
-		float pos_y{ GetHeight() - m_text_add->GetHeight() };
-		Fvector2 pos{ pos_x, pos_y };
+		Fvector2 pos{ GetWidth() - m_text_add->GetWidth(), GetHeight() - m_text_add->GetHeight() };
 
 		m_text_add->SetWndPos(pos);
 		m_text_add->SetText(str);
@@ -381,12 +371,13 @@ bool CUIArtefactCellItem::EqualTo(CUICellItem* itm)
 CUIWeaponCellItem::CUIWeaponCellItem(CWeapon* itm)
 :inherited(itm)
 {
-	b_auto_drag_childs = false;
+	b_auto_drag_childs		= false;
 	m_addons[eSilencer]		= nullptr;
 	m_addons[eScope]		= nullptr;
 	m_addons[eLauncher]		= nullptr;
 	m_addons[eLaser]		= nullptr;
 	m_addons[eFlashlight]	= nullptr;
+	m_addons[eStock]		= nullptr;
 
 	m_cell_size.set(INV_GRID_WIDTHF, INV_GRID_HEIGHTF);
 
@@ -409,6 +400,9 @@ CUIWeaponCellItem::CUIWeaponCellItem(CWeapon* itm)
 
 	if (itm->FlashlightAttachable())
 		m_addon_offset[eFlashlight].set(object()->GetFlashlightX(), object()->GetFlashlightY());
+
+	if (itm->StockAttachable())
+		m_addon_offset[eStock].set(object()->GetStockX(), object()->GetStockY());
 }
 
 void CUIWeaponCellItem::UpdateItemText()
@@ -418,10 +412,8 @@ void CUIWeaponCellItem::UpdateItemText()
 		string32				str;
 		auto pWeaponMag = smart_cast<CWeaponMagazined*>(object());
 		sprintf_s(str, "%d/%d%s", object()->GetAmmoElapsed(), object()->GetAmmoMagSize(), pWeaponMag && pWeaponMag->HasFireModes() ? pWeaponMag->GetCurrentFireModeStr() : "");
-
-		float pos_x{ GetWidth() - m_text_add->GetWidth() };
-		float pos_y{ GetHeight() - m_text_add->GetHeight() };
-		Fvector2 pos{ pos_x, pos_y };
+		
+		Fvector2 pos{ GetWidth() - m_text_add->GetWidth(), GetHeight() - m_text_add->GetHeight() };
 
 		m_text_add->SetWndPos(pos);
 		m_text_add->SetText(str);
@@ -447,6 +439,9 @@ bool CUIWeaponCellItem::is_laser() {
 }
 bool CUIWeaponCellItem::is_flashlight() {
 	return object()->FlashlightAttachable() && object()->IsFlashlightAttached();
+}
+bool CUIWeaponCellItem::is_stock() {
+	return object()->StockAttachable() && object()->IsStockAttached();
 }
 
 void CUIWeaponCellItem::CreateIcon(eAddonType t, CIconParams &params)
@@ -545,49 +540,76 @@ void CUIWeaponCellItem::Update()
 				DestroyIcon(eFlashlight);
 		}
 	}
+
+	if (object()->StockAttachable()) {
+		if (object()->IsStockAttached()) {
+			if (!GetIcon(eStock) || bForceReInitAddons) {
+				CIconParams params(object()->GetStockName());
+				CreateIcon(eStock, params);
+				InitAddon(GetIcon(eStock), params, m_addon_offset[eStock], Heading());
+			}
+		}
+		else {
+			if (m_addons[eStock])
+				DestroyIcon(eStock);
+		}
+	}
 }
 
 void CUIWeaponCellItem::OnAfterChild(CUIDragDropListEx* parent_list)
 {
 	const Ivector2 &cs = parent_list->CellSize();
 	m_cell_size.set((float)cs.x, (float)cs.y);
-	CUIStatic* s_silencer = is_silencer() ? GetIcon(eSilencer) : NULL;
-	CUIStatic* s_scope = is_scope() ? GetIcon(eScope) : NULL;
-	CUIStatic* s_launcher = is_launcher() ? GetIcon(eLauncher) : NULL;
-	CUIStatic* s_laser = is_laser() ? GetIcon(eLaser) : NULL;
-	CUIStatic* s_flashlight = is_flashlight() ? GetIcon(eFlashlight) : NULL;
+	CUIStatic* s_silencer	= is_silencer	() ? GetIcon(eSilencer)		: NULL;
+	CUIStatic* s_scope		= is_scope		() ? GetIcon(eScope)		: NULL;
+	CUIStatic* s_launcher	= is_launcher	() ? GetIcon(eLauncher)		: NULL;
+	CUIStatic* s_laser		= is_laser		() ? GetIcon(eLaser)		: NULL;
+	CUIStatic* s_flashlight = is_flashlight	() ? GetIcon(eFlashlight)	: NULL;
+	CUIStatic* s_stock		= is_stock		() ? GetIcon(eStock)		: NULL;
 	
-	InitAllAddons(s_silencer, s_scope, s_launcher, s_laser, s_flashlight, parent_list->GetVerticalPlacement());
+	InitAllAddons(s_silencer, s_scope, s_launcher, s_laser, s_flashlight, s_stock, parent_list->GetVerticalPlacement());
 }
 
-void CUIWeaponCellItem::InitAllAddons(CUIStatic* s_silencer, CUIStatic* s_scope, CUIStatic* s_launcher, CUIStatic* s_laser, CUIStatic* s_flashlight, bool b_vertical)
+void CUIWeaponCellItem::InitAllAddons(
+	CUIStatic* s_silencer, 
+	CUIStatic* s_scope, 
+	CUIStatic* s_launcher, 
+	CUIStatic* s_laser, 
+	CUIStatic* s_flashlight, 
+	CUIStatic* s_stock, 
+	bool b_vertical)
 {
 	CIconParams params;
 
 	if (s_silencer) {
-		params.Load(*object()->GetSilencerName());
+		params.Load(object()->GetSilencerName());
 		params.set_shader(s_silencer);
 		InitAddon(s_silencer, params, m_addon_offset[eSilencer], b_vertical);
 	}
 	if (s_scope) {
-		params.Load(*object()->GetScopeName());
+		params.Load(object()->GetScopeName());
 		params.set_shader(s_scope);
 		InitAddon(s_scope, params, m_addon_offset[eScope], b_vertical);
 	}
 	if (s_launcher) {
-		params.Load(*object()->GetGrenadeLauncherName());
+		params.Load(object()->GetGrenadeLauncherName());
 		params.set_shader(s_launcher);
 		InitAddon(s_launcher, params, m_addon_offset[eLauncher], b_vertical);
 	}
 	if (s_laser) {
-		params.Load(*object()->GetLaserName());
+		params.Load(object()->GetLaserName());
 		params.set_shader(s_laser);
 		InitAddon(s_laser, params, m_addon_offset[eLaser], b_vertical);
 	}
 	if (s_flashlight) {
-		params.Load(*object()->GetFlashlightName());
+		params.Load(object()->GetFlashlightName());
 		params.set_shader(s_flashlight);
 		InitAddon(s_flashlight, params, m_addon_offset[eFlashlight], b_vertical);
+	}
+	if (s_stock) {
+		params.Load(object()->GetStockName());
+		params.set_shader(s_stock);
+		InitAddon(s_stock, params, m_addon_offset[eStock], b_vertical);
 	}
 }
 
@@ -655,12 +677,11 @@ void CUIWeaponCellItem::InitAddon(CUIStatic* s, CIconParams &params, Fvector2 ad
 
 		s->EnableHeading(b_rotate);
 
-		if (b_rotate)
-		{
+		if (b_rotate){
 			s->SetHeading(GetHeading());
 			Fvector2 offs{};
 			offs.set(0.0f, s->GetWndSize().y);
-			s->SetHeadingPivot(Fvector2().set(0.0f, 0.0f), /*Fvector2().set(0.0f,0.0f)*/offs, true);
+			s->SetHeadingPivot(Fvector2().set(0.0f, 0.0f), offs, true);
 		}
 
 		s->SetWindowName("wpn_addon");
@@ -682,11 +703,12 @@ CUIDragItem* CUIWeaponCellItem::CreateDragItem()
 
     CIconParams params;
 
-	CUIStatic* s_silencer{};
-	CUIStatic* s_scope{};
-	CUIStatic* s_launcher{};
-	CUIStatic* s_laser{};
-	CUIStatic* s_flashlight{};
+	CUIStatic* s_silencer	{};
+	CUIStatic* s_scope		{};
+	CUIStatic* s_launcher	{};
+	CUIStatic* s_laser		{};
+	CUIStatic* s_flashlight	{};
+	CUIStatic* s_stock		{};
 
     if (GetIcon(eSilencer)){
         params.Load(object()->GetSilencerName());
@@ -713,14 +735,13 @@ CUIDragItem* CUIWeaponCellItem::CreateDragItem()
 		s_flashlight = MakeAddonStatic(i, params);
 	}
 
-    /*
-    CUIStatic* s_silencer = GetIcon(eSilencer) ? MakeAddonStatic(i, params) : NULL;
-    CUIStatic* s_scope = GetIcon(eScope) ? MakeAddonStatic(i, params) : NULL;
-    CUIStatic* s_launcher = GetIcon(eLauncher) ? MakeAddonStatic(i, params) : NULL;
-    */
+	if (GetIcon(eStock)) {
+		params.Load(object()->GetStockName());
+		s_stock = MakeAddonStatic(i, params);
+	}
 
 	if (Heading()) m_cell_size.set(m_cell_size.y, m_cell_size.x);   // swap before	
-	InitAllAddons(s_silencer, s_scope, s_launcher, s_laser, s_flashlight, false);
+	InitAllAddons(s_silencer, s_scope, s_launcher, s_laser, s_flashlight, s_stock, false);
 	if (Heading()) m_cell_size.set(m_cell_size.y, m_cell_size.x);  // swap after
 	
 	return				i;

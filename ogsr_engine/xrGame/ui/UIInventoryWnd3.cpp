@@ -185,6 +185,12 @@ void CUIInventoryWnd::ActivatePropertiesBox()
 			UIPropertiesBox.AddItem(temp, (void*)pWeapon->GetFlashlightName().c_str(), INVENTORY_DETACH_ADDON);
 			b_show = true;
 		}
+		if (pWeapon->StockAttachable() && pWeapon->IsStockAttached() && pWeapon->CanDetach(pWeapon->GetStockName().c_str())) {
+			_addon_name = pSettings->r_string(pWeapon->GetStockName().c_str(), "inv_name_short");
+			sprintf(temp, "%s%s %s", _many, CStringTable().translate(detach_tip).c_str(), CStringTable().translate(_addon_name).c_str());
+			UIPropertiesBox.AddItem(temp, (void*)pWeapon->GetStockName().c_str(), INVENTORY_DETACH_ADDON);
+			b_show = true;
+		}
 		if(smart_cast<CWeaponMagazined*>(pWeapon)){
 			auto WpnMagazWgl = smart_cast<CWeaponMagazinedWGrenade*>(pWeapon);
 			bool b = pWeapon->GetAmmoElapsed() > 0 || WpnMagazWgl && !WpnMagazWgl->m_magazine2.empty() || smart_cast<CWeaponMagazined*>(pWeapon)->IsMagazineAttached();

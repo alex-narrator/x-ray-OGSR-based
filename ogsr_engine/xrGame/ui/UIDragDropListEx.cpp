@@ -608,8 +608,6 @@ void CUICellContainer::PlaceItemAtPos(CUICellItem* itm, Ivector2& cell_pos)
 	Ivector2 cp				= cell_pos;
 	if (m_pParentDragDropList->GetVerticalPlacement()){
 		std::swap(cs.x, cs.y);
-		//if (cp.y == 0)
-		//	cp.y = m_pParentDragDropList->CellsCapacity().y-cs.y;
 	}
 	for(int x=0; x<cs.x; ++x)
 		for(int y=0; y<cs.y; ++y){
@@ -617,7 +615,7 @@ void CUICellContainer::PlaceItemAtPos(CUICellItem* itm, Ivector2& cell_pos)
 			C.SetItem		(itm,(x==0&&y==0));
 		}
 
-	itm->SetWndSize			( Fvector2().set( (m_cellSize.x*cs.x),		(m_cellSize.y*cs.y)		 )	);
+	itm->SetWndSize(Fvector2().set((m_cellSize.x*cs.x), (m_cellSize.y*cs.y)));
 	if(!m_pParentDragDropList->GetVirtualCells())
 		itm->SetWndPos			( Fvector2().set( ((CellsSpacing().x+m_cellSize.x)*cp.x), ((CellsSpacing().y+m_cellSize.y)*cp.y))	);
 	else
@@ -935,7 +933,7 @@ void CUICellContainer::Draw()
 	Ivector2			cell_sz = CellSize();
 	cell_sz.add			(CellsSpacing());
 
-	Irect				tgt_cells;
+	Irect				tgt_cells{};
 	tgt_cells.lt		= TopVisibleCell();
 	tgt_cells.x2		= iFloor( (float(clientArea.width())+float(cell_sz.x)-EPS)/float(cell_sz.x)) + tgt_cells.lt.x;
 	tgt_cells.y2		= iFloor( (float(clientArea.height())+float(cell_sz.y)-EPS)/float(cell_sz.y)) + tgt_cells.lt.y;
@@ -946,7 +944,7 @@ void CUICellContainer::Draw()
 	Fvector2			lt_abs_pos;
 	GetAbsolutePos		(lt_abs_pos);
 
-	Fvector2					drawLT;
+	Fvector2					drawLT{};
 	drawLT.set( lt_abs_pos.x + tgt_cells.lt.x * cell_sz.x, lt_abs_pos.y + tgt_cells.lt.y * cell_sz.y );
 	UI()->ClientToScreenScaled	(drawLT, drawLT.x, drawLT.y);
 

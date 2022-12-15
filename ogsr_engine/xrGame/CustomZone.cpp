@@ -341,8 +341,7 @@ BOOL CCustomZone::net_Spawn(CSE_Abstract* DC)
 	m_dwPeriod					= pSettings->r_u32(cNameSect(), "period");
 	m_owner_id					= Z->m_owner_id;
 	m_zone_ttl					= Z->m_zone_ttl;
-	if (m_owner_id != u32(-1))
-	{
+	if (m_owner_id != u32(-1)){
 		m_ttl = Device.dwTimeGlobal + 1000 * m_zone_ttl;// ttl in seconds
 		Msg("anomaly [%s] spawned with ttl [%d]", Name_script(), m_zone_ttl);
 	}
@@ -358,13 +357,11 @@ BOOL CCustomZone::net_Spawn(CSE_Abstract* DC)
 	//добавить источники света
 	bool br1 = (0 == psDeviceFlags.test(rsR2 | rsR3 | rsR4));
 	bool render_ver_allowed = !br1 || (br1&&m_zone_flags.test(eIdleLightR1));
-	if (m_zone_flags.test(eIdleLight) && render_ver_allowed)
-	{
+	if (m_zone_flags.test(eIdleLight) && render_ver_allowed){
 		m_pIdleLight = ::Render->light_create();
 		m_pIdleLight->set_shadow(!!m_zone_flags.test(eIdleLightShadow));
 
-		if (m_zone_flags.test(eIdleLightVolumetric))
-		{
+		if (m_zone_flags.test(eIdleLightVolumetric)){
 			//m_pIdleLight->set_type				(IRender_Light::SPOT);
 			m_pIdleLight->set_volumetric(true);
 		}
@@ -372,8 +369,7 @@ BOOL CCustomZone::net_Spawn(CSE_Abstract* DC)
 	else
 		m_pIdleLight = NULL;
 
-	if ( m_zone_flags.test(eBlowoutLight) ) 
-	{
+	if ( m_zone_flags.test(eBlowoutLight) ) {
 		m_pLight = ::Render->light_create();
 		m_pLight->set_shadow( !!m_zone_flags.test( eBlowoutLightShadow ) );
 	}else

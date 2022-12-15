@@ -171,6 +171,7 @@ public:
 			bool IsSilencerAttached			() const;
 			bool IsLaserAttached			() const;
 			bool IsFlashlightAttached		() const;
+			bool IsStockAttached			() const;
 
 //	bool			IsGrenadeMode() const;
 	virtual bool IsGrenadeMode() const { return false; };
@@ -180,6 +181,7 @@ public:
 	virtual bool SilencerAttachable			() const;
 	virtual bool LaserAttachable			() const;
 	virtual bool FlashlightAttachable		() const;
+	virtual bool StockAttachable			() const;
 	virtual bool UseScopeTexture();
 
 	//обновление видимости для косточек аддонов
@@ -199,12 +201,15 @@ public:
 	int	GetLaserY			();
 	int	GetFlashlightX		();
 	int	GetFlashlightY		();
+	int	GetStockX			();
+	int	GetStockY			();
 
 	const shared_str GetScopeName				() const { return m_scopes		[m_cur_scope]		; }
 	const shared_str GetSilencerName			() const { return m_silencers	[m_cur_silencer]	; }
 	const shared_str GetGrenadeLauncherName		() const { return m_glaunchers	[m_cur_glauncher]	; }
 	const shared_str GetLaserName				() const { return m_lasers		[m_cur_laser]		; }
 	const shared_str GetFlashlightName			() const { return m_flashlights	[m_cur_flashlight]	; }
+	const shared_str GetStockName				() const { return m_stocks		[m_cur_stock]		; }
 
 	u8		GetAddonsState						()		const		{return m_flagsAddOnState;};
 	void	SetAddonsState						(u8 st)	{m_flagsAddOnState=st;}
@@ -234,13 +239,9 @@ protected:
 	ALife::EWeaponAddonStatus	m_eGrenadeLauncherStatus{};
 	ALife::EWeaponAddonStatus	m_eLaserStatus{};
 	ALife::EWeaponAddonStatus	m_eFlashlightStatus{};
+	ALife::EWeaponAddonStatus	m_eStockStatus{};
 
 
-	//смещение иконов апгрейдов в инвентаре
-	int	m_iScopeX, m_iScopeY;
-	int	m_iSilencerX, m_iSilencerY;
-	int	m_iGrenadeLauncherX, m_iGrenadeLauncherY;
-		
 ///////////////////////////////////////////////////
 //	для режима приближения и снайперского прицела
 ///////////////////////////////////////////////////
@@ -297,6 +298,7 @@ protected:
 	float m_fZoomStepCount		= def_zoom_step_count;
 
 	float			m_fScopeInertionFactor;
+	float			m_fAimControlInertionK{};
 public:
 
 	IC bool					IsZoomEnabled		()	const	{return m_bZoomEnabled;}
@@ -327,7 +329,7 @@ public:
 	virtual float			Weight				() const;		
 	virtual u32				Cost				() const;
 	virtual float			Volume				() const;	
-	virtual float			GetControlInertionFactor() const;
+	virtual float			GetControlInertionFactor();
 
 	virtual bool			IsScopeDynamicZoom		() const { return m_bScopeDynamicZoom; };
 	virtual float			GetScopeZoomFactor		() const { return m_fScopeZoomFactor; };
@@ -341,6 +343,8 @@ public:
 	virtual bool			IsGrenadeLauncherBroken	() const { return false; };
 
 	virtual bool			HasRangeMeter			() const { return m_bRangeMeter && !IsScopeBroken(); };
+
+	virtual float			GetZoomRotationTime		() const { return m_fZoomRotateTime; }
 
 public:
 	IC		LPCSTR			strap_bone0			() const {return m_strap_bone0;}
@@ -649,6 +653,9 @@ public:
 
 	xr_vector<shared_str>	m_flashlights{};
 	u8						m_cur_flashlight{};
+
+	xr_vector<shared_str>	m_stocks{};
+	u8						m_cur_stock{};
 
 	bool					camRecoilCompensation;
 

@@ -15,26 +15,7 @@ void CScope::script_register(lua_State* L){
 		];
 }
 
-CSilencer::CSilencer(){
-}
-CSilencer::~CSilencer(){
-}
-
-CGrenadeLauncher::CGrenadeLauncher(){
-}
-CGrenadeLauncher::~CGrenadeLauncher(){
-}
 void CGrenadeLauncher::Load(LPCSTR section){
 	m_fGrenadeVel = pSettings->r_float(section, "grenade_vel");
 	inherited::Load(section);
-}
-
-CLaser::CLaser() {
-}
-CLaser::~CLaser() {
-}
-
-CFlashlight::CFlashlight() {
-}
-CFlashlight::~CFlashlight() {
 }

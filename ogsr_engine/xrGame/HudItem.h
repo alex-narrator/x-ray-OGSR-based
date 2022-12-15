@@ -273,6 +273,8 @@ protected:
 	u32 skip_updated_frame{};
 	bool HudInertionAllowed() const { return m_huditem_flags.test(fl_inertion_allow); }
 	void AllowHudInertion(BOOL B) { m_huditem_flags.set(fl_inertion_allow, B); }
+
+	float m_fAimInertionK;
 private:
 	shared_str world_sect;
 	float hud_recalc_koef{};

@@ -25,6 +25,8 @@
 #include "string_table.h"
 #include "../xr_3da/LightAnimLibrary.h"
 
+constexpr auto ROTATION_TIME = 0.25f;
+
 CWeaponMagazined::CWeaponMagazined(LPCSTR name, ESoundTypes eSoundType) : CWeapon(name)
 {
 	m_eSoundShow		= ESoundTypes(SOUND_TYPE_ITEM_TAKING | eSoundType);
@@ -129,8 +131,7 @@ BOOL CWeaponMagazined::net_Spawn(CSE_Abstract* DC)
 	SetQueueSize(GetCurrentFireMode());
 	//multitype ammo loading
 	xr_vector<u8> ammo_ids = wpn->m_AmmoIDs;
-	for (u32 i = 0; i < ammo_ids.size(); i++)
-	{
+	for (u32 i = 0; i < ammo_ids.size(); i++){
 		u8 LocalAmmoType = ammo_ids[i];
 		if (i >= m_magazine.size()) continue;
 		CCartridge& l_cartridge = *(m_magazine.begin() + i);
@@ -152,8 +153,7 @@ BOOL CWeaponMagazined::net_Spawn(CSE_Abstract* DC)
 	if (IsSilencerAttached())
 		m_fAttachedSilencerCondition = wpn->m_fAttachedSilencerCondition;
 	//
-	if (IsScopeAttached())
-	{
+	if (IsScopeAttached()){
 		m_fRTZoomFactor				= wpn->m_fRTZoomFactor;
 		m_bNightVisionSwitchedOn	= wpn->m_bNightVisionSwitchedOn;
 		m_fAttachedScopeCondition	= wpn->m_fAttachedScopeCondition;
@@ -161,8 +161,7 @@ BOOL CWeaponMagazined::net_Spawn(CSE_Abstract* DC)
 	if (IsGrenadeLauncherAttached())
 		m_fAttachedGrenadeLauncherCondition = wpn->m_fAttachedGrenadeLauncherCondition;
 	//
-	if (HasDetachableMagazine() && IsMagazineAttached())
-	{
+	if (HasDetachableMagazine() && IsMagazineAttached()){
 		int mag_size = AmmoTypeIsMagazine(m_ammoType) ? (int)pSettings->r_s32(m_ammoTypes[m_ammoType], "box_size") : 0;
 		iMagazineSize = mag_size + HasChamber(); //учтём дополнительный патрон в патроннике
 	}
@@ -951,6 +950,7 @@ bool CWeaponMagazined::CanAttach(PIItem pIItem)
 	auto pSilencer			= smart_cast<CSilencer*>		(pIItem);
 	auto pLaser				= smart_cast<CLaser*>			(pIItem);
 	auto pFlashlight		= smart_cast<CFlashlight*>		(pIItem);
+	auto pStock				= smart_cast<CStock*>			(pIItem);
 
 	if (pScope &&
 		m_eScopeStatus == ALife::eAddonAttachable &&
@@ -971,6 +971,11 @@ bool CWeaponMagazined::CanAttach(PIItem pIItem)
 		m_eFlashlightStatus == ALife::eAddonAttachable &&
 		(m_flagsAddOnState & CSE_ALifeItemWeapon::eWeaponAddonFlashlight) == 0 &&
 		std::find(m_flashlights.begin(), m_flashlights.end(), pIItem->object().cNameSect()) != m_flashlights.end())
+		return true;
+	else if (pStock &&
+		m_eStockStatus == ALife::eAddonAttachable &&
+		(m_flagsAddOnState & CSE_ALifeItemWeapon::eWeaponAddonStock) == 0 &&
+		std::find(m_stocks.begin(), m_stocks.end(), pIItem->object().cNameSect()) != m_stocks.end())
 		return true;
 	else
 		return inherited::CanAttach(pIItem);
@@ -998,6 +1003,10 @@ bool CWeaponMagazined::CanDetach(const char* item_section_name)
 		0 != (m_flagsAddOnState & CSE_ALifeItemWeapon::eWeaponAddonFlashlight) &&
 		std::find(m_flashlights.begin(), m_flashlights.end(), item_section_name) != m_flashlights.end())
 		return true;
+	else if (m_eStockStatus == CSE_ALifeItemWeapon::eAddonAttachable &&
+		0 != (m_flagsAddOnState & CSE_ALifeItemWeapon::eWeaponAddonStock) &&
+		std::find(m_stocks.begin(), m_stocks.end(), item_section_name) != m_stocks.end())
+		return true;
 	else
 		return inherited::CanDetach(item_section_name);
 }
@@ -1010,6 +1019,7 @@ bool CWeaponMagazined::Attach(PIItem pIItem, bool b_send_event)
 	auto pSilencer			= smart_cast<CSilencer*>		(pIItem);
 	auto pLaser				= smart_cast<CLaser*>			(pIItem);
 	auto pFlashlight		= smart_cast<CFlashlight*>		(pIItem);
+	auto pStock				= smart_cast<CStock*>			(pIItem);
 
 	if (pScope &&
 		m_eScopeStatus == CSE_ALifeItemWeapon::eAddonAttachable &&
@@ -1047,6 +1057,15 @@ bool CWeaponMagazined::Attach(PIItem pIItem, bool b_send_event)
 		auto it = std::find(m_flashlights.begin(), m_flashlights.end(), pIItem->object().cNameSect());
 		m_cur_flashlight = (u8)std::distance(m_flashlights.begin(), it);
 		m_flagsAddOnState |= CSE_ALifeItemWeapon::eWeaponAddonFlashlight;
+		result = true;
+	}
+	else if (pStock &&
+		m_eStockStatus == CSE_ALifeItemWeapon::eAddonAttachable &&
+		(m_flagsAddOnState & CSE_ALifeItemWeapon::eWeaponAddonStock) == 0)
+	{
+		auto it = std::find(m_stocks.begin(), m_stocks.end(), pIItem->object().cNameSect());
+		m_cur_stock = (u8)std::distance(m_stocks.begin(), it);
+		m_flagsAddOnState |= CSE_ALifeItemWeapon::eWeaponAddonStock;
 		result = true;
 	}
 
@@ -1099,20 +1118,6 @@ bool CWeaponMagazined::Detach(const char* item_section_name, bool b_spawn_item, 
 		InitAddons();
 		return CInventoryItemObject::Detach(item_section_name, b_spawn_item, item_condition);
 	}
-	//else if (m_eGrenadeLauncherStatus == CSE_ALifeItemWeapon::eAddonAttachable &&
-	//	0 != (m_flagsAddOnState & CSE_ALifeItemWeapon::eWeaponAddonGrenadeLauncher) &&
-	//	std::find(m_glaunchers.begin(), m_glaunchers.end(), item_section_name) != m_glaunchers.end())
-	//{
-	//	m_flagsAddOnState &= ~CSE_ALifeItemWeapon::eWeaponAddonGrenadeLauncher;
-	//	//
-	//	m_cur_glauncher = 0;
-	//	if (b_spawn_item) item_condition = m_fAttachedGrenadeLauncherCondition;
-	//	m_fAttachedGrenadeLauncherCondition = 1.f;
-	//	//
-	//	UpdateAddonsVisibility();
-	//	InitAddons();
-	//	return CInventoryItemObject::Detach(item_section_name, b_spawn_item, item_condition);
-	//}
 	else if (m_eLaserStatus == CSE_ALifeItemWeapon::eAddonAttachable &&
 		0 != (m_flagsAddOnState & CSE_ALifeItemWeapon::eWeaponAddonLaser) &&
 		std::find(m_lasers.begin(), m_lasers.end(), item_section_name) != m_lasers.end())
@@ -1139,6 +1144,18 @@ bool CWeaponMagazined::Detach(const char* item_section_name, bool b_spawn_item, 
 		InitAddons();
 		return CInventoryItemObject::Detach(item_section_name, b_spawn_item, item_condition);
 	}
+	else if (m_eStockStatus == CSE_ALifeItemWeapon::eAddonAttachable &&
+		0 != (m_flagsAddOnState & CSE_ALifeItemWeapon::eWeaponAddonStock) &&
+		std::find(m_stocks.begin(), m_stocks.end(), item_section_name) != m_stocks.end())
+	{
+		m_flagsAddOnState &= ~CSE_ALifeItemWeapon::eWeaponAddonStock;
+		//
+		m_cur_stock = 0;
+		//
+		UpdateAddonsVisibility();
+		InitAddons();
+		return CInventoryItemObject::Detach(item_section_name, b_spawn_item, item_condition);
+	}
 	else
 		return inherited::Detach(item_section_name, b_spawn_item, item_condition);
 }
@@ -1149,6 +1166,8 @@ void CWeaponMagazined::InitAddons()
 	// Приціл
 	LPCSTR sect = IsScopeAttached() && ScopeAttachable() ? GetScopeName().c_str() : cNameSect().c_str();
 	LoadZoomParams(sect);
+	//глушник
+	ApplySilencerParams();
 	//ЛЦВ
 	if (IsLaserAttached()) {
 		sect = LaserAttachable() ? GetLaserName().c_str() : cNameSect().c_str();
@@ -1159,59 +1178,8 @@ void CWeaponMagazined::InitAddons()
 		sect = FlashlightAttachable() ? GetFlashlightName().c_str() : cNameSect().c_str();
 		LoadFlashlightParams(sect);
 	}
-
-	if (IsSilencerAttached() && SilencerAttachable()){
-		conditionDecreasePerShotSilencer		= READ_IF_EXISTS(pSettings, r_float, GetSilencerName(), "condition_shot_dec_silencer",	0.f);
-		conditionDecreasePerShotSilencerSelf	= READ_IF_EXISTS(pSettings, r_float, GetSilencerName(), "condition_shot_dec",			0.f);
-	}
-
-	if (IsSilencerAttached() && !IsSilencerBroken()){
-		//flame
-		if (SilencerAttachable() && pSettings->line_exist(GetSilencerName(), "silencer_flame_particles"))
-			m_sSilencerFlameParticles = pSettings->r_string(GetSilencerName(), "silencer_flame_particles");
-		else if (pSettings->line_exist(cNameSect(), "silencer_flame_particles"))
-			m_sSilencerFlameParticles = pSettings->r_string(cNameSect(), "silencer_flame_particles");
-		else
-			m_sSilencerFlameParticles = m_sFlameParticles.c_str();
-		//smoke
-		if (SilencerAttachable() && pSettings->line_exist(GetSilencerName(), "silencer_smoke_particles"))
-			m_sSilencerSmokeParticles = pSettings->r_string(GetSilencerName(), "silencer_smoke_particles");
-		else if (pSettings->line_exist(cNameSect(), "silencer_smoke_particles"))
-			m_sSilencerSmokeParticles = pSettings->r_string(cNameSect(), "silencer_smoke_particles");
-		else
-			m_sSilencerSmokeParticles = m_sSmokeParticles.c_str();
-
-		HUD_SOUND::StopSound(sndSilencerShot);
-
-		if (SilencerAttachable() && pSettings->line_exist(GetSilencerName(), "snd_silncer_shot"))
-			HUD_SOUND::LoadSound(GetSilencerName().c_str(), "snd_silncer_shot", sndSilencerShot, m_eSoundShot);
-		else if (pSettings->line_exist(cNameSect(), "snd_silncer_shot"))
-			HUD_SOUND::LoadSound(cNameSect().c_str(), "snd_silncer_shot", sndSilencerShot, m_eSoundShot);
-		else
-			sndSilencerShot = sndShot;
-
-		m_sFlameParticlesCurrent = m_sSilencerFlameParticles;
-		m_sSmokeParticlesCurrent = m_sSilencerSmokeParticles;
-		m_pSndShotCurrent = &sndSilencerShot;
-
-		//сила выстрела
-		LoadFireParams(cNameSect().c_str(), "");
-
-		//подсветка от выстрела
-		LPCSTR light_prfx = READ_IF_EXISTS(pSettings, r_string, cNameSect(), "silencer_", "");
-		LoadLights(cNameSect().c_str(), /*"silencer_"*/light_prfx);
-		if (SilencerAttachable())
-			ApplySilencerKoeffs();
-	}else{
-		m_sFlameParticlesCurrent = m_sFlameParticles;
-		m_sSmokeParticlesCurrent = m_sSmokeParticles;
-		m_pSndShotCurrent = &sndShot;
-
-		//сила выстрела
-		LoadFireParams(cNameSect().c_str(), "");
-		//подсветка от выстрела
-		LoadLights(cNameSect().c_str(), "");
-	}
+	//приклад
+	ApplyStockParams();
 
 	inherited::InitAddons();
 }
@@ -1227,6 +1195,18 @@ void CWeaponMagazined::LoadZoomParams(LPCSTR section)
 
 	if (m_UIScopeSecond)
 		xr_delete(m_UIScopeSecond);
+
+	//second scope mode
+	m_bHasScopeSecond = READ_IF_EXISTS(pSettings, r_bool, section, "scope_second", false);
+	if (m_bHasScopeSecond) {
+		m_fScopeZoomFactorSecond = READ_IF_EXISTS(pSettings, r_float, section, "scope_zoom_factor_second", 1.0f);
+
+		LPCSTR scope_second_tex_name = READ_IF_EXISTS(pSettings, r_string, section, "scope_texture_second", nullptr);
+		if (scope_second_tex_name) {
+			m_UIScopeSecond = xr_new<CUIStaticItem>();
+			m_UIScopeSecond->Init(scope_second_tex_name, psHUD_Flags.test(HUD_TEXTURES_AUTORESIZE) ? "hud\\scope" : "hud\\default", 0, 0, alNone);
+		}
+	}
 
 	if (!IsScopeAttached() || IsScopeBroken()){
 		m_bScopeDynamicZoom		= false;
@@ -1308,32 +1288,77 @@ void CWeaponMagazined::LoadZoomParams(LPCSTR section)
 	if (!scope_tex_name) return;
 	m_UIScope = xr_new<CUIStaticItem>();
 	m_UIScope->Init(scope_tex_name, psHUD_Flags.test(HUD_TEXTURES_AUTORESIZE) ? "hud\\scope" : "hud\\default", 0, 0, alNone);
-
-	//second scope mode
-	m_bHasScopeSecond = READ_IF_EXISTS(pSettings, r_bool, section, "scope_second", false);
-
-	if (!m_bHasScopeSecond) return;
-
-	m_fScopeZoomFactorSecond = READ_IF_EXISTS(pSettings, r_float, section, "scope_zoom_factor_second", 1.0f);
-
-	LPCSTR scope_second_tex_name = READ_IF_EXISTS(pSettings, r_string, section, "scope_texture_second", nullptr);
-	if (!scope_second_tex_name) return;
-	m_UIScopeSecond = xr_new<CUIStaticItem>();
-	m_UIScopeSecond->Init(scope_second_tex_name, psHUD_Flags.test(HUD_TEXTURES_AUTORESIZE) ? "hud\\scope" : "hud\\default", 0, 0, alNone);
 }
 
-void CWeaponMagazined::ApplySilencerKoeffs	()
+void CWeaponMagazined::ApplySilencerParams() {
+
+	if (IsSilencerAttached() && SilencerAttachable()) {
+		conditionDecreasePerShotSilencer = READ_IF_EXISTS(pSettings, r_float, GetSilencerName(), "condition_shot_dec_silencer", 0.f);
+		conditionDecreasePerShotSilencerSelf = READ_IF_EXISTS(pSettings, r_float, GetSilencerName(), "condition_shot_dec", 0.f);
+	}
+
+	if (IsSilencerAttached() && !IsSilencerBroken()) {
+		//flame
+		if (SilencerAttachable() && pSettings->line_exist(GetSilencerName(), "silencer_flame_particles"))
+			m_sSilencerFlameParticles = pSettings->r_string(GetSilencerName(), "silencer_flame_particles");
+		else if (pSettings->line_exist(cNameSect(), "silencer_flame_particles"))
+			m_sSilencerFlameParticles = pSettings->r_string(cNameSect(), "silencer_flame_particles");
+		else
+			m_sSilencerFlameParticles = m_sFlameParticles.c_str();
+		//smoke
+		if (SilencerAttachable() && pSettings->line_exist(GetSilencerName(), "silencer_smoke_particles"))
+			m_sSilencerSmokeParticles = pSettings->r_string(GetSilencerName(), "silencer_smoke_particles");
+		else if (pSettings->line_exist(cNameSect(), "silencer_smoke_particles"))
+			m_sSilencerSmokeParticles = pSettings->r_string(cNameSect(), "silencer_smoke_particles");
+		else
+			m_sSilencerSmokeParticles = m_sSmokeParticles.c_str();
+
+		HUD_SOUND::StopSound(sndSilencerShot);
+
+		if (SilencerAttachable() && pSettings->line_exist(GetSilencerName(), "snd_silncer_shot"))
+			HUD_SOUND::LoadSound(GetSilencerName().c_str(), "snd_silncer_shot", sndSilencerShot, m_eSoundShot);
+		else if (pSettings->line_exist(cNameSect(), "snd_silncer_shot"))
+			HUD_SOUND::LoadSound(cNameSect().c_str(), "snd_silncer_shot", sndSilencerShot, m_eSoundShot);
+		else
+			sndSilencerShot = sndShot;
+
+		m_sFlameParticlesCurrent = m_sSilencerFlameParticles;
+		m_sSmokeParticlesCurrent = m_sSilencerSmokeParticles;
+		m_pSndShotCurrent = &sndSilencerShot;
+
+		//сила выстрела
+		LoadFireParams(cNameSect().c_str(), "");
+
+		//подсветка от выстрела
+		LPCSTR light_prfx = READ_IF_EXISTS(pSettings, r_string, cNameSect(), "silencer_", "");
+		LoadLights(cNameSect().c_str(), light_prfx);
+		if (SilencerAttachable())
+			ApplySilencerKoeffs();
+	} else {
+		m_sFlameParticlesCurrent = m_sFlameParticles;
+		m_sSmokeParticlesCurrent = m_sSmokeParticles;
+		m_pSndShotCurrent = &sndShot;
+
+		//сила выстрела
+		LoadFireParams(cNameSect().c_str(), "");
+		//подсветка от выстрела
+		LoadLights(cNameSect().c_str(), "");
+	}
+}
+
+void CWeaponMagazined::ApplySilencerKoeffs()
 {
-	float BHP_k	= READ_IF_EXISTS(pSettings, r_float, GetSilencerName(), "bullet_hit_power_k",		0.f);
-	float BS_k	= READ_IF_EXISTS(pSettings, r_float, GetSilencerName(), "bullet_speed_k",			0.f);
-	float FDB_k = READ_IF_EXISTS(pSettings, r_float, GetSilencerName(), "fire_dispersion_base_k",	0.f);
-	float CD_k	= READ_IF_EXISTS(pSettings, r_float, GetSilencerName(), "cam_dispersion_k",			0.f);
+	auto silencer_sect = GetSilencerName();
+
+	float BHP_k	= READ_IF_EXISTS(pSettings, r_float, silencer_sect, "bullet_hit_power_k",		0.f);
+	float BS_k	= READ_IF_EXISTS(pSettings, r_float, silencer_sect, "bullet_speed_k",			0.f);
+	float FDB_k = READ_IF_EXISTS(pSettings, r_float, silencer_sect, "fire_dispersion_base_k",	0.f);
+	float CD_k	= READ_IF_EXISTS(pSettings, r_float, silencer_sect, "cam_dispersion_k",			0.f);
 
 	if (!fis_zero(BHP_k)) {
 		for (int i = 0; i < egdCount; ++i)
 			fvHitPower[i] += fvHitPower[i] * BHP_k;
 	}
-
 	if (!fis_zero(BS_k)) {
 		fHitImpulse			+= fHitImpulse			* BS_k;
 		m_fStartBulletSpeed += m_fStartBulletSpeed	* BS_k;
@@ -1346,8 +1371,35 @@ void CWeaponMagazined::ApplySilencerKoeffs	()
 	}
 }
 
+void CWeaponMagazined::ApplyStockParams() {
+	m_fZoomRotateTime		= READ_IF_EXISTS(pSettings, r_float, hud_sect, "zoom_rotate_time", ROTATION_TIME);
+	m_fAimControlInertionK	= 0.f;
+	m_fAimInertionK			= 0.f;
+	if (!IsStockAttached() || !StockAttachable())
+		return;
+
+	auto stock_sect = GetStockName();
+
+	float CD_k	= READ_IF_EXISTS(pSettings, r_float, stock_sect, "cam_dispersion_k",		0.f);
+	float ZR_k	= READ_IF_EXISTS(pSettings, r_float, stock_sect, "zoom_rotate_time_k",		0.f);
+	float AI_k	= READ_IF_EXISTS(pSettings, r_float, stock_sect, "aim_inertion_k",			0.f);
+	float CI_k	= READ_IF_EXISTS(pSettings, r_float, stock_sect, "aim_control_inertion_k",	0.f);
+	if (!fis_zero(CD_k)) {
+		camDispersion		+= camDispersion		* CD_k;
+		camDispersionInc	+= camDispersionInc		* CD_k;
+	}
+	if (!fis_zero(ZR_k)) {
+		m_fZoomRotateTime += m_fZoomRotateTime * ZR_k;
+	}
+	m_fAimInertionK			+= AI_k;
+	m_fAimControlInertionK	+= CI_k;
+}
+
 void CWeaponMagazined::LoadLaserParams(LPCSTR section) {
-	shared_str wpn_sect = cNameSect();
+	if (!IsLaserAttached()) 
+		return;
+
+	shared_str wpn_sect				= cNameSect();
 	laserdot_attach_bone			= READ_IF_EXISTS(pSettings, r_string, wpn_sect, "laserdot_attach_bone", "wpn_body");
 	Fvector fvec_def{};
 	laserdot_attach_offset			= READ_IF_EXISTS(pSettings, r_fvector3, wpn_sect, "laserdot_attach_offset",			fvec_def);
@@ -1377,7 +1429,10 @@ void CWeaponMagazined::LoadLaserParams(LPCSTR section) {
 }
 
 void CWeaponMagazined::LoadFlashlightParams(LPCSTR section) {
-	shared_str wpn_sect = cNameSect();
+	if (!IsFlashlightAttached())
+		return;
+
+	shared_str wpn_sect					= cNameSect();
 	flashlight_attach_bone				= READ_IF_EXISTS(pSettings, r_string, wpn_sect, "torch_light_bone", "wpn_body");
 	Fvector fvec_def{};
 	flashlight_attach_offset			= READ_IF_EXISTS(pSettings, r_fvector3, wpn_sect, "torch_attach_offset",			fvec_def);

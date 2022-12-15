@@ -154,6 +154,7 @@ SERVER_ENTITY_DECLARE_BEGIN(CSE_ALifeItemWeapon,CSE_ALifeItem)
 		eWeaponAddonSilencer		= 1 << 2,
 		eWeaponAddonLaser			= 1 << 3,
 		eWeaponAddonFlashlight		= 1 << 4,
+		eWeaponAddonStock			= 1 << 5,
 
 		//KRodin: TODO: эти пять свободных флагов можно использовать для хранения какой-то полезной информации, типа установлен ли на оружие лцу, фонарик и тп.
 		//emaxflag = 1<<7,
@@ -171,6 +172,7 @@ SERVER_ENTITY_DECLARE_BEGIN(CSE_ALifeItemWeapon,CSE_ALifeItem)
 	EWeaponAddonStatus				m_grenade_launcher_status{};
 	EWeaponAddonStatus				m_laser_status{};
 	EWeaponAddonStatus				m_flashlight_status{};
+	EWeaponAddonStatus				m_stock_status{};
 
 	u32								timestamp{};
 	u8								wpn_flags{};
@@ -196,6 +198,7 @@ SERVER_ENTITY_DECLARE_BEGIN(CSE_ALifeItemWeapon,CSE_ALifeItem)
 	u8								m_cur_glauncher{};
 	u8								m_cur_laser{};
 	u8								m_cur_flashlight{};
+	u8								m_cur_stock{};
 	//
 	u32								m_MagazineSize;
 

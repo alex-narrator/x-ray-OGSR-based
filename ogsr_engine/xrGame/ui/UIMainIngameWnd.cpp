@@ -822,27 +822,40 @@ void CUIMainIngameWnd::UpdatePickUpItem	()
 		(m_iPickUpItemIconHeight - UIPickUpItemIcon.GetHeight())/2);
 
 	UIPickUpItemIcon.SetColor(color_rgba(255,255,255,192));
-	if (auto wpn = smart_cast<CWeapon*>(m_pPickUpItem))
-	{
+	if (auto wpn = smart_cast<CWeapon*>(m_pPickUpItem)){
 		auto cell_item = xr_new<CUIWeaponCellItem>(wpn);
-		
-		if (wpn->SilencerAttachable() && wpn->IsSilencerAttached())
-		{
-			auto sil = init_addon(cell_item, *wpn->GetSilencerName(), scale, UI()->get_current_kx(), eAddonType::eSilencer);
-			UIPickUpItemIcon.AttachChild(sil);
+		CUIStatic* addon_statick{};
+
+		if (wpn->SilencerAttachable() && wpn->IsSilencerAttached()){
+			addon_statick = init_addon(cell_item, wpn->GetSilencerName().c_str(), scale, UI()->get_current_kx(), eAddonType::eSilencer);
+			UIPickUpItemIcon.AttachChild(addon_statick);
 		}
 		
-		if (wpn->ScopeAttachable() && wpn->IsScopeAttached())
-		{
-			auto scope = init_addon(cell_item, *wpn->GetScopeName(), scale, UI()->get_current_kx(), eAddonType::eScope);
-			UIPickUpItemIcon.AttachChild(scope);
+		if (wpn->ScopeAttachable() && wpn->IsScopeAttached()){
+			addon_statick = init_addon(cell_item, wpn->GetScopeName().c_str(), scale, UI()->get_current_kx(), eAddonType::eScope);
+			UIPickUpItemIcon.AttachChild(addon_statick);
 		}
 		
-		if (wpn->GrenadeLauncherAttachable() && wpn->IsGrenadeLauncherAttached())
-		{
-			auto launcher = init_addon(cell_item, *wpn->GetGrenadeLauncherName(), scale, UI()->get_current_kx(), eAddonType::eLauncher);
-			UIPickUpItemIcon.AttachChild(launcher);
+		if (wpn->GrenadeLauncherAttachable() && wpn->IsGrenadeLauncherAttached()){
+			addon_statick = init_addon(cell_item, wpn->GetGrenadeLauncherName().c_str(), scale, UI()->get_current_kx(), eAddonType::eLauncher);
+			UIPickUpItemIcon.AttachChild(addon_statick);
 		}
+
+		if (wpn->LaserAttachable() && wpn->IsLaserAttached()) {
+			addon_statick = init_addon(cell_item, wpn->GetLaserName().c_str(), scale, UI()->get_current_kx(), eAddonType::eLaser);
+			UIPickUpItemIcon.AttachChild(addon_statick);
+		}
+
+		if (wpn->FlashlightAttachable() && wpn->IsFlashlightAttached()) {
+			addon_statick = init_addon(cell_item, wpn->GetFlashlightName().c_str(), scale, UI()->get_current_kx(), eAddonType::eFlashlight);
+			UIPickUpItemIcon.AttachChild(addon_statick);
+		}
+
+		if (wpn->StockAttachable() && wpn->IsStockAttached()) {
+			addon_statick = init_addon(cell_item, wpn->GetStockName().c_str(), scale, UI()->get_current_kx(), eAddonType::eStock);
+			UIPickUpItemIcon.AttachChild(addon_statick);
+		}
+
 		delete_data(cell_item);
 	}
 

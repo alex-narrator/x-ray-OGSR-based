@@ -50,6 +50,7 @@ bool CUIEquipParams::Check(CInventoryItem* obj){
 		smart_cast<CCustomOutfit*>		(obj)		||
 		smart_cast<CScope*>				(obj)		||
 		smart_cast<CSilencer*>			(obj)		||
+		smart_cast<CStock*>				(obj)		||
 		smart_cast<CInventoryContainer*>(obj)		||
 		smart_cast<CPowerBattery*>		(obj)		||
 		smart_cast<CGrenade*>			(obj)		||
@@ -194,6 +195,42 @@ void CUIEquipParams::SetInfo(CInventoryItem* obj){
 		if (has_range_meter) {
 			_param_name = CStringTable().translate("st_scope_range_meter").c_str();
 			sprintf_s(text_to_show, "%s%s", marker_, _param_name);
+			SetStaticParams(_uiXml, _path, _h)->SetText(text_to_show);
+			_h += list_item_h;
+		}
+	}
+
+	auto pStock = smart_cast<CStock*>(obj);
+	if (pStock) {
+		_val = READ_IF_EXISTS(pSettings, r_float, item_section, "cam_dispersion_k", 0.f);
+		if (!fis_zero(_val)) {
+			_val *= 100.f;
+			_param_name = CStringTable().translate("st_recoil").c_str();
+			sprintf_s(text_to_show, "%s %+.1f%s", _param_name, _val, _sn);
+			SetStaticParams(_uiXml, _path, _h)->SetText(text_to_show);
+			_h += list_item_h;
+		}
+		_val = READ_IF_EXISTS(pSettings, r_float, item_section, "control_inertion_k", 0.f);
+		if (!fis_zero(_val)) {
+			_val *= 100.f;
+			_param_name = CStringTable().translate("st_bulkiness").c_str();
+			sprintf_s(text_to_show, "%s %+.1f%s", _param_name, _val, _sn);
+			SetStaticParams(_uiXml, _path, _h)->SetText(text_to_show);
+			_h += list_item_h;
+		}
+		_val = READ_IF_EXISTS(pSettings, r_float, item_section, "aim_inertion_k", 0.f);
+		if (!fis_zero(_val)) {
+			_val *= -100.f;
+			_param_name = CStringTable().translate("st_aiming_controllability").c_str();
+			sprintf_s(text_to_show, "%s %+.1f%s", _param_name, _val, _sn);
+			SetStaticParams(_uiXml, _path, _h)->SetText(text_to_show);
+			_h += list_item_h;
+		}
+		_val = READ_IF_EXISTS(pSettings, r_float, item_section, "zoom_rotate_time_k", 0.f);
+		if (!fis_zero(_val)) {
+			_val *= 100.f;
+			_param_name = CStringTable().translate("st_aim_time").c_str();
+			sprintf_s(text_to_show, "%s %+.1f%s", _param_name, _val, _sn);
 			SetStaticParams(_uiXml, _path, _h)->SetText(text_to_show);
 			_h += list_item_h;
 		}

@@ -578,6 +578,12 @@
 	<string id="st_recoil">
 		<text>Віддача:</text>
 	</string>
+	<string id="st_aim_time">
+		<text>Час вкладання:</text>
+	</string>	
+	<string id="st_aiming_controllability">
+		<text>Керованість у прицілюванні:</text>
+	</string>	
 	<string id="st_weapon_dec">
 		<text>Зношування зброї:</text>
 	</string>

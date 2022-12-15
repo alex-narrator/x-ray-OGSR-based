@@ -493,18 +493,22 @@ void CGameObject::spawn_supplies()
 
 	LPCSTR					N,V;
 	float					p;
-	bool bScope{},
-		bSilencer{},
-		bLauncher{},
-		bLaser{},
-		bFlashlight{};
+	bool 
+		bScope		{},
+		bSilencer	{},
+		bLauncher	{},
+		bLaser		{},
+		bFlashlight	{},
+		bStock		{};
 
-	u32 cur_scope{},
-		cur_silencer{},
-		cur_launcher{},
-		cur_laser{},
-		cur_flashlight{},
-		cur_ammo_type{};
+	u32 
+		cur_scope		{},
+		cur_silencer	{},
+		cur_launcher	{},
+		cur_laser		{},
+		cur_flashlight	{},
+		cur_stock		{},
+		cur_ammo_type	{};
 
 	for (u32 k = 0, j; spawn_ini()->r_line("spawn",k,&N,&V); k++) {
 		VERIFY				(xr_strlen(N));
@@ -524,25 +528,28 @@ void CGameObject::spawn_supplies()
 			if (!j)	j		= 1;
 			if(NULL!=strstr(V,"cond="))
 				f_cond		= (float)atof(strstr(V,"cond=")+5);
-			bScope			=	(NULL!=strstr(V,"scope"));
-			bSilencer		=	(NULL!=strstr(V,"silencer"));
-			bLauncher		=	(NULL!=strstr(V,"launcher"));
-			bLaser			=	(NULL!=strstr(V,"laser"));
-			bFlashlight		=	(NULL!=strstr(V,"flashlight"));
+			bScope			=	(NULL!=strstr(V,"scope"			));
+			bSilencer		=	(NULL!=strstr(V,"silencer"		));
+			bLauncher		=	(NULL!=strstr(V,"launcher"		));
+			bLaser			=	(NULL!=strstr(V,"laser"			));
+			bFlashlight		=	(NULL!=strstr(V,"flashlight"	));
+			bStock			=	(NULL!=strstr(V,"stock"			));
 			//preloaded ammo type
 			if (NULL != strstr(V, "ammo="))
-				cur_ammo_type = (u32)atof(strstr(V, "ammo=") + 5);
+				cur_ammo_type	= (u32)atof(strstr(V, "ammo=") + 5);
 			//custom multi-addon to install
 			if (NULL != strstr(V, "scope="))
-				cur_scope = (u32)atof(strstr(V, "scope=") + 6);
+				cur_scope		= (u32)atof(strstr(V, "scope=") + 6);
 			if (NULL != strstr(V, "silencer="))
-				cur_silencer = (u32)atof(strstr(V, "silencer=") + 9);
+				cur_silencer	= (u32)atof(strstr(V, "silencer=") + 9);
 			if (NULL != strstr(V, "launcher="))
-				cur_launcher = (u32)atof(strstr(V, "launcher=") + 9);
+				cur_launcher	= (u32)atof(strstr(V, "launcher=") + 9);
 			if (NULL != strstr(V, "laser="))
-				cur_laser = (u32)atof(strstr(V, "laser=") + 6);
+				cur_laser		= (u32)atof(strstr(V, "laser=") + 6);
 			if (NULL != strstr(V, "flashlight="))
-				cur_flashlight = (u32)atof(strstr(V, "flashlight=") + 11);
+				cur_flashlight	= (u32)atof(strstr(V, "flashlight=") + 11);
+			if (NULL != strstr(V, "stock="))
+				cur_stock		= (u32)atof(strstr(V, "stock=") + 6);
 
 		}
 		for (u32 i=0; i<j; ++i)
@@ -576,6 +583,10 @@ void CGameObject::spawn_supplies()
 					if (W->m_flashlight_status == CSE_ALifeItemWeapon::eAddonAttachable) {
 						W->m_addon_flags.set(CSE_ALifeItemWeapon::eWeaponAddonFlashlight, bFlashlight);
 						W->m_cur_flashlight = cur_flashlight;
+					}
+					if (W->m_stock_status == CSE_ALifeItemWeapon::eAddonAttachable) {
+						W->m_addon_flags.set(CSE_ALifeItemWeapon::eWeaponAddonStock, bStock);
+						W->m_cur_stock = cur_stock;
 					}
 				}
 

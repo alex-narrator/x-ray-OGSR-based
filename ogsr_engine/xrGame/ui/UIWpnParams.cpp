@@ -123,6 +123,14 @@ void CUIWpnParams::SetInfo(CInventoryItem* obj)
 		SetStaticParams(_uiXml, _path, _h)->SetText(text_to_show);
 		_h += list_item_h;
 	}
+	if (!pWeaponKnife && !pWeaponBinoc) {
+		_val = pWeapon->GetZoomRotationTime();
+		_param_name = CStringTable().translate("st_aim_time").c_str();
+		_sn = CStringTable().translate("st_time_second").c_str();
+		sprintf_s(text_to_show, "%s %.2f %s", _param_name, _val, _sn);
+		SetStaticParams(_uiXml, _path, _h)->SetText(text_to_show);
+		_h += list_item_h;
+	}
 	//громіздкість
 	_val = pWeapon->GetControlInertionFactor();
 	_param_name = CStringTable().translate("st_bulkiness").c_str();
@@ -242,7 +250,8 @@ void CUIWpnParams::SetInfo(CInventoryItem* obj)
 			pWeapon->SilencerAttachable() ||
 			pWeapon->GrenadeLauncherAttachable() ||
 			pWeapon->LaserAttachable() ||
-			pWeapon->FlashlightAttachable();
+			pWeapon->FlashlightAttachable() ||
+			pWeapon->StockAttachable();
 
 		if (has_addon) {
 			//адони - заголовок
@@ -294,6 +303,16 @@ void CUIWpnParams::SetInfo(CInventoryItem* obj)
 				for (const auto& flashlight : pWeapon->m_flashlights) {
 					auto flashlight_name = pSettings->r_string(flashlight, "inv_name");
 					sprintf_s(text_to_show, "%s%s", marker_, CStringTable().translate(flashlight_name).c_str());
+					SetStaticParams(_uiXml, _path, _h)->SetText(text_to_show);
+					_h += list_item_h;
+				}
+			}
+			//сумісні приклади
+			if (pWeapon->StockAttachable()) {
+				//сумісні приклади - список
+				for (const auto& stock : pWeapon->m_stocks) {
+					auto stock_name = pSettings->r_string(stock, "inv_name");
+					sprintf_s(text_to_show, "%s%s", marker_, CStringTable().translate(stock_name).c_str());
 					SetStaticParams(_uiXml, _path, _h)->SetText(text_to_show);
 					_h += list_item_h;
 				}

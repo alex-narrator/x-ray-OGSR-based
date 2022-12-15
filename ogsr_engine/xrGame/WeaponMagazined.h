@@ -85,7 +85,9 @@ protected:
 
 protected:
 	virtual void	ReloadMagazine	();
+			void	ApplySilencerParams();
 			void	ApplySilencerKoeffs	();
+			void	ApplyStockParams();
 
 	virtual void	state_Fire		(float dt);
 	virtual void	state_MagEmpty	(float dt);
@@ -262,9 +264,9 @@ public:
 	virtual float	Weight() const;
 	virtual float	Volume() const;
 
-	virtual void	LoadZoomParams		(LPCSTR section);
-	virtual void	LoadLaserParams		(LPCSTR section);
-	virtual void	LoadFlashlightParams(LPCSTR section);
+	virtual void	LoadZoomParams		(LPCSTR);
+	virtual void	LoadLaserParams		(LPCSTR);
+	virtual void	LoadFlashlightParams(LPCSTR);
 	//
 	LPCSTR			binoc_vision_sect{};
 	//
@@ -279,7 +281,7 @@ public:
 	virtual	void	Hit(SHit* pHDS);
 	virtual bool	IsHitToAddon(SHit* pHDS);
 
-	virtual bool	IsNightVisionEnabled	()const { return m_bNightVisionEnabled; };
+	virtual bool	IsNightVisionEnabled	() const { return m_bNightVisionEnabled; };
 	virtual bool	IsVisionPresent			() const { return m_bVision; };
 
 	virtual void	SwitchLaser				(bool on);

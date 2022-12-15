@@ -437,12 +437,12 @@ void CWeaponScript::script_register(lua_State *L)
 			.def_readonly("zoom_rotation_factor"			,			&CWeapon::m_fZoomRotationFactor)
 			// переменные для подстройки положения аддонов из скриптов:
 			
-			.def_readwrite("grenade_launcher_x"			,			&CWeapon::m_iGrenadeLauncherX)
-			.def_readwrite("grenade_launcher_y"			,			&CWeapon::m_iGrenadeLauncherY)
-			.def_readwrite("scope_x"					,			&CWeapon::m_iScopeX)
-			.def_readwrite("scope_y"					,			&CWeapon::m_iScopeY)
-			.def_readwrite("silencer_x"					,			&CWeapon::m_iSilencerX)
-			.def_readwrite("silencer_y"					,			&CWeapon::m_iSilencerY)
+			//.def_readwrite("grenade_launcher_x"			,			&CWeapon::m_iGrenadeLauncherX)
+			//.def_readwrite("grenade_launcher_y"			,			&CWeapon::m_iGrenadeLauncherY)
+			//.def_readwrite("scope_x"					,			&CWeapon::m_iScopeX)
+			//.def_readwrite("scope_y"					,			&CWeapon::m_iScopeY)
+			//.def_readwrite("silencer_x"					,			&CWeapon::m_iSilencerX)
+			//.def_readwrite("silencer_y"					,			&CWeapon::m_iSilencerY)
 
             .def_readwrite("scope_status", &CWeapon::m_eScopeStatus)
             .def_readwrite("silencer_status", &CWeapon::m_eSilencerStatus)

@@ -25,8 +25,8 @@ class CSilencer : public CInventoryItemObject {
 private:
 	typedef CInventoryItemObject inherited;
 public:
-	CSilencer(void);
-	virtual ~CSilencer(void);
+	CSilencer(void){};
+	virtual ~CSilencer(void){};
 };
 ///////////////////////////////////////////////////////////////
 // GrenadeLauncher.h
@@ -36,8 +36,8 @@ class CGrenadeLauncher : public CInventoryItemObject {
 private:
 	typedef CInventoryItemObject inherited;
 public:
-	CGrenadeLauncher(void);
-	virtual ~CGrenadeLauncher(void);
+	CGrenadeLauncher(void) {};
+	virtual ~CGrenadeLauncher(void) {};
 
 	virtual void Load(LPCSTR section);
 
@@ -54,8 +54,8 @@ class CLaser : public CInventoryItemObject {
 private:
 	typedef CInventoryItemObject inherited;
 public:
-	CLaser(void);
-	virtual ~CLaser(void);
+	CLaser(void){};
+	virtual ~CLaser(void){};
 };
 ///////////////////////////////////////////////////////////////
 // Flashlight - апгрейд оружия фонарь 
@@ -64,6 +64,16 @@ class CFlashlight : public CInventoryItemObject {
 private:
 	typedef CInventoryItemObject inherited;
 public:
-	CFlashlight(void);
-	virtual ~CFlashlight(void);
+	CFlashlight(void){};
+	virtual ~CFlashlight(void){};
+};
+///////////////////////////////////////////////////////////////
+// Stock - збройовий апгрейд приклад
+///////////////////////////////////////////////////////////////
+class CStock : public CInventoryItemObject {
+private:
+	typedef CInventoryItemObject inherited;
+public:
+	CStock(void){};
+	virtual ~CStock(void){};
 };

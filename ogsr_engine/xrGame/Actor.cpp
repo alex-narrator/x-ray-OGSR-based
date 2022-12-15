@@ -788,9 +788,8 @@ void CActor::UpdateCL	()
 	}
 	if(pWeapon){
 		if(pWeapon->IsZoomed()){
-			//float full_fire_disp = pWeapon->GetFireDispersion(true);
 			CEffectorZoomInertion* S = smart_cast<CEffectorZoomInertion*>(Cameras().GetCamEffector(eCEZoom));
-			if(S) S->SetParams(/*full_fire_disp*/pWeapon->GetControlInertionFactor());
+			if(S) S->SetParams(pWeapon->GetControlInertionFactor());
 			m_bZoomAimingMode = true;
 		}
 
@@ -2044,15 +2043,15 @@ bool CActor::HasRequiredTool(const shared_str& sect) {
 	return false;
 }
 
-void CActor::TryGroggyEffect(SHit* pHDS) {
+void CActor::TryGroggyEffect(float hit_power, int hit_type) {
 	if (GodMode() ||
 		fis_zero(m_fGroggyTreshold) ||
-		pHDS->damage() < m_fGroggyTreshold)
+		hit_power < m_fGroggyTreshold)
 		return;
 
 	//groggy effect
 	if (this == Level().CurrentControlEntity()) {
-		switch (pHDS->hit_type)
+		switch (hit_type)
 		{
 		case ALife::eHitTypeFireWound:
 		case ALife::eHitTypeStrike:
@@ -2060,7 +2059,7 @@ void CActor::TryGroggyEffect(SHit* pHDS) {
 		{
 			CEffectorCam* ce = Actor()->Cameras().GetCamEffector((ECamEffectorType)effGroggy);
 			if (!ce && !!m_GroggyEffector) {
-				AddEffector(this, effGroggy, "effector_groggy", pHDS->damage());
+				AddEffector(this, effGroggy, "effector_groggy", hit_power);
 			}
 			Fvector point = Position();
 			point.y += CameraHeight();

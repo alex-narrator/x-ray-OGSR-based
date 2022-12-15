@@ -321,8 +321,6 @@ float CEntityCondition::HitOutfitEffect(SHit* pHDS)
 				new_hit_power *= (1.0f - pOutfit->GetHitTypeProtection(pHDS->type()));
 			pOutfit->Hit(pHDS);
 		}
-		pHDS->power = new_hit_power;
-		pInvOwner->TryGroggyEffect(pHDS);
 	} else {
 		if (pBackPack && pInvOwner->IsHitToBackPack(pHDS)) {
 			new_hit_power *= (1.0f - pBackPack->GetHitTypeProtection(pHDS->type()));
@@ -494,10 +492,13 @@ dsh: обработка перенесена ниже, вместе с eHitTypeF
 		m_fHealthLost*100.0f, 
 		hit_power_org);
 	//раны добавляются только живому
-	if(bAddWound && GetHealth()>0)
-		return AddWound(hit_power*m_fWoundBoneScale, pHDS->hit_type, pHDS->boneID);
-	else
-		return NULL;
+		if (bAddWound && GetHealth() > 0) {
+			if (auto pInvOwner = smart_cast<CInventoryOwner*>(m_object)) {
+				pInvOwner->TryGroggyEffect(hit_power, pHDS->hit_type);
+			}
+			return AddWound(hit_power * m_fWoundBoneScale, pHDS->hit_type, pHDS->boneID);
+		} else
+			return NULL;
 }
 
 
