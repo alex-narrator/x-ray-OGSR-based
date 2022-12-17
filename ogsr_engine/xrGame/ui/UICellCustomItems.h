@@ -100,6 +100,7 @@ public:
 		eLaser, 
 		eFlashlight, 
 		eStock,
+		eExtender,
 		eMaxAddon
 	};
 
@@ -118,6 +119,7 @@ protected:
 		CUIStatic* s_laser, 
 		CUIStatic* s_flashlight, 
 		CUIStatic* s_stock,
+		CUIStatic* s_extender,
 		bool b_vertical);
 	bool						is_scope					();
 	bool						is_silencer					();
@@ -125,6 +127,7 @@ protected:
 	bool						is_laser					();
 	bool						is_flashlight				();
 	bool						is_stock					();
+	bool						is_extender					();
 public:
 								CUIWeaponCellItem			(CWeapon* itm);
 				virtual			~CUIWeaponCellItem			();

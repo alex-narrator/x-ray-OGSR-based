@@ -371,6 +371,12 @@ void CUITradeWnd::ActivatePropertiesBox()
 				m_pUIPropertiesBox->AddItem(temp, (void*)pWeapon->GetStockName().c_str(), INVENTORY_DETACH_ADDON);
 				b_show = true;
 			}
+			if (pWeapon->ExtenderAttachable() && pWeapon->IsExtenderAttached() && pWeapon->CanDetach(pWeapon->GetExtenderName().c_str())) {
+				_addon_name = pSettings->r_string(pWeapon->GetExtenderName().c_str(), "inv_name_short");
+				sprintf(temp, "%s%s %s", _many, CStringTable().translate(detach_tip).c_str(), CStringTable().translate(_addon_name).c_str());
+				m_pUIPropertiesBox->AddItem(temp, (void*)pWeapon->GetExtenderName().c_str(), INVENTORY_DETACH_ADDON);
+				b_show = true;
+			}
 			if (smart_cast<CWeaponMagazined*>(pWeapon)) {
 				auto WpnMagazWgl = smart_cast<CWeaponMagazinedWGrenade*>(pWeapon);
 				bool b = pWeapon->GetAmmoElapsed() > 0

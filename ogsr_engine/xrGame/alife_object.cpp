@@ -40,7 +40,8 @@ void CSE_ALifeObject::spawn_supplies		(LPCSTR ini_string)
 				bLauncher	{},
 				bLaser		{},
 				bFlashlight	{},
-				bStock		{};
+				bStock		{},
+				bExtender	{};
 
 			u32 
 				cur_scope		{},
@@ -49,6 +50,8 @@ void CSE_ALifeObject::spawn_supplies		(LPCSTR ini_string)
 				cur_laser		{},
 				cur_flashlight	{},
 				cur_stock		{},
+				cur_extender	{},
+
 				cur_ammo_type	{};
 			
 			j					= 1;
@@ -65,6 +68,7 @@ void CSE_ALifeObject::spawn_supplies		(LPCSTR ini_string)
 				bLaser				= (NULL!=strstr(V,"laser"		));
 				bFlashlight			= (NULL!=strstr(V,"flashlight"	));
 				bStock				= (NULL!=strstr(V,"stock"		));
+				bExtender			= (NULL!=strstr(V,"extender"	));
 				//preloaded ammo type
 				if (NULL != strstr(V, "ammo="))
 					cur_ammo_type	= (u32)atof(strstr(V, "ammo=") + 5);
@@ -81,6 +85,8 @@ void CSE_ALifeObject::spawn_supplies		(LPCSTR ini_string)
 					cur_flashlight	= (u32)atof(strstr(V, "flashlight=") + 11);
 				if (NULL != strstr(V, "stock="))
 					cur_stock		= (u32)atof(strstr(V, "stock=") + 6);
+				if (NULL != strstr(V, "extender="))
+					cur_extender	= (u32)atof(strstr(V, "extender=") + 9);
 				//probability
 				if(NULL!=strstr(V,"prob="))
 					p				= (float)atof(strstr(V,"prob=")+5);
@@ -119,6 +125,10 @@ void CSE_ALifeObject::spawn_supplies		(LPCSTR ini_string)
 						if (W->m_stock_status == CSE_ALifeItemWeapon::eAddonAttachable) {
 							W->m_addon_flags.set(CSE_ALifeItemWeapon::eWeaponAddonStock, bStock);
 							W->m_cur_stock = cur_stock;
+						}
+						if (W->m_extender_status == CSE_ALifeItemWeapon::eAddonAttachable) {
+							W->m_addon_flags.set(CSE_ALifeItemWeapon::eWeaponAddonExtender, bExtender);
+							W->m_cur_extender = cur_extender;
 						}
 					}
 					CSE_ALifeInventoryItem* IItem = smart_cast<CSE_ALifeInventoryItem*>(E);

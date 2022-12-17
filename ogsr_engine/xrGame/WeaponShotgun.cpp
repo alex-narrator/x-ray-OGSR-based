@@ -6,6 +6,7 @@
 #include "inventory.h"
 #include "level.h"
 #include "actor.h"
+#include "Addons.h"
 
 #include "hudmanager.h"
 #include "uigamecustom.h"
@@ -453,4 +454,90 @@ void CWeaponShotgun::StopHUDSounds() {
   HUD_SOUND::StopSound( m_sndAddCartridge );
   HUD_SOUND::StopSound( m_sndClose );
   inherited::StopHUDSounds();
+}
+
+bool CWeaponShotgun::CanAttach(PIItem pIItem)
+{
+	auto pActor = smart_cast<CActor*>(Level().CurrentViewEntity());
+	if (pActor && !pActor->HasRequiredTool(pIItem))
+		return false;
+
+	auto pExtender = smart_cast<CExtender*>(pIItem);
+	if (pExtender &&
+		m_eExtenderStatus == CSE_ALifeItemWeapon::eAddonAttachable &&
+		0 == (m_flagsAddOnState & CSE_ALifeItemWeapon::eWeaponAddonExtender) &&
+		std::find(m_extenders.begin(), m_extenders.end(), pIItem->object().cNameSect()) != m_extenders.end())
+		return true;
+	else
+		return inherited::CanAttach(pIItem);
+}
+
+bool CWeaponShotgun::CanDetach(const char* item_section_name)
+{
+	auto pActor = smart_cast<CActor*>(Level().CurrentViewEntity());
+	if (pActor && !pActor->HasRequiredTool(item_section_name))
+		return false;
+
+	if (m_eExtenderStatus == CSE_ALifeItemWeapon::eAddonAttachable &&
+		0 != (m_flagsAddOnState & CSE_ALifeItemWeapon::eWeaponAddonExtender) &&
+		std::find(m_extenders.begin(), m_extenders.end(), item_section_name) != m_extenders.end())
+		return true;
+	else
+		return inherited::CanDetach(item_section_name);
+}
+
+bool CWeaponShotgun::Attach(PIItem pIItem, bool b_send_event)
+{
+	auto pExtender = smart_cast<CExtender*>(pIItem);
+
+	if (pExtender &&
+		CSE_ALifeItemWeapon::eAddonAttachable == m_eExtenderStatus &&
+		0 == (m_flagsAddOnState & CSE_ALifeItemWeapon::eWeaponAddonExtender))
+	{
+		auto it = std::find(m_extenders.begin(), m_extenders.end(), pIItem->object().cNameSect());
+		m_cur_extender = (u8)std::distance(m_extenders.begin(), it);
+		m_flagsAddOnState |= CSE_ALifeItemWeapon::eWeaponAddonExtender;
+
+		UnloadWeaponFull(true);
+
+		if (b_send_event) {
+			//.			pIItem->Drop();
+			if (OnServer())
+				pIItem->object().DestroyObject();
+		}
+		UpdateAddonsVisibility();
+		InitAddons();
+		return					true;
+	}
+	else
+		return inherited::Attach(pIItem, b_send_event);
+}
+
+bool CWeaponShotgun::Detach(const char* item_section_name, bool b_spawn_item, float item_condition)
+{
+	if (CSE_ALifeItemWeapon::eAddonAttachable == m_eExtenderStatus &&
+		0 != (m_flagsAddOnState & CSE_ALifeItemWeapon::eWeaponAddonExtender) &&
+		std::find(m_extenders.begin(), m_extenders.end(), item_section_name) != m_extenders.end())
+	{
+		UnloadWeaponFull(true);
+
+		m_flagsAddOnState &= ~CSE_ALifeItemWeapon::eWeaponAddonExtender;
+
+		m_cur_extender = 0;
+
+		UpdateAddonsVisibility();
+		InitAddons();
+		return CInventoryItemObject::Detach(item_section_name, b_spawn_item, item_condition);
+	}
+	else
+		return inherited::Detach(item_section_name, b_spawn_item, item_condition);
+}
+
+void CWeaponShotgun::InitAddons()
+{
+	inherited::InitAddons();
+	iMagazineSize = pSettings->r_s32(cNameSect(), "ammo_mag_size");
+	if (IsExtenderAttached()) {
+		iMagazineSize += READ_IF_EXISTS(pSettings, r_u32, GetExtenderName(), "ammo_mag_size", 0);
+	}
 }

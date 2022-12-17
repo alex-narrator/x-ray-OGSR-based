@@ -251,7 +251,8 @@ void CUIWpnParams::SetInfo(CInventoryItem* obj)
 			pWeapon->GrenadeLauncherAttachable() ||
 			pWeapon->LaserAttachable() ||
 			pWeapon->FlashlightAttachable() ||
-			pWeapon->StockAttachable();
+			pWeapon->StockAttachable() ||
+			pWeapon->ExtenderAttachable();
 
 		if (has_addon) {
 			//адони - заголовок
@@ -313,6 +314,16 @@ void CUIWpnParams::SetInfo(CInventoryItem* obj)
 				for (const auto& stock : pWeapon->m_stocks) {
 					auto stock_name = pSettings->r_string(stock, "inv_name");
 					sprintf_s(text_to_show, "%s%s", marker_, CStringTable().translate(stock_name).c_str());
+					SetStaticParams(_uiXml, _path, _h)->SetText(text_to_show);
+					_h += list_item_h;
+				}
+			}
+			//сумісні подовжувачі магазину
+			if (pWeapon->ExtenderAttachable()) {
+				//сумісні приклади - список
+				for (const auto& extender : pWeapon->m_extenders) {
+					auto extender_name = pSettings->r_string(extender, "inv_name");
+					sprintf_s(text_to_show, "%s%s", marker_, CStringTable().translate(extender_name).c_str());
 					SetStaticParams(_uiXml, _path, _h)->SetText(text_to_show);
 					_h += list_item_h;
 				}

@@ -276,6 +276,7 @@ void CObjectFactory::register_classes	()
 	ADD(CLaser					,CSE_ALifeItem					,CLSID_OBJECT_W_LASER			,"wpn_laser");
 	ADD(CFlashlight				,CSE_ALifeItem					,CLSID_OBJECT_W_FLASHLIGHT		,"wpn_flashlight");
 	ADD(CStock					,CSE_ALifeItem					,CLSID_OBJECT_W_STOCK			,"wpn_stock");
+	ADD(CExtender				,CSE_ALifeItem					,CLSID_OBJECT_W_EXTENDER		,"wpn_extender");
 
 	// Inventory
 	ADD(CBolt					,CSE_ALifeItemBolt				,CLSID_IITEM_BOLT				,"obj_bolt");

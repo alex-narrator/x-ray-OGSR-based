@@ -584,6 +584,9 @@
 	<string id="st_aiming_controllability">
 		<text>Керованість у прицілюванні:</text>
 	</string>	
+	<string id="st_ammo_mag_size">
+		<text>Обсяг магазину:</text>
+	</string>		
 	<string id="st_weapon_dec">
 		<text>Зношування зброї:</text>
 	</string>

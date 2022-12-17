@@ -73,6 +73,7 @@ CWeapon::~CWeapon		()
 	delete_data(m_lasers);
 	delete_data(m_flashlights);
 	delete_data(m_stocks);
+	delete_data(m_extenders);
 }
 
 void CWeapon::UpdateXForm	()
@@ -288,7 +289,7 @@ void CWeapon::Load		(LPCSTR section)
 	m_fPDM_disp_crouch			= READ_IF_EXISTS(pSettings, r_float, section, "PDM_disp_crouch",		1.0f);
 	m_fPDM_disp_crouch_no_acc	= READ_IF_EXISTS(pSettings, r_float, section, "PDM_disp_crouch_no_acc",	1.0f);
 	//  [8/2/2005]
-	camRecoilCompensation		= !!READ_IF_EXISTS(pSettings, r_bool, section, "cam_recoil_compensation", /*false*/true);
+	m_bCamRecoilCompensation		= !!READ_IF_EXISTS(pSettings, r_bool, section, "cam_recoil_compensation", /*false*/true);
 
 	fireDispersionConditionFactor = pSettings->r_float(section,"fire_dispersion_condition_factor"); 
 	misfireProbability			  = pSettings->r_float(section,"misfire_probability"); 
@@ -321,6 +322,8 @@ void CWeapon::Load		(LPCSTR section)
 		m_eFlashlightStatus			= (ALife::EWeaponAddonStatus)pSettings->r_s32(section, "flashlight_status");
 	if (pSettings->line_exist(section, "stock_status"))
 		m_eStockStatus				= (ALife::EWeaponAddonStatus)pSettings->r_s32(section, "stock_status");
+	if (pSettings->line_exist(section, "extender_status"))
+		m_eExtenderStatus			= (ALife::EWeaponAddonStatus)pSettings->r_s32(section, "extender_status");
 
 	m_bZoomEnabled = !!pSettings->r_bool(section,"zoom_enabled");
 	m_bUseScopeZoom = !!READ_IF_EXISTS(pSettings, r_bool, section, "use_scope_zoom", false);
@@ -403,17 +406,25 @@ void CWeapon::Load		(LPCSTR section)
 			}
 		}
 	}
+	if (m_eExtenderStatus == ALife::eAddonAttachable) {
+		if (pSettings->line_exist(section, "extender_name")) {
+			str = pSettings->r_string(section, "extender_name");
+			for (int i = 0, count = _GetItemCount(str); i < count; ++i) {
+				string128 extender_section;
+				_GetItem(str, i, extender_section);
+				m_extenders.push_back(extender_section);
+				m_highlightAddons.push_back(extender_section);
+			}
+		}
+	}
 
 	// Кости мировой модели оружия
-	if (pSettings->line_exist(section, "scope_bone"))
-	{
+	if (pSettings->line_exist(section, "scope_bone")){
 		const char* S = pSettings->r_string(section, "scope_bone");
-		if (S && strlen(S))
-		{
+		if (S && strlen(S)){
 			const int count = _GetItemCount(S);
 			string128 _scope_bone{};
-			for (int it = 0; it < count; ++it)
-			{
+			for (int it = 0; it < count; ++it){
 				_GetItem(S, it, _scope_bone);
 				m_sWpn_scope_bones.push_back(_scope_bone);
 			}
@@ -444,11 +455,9 @@ void CWeapon::Load		(LPCSTR section)
 	}
 
 	// Кости худовой модели оружия - если не прописаны, используются имена из конфига мировой модели.
-	if (pSettings->line_exist(hud_sect, "scope_bone"))
-	{
+	if (pSettings->line_exist(hud_sect, "scope_bone")){
 		const char* S = pSettings->r_string(hud_sect, "scope_bone");
-		if (S && strlen(S))
-		{
+		if (S && strlen(S)){
 			const int count = _GetItemCount(S);
 			string128 _scope_bone{};
 			for (int it = 0; it < count; ++it)
@@ -467,15 +476,12 @@ void CWeapon::Load		(LPCSTR section)
 	m_sHud_wpn_laser_bone		= READ_IF_EXISTS(pSettings, r_string, hud_sect, "laser_ray_bones", m_sWpn_laser_bone);
 	m_sHud_wpn_flashlight_bone	= READ_IF_EXISTS(pSettings, r_string, hud_sect, "torch_cone_bones", m_sWpn_flashlight_bone);
 
-	if (pSettings->line_exist(hud_sect, "hidden_bones"))
-	{
+	if (pSettings->line_exist(hud_sect, "hidden_bones")){
 		const char* S = pSettings->r_string(hud_sect, "hidden_bones");
-		if (S && strlen(S))
-		{
+		if (S && strlen(S)){
 			const int count = _GetItemCount(S);
 			string128 _hidden_bone{};
-			for (int it = 0; it < count; ++it)
-			{
+			for (int it = 0; it < count; ++it){
 				_GetItem(S, it, _hidden_bone);
 				hud_hidden_bones.push_back(_hidden_bone);
 			}
@@ -486,9 +492,6 @@ void CWeapon::Load		(LPCSTR section)
 
 
 	//Можно и из конфига прицела читать и наоборот! Пока так.
-	m_fSecondVPZoomFactor = 0.0f;
-	m_fZoomHudFov = 0.0f;
-	m_fSecondVPHudFov = 0.0f;
 	m_fScopeInertionFactor = m_fControlInertionFactor;
 
 	InitAddons();
@@ -591,6 +594,12 @@ BOOL CWeapon::net_Spawn		(CSE_Abstract* DC)
 	}
 	m_cur_stock = E->m_cur_stock;
 
+	if (ExtenderAttachable() && IsExtenderAttached() && E->m_cur_extender >= m_extenders.size()) {
+		Msg("! [%s]: %s: wrong extender current [%u/%u]", __FUNCTION__, cName().c_str(), E->m_cur_extender, m_extenders.size() - 1);
+		E->m_cur_extender = 0;
+	}
+	m_cur_extender = E->m_cur_extender;
+
 	//
 	iMagazineSize	= E->m_MagazineSize;
 	//
@@ -681,6 +690,7 @@ void CWeapon::net_Export( CSE_Abstract* E ) {
   wpn->m_cur_laser		= m_cur_laser;
   wpn->m_cur_flashlight = m_cur_flashlight;
   wpn->m_cur_stock		= m_cur_stock;
+  wpn->m_cur_extender	= m_cur_extender;
   //
   wpn->m_MagazineSize	= iMagazineSize;
   //
@@ -1407,6 +1417,11 @@ bool CWeapon::IsStockAttached() const {
 		0 != (m_flagsAddOnState & CSE_ALifeItemWeapon::eWeaponAddonStock)) ||
 		CSE_ALifeItemWeapon::eAddonPermanent == m_eStockStatus;
 }
+bool CWeapon::IsExtenderAttached() const {
+	return (CSE_ALifeItemWeapon::eAddonAttachable == m_eExtenderStatus &&
+		0 != (m_flagsAddOnState & CSE_ALifeItemWeapon::eWeaponAddonExtender)) ||
+		CSE_ALifeItemWeapon::eAddonPermanent == m_eExtenderStatus;
+}
 
 bool CWeapon::GrenadeLauncherAttachable() const{
 	return (CSE_ALifeItemWeapon::eAddonAttachable == m_eGrenadeLauncherStatus);
@@ -1425,6 +1440,9 @@ bool CWeapon::FlashlightAttachable() const{
 }
 bool CWeapon::StockAttachable() const {
 	return (CSE_ALifeItemWeapon::eAddonAttachable == m_eStockStatus);
+}
+bool CWeapon::ExtenderAttachable() const {
+	return (CSE_ALifeItemWeapon::eAddonAttachable == m_eExtenderStatus);
 }
 
 void CWeapon::UpdateHUDAddonsVisibility()
@@ -2273,7 +2291,7 @@ u32 CWeapon::GetNextAmmoType(bool looped)
 int	CWeapon::GetScopeX(){
 	int res = pSettings->r_s32(cNameSect(), "scope_x");
 	string1024 scope_sect_x;
-	sprintf(scope_sect_x, "%s_x", m_scopes[m_cur_scope].c_str());
+	sprintf(scope_sect_x, "%s_x", GetScopeName().c_str());
 	if (pSettings->line_exist(cNameSect(), scope_sect_x))
 		res = pSettings->r_s32(cNameSect(), scope_sect_x);
 	return res;
@@ -2281,7 +2299,7 @@ int	CWeapon::GetScopeX(){
 int	CWeapon::GetScopeY(){
 	int res = pSettings->r_s32(cNameSect(), "scope_y");
 	string1024 scope_sect_y;
-	sprintf(scope_sect_y, "%s_y", m_scopes[m_cur_scope].c_str());
+	sprintf(scope_sect_y, "%s_y", GetScopeName().c_str());
 	if (pSettings->line_exist(cNameSect(), scope_sect_y))
 		res = pSettings->r_s32(cNameSect(), scope_sect_y);
 	return res;
@@ -2290,7 +2308,7 @@ int	CWeapon::GetScopeY(){
 int	CWeapon::GetSilencerX(){
 	int res = pSettings->r_s32(cNameSect(), "silencer_x");
 	string1024 silencer_sect_x;
-	sprintf(silencer_sect_x, "%s_x", m_silencers[m_cur_silencer].c_str());
+	sprintf(silencer_sect_x, "%s_x", GetSilencerName().c_str());
 	if (pSettings->line_exist(cNameSect(), silencer_sect_x))
 		res = pSettings->r_s32(cNameSect(), silencer_sect_x);
 	return res;
@@ -2298,7 +2316,7 @@ int	CWeapon::GetSilencerX(){
 int	CWeapon::GetSilencerY(){
 	int res = pSettings->r_s32(cNameSect(), "silencer_y");
 	string1024 silencer_sect_y;
-	sprintf(silencer_sect_y, "%s_y", m_silencers[m_cur_silencer].c_str());
+	sprintf(silencer_sect_y, "%s_y", GetSilencerName().c_str());
 	if (pSettings->line_exist(cNameSect(), silencer_sect_y))
 		res = pSettings->r_s32(cNameSect(), silencer_sect_y);
 	return res;
@@ -2307,7 +2325,7 @@ int	CWeapon::GetSilencerY(){
 int	CWeapon::GetGrenadeLauncherX(){
 	int res = pSettings->r_s32(cNameSect(), "grenade_launcher_x");
 	string1024 glauncher_sect_x;
-	sprintf(glauncher_sect_x, "%s_x", m_glaunchers[m_cur_glauncher].c_str());
+	sprintf(glauncher_sect_x, "%s_x", GetGrenadeLauncherName().c_str());
 	if (pSettings->line_exist(cNameSect(), glauncher_sect_x))
 		res = pSettings->r_s32(cNameSect(), glauncher_sect_x);
 	return res;
@@ -2315,7 +2333,7 @@ int	CWeapon::GetGrenadeLauncherX(){
 int	CWeapon::GetGrenadeLauncherY(){
 	int res = pSettings->r_s32(cNameSect(), "grenade_launcher_y");
 	string1024 glauncher_sect_y;
-	sprintf(glauncher_sect_y, "%s_y", m_glaunchers[m_cur_glauncher].c_str());
+	sprintf(glauncher_sect_y, "%s_y", GetGrenadeLauncherName().c_str());
 	if (pSettings->line_exist(cNameSect(), glauncher_sect_y))
 		res = pSettings->r_s32(cNameSect(), glauncher_sect_y);
 	return res;
@@ -2324,7 +2342,7 @@ int	CWeapon::GetGrenadeLauncherY(){
 int	CWeapon::GetLaserX(){
 	int res = pSettings->r_s32(cNameSect(), "laser_x");
 	string1024 laser_sect_x;
-	sprintf(laser_sect_x, "%s_x", m_lasers[m_cur_laser].c_str());
+	sprintf(laser_sect_x, "%s_x", GetLaserName().c_str());
 	if (pSettings->line_exist(cNameSect(), laser_sect_x))
 		res = pSettings->r_s32(cNameSect(), laser_sect_x);
 	return res;
@@ -2332,7 +2350,7 @@ int	CWeapon::GetLaserX(){
 int	CWeapon::GetLaserY(){
 	int res = pSettings->r_s32(cNameSect(), "laser_y");
 	string1024 laser_sect_y;
-	sprintf(laser_sect_y, "%s_x", m_lasers[m_cur_laser].c_str());
+	sprintf(laser_sect_y, "%s_x", GetLaserName().c_str());
 	if (pSettings->line_exist(cNameSect(), laser_sect_y))
 		res = pSettings->r_s32(cNameSect(), laser_sect_y);
 	return res;
@@ -2341,7 +2359,7 @@ int	CWeapon::GetLaserY(){
 int	CWeapon::GetFlashlightX(){
 	int res = pSettings->r_s32(cNameSect(), "flashlight_x");
 	string1024 flashlight_sect_x;
-	sprintf(flashlight_sect_x, "%s_x", m_flashlights[m_cur_flashlight].c_str());
+	sprintf(flashlight_sect_x, "%s_x", GetFlashlightName().c_str());
 	if (pSettings->line_exist(cNameSect(), flashlight_sect_x))
 		res = pSettings->r_s32(cNameSect(), flashlight_sect_x);
 	return res;
@@ -2349,7 +2367,7 @@ int	CWeapon::GetFlashlightX(){
 int	CWeapon::GetFlashlightY(){
 	int res = pSettings->r_s32(cNameSect(), "flashlight_y");
 	string1024 flashlight_sect_y;
-	sprintf(flashlight_sect_y, "%s_y", m_flashlights[m_cur_flashlight].c_str());
+	sprintf(flashlight_sect_y, "%s_y", GetFlashlightName().c_str());
 	if (pSettings->line_exist(cNameSect(), flashlight_sect_y))
 		res = pSettings->r_s32(cNameSect(), flashlight_sect_y);
 	return res;
@@ -2358,7 +2376,7 @@ int	CWeapon::GetFlashlightY(){
 int	CWeapon::GetStockX() {
 	int res = pSettings->r_s32(cNameSect(), "stock_x");
 	string1024 stock_sect_x;
-	sprintf(stock_sect_x, "%s_x", m_stocks[m_cur_stock].c_str());
+	sprintf(stock_sect_x, "%s_x", GetStockName().c_str());
 	if (pSettings->line_exist(cNameSect(), stock_sect_x))
 		res = pSettings->r_s32(cNameSect(), stock_sect_x);
 	return res;
@@ -2366,9 +2384,26 @@ int	CWeapon::GetStockX() {
 int	CWeapon::GetStockY() {
 	int res = pSettings->r_s32(cNameSect(), "stock_y");
 	string1024 stock_sect_y;
-	sprintf(stock_sect_y, "%s_y", m_stocks[m_cur_stock].c_str());
+	sprintf(stock_sect_y, "%s_y", GetStockName().c_str());
 	if (pSettings->line_exist(cNameSect(), stock_sect_y))
 		res = pSettings->r_s32(cNameSect(), stock_sect_y);
+	return res;
+}
+
+int	CWeapon::GetExtenderX() {
+	int res = pSettings->r_s32(cNameSect(), "extender_x");
+	string1024 extender_sect_x;
+	sprintf(extender_sect_x, "%s_x", GetExtenderName().c_str());
+	if (pSettings->line_exist(cNameSect(), extender_sect_x))
+		res = pSettings->r_s32(cNameSect(), extender_sect_x);
+	return res;
+}
+int	CWeapon::GetExtenderY() {
+	int res = pSettings->r_s32(cNameSect(), "extender_y");
+	string1024 extender_sect_y;
+	sprintf(extender_sect_y, "%s_y", GetExtenderName().c_str());
+	if (pSettings->line_exist(cNameSect(), extender_sect_y))
+		res = pSettings->r_s32(cNameSect(), extender_sect_y);
 	return res;
 }
 

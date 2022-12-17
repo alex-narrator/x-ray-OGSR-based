@@ -77,3 +77,14 @@ public:
 	CStock(void){};
 	virtual ~CStock(void){};
 };
+
+///////////////////////////////////////////////////////////////
+// Extender - збройовий апгрейд подовжувач магазину
+///////////////////////////////////////////////////////////////
+class CExtender : public CInventoryItemObject {
+private:
+	typedef CInventoryItemObject inherited;
+public:
+	CExtender(void) {};
+	virtual ~CExtender(void) {};
+};

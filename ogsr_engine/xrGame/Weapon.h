@@ -172,6 +172,7 @@ public:
 			bool IsLaserAttached			() const;
 			bool IsFlashlightAttached		() const;
 			bool IsStockAttached			() const;
+			bool IsExtenderAttached			() const;
 
 //	bool			IsGrenadeMode() const;
 	virtual bool IsGrenadeMode() const { return false; };
@@ -182,6 +183,7 @@ public:
 	virtual bool LaserAttachable			() const;
 	virtual bool FlashlightAttachable		() const;
 	virtual bool StockAttachable			() const;
+	virtual bool ExtenderAttachable			() const;
 	virtual bool UseScopeTexture();
 
 	//обновление видимости для косточек аддонов
@@ -203,6 +205,8 @@ public:
 	int	GetFlashlightY		();
 	int	GetStockX			();
 	int	GetStockY			();
+	int	GetExtenderX		();
+	int	GetExtenderY		();
 
 	const shared_str GetScopeName				() const { return m_scopes		[m_cur_scope]		; }
 	const shared_str GetSilencerName			() const { return m_silencers	[m_cur_silencer]	; }
@@ -210,6 +214,7 @@ public:
 	const shared_str GetLaserName				() const { return m_lasers		[m_cur_laser]		; }
 	const shared_str GetFlashlightName			() const { return m_flashlights	[m_cur_flashlight]	; }
 	const shared_str GetStockName				() const { return m_stocks		[m_cur_stock]		; }
+	const shared_str GetExtenderName			() const { return m_extenders	[m_cur_extender]	; }
 
 	u8		GetAddonsState						()		const		{return m_flagsAddOnState;};
 	void	SetAddonsState						(u8 st)	{m_flagsAddOnState=st;}
@@ -240,6 +245,7 @@ protected:
 	ALife::EWeaponAddonStatus	m_eLaserStatus{};
 	ALife::EWeaponAddonStatus	m_eFlashlightStatus{};
 	ALife::EWeaponAddonStatus	m_eStockStatus{};
+	ALife::EWeaponAddonStatus	m_eExtenderStatus{};
 
 
 ///////////////////////////////////////////////////
@@ -268,7 +274,7 @@ protected:
 	//когда режим приближения включен
 	bool			m_bZoomMode;
 	//коэффициент увеличения во втором вьюпорте при зуме
-	float			m_fSecondVPZoomFactor;
+	float			m_fSecondVPZoomFactor{};
 	//прятать перекрестие в режиме прицеливания
 	bool			m_bHideCrosshairInZoom;
 	//разрешить инерцию оружия в режиме прицеливания
@@ -276,9 +282,9 @@ protected:
 	// или в режиме прицеливания через оптику
 	bool			m_bScopeZoomInertionAllow;
 	//Целевой HUD FOV при зуме
-	float			m_fZoomHudFov;
+	float			m_fZoomHudFov{};
 	//Целевой HUD FOV для линзы
-	float			m_fSecondVPHudFov;
+	float			m_fSecondVPHudFov{};
 
 	bool			m_bHasScopeSecond{};
 	bool			m_bScopeSecondMode{};
@@ -657,7 +663,10 @@ public:
 	xr_vector<shared_str>	m_stocks{};
 	u8						m_cur_stock{};
 
-	bool					camRecoilCompensation;
+	xr_vector<shared_str>	m_extenders{};
+	u8						m_cur_extender{};
+
+	bool					m_bCamRecoilCompensation;
 
 	virtual float			GetHitPowerForActor		() const;
 

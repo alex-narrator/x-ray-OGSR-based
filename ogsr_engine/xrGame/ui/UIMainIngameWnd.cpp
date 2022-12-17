@@ -856,6 +856,11 @@ void CUIMainIngameWnd::UpdatePickUpItem	()
 			UIPickUpItemIcon.AttachChild(addon_statick);
 		}
 
+		if (wpn->ExtenderAttachable() && wpn->IsExtenderAttached()) {
+			addon_statick = init_addon(cell_item, wpn->GetExtenderName().c_str(), scale, UI()->get_current_kx(), eAddonType::eExtender);
+			UIPickUpItemIcon.AttachChild(addon_statick);
+		}
+
 		delete_data(cell_item);
 	}
 

@@ -51,6 +51,7 @@ bool CUIEquipParams::Check(CInventoryItem* obj){
 		smart_cast<CScope*>				(obj)		||
 		smart_cast<CSilencer*>			(obj)		||
 		smart_cast<CStock*>				(obj)		||
+		smart_cast<CExtender*>			(obj)		||
 		smart_cast<CInventoryContainer*>(obj)		||
 		smart_cast<CPowerBattery*>		(obj)		||
 		smart_cast<CGrenade*>			(obj)		||
@@ -231,6 +232,17 @@ void CUIEquipParams::SetInfo(CInventoryItem* obj){
 			_val *= 100.f;
 			_param_name = CStringTable().translate("st_aim_time").c_str();
 			sprintf_s(text_to_show, "%s %+.1f%s", _param_name, _val, _sn);
+			SetStaticParams(_uiXml, _path, _h)->SetText(text_to_show);
+			_h += list_item_h;
+		}
+	}
+
+	auto pExtender = smart_cast<CExtender*>(obj);
+	if (pExtender) {
+		_val = READ_IF_EXISTS(pSettings, r_float, item_section, "ammo_mag_size", 0.f);
+		if (!fis_zero(_val)) {
+			_param_name = CStringTable().translate("st_ammo_mag_size").c_str();
+			sprintf_s(text_to_show, "%s %+.0f", _param_name, _val);
 			SetStaticParams(_uiXml, _path, _h)->SetText(text_to_show);
 			_h += list_item_h;
 		}

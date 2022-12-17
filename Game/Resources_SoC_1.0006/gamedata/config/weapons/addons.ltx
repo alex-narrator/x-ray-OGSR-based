@@ -351,3 +351,40 @@ cam_dispersion_k	= -0.3
 zoom_rotate_time_k 	= -0.1
 aim_inertion_k 		= -0.5
 ;aim_control_inertion_k = -0.5
+
+[wpn_addon_extender_2]:identity_immunities
+GroupControlSection	= spawn_group
+discovery_dependency = 
+$spawn			= "weapons\addons\silencer" ; option for Level Editor
+class			= W_EXTNDR
+cform           = skeleton
+visual          = weapons\upgrade\wpn_silencer.ogf
+description		= extender_2
+$prefetch 		= 32
+
+cost			= 250
+inv_name		= extender_2
+inv_name_short	= extender_2_short
+inv_weight		= 0.5
+
+inv_grid_width     = 1
+inv_grid_height    = 1
+inv_grid_x         = 17
+inv_grid_y         = 34
+
+ammo_mag_size = 2
+
+[wpn_addon_extender_4]:wpn_addon_extender_2
+cost			= 550
+description		= extender_4
+inv_name		= extender_4
+inv_name_short	= extender_4_short
+inv_weight		= 0.5
+
+inv_grid_width     = 1
+inv_grid_height    = 1
+inv_grid_x         = 16
+inv_grid_y         = 34
+
+
+ammo_mag_size = 4
