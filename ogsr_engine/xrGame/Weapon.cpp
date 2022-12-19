@@ -74,6 +74,7 @@ CWeapon::~CWeapon		()
 	delete_data(m_flashlights);
 	delete_data(m_stocks);
 	delete_data(m_extenders);
+	delete_data(m_forends);
 }
 
 void CWeapon::UpdateXForm	()
@@ -310,20 +311,15 @@ void CWeapon::Load		(LPCSTR section)
 
 
 	// информация о возможных апгрейдах и их визуализации в инвентаре
-	if (pSettings->line_exist(section, "scope_status"))
-		m_eScopeStatus				= (ALife::EWeaponAddonStatus)pSettings->r_s32(section, "scope_status");
-	if (pSettings->line_exist(section, "silencer_status"))
-		m_eSilencerStatus			= (ALife::EWeaponAddonStatus)pSettings->r_s32(section, "silencer_status");
-	if (pSettings->line_exist(section, "grenade_launcher_status"))
-		m_eGrenadeLauncherStatus	= (ALife::EWeaponAddonStatus)pSettings->r_s32(section, "grenade_launcher_status");
-	if (pSettings->line_exist(section, "laser_status"))
-		m_eLaserStatus				= (ALife::EWeaponAddonStatus)pSettings->r_s32(section, "laser_status");
-	if (pSettings->line_exist(section, "flashlight_status"))
-		m_eFlashlightStatus			= (ALife::EWeaponAddonStatus)pSettings->r_s32(section, "flashlight_status");
-	if (pSettings->line_exist(section, "stock_status"))
-		m_eStockStatus				= (ALife::EWeaponAddonStatus)pSettings->r_s32(section, "stock_status");
-	if (pSettings->line_exist(section, "extender_status"))
-		m_eExtenderStatus			= (ALife::EWeaponAddonStatus)pSettings->r_s32(section, "extender_status");
+	m_eScopeStatus				= (ALife::EWeaponAddonStatus)READ_IF_EXISTS(pSettings, r_u8, section, "scope_status",				0);
+	m_eSilencerStatus			= (ALife::EWeaponAddonStatus)READ_IF_EXISTS(pSettings, r_u8, section, "silencer_status",			0);
+	m_eGrenadeLauncherStatus	= (ALife::EWeaponAddonStatus)READ_IF_EXISTS(pSettings, r_u8, section, "grenade_launcher_status",	0);
+	m_eLaserStatus				= (ALife::EWeaponAddonStatus)READ_IF_EXISTS(pSettings, r_u8, section, "laser_status",				0);
+	m_eFlashlightStatus			= (ALife::EWeaponAddonStatus)READ_IF_EXISTS(pSettings, r_u8, section, "flashlight_status",			0);
+	m_eStockStatus				= (ALife::EWeaponAddonStatus)READ_IF_EXISTS(pSettings, r_u8, section, "stock_status",				0);
+	m_eExtenderStatus			= (ALife::EWeaponAddonStatus)READ_IF_EXISTS(pSettings, r_u8, section, "extender_status",			0);
+	m_eForendStatus				= (ALife::EWeaponAddonStatus)READ_IF_EXISTS(pSettings, r_u8, section, "forend_status",				0);
+
 
 	m_bZoomEnabled = !!pSettings->r_bool(section,"zoom_enabled");
 	m_bUseScopeZoom = !!READ_IF_EXISTS(pSettings, r_bool, section, "use_scope_zoom", false);
@@ -371,6 +367,7 @@ void CWeapon::Load		(LPCSTR section)
 				m_glaunchers.push_back(glauncher_section);
 				m_highlightAddons.push_back(glauncher_section);
 			}
+			m_bGrenadeLauncherRequiresForend = READ_IF_EXISTS(pSettings, r_bool, section, "grenade_launcher_requires_forend", false);
 		}
 	}
 	if (m_eLaserStatus == ALife::eAddonAttachable){
@@ -382,6 +379,7 @@ void CWeapon::Load		(LPCSTR section)
 				m_lasers.push_back(laser_section);
 				m_highlightAddons.push_back(laser_section);
 			}
+			m_bLaserRequiresForend = READ_IF_EXISTS(pSettings, r_bool, section, "laser_requires_forend", false);
 		}
 	}
 	if (m_eFlashlightStatus == ALife::eAddonAttachable){
@@ -393,6 +391,7 @@ void CWeapon::Load		(LPCSTR section)
 				m_flashlights.push_back(flashlight_section);
 				m_highlightAddons.push_back(flashlight_section);
 			}
+			m_bFlashlightRequiresForend = READ_IF_EXISTS(pSettings, r_bool, section, "flashlight_requires_forend", false);
 		}
 	}
 	if (m_eStockStatus == ALife::eAddonAttachable) {
@@ -414,6 +413,17 @@ void CWeapon::Load		(LPCSTR section)
 				_GetItem(str, i, extender_section);
 				m_extenders.push_back(extender_section);
 				m_highlightAddons.push_back(extender_section);
+			}
+		}
+	}
+	if (m_eForendStatus == ALife::eAddonAttachable) {
+		if (pSettings->line_exist(section, "forend_name")) {
+			str = pSettings->r_string(section, "forend_name");
+			for (int i = 0, count = _GetItemCount(str); i < count; ++i) {
+				string128 forend_section;
+				_GetItem(str, i, forend_section);
+				m_forends.push_back(forend_section);
+				m_highlightAddons.push_back(forend_section);
 			}
 		}
 	}
@@ -600,6 +610,12 @@ BOOL CWeapon::net_Spawn		(CSE_Abstract* DC)
 	}
 	m_cur_extender = E->m_cur_extender;
 
+	if (ForendAttachable() && IsForendAttached() && E->m_cur_forend >= m_forends.size()) {
+		Msg("! [%s]: %s: wrong forend current [%u/%u]", __FUNCTION__, cName().c_str(), E->m_cur_forend, m_forends.size() - 1);
+		E->m_cur_forend = 0;
+	}
+	m_cur_forend = E->m_cur_forend;
+
 	//
 	iMagazineSize	= E->m_MagazineSize;
 	//
@@ -691,6 +707,7 @@ void CWeapon::net_Export( CSE_Abstract* E ) {
   wpn->m_cur_flashlight = m_cur_flashlight;
   wpn->m_cur_stock		= m_cur_stock;
   wpn->m_cur_extender	= m_cur_extender;
+  wpn->m_cur_forend		= m_cur_forend;
   //
   wpn->m_MagazineSize	= iMagazineSize;
   //
@@ -1422,6 +1439,11 @@ bool CWeapon::IsExtenderAttached() const {
 		0 != (m_flagsAddOnState & CSE_ALifeItemWeapon::eWeaponAddonExtender)) ||
 		CSE_ALifeItemWeapon::eAddonPermanent == m_eExtenderStatus;
 }
+bool CWeapon::IsForendAttached() const {
+	return (CSE_ALifeItemWeapon::eAddonAttachable == m_eForendStatus &&
+		0 != (m_flagsAddOnState & CSE_ALifeItemWeapon::eWeaponAddonForend)) ||
+		CSE_ALifeItemWeapon::eAddonPermanent == m_eForendStatus;
+}
 
 bool CWeapon::GrenadeLauncherAttachable() const{
 	return (CSE_ALifeItemWeapon::eAddonAttachable == m_eGrenadeLauncherStatus);
@@ -1443,6 +1465,9 @@ bool CWeapon::StockAttachable() const {
 }
 bool CWeapon::ExtenderAttachable() const {
 	return (CSE_ALifeItemWeapon::eAddonAttachable == m_eExtenderStatus);
+}
+bool CWeapon::ForendAttachable() const {
+	return (CSE_ALifeItemWeapon::eAddonAttachable == m_eForendStatus);
 }
 
 void CWeapon::UpdateHUDAddonsVisibility()
@@ -1629,8 +1654,7 @@ bool CWeapon::Activate( bool now )
 	return inherited::Activate( now );
 }
 
-void CWeapon::InitAddons()
-{
+void CWeapon::InitAddons(){
 }
 
 float CWeapon::CurrentZoomFactor()
@@ -2044,12 +2068,22 @@ float CWeapon::GetAmmoInMagazineWeight(const decltype(CWeapon::m_magazine)& mag)
 float CWeapon::Weight() const
 {
 	float res = CInventoryItemObject::Weight();
-	if ( GrenadeLauncherAttachable() && IsGrenadeLauncherAttached() )
-		res += pSettings->r_float(GetGrenadeLauncherName(),"inv_weight");
-	if ( ScopeAttachable() && IsScopeAttached() )
-		res += pSettings->r_float(GetScopeName(),"inv_weight");
-	if ( SilencerAttachable() && IsSilencerAttached() )
-		res += pSettings->r_float(GetSilencerName(),"inv_weight");
+	if (GrenadeLauncherAttachable() && IsGrenadeLauncherAttached())
+		res += pSettings->r_float(GetGrenadeLauncherName(),	"inv_weight");
+	if (ScopeAttachable() && IsScopeAttached())
+		res += pSettings->r_float(GetScopeName(),			"inv_weight");
+	if (SilencerAttachable() && IsSilencerAttached())
+		res += pSettings->r_float(GetSilencerName(),		"inv_weight");
+	if (LaserAttachable() && IsLaserAttached())
+		res += pSettings->r_float(GetLaserName(),			"inv_weight");
+	if (FlashlightAttachable() && IsFlashlightAttached())
+		res += pSettings->r_float(GetFlashlightName(),		"inv_weight");
+	if (StockAttachable() && IsStockAttached())
+		res += pSettings->r_float(GetStockName(),			"inv_weight");
+	if (ExtenderAttachable() && IsExtenderAttached())
+		res += pSettings->r_float(GetExtenderName(),		"inv_weight");
+	if (ForendAttachable() && IsForendAttached())
+		res += pSettings->r_float(GetForendName(),			"inv_weight");
 	res += GetAmmoInMagazineWeight(m_magazine);
 
 	return res;
@@ -2061,11 +2095,21 @@ u32 CWeapon::Cost() const
 	
 	if (Core.Features.test(xrCore::Feature::wpn_cost_include_addons)) {
 		if (GrenadeLauncherAttachable() && IsGrenadeLauncherAttached())
-			res += pSettings->r_u32(GetGrenadeLauncherName(), "cost");
+			res += pSettings->r_u32(GetGrenadeLauncherName(),	"cost");
 		if (ScopeAttachable() && IsScopeAttached())
-			res += pSettings->r_u32(GetScopeName(), "cost");
+			res += pSettings->r_u32(GetScopeName(),				"cost");
 		if (SilencerAttachable() && IsSilencerAttached())
-			res += pSettings->r_u32(GetSilencerName(), "cost");
+			res += pSettings->r_u32(GetSilencerName(),			"cost");
+		if (LaserAttachable() && IsLaserAttached())
+			res += pSettings->r_float(GetLaserName(),			"cost");
+		if (FlashlightAttachable() && IsFlashlightAttached())
+			res += pSettings->r_float(GetFlashlightName(),		"cost");
+		if (StockAttachable() && IsStockAttached())
+			res += pSettings->r_float(GetStockName(),			"cost");
+		if (ExtenderAttachable() && IsExtenderAttached())
+			res += pSettings->r_float(GetExtenderName(),		"cost");
+		if (ForendAttachable() && IsForendAttached())
+			res += pSettings->r_float(GetForendName(),			"cost");
 	}
 	return res;
 }
@@ -2075,11 +2119,21 @@ float CWeapon::Volume() const
 	float res = m_volume;
 
 	if (GrenadeLauncherAttachable() && IsGrenadeLauncherAttached())
-		res += READ_IF_EXISTS(pSettings, r_float, GetGrenadeLauncherName(), "inv_volume", .0f);
+		res += READ_IF_EXISTS(pSettings, r_float, GetGrenadeLauncherName(),		"inv_volume", .0f);
 	if (ScopeAttachable() && IsScopeAttached())
-		res += READ_IF_EXISTS(pSettings, r_float, GetScopeName(), "inv_volume", .0f);
+		res += READ_IF_EXISTS(pSettings, r_float, GetScopeName(),				"inv_volume", .0f);
 	if (SilencerAttachable() && IsSilencerAttached())
-		res += res += READ_IF_EXISTS(pSettings, r_float, GetSilencerName(), "inv_volume", .0f);
+		res += READ_IF_EXISTS(pSettings, r_float, GetSilencerName(),			"inv_volume", .0f);
+	if (LaserAttachable() && IsLaserAttached())
+		res += READ_IF_EXISTS(pSettings, r_float, GetLaserName(),				"inv_volume", .0f);
+	if (FlashlightAttachable() && IsFlashlightAttached())
+		res += READ_IF_EXISTS(pSettings, r_float, GetFlashlightName(),			"inv_volume", .0f);
+	if (StockAttachable() && IsStockAttached())
+		res += READ_IF_EXISTS(pSettings, r_float, GetStockName(),				"inv_volume", .0f);
+	if (ExtenderAttachable() && IsExtenderAttached())
+		res += READ_IF_EXISTS(pSettings, r_float, GetExtenderName(),			"inv_volume", .0f);
+	if (ForendAttachable() && IsForendAttached())
+		res += READ_IF_EXISTS(pSettings, r_float, GetForendName(),				"inv_volume", .0f);
 
 	return res;
 }
@@ -2404,6 +2458,23 @@ int	CWeapon::GetExtenderY() {
 	sprintf(extender_sect_y, "%s_y", GetExtenderName().c_str());
 	if (pSettings->line_exist(cNameSect(), extender_sect_y))
 		res = pSettings->r_s32(cNameSect(), extender_sect_y);
+	return res;
+}
+
+int	CWeapon::GetForendX() {
+	int res = pSettings->r_s32(cNameSect(), "forend_x");
+	string1024 forend_sect_x;
+	sprintf(forend_sect_x, "%s_x", GetForendName().c_str());
+	if (pSettings->line_exist(cNameSect(), forend_sect_x))
+		res = pSettings->r_s32(cNameSect(), forend_sect_x);
+	return res;
+}
+int	CWeapon::GetForendY() {
+	int res = pSettings->r_s32(cNameSect(), "forend_y");
+	string1024 forend_sect_y;
+	sprintf(forend_sect_y, "%s_y", GetForendName().c_str());
+	if (pSettings->line_exist(cNameSect(), forend_sect_y))
+		res = pSettings->r_s32(cNameSect(), forend_sect_y);
 	return res;
 }
 

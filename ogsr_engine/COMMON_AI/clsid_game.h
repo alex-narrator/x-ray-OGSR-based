@@ -108,6 +108,7 @@ constexpr auto CLSID_OBJECT_W_LASER			  = MK_CLSID('W','_','L','A','S','E','R','
 constexpr auto CLSID_OBJECT_W_FLASHLIGHT      = MK_CLSID('W','_','F','L','A','S','H','L');
 constexpr auto CLSID_OBJECT_W_STOCK			  = MK_CLSID('W','_','S','T','O','C','K',' ');
 constexpr auto CLSID_OBJECT_W_EXTENDER		  = MK_CLSID('W','_','E','X','T','N','D','R');
+constexpr auto CLSID_OBJECT_W_FOREND		  = MK_CLSID('W','_','F','O','R','E','N','D');
 
 // Modifiers
 constexpr auto CLSID_OBJECT_M_QDAMAGE         = MK_CLSID('O','_','Q','D','M','G',' ',' ');

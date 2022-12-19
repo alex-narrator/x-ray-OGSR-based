@@ -41,7 +41,7 @@ public:
 
 	virtual void Load(LPCSTR section);
 
-	float	GetGrenadeVel() { return m_fGrenadeVel; }
+			float GetGrenadeVel() { return m_fGrenadeVel; }
 
 protected:
 	//стартовая скорость вылета подствольной гранаты
@@ -87,4 +87,15 @@ private:
 public:
 	CExtender(void) {};
 	virtual ~CExtender(void) {};
+};
+
+///////////////////////////////////////////////////////////////
+// Forend - збройовий апгрейд цівка
+///////////////////////////////////////////////////////////////
+class CForend : public CInventoryItemObject {
+private:
+	typedef CInventoryItemObject inherited;
+public:
+	CForend(void) {};
+	virtual ~CForend(void) {};
 };

@@ -600,6 +600,16 @@
 		<text>Кількість шротин:</text>
 	</string>
 	
+	<string id="st_grenade_launcher_allowed">
+		<text>Кріплення гранатомету:</text>
+	</string>
+	<string id="st_laser_allowed">
+		<text>Кріплення ЛЦВ:</text>
+	</string>
+	<string id="st_flashlight_allowed">
+		<text>Кріплення ліхтаря:</text>
+	</string>	
+	
 	<string id="st_compatible_ammo">
 		<text>набої:</text>
 	</string>

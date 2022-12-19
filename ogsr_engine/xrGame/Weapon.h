@@ -173,6 +173,7 @@ public:
 			bool IsFlashlightAttached		() const;
 			bool IsStockAttached			() const;
 			bool IsExtenderAttached			() const;
+			bool IsForendAttached			() const;
 
 //	bool			IsGrenadeMode() const;
 	virtual bool IsGrenadeMode() const { return false; };
@@ -184,6 +185,7 @@ public:
 	virtual bool FlashlightAttachable		() const;
 	virtual bool StockAttachable			() const;
 	virtual bool ExtenderAttachable			() const;
+	virtual bool ForendAttachable			() const;
 	virtual bool UseScopeTexture();
 
 	//обновление видимости для косточек аддонов
@@ -207,6 +209,8 @@ public:
 	int	GetStockY			();
 	int	GetExtenderX		();
 	int	GetExtenderY		();
+	int	GetForendX			();
+	int	GetForendY			();
 
 	const shared_str GetScopeName				() const { return m_scopes		[m_cur_scope]		; }
 	const shared_str GetSilencerName			() const { return m_silencers	[m_cur_silencer]	; }
@@ -215,6 +219,7 @@ public:
 	const shared_str GetFlashlightName			() const { return m_flashlights	[m_cur_flashlight]	; }
 	const shared_str GetStockName				() const { return m_stocks		[m_cur_stock]		; }
 	const shared_str GetExtenderName			() const { return m_extenders	[m_cur_extender]	; }
+	const shared_str GetForendName				() const { return m_forends		[m_cur_forend]		; }
 
 	u8		GetAddonsState						()		const		{return m_flagsAddOnState;};
 	void	SetAddonsState						(u8 st)	{m_flagsAddOnState=st;}
@@ -229,6 +234,11 @@ public:
 	shared_str m_sHud_wpn_launcher_bone;
 	shared_str m_sHud_wpn_laser_bone;
 	shared_str m_sHud_wpn_flashlight_bone;
+
+	bool
+		m_bGrenadeLauncherRequiresForend{},
+		m_bLaserRequiresForend{},
+		m_bFlashlightRequiresForend{};
 
 private:
 	xr_vector<shared_str> hidden_bones;
@@ -246,6 +256,7 @@ protected:
 	ALife::EWeaponAddonStatus	m_eFlashlightStatus{};
 	ALife::EWeaponAddonStatus	m_eStockStatus{};
 	ALife::EWeaponAddonStatus	m_eExtenderStatus{};
+	ALife::EWeaponAddonStatus	m_eForendStatus{};
 
 
 ///////////////////////////////////////////////////
@@ -665,6 +676,9 @@ public:
 
 	xr_vector<shared_str>	m_extenders{};
 	u8						m_cur_extender{};
+
+	xr_vector<shared_str>	m_forends{};
+	u8						m_cur_forend{};
 
 	bool					m_bCamRecoilCompensation;
 

@@ -951,31 +951,37 @@ bool CWeaponMagazined::CanAttach(PIItem pIItem)
 	auto pLaser				= smart_cast<CLaser*>			(pIItem);
 	auto pFlashlight		= smart_cast<CFlashlight*>		(pIItem);
 	auto pStock				= smart_cast<CStock*>			(pIItem);
+	auto pForend			= smart_cast<CForend*>			(pIItem);
 
 	if (pScope &&
 		m_eScopeStatus == ALife::eAddonAttachable &&
-		(m_flagsAddOnState&CSE_ALifeItemWeapon::eWeaponAddonScope) == 0 && 
+		(m_flagsAddOnState & CSE_ALifeItemWeapon::eWeaponAddonScope) == 0 &&
 		std::find(m_scopes.begin(), m_scopes.end(), pIItem->object().cNameSect()) != m_scopes.end())
 		return true;
 	else if (pSilencer &&
 		m_eSilencerStatus == ALife::eAddonAttachable &&
-		(m_flagsAddOnState&CSE_ALifeItemWeapon::eWeaponAddonSilencer) == 0 &&
+		(m_flagsAddOnState & CSE_ALifeItemWeapon::eWeaponAddonSilencer) == 0 &&
 		std::find(m_silencers.begin(), m_silencers.end(), pIItem->object().cNameSect()) != m_silencers.end())
 		return true;
 	else if (pLaser &&
 		m_eLaserStatus == ALife::eAddonAttachable &&
 		(m_flagsAddOnState & CSE_ALifeItemWeapon::eWeaponAddonLaser) == 0 &&
 		std::find(m_lasers.begin(), m_lasers.end(), pIItem->object().cNameSect()) != m_lasers.end())
-		return true;
+		return !m_bLaserRequiresForend || IsForendAttached() && READ_IF_EXISTS(pSettings, r_bool, GetForendName(), "laser_allowed", true);//true;
 	else if (pFlashlight &&
 		m_eFlashlightStatus == ALife::eAddonAttachable &&
 		(m_flagsAddOnState & CSE_ALifeItemWeapon::eWeaponAddonFlashlight) == 0 &&
 		std::find(m_flashlights.begin(), m_flashlights.end(), pIItem->object().cNameSect()) != m_flashlights.end())
-		return true;
+		return !m_bFlashlightRequiresForend || IsForendAttached() && READ_IF_EXISTS(pSettings, r_bool, GetForendName(), "flashlight_allowed", true);//true;
 	else if (pStock &&
 		m_eStockStatus == ALife::eAddonAttachable &&
 		(m_flagsAddOnState & CSE_ALifeItemWeapon::eWeaponAddonStock) == 0 &&
 		std::find(m_stocks.begin(), m_stocks.end(), pIItem->object().cNameSect()) != m_stocks.end())
+		return true;
+	else if (pForend &&
+		m_eForendStatus == ALife::eAddonAttachable &&
+		(m_flagsAddOnState & CSE_ALifeItemWeapon::eWeaponAddonForend) == 0 &&
+		std::find(m_forends.begin(), m_forends.end(), pIItem->object().cNameSect()) != m_forends.end())
 		return true;
 	else
 		return inherited::CanAttach(pIItem);
@@ -1007,6 +1013,10 @@ bool CWeaponMagazined::CanDetach(const char* item_section_name)
 		0 != (m_flagsAddOnState & CSE_ALifeItemWeapon::eWeaponAddonStock) &&
 		std::find(m_stocks.begin(), m_stocks.end(), item_section_name) != m_stocks.end())
 		return true;
+	else if (m_eForendStatus == CSE_ALifeItemWeapon::eAddonAttachable &&
+		0 != (m_flagsAddOnState & CSE_ALifeItemWeapon::eWeaponAddonForend) &&
+		std::find(m_forends.begin(), m_forends.end(), item_section_name) != m_forends.end())
+		return true;
 	else
 		return inherited::CanDetach(item_section_name);
 }
@@ -1020,6 +1030,7 @@ bool CWeaponMagazined::Attach(PIItem pIItem, bool b_send_event)
 	auto pLaser				= smart_cast<CLaser*>			(pIItem);
 	auto pFlashlight		= smart_cast<CFlashlight*>		(pIItem);
 	auto pStock				= smart_cast<CStock*>			(pIItem);
+	auto pForend			= smart_cast<CForend*>			(pIItem);
 
 	if (pScope &&
 		m_eScopeStatus == CSE_ALifeItemWeapon::eAddonAttachable &&
@@ -1067,6 +1078,16 @@ bool CWeaponMagazined::Attach(PIItem pIItem, bool b_send_event)
 		m_cur_stock = (u8)std::distance(m_stocks.begin(), it);
 		m_flagsAddOnState |= CSE_ALifeItemWeapon::eWeaponAddonStock;
 		result = true;
+	}
+	else if (pForend &&
+		m_eForendStatus == CSE_ALifeItemWeapon::eAddonAttachable &&
+		(m_flagsAddOnState & CSE_ALifeItemWeapon::eWeaponAddonForend) == 0)
+	{
+		auto it = std::find(m_forends.begin(), m_forends.end(), pIItem->object().cNameSect());
+		m_cur_forend = (u8)std::distance(m_forends.begin(), it);
+		m_flagsAddOnState |= CSE_ALifeItemWeapon::eWeaponAddonForend;
+		result = true;
+		DetachWForend();
 	}
 
 	if(result){
@@ -1156,6 +1177,19 @@ bool CWeaponMagazined::Detach(const char* item_section_name, bool b_spawn_item, 
 		InitAddons();
 		return CInventoryItemObject::Detach(item_section_name, b_spawn_item, item_condition);
 	}
+	else if (m_eForendStatus == CSE_ALifeItemWeapon::eAddonAttachable &&
+		0 != (m_flagsAddOnState & CSE_ALifeItemWeapon::eWeaponAddonForend) &&
+		std::find(m_forends.begin(), m_forends.end(), item_section_name) != m_forends.end())
+	{
+		m_flagsAddOnState &= ~CSE_ALifeItemWeapon::eWeaponAddonForend;
+		//
+		m_cur_forend = 0;
+		//
+		DetachWForend();
+		UpdateAddonsVisibility();
+		InitAddons();
+		return CInventoryItemObject::Detach(item_section_name, b_spawn_item, item_condition);
+	}
 	else
 		return inherited::Detach(item_section_name, b_spawn_item, item_condition);
 }
@@ -1178,8 +1212,14 @@ void CWeaponMagazined::InitAddons()
 		sect = FlashlightAttachable() ? GetFlashlightName().c_str() : cNameSect().c_str();
 		LoadFlashlightParams(sect);
 	}
+	//до цих параметрів можуть додаватися коефіцієнти у функціях нижче
+	m_fZoomRotateTime		= READ_IF_EXISTS(pSettings, r_float, hud_sect, "zoom_rotate_time", ROTATION_TIME);
+	m_fAimControlInertionK	= 0.f;
+	m_fAimInertionK			= 0.f;
 	//приклад
 	ApplyStockParams();
+	//цівка
+	ApplyForendParams();
 
 	inherited::InitAddons();
 }
@@ -1372,9 +1412,6 @@ void CWeaponMagazined::ApplySilencerKoeffs()
 }
 
 void CWeaponMagazined::ApplyStockParams() {
-	m_fZoomRotateTime		= READ_IF_EXISTS(pSettings, r_float, hud_sect, "zoom_rotate_time", ROTATION_TIME);
-	m_fAimControlInertionK	= 0.f;
-	m_fAimInertionK			= 0.f;
 	if (!IsStockAttached() || !StockAttachable())
 		return;
 
@@ -1393,6 +1430,32 @@ void CWeaponMagazined::ApplyStockParams() {
 	}
 	m_fAimInertionK			+= AI_k;
 	m_fAimControlInertionK	+= CI_k;
+}
+
+void CWeaponMagazined::ApplyForendParams() {
+	if (!IsForendAttached() || !ForendAttachable())
+		return;
+
+	auto forend_sect = GetForendName();
+
+	float CD_k = READ_IF_EXISTS(pSettings, r_float, forend_sect, "cam_dispersion_k",		0.f);
+	float AI_k = READ_IF_EXISTS(pSettings, r_float, forend_sect, "aim_inertion_k",			0.f);
+	float CI_k = READ_IF_EXISTS(pSettings, r_float, forend_sect, "aim_control_inertion_k",	0.f);
+	if (!fis_zero(CD_k)) {
+		camDispersion += camDispersion * CD_k;
+		camDispersionInc += camDispersionInc * CD_k;
+	}
+	m_fAimInertionK += AI_k;
+	m_fAimControlInertionK += CI_k;
+}
+
+void CWeaponMagazined::DetachWForend() {
+	if (GrenadeLauncherAttachable() && IsGrenadeLauncherAttached())
+		Detach(GetGrenadeLauncherName().c_str(), true);
+	if (LaserAttachable() && IsLaserAttached())
+		Detach(GetLaserName().c_str(), true);
+	if (FlashlightAttachable() && IsFlashlightAttached())
+		Detach(GetFlashlightName().c_str(), true);
 }
 
 void CWeaponMagazined::LoadLaserParams(LPCSTR section) {
@@ -2237,6 +2300,12 @@ void CWeaponMagazined::UnloadAndDetachAllAddons(bool skip_animation) {
 		Detach(GetLaserName().c_str(), true);
 	if (FlashlightAttachable() && IsFlashlightAttached())
 		Detach(GetFlashlightName().c_str(), true);
+	if (StockAttachable() && IsStockAttached())
+		Detach(GetStockName().c_str(), true);
+	if (ExtenderAttachable() && IsExtenderAttached())
+		Detach(GetExtenderName().c_str(), true);
+	if (ForendAttachable() && IsForendAttached())
+		Detach(GetForendName().c_str(), true);
 }
 
 void CWeaponMagazined::PrepairItem() {

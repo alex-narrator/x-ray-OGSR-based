@@ -388,3 +388,31 @@ inv_grid_y         = 34
 
 
 ammo_mag_size = 4
+
+[wpn_addon_forend_ak74]:identity_immunities
+GroupControlSection	= spawn_group
+discovery_dependency = 
+$spawn			= "weapons\addons\grenade_launcher_m203" ; option for Level Editor
+class			= W_FOREND
+cform           = skeleton
+visual          = weapons\upgrade\wpn_grenade_launcher_m203.ogf
+description		= descr_forend
+$prefetch 		= 32
+
+cost			= 250
+inv_name		= forend
+inv_name_short	= forend_short
+inv_weight		= 0.5
+
+inv_grid_width     = 1
+inv_grid_height    = 1
+inv_grid_x         = 16
+inv_grid_y         = 35
+
+grenade_launcher_allowed 	= true
+laser_allowed 				= false
+flashlight_allowed 			= false
+
+;cam_dispersion_k	= -0.3
+;aim_inertion_k 		= -0.5
+;aim_control_inertion_k = -0.5

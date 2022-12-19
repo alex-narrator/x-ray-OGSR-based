@@ -146,6 +146,11 @@ scope_status				= 2							; 0 - no addon
 silencer_status				= 2;0							; 1 - permanent
 grenade_launcher_status		= 2							; 2 - attachable
 stock_status 				= 2
+forend_status 				= 2
+
+;grenade_launcher_requires_forend = true
+laser_requires_forend = true
+flashlight_requires_forend = true
 
 zoom_enabled				= true						; (on,off)zoom mode (right mouse button)
 
@@ -153,10 +158,6 @@ zoom_enabled				= true						; (on,off)zoom mode (right mouse button)
 scope_name 					= wpn_addon_scope			; section name for the attachable scope
 scope_x 					= 42						; offset in inventory icon
 scope_y 					= 3
-;wpn_addon_scope_x 					= 42						; offset in inventory icon
-;wpn_addon_scope_y 					= 3
-;wpn_addon_scope_susat_x 			= 86						; offset in inventory icon
-;wpn_addon_scope_susat_y 			= 3
 silencer_name  				= wpn_addon_silencer, wpn_addon_muzzle_break		; section name for the attachable silencer
 silencer_x 					= 218						; offset in inventory icon
 silencer_y 					= 13
@@ -170,8 +171,13 @@ stock_name = wpn_addon_stock_ak74
 stock_x = -8
 stock_y = 22
 
+forend_name = wpn_addon_forend_ak74
+forend_x = 126
+forend_y = 13
+
 silencer_installed = 1
 stock_installed = 0
+forend_installed = 0
 
 scope_second = true
 

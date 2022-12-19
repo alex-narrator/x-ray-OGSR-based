@@ -401,20 +401,14 @@ CSE_ALifeItemWeapon::CSE_ALifeItemWeapon	(LPCSTR caSection) : CSE_ALifeItem(caSe
 
 	m_addon_flags.zero			();
 
-	if (pSettings->line_exist(caSection, "scope_status"))
-		m_scope_status				=	(EWeaponAddonStatus)pSettings->r_s32(s_name,"scope_status"				);
-	if (pSettings->line_exist(caSection, "silencer_status"))
-		m_silencer_status			=	(EWeaponAddonStatus)pSettings->r_s32(s_name,"silencer_status"			);
-	if (pSettings->line_exist(caSection, "grenade_launcher_status"))
-		m_grenade_launcher_status	=	(EWeaponAddonStatus)pSettings->r_s32(s_name,"grenade_launcher_status"	);
-	if (pSettings->line_exist(caSection, "laser_status"))
-		m_laser_status				= (EWeaponAddonStatus)pSettings->r_s32(s_name, "laser_status"				);
-	if (pSettings->line_exist(caSection, "flashlight_status"))
-		m_flashlight_status			= (EWeaponAddonStatus)pSettings->r_s32(s_name, "flashlight_status"			);
-	if (pSettings->line_exist(caSection, "stock_status"))
-		m_stock_status				= (EWeaponAddonStatus)pSettings->r_s32(s_name, "stock_status"				);
-	if (pSettings->line_exist(caSection, "extender_status"))
-		m_extender_status			= (EWeaponAddonStatus)pSettings->r_s32(s_name, "extender_status"			);
+	m_scope_status				= (EWeaponAddonStatus)READ_IF_EXISTS(pSettings, r_u8, caSection, "scope_status",			0);
+	m_silencer_status			= (EWeaponAddonStatus)READ_IF_EXISTS(pSettings, r_u8, caSection, "silencer_status",			0);
+	m_grenade_launcher_status	= (EWeaponAddonStatus)READ_IF_EXISTS(pSettings, r_u8, caSection, "grenade_launcher_status",	0);
+	m_laser_status				= (EWeaponAddonStatus)READ_IF_EXISTS(pSettings, r_u8, caSection, "laser_status",			0);
+	m_flashlight_status			= (EWeaponAddonStatus)READ_IF_EXISTS(pSettings, r_u8, caSection, "flashlight_status",		0);
+	m_stock_status				= (EWeaponAddonStatus)READ_IF_EXISTS(pSettings, r_u8, caSection, "stock_status",			0);
+	m_extender_status			= (EWeaponAddonStatus)READ_IF_EXISTS(pSettings, r_u8, caSection, "extender_status",			0);
+	m_forend_status				= (EWeaponAddonStatus)READ_IF_EXISTS(pSettings, r_u8, caSection, "forend_status",			0);
 
 	m_ef_main_weapon_type		= READ_IF_EXISTS(pSettings,r_u32,caSection,"ef_main_weapon_type",u32(-1));
 	m_ef_weapon_type			= READ_IF_EXISTS(pSettings,r_u32,caSection,"ef_weapon_type",u32(-1));
@@ -467,6 +461,12 @@ CSE_ALifeItemWeapon::CSE_ALifeItemWeapon	(LPCSTR caSection) : CSE_ALifeItem(caSe
 			m_cur_extender = pSettings->r_u8(s_name, "extender_installed");
 		}
 	}
+	if (m_forend_status == EWeaponAddonStatus::eAddonAttachable) {
+		if (pSettings->line_exist(caSection, "forend_installed")) {
+			m_addon_flags.set(eWeaponAddonForend, true);
+			m_cur_forend = pSettings->r_u8(s_name, "forend_installed");
+		}
+	}
 }
 
 CSE_ALifeItemWeapon::~CSE_ALifeItemWeapon	()
@@ -505,6 +505,7 @@ void CSE_ALifeItemWeapon::UPDATE_Read(NET_Packet	&tNetPacket)
 		tNetPacket.r_u8		(m_cur_flashlight);
 		tNetPacket.r_u8		(m_cur_stock);
 		tNetPacket.r_u8		(m_cur_extender);
+		tNetPacket.r_u8		(m_cur_forend);
 
 		tNetPacket.r_u32	(m_MagazineSize);
 
@@ -534,6 +535,7 @@ void CSE_ALifeItemWeapon::UPDATE_Write(NET_Packet	&tNetPacket)
 	tNetPacket.w_u8				(m_cur_flashlight);
 	tNetPacket.w_u8				(m_cur_stock);
 	tNetPacket.w_u8				(m_cur_extender);
+	tNetPacket.w_u8				(m_cur_forend);
 
 	tNetPacket.w_u32			(m_MagazineSize);
 
