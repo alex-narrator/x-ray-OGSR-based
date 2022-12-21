@@ -380,6 +380,7 @@ CUIWeaponCellItem::CUIWeaponCellItem(CWeapon* itm)
 	m_addons[eStock]		= nullptr;
 	m_addons[eExtender]		= nullptr;
 	m_addons[eForend]		= nullptr;
+	m_addons[eMagazine]		= nullptr;
 
 	m_cell_size.set(INV_GRID_WIDTHF, INV_GRID_HEIGHTF);
 
@@ -411,6 +412,9 @@ CUIWeaponCellItem::CUIWeaponCellItem(CWeapon* itm)
 
 	if (itm->ForendAttachable())
 		m_addon_offset[eForend].set(object()->GetForendX(), object()->GetForendY());
+
+	if (itm->HasDetachableMagazine())
+		m_addon_offset[eMagazine].set(object()->GetMagazineX(), object()->GetMagazineY());
 }
 
 void CUIWeaponCellItem::UpdateItemText()
@@ -456,6 +460,10 @@ bool CUIWeaponCellItem::is_extender() {
 }
 bool CUIWeaponCellItem::is_forend() {
 	return object()->ForendAttachable() && object()->IsForendAttached();
+}
+bool CUIWeaponCellItem::is_magazine() {
+	return object()->HasDetachableMagazine() && object()->IsMagazineAttached() &&
+		pSettings->line_exist(object()->GetMagazineName(), "mag_icon_sect");
 }
 
 void CUIWeaponCellItem::CreateIcon(eAddonType t, CIconParams &params)
@@ -594,6 +602,19 @@ void CUIWeaponCellItem::Update()
 				DestroyIcon(eForend);
 		}
 	}
+	if (object()->HasDetachableMagazine()) {
+		if (object()->IsMagazineAttached()) {
+			if (!GetIcon(eMagazine) || bForceReInitAddons) {
+				CIconParams params(object()->GetMagazineIconSect());
+				CreateIcon(eMagazine, params);
+				InitAddon(GetIcon(eMagazine), params, m_addon_offset[eMagazine], Heading());
+			}
+		}
+		else {
+			if (m_addons[eMagazine])
+				DestroyIcon(eMagazine);
+		}
+	}
 }
 
 void CUIWeaponCellItem::OnAfterChild(CUIDragDropListEx* parent_list)
@@ -608,8 +629,19 @@ void CUIWeaponCellItem::OnAfterChild(CUIDragDropListEx* parent_list)
 	CUIStatic* s_stock		= is_stock		() ? GetIcon(eStock)		: NULL;
 	CUIStatic* s_extender	= is_extender	() ? GetIcon(eExtender)		: NULL;
 	CUIStatic* s_forend		= is_forend		() ? GetIcon(eForend)		: NULL;
+	CUIStatic* s_magazine	= is_magazine	() ? GetIcon(eMagazine)		: NULL;
 	
-	InitAllAddons(s_silencer, s_scope, s_launcher, s_laser, s_flashlight, s_stock, s_extender, s_forend, parent_list->GetVerticalPlacement());
+	InitAllAddons(
+		s_silencer, 
+		s_scope, 
+		s_launcher, 
+		s_laser, 
+		s_flashlight, 
+		s_stock, 
+		s_extender, 
+		s_forend, 
+		s_magazine, 
+		parent_list->GetVerticalPlacement());
 }
 
 void CUIWeaponCellItem::InitAllAddons(
@@ -621,6 +653,7 @@ void CUIWeaponCellItem::InitAllAddons(
 	CUIStatic* s_stock, 
 	CUIStatic* s_extender,
 	CUIStatic* s_forend,
+	CUIStatic* s_magazine,
 	bool b_vertical)
 {
 	CIconParams params;
@@ -664,6 +697,11 @@ void CUIWeaponCellItem::InitAllAddons(
 		params.Load(object()->GetForendName());
 		params.set_shader(s_forend);
 		InitAddon(s_forend, params, m_addon_offset[eForend], b_vertical);
+	}
+	if (s_magazine) {
+		params.Load(object()->GetMagazineIconSect());
+		params.set_shader(s_magazine);
+		InitAddon(s_magazine, params, m_addon_offset[eMagazine], b_vertical);
 	}
 }
 
@@ -765,6 +803,7 @@ CUIDragItem* CUIWeaponCellItem::CreateDragItem()
 	CUIStatic* s_stock		{};
 	CUIStatic* s_extender	{};
 	CUIStatic* s_forend		{};
+	CUIStatic* s_magazine	{};
 
     if (GetIcon(eSilencer)){
         params.Load(object()->GetSilencerName());
@@ -806,8 +845,23 @@ CUIDragItem* CUIWeaponCellItem::CreateDragItem()
 		s_forend = MakeAddonStatic(i, params);
 	}
 
+	if (GetIcon(eMagazine)) {
+		params.Load(object()->GetMagazineIconSect());
+		s_magazine = MakeAddonStatic(i, params);
+	}
+
 	if (Heading()) m_cell_size.set(m_cell_size.y, m_cell_size.x);   // swap before	
-	InitAllAddons(s_silencer, s_scope, s_launcher, s_laser, s_flashlight, s_stock, s_extender, s_forend, false);
+	InitAllAddons(
+		s_silencer, 
+		s_scope, 
+		s_launcher, 
+		s_laser, 
+		s_flashlight, 
+		s_stock, 
+		s_extender, 
+		s_forend, 
+		s_magazine, 
+		false);
 	if (Heading()) m_cell_size.set(m_cell_size.y, m_cell_size.x);  // swap after
 	
 	return				i;

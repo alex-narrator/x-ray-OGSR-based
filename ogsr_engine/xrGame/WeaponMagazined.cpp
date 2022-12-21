@@ -2117,12 +2117,10 @@ bool CWeaponMagazined::AmmoTypeIsMagazine(u32 type) const{
 }
 
 LPCSTR CWeaponMagazined::GetMagazineEmptySect() const{
-	LPCSTR empty_sect{};
-
 	if (HasDetachableMagazine() && IsMagazineAttached())
-		empty_sect = pSettings->r_string(m_ammoTypes[m_LastLoadedMagType], "empty_box");
-
-	return empty_sect;
+		return pSettings->r_string(GetMagazineName(), "empty_box");
+	else
+		return nullptr;
 }
 
 float CWeaponMagazined::Weight() const{

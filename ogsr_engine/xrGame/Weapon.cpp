@@ -2478,6 +2478,23 @@ int	CWeapon::GetForendY() {
 	return res;
 }
 
+int	CWeapon::GetMagazineX() {
+	int res = pSettings->r_s32(cNameSect(), "magazine_x");
+	string1024 magazine_sect_x;
+	sprintf(magazine_sect_x, "%s_x", GetMagazineName().c_str());
+	if (pSettings->line_exist(cNameSect(), magazine_sect_x))
+		res = pSettings->r_s32(cNameSect(), magazine_sect_x);
+	return res;
+}
+int	CWeapon::GetMagazineY() {
+	int res = pSettings->r_s32(cNameSect(), "magazine_y");
+	string1024 magazine_sect_y;
+	sprintf(magazine_sect_y, "%s_y", GetMagazineName().c_str());
+	if (pSettings->line_exist(cNameSect(), magazine_sect_y))
+		res = pSettings->r_s32(cNameSect(), magazine_sect_y);
+	return res;
+}
+
 float CWeapon::GetHitPowerForActor() const {
 	return fvHitPower[g_SingleGameDifficulty];
 }
@@ -2544,3 +2561,8 @@ void CWeapon::SaveAttachableParams()
 void CWeapon::ParseCurrentItem(CGameFont* F) {
 	F->OutNext("WEAPON IN STRAPPED MODE: [%d]", m_strapped_mode);
 }
+
+const shared_str	CWeapon::GetMagazineIconSect() const {
+	return pSettings->r_string(GetMagazineName(), "mag_icon_sect");
+}
+

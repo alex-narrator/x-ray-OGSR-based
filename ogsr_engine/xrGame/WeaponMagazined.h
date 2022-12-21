@@ -84,12 +84,12 @@ protected:
 	bool			TryReload		();
 
 protected:
-	virtual void	ReloadMagazine	();
-			void	ApplySilencerParams();
-			void	ApplySilencerKoeffs();
-			void	ApplyStockParams();
-			void	ApplyForendParams();
-			void	DetachWForend();
+	virtual void	ReloadMagazine		();
+			void	ApplySilencerParams	();
+			void	ApplySilencerKoeffs	();
+			void	ApplyStockParams	();
+			void	ApplyForendParams	();
+			void	DetachWForend		();
 
 	virtual void	state_Fire		(float dt);
 	virtual void	state_MagEmpty	(float dt);
@@ -165,8 +165,6 @@ protected:
 
 	//у оружия есть патронник
 	bool			m_bHasChamber{ true };
-	//последний заряженный тип магазина
-	u32				m_LastLoadedMagType{};
 	//присоединён ли магазин
 	bool			m_bIsMagazineAttached{ true };
 
@@ -253,9 +251,9 @@ public:
 	//
 	int				GetMagazineCount() const;
 	//
-	virtual bool	IsSingleReloading();
-	virtual bool	AmmoTypeIsMagazine(u32 type) const;
-	LPCSTR			GetMagazineEmptySect() const;
+	virtual bool	IsSingleReloading	();
+	virtual bool	AmmoTypeIsMagazine	(u32 type) const;
+	virtual LPCSTR	GetMagazineEmptySect() const;
 	virtual LPCSTR	GetCurrentMagazine_ShortName();
 
 	//действие передёргивания затвора

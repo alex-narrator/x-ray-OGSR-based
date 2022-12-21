@@ -753,36 +753,11 @@ void CUIMainIngameWnd::SetPickUpItem	(CInventoryItem* PickUpItem)
 	}
 };
 
-#include "UICellCustomItems.h"
 #include "../game_object_space.h"
 #include "../script_callback_ex.h"
 #include "../script_game_object.h"
 #include "../Actor.h"
 
-typedef CUIWeaponCellItem::eAddonType eAddonType;
-
-CUIStatic* init_addon(
-	CUIWeaponCellItem *cell_item,
-	LPCSTR sect,
-	float scale,
-	float scale_x,
-	eAddonType idx)
-{
-	CUIStatic *addon = xr_new<CUIStatic>();
-	addon->SetAutoDelete(true);
-	
-	auto pos = cell_item->get_addon_offset(idx);
-	pos.x	  *= scale *scale_x; 
-	pos.y	  *= scale;
-	
-	CIconParams     params(sect);
-	Frect rect = params.original_rect();			
-	params.set_shader( addon );
-	addon->SetWndRect(pos.x, pos.y, rect.width()*scale*scale_x, rect.height()*scale);
-	addon->SetColor(color_rgba(255, 255, 255, 192));
-
-	return addon;
-}
 
 void CUIMainIngameWnd::UpdatePickUpItem	()
 {
@@ -822,52 +797,8 @@ void CUIMainIngameWnd::UpdatePickUpItem	()
 		(m_iPickUpItemIconHeight - UIPickUpItemIcon.GetHeight())/2);
 
 	UIPickUpItemIcon.SetColor(color_rgba(255,255,255,192));
-	if (auto wpn = smart_cast<CWeapon*>(m_pPickUpItem)){
-		auto cell_item = xr_new<CUIWeaponCellItem>(wpn);
-		CUIStatic* addon_statick{};
 
-		if (wpn->SilencerAttachable() && wpn->IsSilencerAttached()){
-			addon_statick = init_addon(cell_item, wpn->GetSilencerName().c_str(), scale, UI()->get_current_kx(), eAddonType::eSilencer);
-			UIPickUpItemIcon.AttachChild(addon_statick);
-		}
-		
-		if (wpn->ScopeAttachable() && wpn->IsScopeAttached()){
-			addon_statick = init_addon(cell_item, wpn->GetScopeName().c_str(), scale, UI()->get_current_kx(), eAddonType::eScope);
-			UIPickUpItemIcon.AttachChild(addon_statick);
-		}
-		
-		if (wpn->GrenadeLauncherAttachable() && wpn->IsGrenadeLauncherAttached()){
-			addon_statick = init_addon(cell_item, wpn->GetGrenadeLauncherName().c_str(), scale, UI()->get_current_kx(), eAddonType::eLauncher);
-			UIPickUpItemIcon.AttachChild(addon_statick);
-		}
-
-		if (wpn->LaserAttachable() && wpn->IsLaserAttached()) {
-			addon_statick = init_addon(cell_item, wpn->GetLaserName().c_str(), scale, UI()->get_current_kx(), eAddonType::eLaser);
-			UIPickUpItemIcon.AttachChild(addon_statick);
-		}
-
-		if (wpn->FlashlightAttachable() && wpn->IsFlashlightAttached()) {
-			addon_statick = init_addon(cell_item, wpn->GetFlashlightName().c_str(), scale, UI()->get_current_kx(), eAddonType::eFlashlight);
-			UIPickUpItemIcon.AttachChild(addon_statick);
-		}
-
-		if (wpn->StockAttachable() && wpn->IsStockAttached()) {
-			addon_statick = init_addon(cell_item, wpn->GetStockName().c_str(), scale, UI()->get_current_kx(), eAddonType::eStock);
-			UIPickUpItemIcon.AttachChild(addon_statick);
-		}
-
-		if (wpn->ExtenderAttachable() && wpn->IsExtenderAttached()) {
-			addon_statick = init_addon(cell_item, wpn->GetExtenderName().c_str(), scale, UI()->get_current_kx(), eAddonType::eExtender);
-			UIPickUpItemIcon.AttachChild(addon_statick);
-		}
-
-		if (wpn->ForendAttachable() && wpn->IsForendAttached()) {
-			addon_statick = init_addon(cell_item, wpn->GetForendName().c_str(), scale, UI()->get_current_kx(), eAddonType::eForend);
-			UIPickUpItemIcon.AttachChild(addon_statick);
-		}
-
-		delete_data(cell_item);
-	}
+	TryAttachWpnAddonIcons(&UIPickUpItemIcon, m_pPickUpItem, scale);
 
 	// Real Wolf: Колбек для скриптового добавления своих иконок. 10.08.2014.
 	g_actor->callback(GameObject::eUIPickUpItemShowing)(m_pPickUpItem->object().lua_game_object(), &UIPickUpItemIcon);

@@ -102,6 +102,7 @@ public:
 		eStock,
 		eExtender,
 		eForend,
+		eMagazine,
 		eMaxAddon
 	};
 
@@ -122,6 +123,7 @@ protected:
 		CUIStatic* s_stock,
 		CUIStatic* s_extender,
 		CUIStatic* s_forend,
+		CUIStatic* s_magazine,
 		bool b_vertical);
 	bool						is_scope					();
 	bool						is_silencer					();
@@ -131,6 +133,7 @@ protected:
 	bool						is_stock					();
 	bool						is_extender					();
 	bool						is_forend					();
+	bool						is_magazine					();
 public:
 								CUIWeaponCellItem			(CWeapon* itm);
 				virtual			~CUIWeaponCellItem			();

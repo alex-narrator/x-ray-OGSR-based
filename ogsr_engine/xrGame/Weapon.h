@@ -155,7 +155,10 @@ protected:
 	// Weapon fires now
 	bool					bWorking2;
 	// a misfire happens, you'll need to rearm weapon
-	bool					bMisfire;				
+	bool					bMisfire;
+
+	//последний заряженный тип магазина
+	u32						m_LastLoadedMagType{};
 
 //////////////////////////////////////////////////////////////////////////
 //  Weapon Addons
@@ -212,6 +215,9 @@ public:
 	int	GetForendX			();
 	int	GetForendY			();
 
+	int	GetMagazineX		();
+	int	GetMagazineY		();
+
 	const shared_str GetScopeName				() const { return m_scopes		[m_cur_scope]		; }
 	const shared_str GetSilencerName			() const { return m_silencers	[m_cur_silencer]	; }
 	const shared_str GetGrenadeLauncherName		() const { return m_glaunchers	[m_cur_glauncher]	; }
@@ -220,6 +226,9 @@ public:
 	const shared_str GetStockName				() const { return m_stocks		[m_cur_stock]		; }
 	const shared_str GetExtenderName			() const { return m_extenders	[m_cur_extender]	; }
 	const shared_str GetForendName				() const { return m_forends		[m_cur_forend]		; }
+
+	const shared_str GetMagazineName			() const { return m_ammoTypes	[m_LastLoadedMagType]; }
+	const shared_str GetMagazineIconSect		() const;
 
 	u8		GetAddonsState						()		const		{return m_flagsAddOnState;};
 	void	SetAddonsState						(u8 st)	{m_flagsAddOnState=st;}
@@ -650,8 +659,9 @@ public:
 	//какие патроны будут заряжены при смене типа боеприпаса
 	u32	GetNextAmmoType(bool looped);
 	//оружие использует отъёмный магазин
-	virtual bool	HasDetachableMagazine() const { return false; };
-	virtual bool	IsSingleReloading() { return false; };
+	virtual bool		HasDetachableMagazine	() const { return false; };
+	virtual bool		IsMagazineAttached		() const { return false; };
+	virtual bool		IsSingleReloading		() { return false; };
 	//
 	IC void ReloadWeapon() { Reload(); };
 	virtual	bool TryToGetAmmo(u32) { return true; };

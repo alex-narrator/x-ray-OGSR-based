@@ -18,6 +18,8 @@
 #include "UIEatableParams.h"
 #include "UIArmorParams.h"
 
+#include "Weapon.h"
+
 CUIItemInfo::CUIItemInfo(){
 }
 
@@ -141,6 +143,8 @@ void CUIItemInfo::Init(float x, float y, float width, float height, LPCSTR xml_n
     Init			(xml_name);
 }
 
+using namespace InventoryUtilities;
+
 void CUIItemInfo::InitItem(CInventoryItem* pInvItem)
 {
 	m_pInvItem				= pInvItem;
@@ -212,6 +216,8 @@ void CUIItemInfo::InitItem(CInventoryItem* pInvItem)
 		UIItemImage->GetUIStaticItem().SetRect	(v_r);
 		UIItemImage->SetWidth					(_min(v_r.width(),	UIItemImageSize.x));
 		UIItemImage->SetHeight					(_min(v_r.height(),	UIItemImageSize.y));
+
+		TryAttachWpnAddonIcons(UIItemImage, pInvItem);
 	}
 }
 
