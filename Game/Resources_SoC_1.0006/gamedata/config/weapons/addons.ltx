@@ -87,10 +87,10 @@ description		= enc_weapons1_wpn_addon_scope_pgo_7v
 inv_name		= wpn_addon_scope_pgo_7v
 inv_name_short	= wpn_addon_scope_pgo_7v
 inv_weight		= .2
-inv_grid_width		= 1
-inv_grid_height		= 1
-inv_grid_x			= 9
-inv_grid_y			= 33
+inv_grid_width     = 1
+inv_grid_height    = 1
+inv_grid_x         = 25
+inv_grid_y         = 1
 scope_texture			= wpn\crosshairs\anomaly\wpn_crosshair_rpg
 scope_zoom_factor = 2.7
 
@@ -137,10 +137,10 @@ inv_name		= wpn-addon-silencer_long
 inv_name_short	= wpn-addon-silencer_long
 inv_weight		= .1
 
-inv_grid_width		= 1
-inv_grid_height		= 1
-inv_grid_x			= 11
-inv_grid_y			= 22
+inv_grid_width     = 1
+inv_grid_height    = 1
+inv_grid_x         = 24
+inv_grid_y         = 0
 
 condition_shot_dec = 0.01 ;износ глушителя за выстрел
 
@@ -157,6 +157,11 @@ description		= wpn_addon_choke_descr
 inv_name		= wpn-addon-choke
 inv_name_short	= wpn-addon-choke_short
 
+inv_grid_width     = 1
+inv_grid_height    = 1
+inv_grid_x         = 29
+inv_grid_y         = 0
+
 bullet_hit_power_k		= 0.1
 bullet_speed_k 			= 0.1
 fire_dispersion_base_k 	= -0.5
@@ -166,32 +171,42 @@ condition_shot_dec_silencer = 2 ;коефіцієнт зношування зб�
 
 show_on_model = false
 
-[wpn_addon_muzzle_break]:identity_immunities
+[wpn_addon_muzzle_break_ak74]:identity_immunities
 GroupControlSection	= spawn_group
 discovery_dependency = 
 $spawn			= "weapons\addons\silencer" ; option for Level Editor
 class			= W_SILENC
 cform           = skeleton
 visual          = weapons\upgrade\wpn_silencer.ogf
-description		= enc_weapons1_wpn-addon-silencer
+description		= muzzle_break_ak74
 $prefetch 		= 32
 
-description		= muzzle_break
-inv_name		= wpn-muzzle_break-choke
-inv_name_short	= muzzle_break_short
+description		= descr_muzzle_break_ak74
+inv_name		= muzzle_break_ak74
+inv_name_short	= muzzle_break_ak74_short
 
 inv_weight		= 0.1
 cost = 100
 
 inv_grid_width     = 1
 inv_grid_height    = 1
-inv_grid_x         = 16
-inv_grid_y         = 29
+inv_grid_x         = 20
+inv_grid_y         = 0
 
 ;fire_dispersion_base_k = -0.5
 cam_dispersion_k	= -0.2
 
 show_on_model = false
+
+[wpn_addon_muzzle_break_lr300]:wpn_addon_muzzle_break_ak74
+description		= descr_muzzle_break_lr300
+description		= muzzle_break_lr300
+inv_name		= muzzle_break_lr300
+inv_name_short	= muzzle_break_lr300_short
+inv_grid_width     = 1
+inv_grid_height    = 1
+inv_grid_x         = 21
+inv_grid_y         = 0
 
 [wpn_addon_grenade_launcher]:identity_immunities
 GroupControlSection	= spawn_group
@@ -252,10 +267,10 @@ inv_name		= wpn-addon-laser_red
 inv_name_short	= wpn-addon-laser_red
 inv_weight		= .1
 
-inv_grid_width		= 1
-inv_grid_height		= 1
-inv_grid_x			= 18
-inv_grid_y			= 1
+inv_grid_width     = 1
+inv_grid_height    = 1
+inv_grid_x         = 32
+inv_grid_y         = 0
 
 snd_laser_switch	= weapons\pistol_empty
 
@@ -283,10 +298,10 @@ inv_name		= wpn-addon-flashlight
 inv_name_short	= wpn-addon-flashlight
 inv_weight		= .1
 
-inv_grid_width		= 1
-inv_grid_height		= 1
-inv_grid_x			= 18
-inv_grid_y			= 1
+inv_grid_width     = 1
+inv_grid_height    = 1
+inv_grid_x         = 31
+inv_grid_y         = 0
 
 snd_flashlight_switch	= weapons\pistol_empty
 
@@ -334,23 +349,32 @@ $spawn			= "weapons\addons\grenade_launcher_m203" ; option for Level Editor
 class			= W_STOCK
 cform           = skeleton
 visual          = weapons\upgrade\wpn_grenade_launcher_m203.ogf
-description		= descr_stock
+description		= descr_stock_ak74
 $prefetch 		= 32
 
 cost					 = 250
-inv_name		= stock
-inv_name_short	= stock_short
+inv_name		= stock_ak74
+inv_name_short	= stock_ak74_short
 inv_weight		= 0.5
 
 inv_grid_width     = 2
 inv_grid_height    = 1
-inv_grid_x         = 12
-inv_grid_y         = 29
+inv_grid_x         = 20
+inv_grid_y         = 3
 
 cam_dispersion_k	= -0.3
 zoom_rotate_time_k 	= -0.1
 aim_inertion_k 		= -0.5
 ;aim_control_inertion_k = -0.5
+
+[wpn_addon_stock_lr300]:wpn_addon_stock_ak74
+description		= descr_stock_lr300
+inv_name		= stock_lr300
+inv_name_short	= stock_lr300_short
+inv_grid_width     = 2
+inv_grid_height    = 1
+inv_grid_x         = 22
+inv_grid_y         = 4
 
 [wpn_addon_extender_2]:identity_immunities
 GroupControlSection	= spawn_group
@@ -369,8 +393,8 @@ inv_weight		= 0.5
 
 inv_grid_width     = 1
 inv_grid_height    = 1
-inv_grid_x         = 17
-inv_grid_y         = 34
+inv_grid_x         = 31
+inv_grid_y         = 0
 
 ammo_mag_size = 2
 
@@ -383,8 +407,8 @@ inv_weight		= 0.5
 
 inv_grid_width     = 1
 inv_grid_height    = 1
-inv_grid_x         = 16
-inv_grid_y         = 34
+inv_grid_x         = 30
+inv_grid_y         = 0
 
 
 ammo_mag_size = 4
@@ -396,18 +420,18 @@ $spawn			= "weapons\addons\grenade_launcher_m203" ; option for Level Editor
 class			= W_FOREND
 cform           = skeleton
 visual          = weapons\upgrade\wpn_grenade_launcher_m203.ogf
-description		= descr_forend
+description		= descr_forend_ak74
 $prefetch 		= 32
 
 cost			= 250
-inv_name		= forend
-inv_name_short	= forend_short
+inv_name		= forend_ak74
+inv_name_short	= forend_ak74_short
 inv_weight		= 0.5
 
 inv_grid_width     = 1
 inv_grid_height    = 1
-inv_grid_x         = 16
-inv_grid_y         = 35
+inv_grid_x         = 26
+inv_grid_y         = 1
 
 grenade_launcher_allowed 	= true
 laser_allowed 				= false
@@ -416,3 +440,12 @@ flashlight_allowed 			= false
 ;cam_dispersion_k	= -0.3
 ;aim_inertion_k 		= -0.5
 ;aim_control_inertion_k = -0.5
+
+[wpn_addon_forend_lr300]:wpn_addon_forend_ak74
+description		= descr_forend_lr300
+inv_name		= forend_lr300
+inv_name_short	= forend_lr300_short
+inv_grid_width     = 1
+inv_grid_height    = 1
+inv_grid_x         = 27
+inv_grid_y         = 1

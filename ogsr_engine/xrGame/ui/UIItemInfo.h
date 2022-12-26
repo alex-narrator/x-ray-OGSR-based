@@ -24,7 +24,7 @@ private:
 		u32					uDescClr;
 		bool				bShowDescrText;
 	} m_desc_info{};
-	CInventoryItem* m_pInvItem;
+	CInventoryItem* m_pInvItem{};
 public:
 						CUIItemInfo			();
 	virtual				~CUIItemInfo		();

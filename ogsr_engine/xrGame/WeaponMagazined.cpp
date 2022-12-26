@@ -256,10 +256,8 @@ void CWeaponMagazined::Load	(LPCSTR section)
 
 void CWeaponMagazined::FireStart		()
 {
-	if(IsValid() && !IsMisfire()) 
-	{
-		if(!IsWorking() || AllowFireWhileWorking())
-		{
+	if(IsValid() && !IsMisfire()) {
+		if(!IsWorking() || AllowFireWhileWorking()){
 			if(GetState()==eReload) return;
 			if(GetState()==eShowing) return;
 			if(GetState()==eHiding) return;
@@ -273,12 +271,10 @@ void CWeaponMagazined::FireStart		()
 				SwitchState(eFire);
 		}
 	}
-	else if ( IsMisfire() ) 
-	{
-		if (smart_cast<CActor*>(H_Parent()) && Level().CurrentViewEntity() == H_Parent())
-		{
-			HUD().GetUI()->AddInfoMessage("item_state", "gun_jammed");
-		}
+	else if (IsMisfire()) {
+		//if (smart_cast<CActor*>(H_Parent()) && Level().CurrentViewEntity() == H_Parent()){
+		//	HUD().GetUI()->AddInfoMessage("item_state", "gun_jammed");
+		//}
 	  OnEmptyClick();
 	  // Callbacks added by Cribbledirge.
 	  StateSwitchCallback( GameObject::eOnActorWeaponJammed, GameObject::eOnNPCWeaponJammed );
@@ -477,9 +473,9 @@ void CWeaponMagazined::OnStateSwitch(u32 S, u32 oldState)
 		switch2_Fire2	();
 		break;
 	case eMisfire:
-		if (smart_cast<CActor*>(H_Parent()) && (Level().CurrentViewEntity() == H_Parent())) {
-			HUD().GetUI()->AddInfoMessage("item_state", "gun_jammed");
-		}
+		//if (smart_cast<CActor*>(H_Parent()) && (Level().CurrentViewEntity() == H_Parent())) {
+		//	HUD().GetUI()->AddInfoMessage("item_state", "gun_jammed");
+		//}
 		// Callbacks added by Cribbledirge.
 		StateSwitchCallback(GameObject::eOnActorWeaponJammed, GameObject::eOnNPCWeaponJammed);
 		break;
@@ -1817,6 +1813,10 @@ void CWeaponMagazined::net_Export( CSE_Abstract* E ) {
 #include "ui/UIMainIngameWnd.h"
 void CWeaponMagazined::GetBriefInfo(xr_string& str_name, xr_string& icon_sect_name, xr_string& str_count)
 {
+	if (IsMisfire() && smart_cast<CActor*>(H_Parent()) && (Level().CurrentViewEntity() == H_Parent())) {
+		HUD().GetUI()->AddInfoMessage("item_state", "gun_jammed");
+	}
+
 	auto CurrentHUD		= HUD().GetUI()->UIMainIngameWnd;
 	bool b_wpn_info		= CurrentHUD->IsHUDElementAllowed(eActiveItem);
 	bool b_gear_info	= CurrentHUD->IsHUDElementAllowed(eGear);
@@ -1831,7 +1831,7 @@ void CWeaponMagazined::GetBriefInfo(xr_string& str_name, xr_string& icon_sect_na
 		icon_sect_name = b_use_mags && IsMagazineAttached() && (b_gear_info && !b_wpn_info) ? GetMagazineEmptySect() : m_magazine.back().m_ammoSect.c_str();
 
 	string256 sItemName;
-	strcpy_s(sItemName, *CStringTable().translate(AE > 0 ? pSettings->r_string(icon_sect_name.c_str(), "inv_name_short") : "st_not_loaded"));
+	strcpy_s(sItemName, CStringTable().translate(AE > 0 ? pSettings->r_string(icon_sect_name.c_str(), "inv_name_short") : "st_not_loaded").c_str());
 
 	if (HasFireModes() && b_wpn_info)
 		strcat_s(sItemName, GetCurrentFireModeStr());
@@ -1843,14 +1843,29 @@ void CWeaponMagazined::GetBriefInfo(xr_string& str_name, xr_string& icon_sect_na
 	//str_count = std::regex_replace(str_count, ae_re, std::to_string(AE));
 	//str_count = std::regex_replace(str_count, ac_re, unlimited_ammo() ? "--" : std::to_string(b_use_mags ? AC : AC - AE));
 
+	string256 sAmmoInMag{};
+	bool b_show_count{true};
+	if (b_use_mags && IsMagazineAttached()) {
+		b_show_count = READ_IF_EXISTS(pSettings, r_bool, GetMagazineEmptySect(), "ammo_counter", false);
+		if(!b_show_count)
+			sprintf(sAmmoInMag, "%s", CStringTable().translate(GetAmmoElapsedStr()).c_str());
+		else
+			sprintf(sAmmoInMag, "%d", AE);
+	}
+	else
+		sprintf(sAmmoInMag, "%d", AE);
+
 	if (b_wpn_info && b_gear_info)
-		sprintf_s(sItemName, "%d|%d", AE, b_use_mags ? AC : AC - AE);
+		sprintf_s(sItemName, "[%s]%d", sAmmoInMag, b_use_mags ? AC : AC - AE);
 	else if (b_wpn_info)
-		sprintf_s(sItemName, "[%d]", AE);
+		sprintf_s(sItemName, "[%s]", sAmmoInMag);
 	else if (b_gear_info)
 		sprintf_s(sItemName, "%d", b_use_mags ? AC : AC - AE);
 	else if (unlimited_ammo())
-		sprintf_s(sItemName, "%d|--", AE);
+		sprintf_s(sItemName, "[%s]--", sAmmoInMag);
+
+	//if(b_wpn_info && !b_show_count && smart_cast<CActor*>(H_Parent()) && (Level().CurrentViewEntity() == H_Parent()))
+	//	HUD().GetUI()->AddInfoMessage("item_usage", GetAmmoElapsedStr().c_str());
 
 	str_count = sItemName;
 }
@@ -1941,7 +1956,7 @@ void CWeaponMagazined::HandleCartridgeInChamber()
 	if (!HasChamber() || !HasDetachableMagazine() || m_magazine.empty())
 		return;
 	//отстрел и заряжание нового патрона идёт от конца вектора m_magazine.back() - первым подаётся последний добавленный патрон
-	if (*m_magazine.back().m_ammoSect != *m_magazine.front().m_ammoSect) //первый и последний патрон различны, значит зарядка смешанная
+	if (m_magazine.back().m_ammoSect != m_magazine.front().m_ammoSect) //первый и последний патрон различны, значит зарядка смешанная
 	{//конец заряжания магазина
 		//перекладываем патрон отличного типа (первый заряженный, он же последний на отстрел) из начала вектора в конец
 		//Msg("~~ weapon:[%s]|back:[%s]|front:[%s]|[1]:[%s] on reloading", Name_script(), *m_magazine.back().m_ammoSect, *m_magazine.front().m_ammoSect, *m_magazine[1].m_ammoSect);
@@ -2309,4 +2324,17 @@ void CWeaponMagazined::UnloadAndDetachAllAddons(bool skip_animation) {
 void CWeaponMagazined::PrepairItem() {
 	UnloadAndDetachAllAddons(true);
 	inherited::PrepairItem();
+}
+
+shared_str	CWeaponMagazined::GetAmmoElapsedStr() const {
+	if (iAmmoElapsed == iMagazineSize)
+		return "st_mag_full";
+	else if (iAmmoElapsed == 0)
+		return "st_mag_empty";
+	else if (iAmmoElapsed >= iMagazineSize * 0.75f)
+		return "st_mag_quarter_empty";
+	else if (iAmmoElapsed <= iMagazineSize * 0.25f)
+		return "st_mag_quarter_full";
+	else
+		return "st_mag_half_full";
 }

@@ -463,7 +463,7 @@ bool CUIWeaponCellItem::is_forend() {
 }
 bool CUIWeaponCellItem::is_magazine() {
 	return object()->HasDetachableMagazine() && object()->IsMagazineAttached() &&
-		pSettings->line_exist(object()->GetMagazineName(), "mag_icon_sect");
+		!!object()->GetMagazineIconSect();//pSettings->line_exist(object()->GetMagazineName(), "mag_icon_sect");
 }
 
 void CUIWeaponCellItem::CreateIcon(eAddonType t, CIconParams &params)
@@ -603,7 +603,7 @@ void CUIWeaponCellItem::Update()
 		}
 	}
 	if (object()->HasDetachableMagazine()) {
-		if (object()->IsMagazineAttached()) {
+		if (object()->IsMagazineAttached() && !!object()->GetMagazineIconSect()) {
 			if (!GetIcon(eMagazine) || bForceReInitAddons) {
 				CIconParams params(object()->GetMagazineIconSect());
 				CreateIcon(eMagazine, params);

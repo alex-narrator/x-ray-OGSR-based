@@ -191,6 +191,7 @@ public:
 	virtual bool	HasFireModes		() { return m_bHasDifferentFireModes; };
 	virtual	int		GetCurrentFireMode	() const { return m_bHasDifferentFireModes ? m_aFireModes[m_iCurFireMode] : 1; };
 	virtual LPCSTR	GetCurrentFireModeStr	() {return m_sCurFireMode;};
+	virtual shared_str	GetAmmoElapsedStr	() const;
 
 	virtual void	save				(NET_Packet &output_packet);
 	virtual void	load				(IReader &input_packet);

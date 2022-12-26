@@ -893,4 +893,21 @@
 	<string id="st_armor_hit_fraction">
 		<text>«аброньова травма</text>
 	</string>		
+	
+	<string id="st_mag_full">
+		<text>ХХХХ</text>
+	</string>	
+	<string id="st_mag_empty">
+		<text>∞∞∞∞</text>
+	</string>	
+	<string id="st_mag_quarter_empty">
+		<text>ХХХ∞</text>
+	</string>	
+	<string id="st_mag_quarter_full">
+		<text>Х∞∞∞</text>
+	</string>	
+	<string id="st_mag_half_full">
+		<text>ХХ∞∞</text>
+	</string>		
+	
 </string_table>

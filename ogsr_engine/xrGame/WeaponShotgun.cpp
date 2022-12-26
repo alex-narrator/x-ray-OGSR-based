@@ -62,10 +62,8 @@ void CWeaponShotgun::Fire2Start ()
 
 	inherited::Fire2Start();
 
-	if (IsValid() && !IsMisfire())
-	{
-		if (!IsWorking())
-		{
+	if (IsValid() && !IsMisfire()){
+		if (!IsWorking()){
 			if (GetState()==eReload)		return;
 			if (GetState()==eShowing)		return;
 			if (GetState()==eHiding)		return;
@@ -78,12 +76,10 @@ void CWeaponShotgun::Fire2Start ()
 				SwitchState((iAmmoElapsed < iMagazineSize)?eFire:eFire2);
 		}
 	}
-	else if (IsMisfire())
-	{
-		if (smart_cast<CActor*>(this->H_Parent()) && (Level().CurrentViewEntity() == H_Parent()))
-		{
-			HUD().GetUI()->AddInfoMessage("item_state", "gun_jammed");
-		}
+	else if (IsMisfire()){
+		//if (smart_cast<CActor*>(this->H_Parent()) && (Level().CurrentViewEntity() == H_Parent())){
+		//	HUD().GetUI()->AddInfoMessage("item_state", "gun_jammed");
+		//}
 		// Callbacks added by Cribbledirge.
 		StateSwitchCallback(GameObject::eOnActorWeaponJammed, GameObject::eOnNPCWeaponJammed);
 	}

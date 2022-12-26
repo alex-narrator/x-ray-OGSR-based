@@ -2479,7 +2479,7 @@ int	CWeapon::GetForendY() {
 }
 
 int	CWeapon::GetMagazineX() {
-	int res = pSettings->r_s32(cNameSect(), "magazine_x");
+	int res = READ_IF_EXISTS(pSettings, r_s32, cNameSect(), "magazine_x", 0);
 	string1024 magazine_sect_x;
 	sprintf(magazine_sect_x, "%s_x", GetMagazineName().c_str());
 	if (pSettings->line_exist(cNameSect(), magazine_sect_x))
@@ -2487,7 +2487,7 @@ int	CWeapon::GetMagazineX() {
 	return res;
 }
 int	CWeapon::GetMagazineY() {
-	int res = pSettings->r_s32(cNameSect(), "magazine_y");
+	int res = READ_IF_EXISTS(pSettings, r_s32, cNameSect(), "magazine_y", 0);
 	string1024 magazine_sect_y;
 	sprintf(magazine_sect_y, "%s_y", GetMagazineName().c_str());
 	if (pSettings->line_exist(cNameSect(), magazine_sect_y))
@@ -2562,7 +2562,7 @@ void CWeapon::ParseCurrentItem(CGameFont* F) {
 	F->OutNext("WEAPON IN STRAPPED MODE: [%d]", m_strapped_mode);
 }
 
-const shared_str	CWeapon::GetMagazineIconSect() const {
-	return pSettings->r_string(GetMagazineName(), "mag_icon_sect");
+const shared_str CWeapon::GetMagazineIconSect() const {
+	return READ_IF_EXISTS(pSettings, r_string, GetMagazineName(), "mag_icon_sect", nullptr);//pSettings->r_string(GetMagazineName(), "mag_icon_sect");
 }
 

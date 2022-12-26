@@ -520,8 +520,8 @@ protected:
 	int GetAmmoCount( u8 ammo_type, u32 = 0 ) const;
 
 public:
-	IC int					GetAmmoElapsed		()	const		{	return /*int(m_magazine.size())*/iAmmoElapsed;}
-	IC int					GetAmmoMagSize		()	const		{	return iMagazineSize;						}
+	IC int					GetAmmoElapsed		()	const		{	return iAmmoElapsed; }
+	IC int					GetAmmoMagSize		()	const		{	return iMagazineSize;}
 	int						GetAmmoCurrent		(bool use_item_to_spawn = false)  const;
 	IC void					SetAmmoMagSize		(int _size) { iMagazineSize = _size; }
 

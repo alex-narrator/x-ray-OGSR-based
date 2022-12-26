@@ -147,9 +147,11 @@ silencer_status				= 2;0							; 1 - permanent
 grenade_launcher_status		= 2							; 2 - attachable
 stock_status 				= 2
 forend_status 				= 2
+laser_status 				= 2
+flashlight_status 			= 2
 
 ;grenade_launcher_requires_forend = true
-laser_requires_forend = true
+;laser_requires_forend = true
 flashlight_requires_forend = true
 
 zoom_enabled				= true						; (on,off)zoom mode (right mouse button)
@@ -158,11 +160,14 @@ zoom_enabled				= true						; (on,off)zoom mode (right mouse button)
 scope_name 					= wpn_addon_scope			; section name for the attachable scope
 scope_x 					= 42						; offset in inventory icon
 scope_y 					= 3
-silencer_name  				= wpn_addon_silencer, wpn_addon_muzzle_break		; section name for the attachable silencer
+
+silencer_name  				= wpn_addon_silencer, wpn_addon_muzzle_break_ak74		; section name for the attachable silencer
+silencer_installed 			= 1
 silencer_x 					= 218						; offset in inventory icon
 silencer_y 					= 13
-wpn_addon_muzzle_break_x 		= 204
-wpn_addon_muzzle_break_y 		= 15				
+wpn_addon_muzzle_break_ak74_x 		= 204
+wpn_addon_muzzle_break_ak74_y 		= 15				
+
 grenade_launcher_name 		= wpn_addon_grenade_launcher; section name for the attachable grenade launcher
 grenade_launcher_x 			= 116						; offset in inventory icon
 grenade_launcher_y 			= 23
@@ -171,16 +176,22 @@ magazine_x = 104
 magazine_y = 49
 
 stock_name = wpn_addon_stock_ak74
+stock_installed = 0
 stock_x = -8
 stock_y = 22
 
 forend_name = wpn_addon_forend_ak74
+forend_installed = 0
 forend_x = 126
 forend_y = 13
 
-silencer_installed = 1
-stock_installed = 0
-forend_installed = 0
+laser_name = wpn_addon_laser_red, wpn_addon_laser_green
+laser_x = 157
+laser_y = 14
+
+flashlight_name = wpn_addon_flashlight
+flashlight_x = 183
+flashlight_y = 23
 
 scope_second = true
 
