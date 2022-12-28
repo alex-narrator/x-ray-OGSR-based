@@ -919,6 +919,14 @@ void CWeapon::UpdateCL		()
 	}
 }
 
+void SetToScreenCenter(Fvector& dir, Fvector& pos, float distance, CWeapon* wpn) {
+	auto pActor = smart_cast<CActor*>(wpn->H_Parent());
+	if (!pActor) return;
+	dir = pActor->Cameras().Direction();
+	pos = pActor->Cameras().Position();
+	pos.mad(pos, dir, distance);
+}
+
 void CWeapon::UpdateLaser()
 {
 	if (IsLaserAttached())
@@ -938,6 +946,10 @@ void CWeapon::UpdateLaser()
 			Fvector laser_dir = get_LastFD();
 
 			if (GetHUDmode()) {
+				if (IsZoomed() && !IsRotatingToZoom()) {
+					SetToScreenCenter(laser_dir, laser_pos, laserdot_attach_aim_dist, this);
+
+				}else
 				if (laserdot_attach_bone.size()) {
 					GetBoneOffsetPosDir(laserdot_attach_bone, laser_pos, laser_dir, laserdot_attach_offset);
 					CorrectDirFromWorldToHud(laser_dir);
@@ -988,14 +1000,20 @@ void CWeapon::UpdateFlashlight()
 		}
 
 		if (flashlight_render->get_active()) {
-			Fvector flashlight_pos_omni, flashlight_dir, flashlight_dir_omni;
+			Fvector flashlight_pos_omni{}, flashlight_dir{}, flashlight_dir_omni{};
 
 			if (GetHUDmode()) {
-				GetBoneOffsetPosDir(flashlight_attach_bone, flashlight_pos, flashlight_dir, flashlight_attach_offset);
-				CorrectDirFromWorldToHud(flashlight_dir);
+				if (IsZoomed() && !IsRotatingToZoom()) {
+					SetToScreenCenter(flashlight_dir, flashlight_pos, flashlight_attach_aim_dist, this);
+					SetToScreenCenter(flashlight_dir_omni, flashlight_pos_omni, flashlight_attach_aim_dist, this);
+				}
+				else {
+					GetBoneOffsetPosDir(flashlight_attach_bone, flashlight_pos, flashlight_dir, flashlight_attach_offset);
+					CorrectDirFromWorldToHud(flashlight_dir);
 
-				GetBoneOffsetPosDir(flashlight_attach_bone, flashlight_pos_omni, flashlight_dir_omni, flashlight_omni_attach_offset);
-				CorrectDirFromWorldToHud(flashlight_dir_omni);
+					GetBoneOffsetPosDir(flashlight_attach_bone, flashlight_pos_omni, flashlight_dir_omni, flashlight_omni_attach_offset);
+					CorrectDirFromWorldToHud(flashlight_dir_omni);
+				}
 			}
 			else {
 				flashlight_dir = get_LastFD();

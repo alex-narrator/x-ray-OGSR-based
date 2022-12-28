@@ -19,7 +19,7 @@ enum HUD_ADJUST_MODE : int {
 	SHELL_POINT,
 	ADJUST_DELTA_POS,
 	ADJUST_DELTA_ROT,
-	LASETDOT_POS,
+	LASERDOT_POS,
 	FLASHLIGHT_POS,
 	_HUD_ADJUST_MODES_COUNT_
 };
@@ -134,7 +134,7 @@ void attachable_hud_item::tune(const Ivector& values) {
 		}
 	}
 
-	if (g_bHudAdjustMode == FIRE_POINT || g_bHudAdjustMode == FIRE_POINT2 || g_bHudAdjustMode == SHELL_POINT || g_bHudAdjustMode == LASETDOT_POS || g_bHudAdjustMode == FLASHLIGHT_POS)
+	if (g_bHudAdjustMode == FIRE_POINT || g_bHudAdjustMode == FIRE_POINT2 || g_bHudAdjustMode == SHELL_POINT || g_bHudAdjustMode == LASERDOT_POS || g_bHudAdjustMode == FLASHLIGHT_POS)
 	{
 		if (values.x)	diff.x = (values.x > 0) ? g_bHudAdjustDeltaPos : -g_bHudAdjustDeltaPos;
 		if (values.y)	diff.y = (values.y > 0) ? g_bHudAdjustDeltaPos : -g_bHudAdjustDeltaPos;
@@ -146,9 +146,9 @@ void attachable_hud_item::tune(const Ivector& values) {
 			m_measures.m_fire_point2_offset.add(diff);
 		else if (g_bHudAdjustMode == SHELL_POINT)
 			m_measures.m_shell_point_offset.add(diff);
-		else if (g_bHudAdjustMode == LASETDOT_POS) {
+		else if (g_bHudAdjustMode == LASERDOT_POS) {
 			if (auto Wpn = smart_cast<CWeapon*>(m_parent_hud_item))
-				Wpn->laserdot_attach_offset.add(diff);
+					Wpn->laserdot_attach_offset.add(diff);
 		}
 		else if (g_bHudAdjustMode == FLASHLIGHT_POS) {
 			if (auto Wpn = smart_cast<CWeapon*>(m_parent_hud_item))
@@ -173,7 +173,7 @@ void attachable_hud_item::tune(const Ivector& values) {
 void attachable_hud_item::debug_draw_firedeps() {
 	const bool bForce = g_bHudAdjustMode == ITM_POS || g_bHudAdjustMode == ITM_ROT;
 
-	if (g_bHudAdjustMode == FIRE_POINT || g_bHudAdjustMode == FIRE_POINT2 || g_bHudAdjustMode == SHELL_POINT || g_bHudAdjustMode == LASETDOT_POS || g_bHudAdjustMode == FLASHLIGHT_POS || bForce) {
+	if (g_bHudAdjustMode == FIRE_POINT || g_bHudAdjustMode == FIRE_POINT2 || g_bHudAdjustMode == SHELL_POINT || g_bHudAdjustMode == LASERDOT_POS || g_bHudAdjustMode == FLASHLIGHT_POS || bForce) {
 		auto& render = Level().debug_renderer();
 
 		firedeps fd;
@@ -189,7 +189,7 @@ void attachable_hud_item::debug_draw_firedeps() {
 		else if (g_bHudAdjustMode == SHELL_POINT) {
 			render.draw_aabb(fd.vLastSP, 0.01f, 0.01f, 0.01f, D3DCOLOR_XRGB(0, 255, 0));
 		}
-		else if (g_bHudAdjustMode == LASETDOT_POS) {
+		else if (g_bHudAdjustMode == LASERDOT_POS) {
 			if (auto Wpn = smart_cast<CWeapon*>(m_parent_hud_item))
 				render.draw_aabb(Wpn->laser_pos, 0.01f, 0.01f, 0.01f, D3DCOLOR_XRGB(125, 0, 0));
 		}

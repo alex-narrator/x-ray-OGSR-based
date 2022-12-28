@@ -174,6 +174,8 @@ protected:
 
 	const char*		m_str_count_tmpl{};
 
+	bool			m_bShowAmmoCounter{};
+
 	// режим выделения рамкой противников
 protected:
 	bool					m_bVision{};
@@ -192,6 +194,8 @@ public:
 	virtual	int		GetCurrentFireMode	() const { return m_bHasDifferentFireModes ? m_aFireModes[m_iCurFireMode] : 1; };
 	virtual LPCSTR	GetCurrentFireModeStr	() {return m_sCurFireMode;};
 	virtual shared_str	GetAmmoElapsedStr	() const;
+
+	virtual bool	ShowAmmoCounter		() const;
 
 	virtual void	save				(NET_Packet &output_packet);
 	virtual void	load				(IReader &input_packet);

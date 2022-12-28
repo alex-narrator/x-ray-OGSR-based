@@ -252,6 +252,8 @@ void CWeaponMagazined::Load	(LPCSTR section)
 
 	if (pSettings->line_exist(section, "has_chamber"))
 		m_bHasChamber = !!pSettings->r_bool(section, "has_chamber");
+
+	m_bShowAmmoCounter = READ_IF_EXISTS(pSettings, r_bool, section, "ammo_counter", true);
 }
 
 void CWeaponMagazined::FireStart		()
@@ -1459,10 +1461,11 @@ void CWeaponMagazined::LoadLaserParams(LPCSTR section) {
 		return;
 
 	shared_str wpn_sect				= cNameSect();
-	laserdot_attach_bone			= READ_IF_EXISTS(pSettings, r_string, wpn_sect, "laserdot_attach_bone", "wpn_body");
+	laserdot_attach_bone			= READ_IF_EXISTS(pSettings, r_string, wpn_sect, "laserdot_attach_bone", /*"wpn_body"*/nullptr);
 	Fvector fvec_def{};
 	laserdot_attach_offset			= READ_IF_EXISTS(pSettings, r_fvector3, wpn_sect, "laserdot_attach_offset",			fvec_def);
 	laserdot_world_attach_offset	= READ_IF_EXISTS(pSettings, r_fvector3, wpn_sect, "laserdot_world_attach_offset",	fvec_def);
+	laserdot_attach_aim_dist		= READ_IF_EXISTS(pSettings, r_float, wpn_sect, "laserdot_attach_aim_dist", 0.5f);
 
 	const bool b_r2 = psDeviceFlags.test(rsR2) || psDeviceFlags.test(rsR3) || psDeviceFlags.test(rsR4);
 
@@ -1498,6 +1501,7 @@ void CWeaponMagazined::LoadFlashlightParams(LPCSTR section) {
 	flashlight_omni_attach_offset		= READ_IF_EXISTS(pSettings, r_fvector3, wpn_sect, "torch_omni_attach_offset",		fvec_def);
 	flashlight_world_attach_offset		= READ_IF_EXISTS(pSettings, r_fvector3, wpn_sect, "torch_world_attach_offset",		fvec_def);
 	flashlight_omni_world_attach_offset = READ_IF_EXISTS(pSettings, r_fvector3, wpn_sect, "torch_omni_world_attach_offset",	fvec_def);
+	flashlight_attach_aim_dist			= READ_IF_EXISTS(pSettings, r_float, wpn_sect,	"torch_attach_aim_dist", 0.5f);
 
 	const bool b_r2 = psDeviceFlags.test(rsR2) || psDeviceFlags.test(rsR3) || psDeviceFlags.test(rsR4);
 
@@ -1844,16 +1848,10 @@ void CWeaponMagazined::GetBriefInfo(xr_string& str_name, xr_string& icon_sect_na
 	//str_count = std::regex_replace(str_count, ac_re, unlimited_ammo() ? "--" : std::to_string(b_use_mags ? AC : AC - AE));
 
 	string256 sAmmoInMag{};
-	bool b_show_count{true};
-	if (b_use_mags && IsMagazineAttached()) {
-		b_show_count = READ_IF_EXISTS(pSettings, r_bool, GetMagazineEmptySect(), "ammo_counter", false);
-		if(!b_show_count)
-			sprintf(sAmmoInMag, "%s", CStringTable().translate(GetAmmoElapsedStr()).c_str());
-		else
-			sprintf(sAmmoInMag, "%d", AE);
-	}
-	else
+	if(ShowAmmoCounter())
 		sprintf(sAmmoInMag, "%d", AE);
+	else
+		sprintf(sAmmoInMag, "%s", CStringTable().translate(GetAmmoElapsedStr()).c_str());
 
 	if (b_wpn_info && b_gear_info)
 		sprintf_s(sItemName, "[%s]%d", sAmmoInMag, b_use_mags ? AC : AC - AE);
@@ -2337,4 +2335,12 @@ shared_str	CWeaponMagazined::GetAmmoElapsedStr() const {
 		return "st_mag_quarter_full";
 	else
 		return "st_mag_half_full";
+}
+
+bool CWeaponMagazined::ShowAmmoCounter() const {
+	if (HasDetachableMagazine() && IsMagazineAttached()) {
+		bool res = READ_IF_EXISTS(pSettings, r_bool, GetMagazineEmptySect(), "ammo_counter", false);
+		return res;
+	}
+	return m_bShowAmmoCounter;
 }
