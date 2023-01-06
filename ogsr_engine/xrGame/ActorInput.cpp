@@ -236,29 +236,29 @@ void CActor::IR_OnKeyboardPress(int cmd){
 			if (itm) {
 				string1024			str;
 
-				if (itm->cast_eatable_item())
-				{
+				if (itm->cast_eatable_item()){
 					inventory().TryToHideWeapon(true, false);
 					//
 					bool SearchRuck = !psActorFlags.test(AF_QUICK_FROM_BELT);
 					PIItem iitm = inventory().GetSame(itm, SearchRuck);
 
-					if (iitm)
-					{
+					if (iitm){
 						inventory().Eat(iitm);
 						strconcat(sizeof(str), str, CStringTable().translate("st_item_used").c_str(), ": ", iitm->Name());
-					}
-					else
-					{
+					}else{
 						inventory().Eat(itm);
 						strconcat(sizeof(str), str, CStringTable().translate("st_item_used").c_str(), ": ", itm->Name());
 					}
 					HUD().GetUI()->AddInfoMessage("item_usage", str, false);
 				}
+				else if (auto ammo = smart_cast<CWeaponAmmo*>(itm)) {
+					if (auto wpn = smart_cast<CWeapon*>(inventory().ActiveItem())) {
+						wpn->IsDirectReload(ammo);
+					}
+				}
 
 			}
-			else
-			{
+			else{
 				HUD().GetUI()->AddInfoMessage("item_usage", "st_quick_slot_empty");
 			}
 		}

@@ -42,41 +42,6 @@ enum EHUDElement
 	eArmor,
 };
 
-class CUIQuickSlotPanel : public CUIWindow
-{
-private:
-	typedef				CUIWindow inherited;
-public:
-	CUIQuickSlotPanel();
-	~CUIQuickSlotPanel();
-	virtual void 		Update();
-	virtual void 		Init();
-	void				DrawItemInSlot(const PIItem itm, CUIStatic* m_QuickSlot_Icon, Fvector2 m_QuickSlot_Icon_Size);
-protected:
-	//
-	Fvector2 m_QuickSlot_0_Icon_Size{};
-	Fvector2 m_QuickSlot_1_Icon_Size{};
-	Fvector2 m_QuickSlot_2_Icon_Size{};
-	Fvector2 m_QuickSlot_3_Icon_Size{};
-	//
-	CUIStatic* m_QuickSlot_0_Icon{};
-	CUIStatic* m_QuickSlot_1_Icon{};
-	CUIStatic* m_QuickSlot_2_Icon{};
-	CUIStatic* m_QuickSlot_3_Icon{};
-	//
-	CUIStatic* m_CountItemQuickSlot_0_Text{};
-	CUIStatic* m_CountItemQuickSlot_1_Text{};
-	CUIStatic* m_CountItemQuickSlot_2_Text{};
-	CUIStatic* m_CountItemQuickSlot_3_Text{};
-	//
-	CUIStatic* m_UseQuickSlot_0_Text{};
-	CUIStatic* m_UseQuickSlot_1_Text{};
-	CUIStatic* m_UseQuickSlot_2_Text{};
-	CUIStatic* m_UseQuickSlot_3_Text{};
-	//
-	CUIStatic* m_QuickSlotPanelBackground{};
-};
-
 class CUIMainIngameWnd: public CUIWindow  
 {
 public:
@@ -140,7 +105,6 @@ public:
 	CUIArtefactPanel*		m_artefactPanel;
 	CUISlotPanel*			m_slotPanel;
 	CUIVestPanel*			m_vestPanel;
-	CUIQuickSlotPanel*		m_quickSlotPanel;
 	
 public:
 	

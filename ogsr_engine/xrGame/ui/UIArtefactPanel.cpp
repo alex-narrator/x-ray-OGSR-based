@@ -7,25 +7,62 @@
 #include "Inventory.h"
 #include "string_table.h"
 
-void CUIArtefactPanel::InitFromXML	(CUIXml& xml, LPCSTR path, int index)
-{
+void SetCounter(int count, float pos_x, float pos_y) {
+	CUIStatic st_count;
+	string256 str_count{};
+	sprintf(str_count, "x%d", count);
+	st_count.SetText(str_count);
+	st_count.SetWndPos(pos_x, pos_y);
+	st_count.Draw();
+}
+
+void TryAddToShowList(TIItemContainer& list, PIItem item, bool group) {
+	if (!group) {
+		list.push_back(item);
+		return;
+	}
+
+	bool b_add{ true };
+	for (const auto& _itm : list) {
+		if (item->object().cNameSect() == _itm->object().cNameSect()) {
+			b_add = false;
+			break;
+		}
+	}
+	if (b_add)
+		list.push_back(item);
+}
+
+void CUIArtefactPanel::InitFromXML	(CUIXml& xml, LPCSTR path, int index){
 	CUIXmlInit::InitWindow		(xml, path, index, this);
 	m_cell_size.x				= xml.ReadAttribFlt(path, index, "cell_width");
 	m_cell_size.y				= xml.ReadAttribFlt(path, index, "cell_height");
 	m_fScale					= xml.ReadAttribFlt(path, index, "scale");
+	m_bGroupSimilar				= xml.ReadAttribFlt(path, index, "group_similar", 0);
+	m_counter_offset.x			= xml.ReadAttribFlt(path, index, "counter_x", 0);
+	m_counter_offset.y			= xml.ReadAttribFlt(path, index, "counter_y", 0);
 }
 
-void CUIArtefactPanel::Update()
-{
+void CUIArtefactPanel::Update(){
 	m_si.SetShader(InventoryUtilities::GetEquipmentIconsShader());
 	m_vRects.clear();
+	m_count.clear();
 
 	auto pActor = smart_cast<CActor*>(Level().CurrentViewEntity());
 	auto& inv = pActor->inventory();
 
-	for(const auto& _itm : inv.m_belt){
+	TIItemContainer items_to_show{};
+	for (const auto& itm : inv.m_belt) {
+		TryAddToShowList(items_to_show, itm, m_bGroupSimilar);
+	}
+
+	for(const auto& _itm : items_to_show){
 		if (_itm) {
+			bool bSearchRuck = _itm->cast_weapon_ammo() ? !psActorFlags.test(AF_AMMO_FROM_BELT) : !psActorFlags.test(AF_QUICK_FROM_BELT);
+
 			m_vRects.push_back( &(_itm->m_icon_params ) );
+			auto item_sect = _itm->object().cNameSect().c_str();
+			m_count.push_back(inv.GetSameItemCount(item_sect, bSearchRuck));
 		}
 	}
 }
@@ -44,8 +81,9 @@ void CUIArtefactPanel::Draw(){
 	
 	float _s			= m_cell_size.x/m_cell_size.y;
 
-	for ( const auto& params : m_vRects )
-	{
+	for (int i = 0; i < m_vRects.size(); i++){
+		const auto& params = m_vRects[i];
+
 		params->set_shader( &m_si );
 		const auto& r = params->original_rect();
 		iHeight = m_fScale*(r.bottom - r.top);
@@ -54,6 +92,11 @@ void CUIArtefactPanel::Draw(){
 		m_si.SetRect(0, 0, iWidth, iHeight);
 
 		m_si.SetPos(x, y);
+		if (m_count[i] > 1 && m_bGroupSimilar) {
+			float pos_x = m_counter_offset.x + x;
+			float pos_y = m_counter_offset.y + (y + iHeight);
+			SetCounter(m_count[i], pos_x, pos_y);
+		}
 		x = x + iIndent + iWidth;
 
         m_si.Render();
@@ -65,19 +108,20 @@ void CUIArtefactPanel::Draw(){
 /////////////////////////////////////////////////
 /////////////////SLOT PANEL//////////////////////
 /////////////////////////////////////////////////
-void CUISlotPanel::InitFromXML(CUIXml& xml, LPCSTR path, int index)
-{
+void CUISlotPanel::InitFromXML(CUIXml& xml, LPCSTR path, int index){
 	CUIXmlInit::InitWindow(xml, path, index, this);
-	m_cell_size.x = xml.ReadAttribFlt(path, index, "cell_width");
-	m_cell_size.y = xml.ReadAttribFlt(path, index, "cell_height");
-	m_fScale = xml.ReadAttribFlt(path, index, "scale");
+	m_cell_size.x		= xml.ReadAttribFlt(path, index, "cell_width");
+	m_cell_size.y		= xml.ReadAttribFlt(path, index, "cell_height");
+	m_fScale			= xml.ReadAttribFlt(path, index, "scale");
+	m_counter_offset.x	= xml.ReadAttribFlt(path, index, "counter_x", 0);
+	m_counter_offset.y	= xml.ReadAttribFlt(path, index, "counter_y", 0);
 }
 
-void CUISlotPanel::Update()
-{
+void CUISlotPanel::Update(){
 	m_st.SetShader(InventoryUtilities::GetEquipmentIconsShader());
 	m_vRects.clear();
 	m_action_key.clear();
+	m_count.clear();
 
 	auto pActor = smart_cast<CActor*>(Level().CurrentViewEntity());
 	auto& inv = pActor->inventory();
@@ -94,12 +138,14 @@ void CUISlotPanel::Update()
 		case QUICK_SLOT_3:
 		{
 			if (_itm) {
+				bool bSearchRuck = _itm->cast_weapon_ammo() ? !psActorFlags.test(AF_AMMO_FROM_BELT) : !psActorFlags.test(AF_QUICK_FROM_BELT);
+
 				string16	slot_key{};
-				if (_itm->cast_eatable_item() || _itm->cast_hud_item()) {
-					sprintf_s(slot_key, "ui_use_slot_%d", _itm->GetSlot());
-				}
+				sprintf_s(slot_key, "ui_use_slot_%d", _itm->GetSlot());
 				m_action_key.push_back(CStringTable().translate(slot_key).c_str());
 				m_vRects.push_back(&(_itm->m_icon_params));
+				auto item_sect = _itm->object().cNameSect().c_str();
+				m_count.push_back(inv.GetSameItemCount(item_sect, bSearchRuck));
 			}
 		}
 		default:
@@ -115,15 +161,14 @@ void CUISlotPanel::Draw() {
 	float iHeight;
 	float iWidth;
 
-	Frect				rect;
+	Frect rect;
 	GetAbsoluteRect(rect);
 	x = rect.left;
 	y = rect.top;
 
 	float _s = m_cell_size.x / m_cell_size.y;
 
-	for (int i = 0; i < m_vRects.size(); i++)
-	{
+	for (int i = 0; i < m_vRects.size(); i++){
 		const auto& params = m_vRects[i];
 
 		params->set_shader(&m_st);
@@ -134,11 +179,17 @@ void CUISlotPanel::Draw() {
 		m_st.SetWndRect(0, 0, iWidth, iHeight);
 
 		m_st.SetWndPos(x, y);
+		if (m_count[i] > 1) {
+			float pos_x = m_counter_offset.x + x;
+			float pos_y = m_counter_offset.y + (y + iHeight);
+			SetCounter(m_count[i], pos_x, pos_y);
+		}
 		x = x + iIndent + iWidth;
 
 		m_st.SetText(m_action_key[i].c_str());
 
 		m_st.Draw();
+
 	}
 
 	CUIWindow::Draw();
@@ -147,25 +198,36 @@ void CUISlotPanel::Draw() {
 /////////////////////////////////////////////////
 /////////////////VEST PANEL//////////////////////
 /////////////////////////////////////////////////
-void CUIVestPanel::InitFromXML(CUIXml& xml, LPCSTR path, int index)
-{
+void CUIVestPanel::InitFromXML(CUIXml& xml, LPCSTR path, int index){
 	CUIXmlInit::InitWindow(xml, path, index, this);
-	m_cell_size.x	= xml.ReadAttribFlt(path, index, "cell_width");
-	m_cell_size.y	= xml.ReadAttribFlt(path, index, "cell_height");
-	m_fScale		= xml.ReadAttribFlt(path, index, "scale");
+	m_cell_size.x		= xml.ReadAttribFlt(path, index, "cell_width");
+	m_cell_size.y		= xml.ReadAttribFlt(path, index, "cell_height");
+	m_fScale			= xml.ReadAttribFlt(path, index, "scale");
+	m_bGroupSimilar		= xml.ReadAttribFlt(path, index, "group_similar", 0);
+	m_counter_offset.x	= xml.ReadAttribFlt(path, index, "counter_x", 0);
+	m_counter_offset.y	= xml.ReadAttribFlt(path, index, "counter_y", 0);
 }
 
-void CUIVestPanel::Update()
-{
+void CUIVestPanel::Update(){
 	m_st.SetShader(InventoryUtilities::GetEquipmentIconsShader());
 	m_vRects.clear();
+	m_count.clear();
 
 	auto pActor = smart_cast<CActor*>(Level().CurrentViewEntity());
 	auto& inv = pActor->inventory();
 
-	for (const auto& _itm : inv.m_vest) {
+	TIItemContainer items_to_show{};
+	for (const auto& itm : inv.m_vest) {
+		TryAddToShowList(items_to_show, itm, m_bGroupSimilar);
+	}
+
+	for (const auto& _itm : items_to_show) {
 		if (_itm) {
+			bool bSearchRuck = _itm->cast_weapon_ammo() ? !psActorFlags.test(AF_AMMO_FROM_BELT) : !psActorFlags.test(AF_QUICK_FROM_BELT);
+
 			m_vRects.push_back(&(_itm->m_icon_params));
+			auto item_sect = _itm->object().cNameSect().c_str();
+			m_count.push_back(inv.GetSameItemCount(item_sect, bSearchRuck));
 		}
 	}
 }
@@ -177,15 +239,14 @@ void CUIVestPanel::Draw() {
 	float iHeight;
 	float iWidth;
 
-	Frect				rect;
+	Frect rect;
 	GetAbsoluteRect(rect);
 	x = rect.left;
 	y = rect.top;
 
 	float _s = m_cell_size.x / m_cell_size.y;
 
-	for (int i = 0; i < m_vRects.size(); i++)
-	{
+	for (int i = 0; i < m_vRects.size(); i++){
 		const auto& params = m_vRects[i];
 
 		params->set_shader(&m_st);
@@ -196,6 +257,11 @@ void CUIVestPanel::Draw() {
 		m_st.SetRect(0, 0, iWidth, iHeight);
 
 		m_st.SetPos(x, y);
+		if (m_count[i] > 1 && m_bGroupSimilar) {
+			float pos_x = m_counter_offset.x + x;
+			float pos_y = m_counter_offset.y + (y + iHeight);
+			SetCounter(m_count[i], pos_x, pos_y);
+		}
 		x = x + iIndent + iWidth;
 
 		m_st.Render();

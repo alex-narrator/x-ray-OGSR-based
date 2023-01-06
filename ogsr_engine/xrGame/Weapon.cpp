@@ -2525,20 +2525,28 @@ bool CWeapon::IsFlashlightOn() const {
 	return m_bIsFlashlightOn;
 }
 
-void CWeapon::DirectReload(CWeaponAmmo* ammo) {
+bool CWeapon::IsDirectReload(CWeaponAmmo* ammo) {
+	auto _it = std::find(m_ammoTypes.begin(), m_ammoTypes.end(), ammo->cNameSect());
+	if (_it == m_ammoTypes.end())
+		return false;
+
 	m_bDirectReload = true;
 	m_pAmmo = ammo;
-	for (u32 i = 0; i < m_ammoTypes.size(); ++i) {
-		if (m_ammoTypes[i] == ammo->cNameSect() && 
-			TryToGetAmmo(i) &&
-			(iAmmoElapsed < iMagazineSize || IsMisfire() || HasDetachableMagazine())) {
-			m_ammoType = i;
-			m_set_next_ammoType_on_reload = u32(-1);
-			Reload();
-			return;
-		}
+
+	auto i = std::distance(m_ammoTypes.begin(), _it);
+	if (TryToGetAmmo(i) && CanBeReloaded()) {
+		m_ammoType = i;
+		m_set_next_ammoType_on_reload = u32(-1);
+		Reload();
 	}
-	m_bDirectReload = false;
+	else
+		m_bDirectReload = false;
+
+	return m_bDirectReload;
+}
+
+bool CWeapon::CanBeReloaded() {
+	return (iAmmoElapsed < iMagazineSize || IsMisfire() || HasDetachableMagazine() || m_pAmmo && m_pAmmo->cNameSect() != m_magazine.back().m_ammoSect);
 }
 
 float CWeapon::GetCondDecPerShotToShow() const {

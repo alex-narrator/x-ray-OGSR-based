@@ -463,7 +463,7 @@ bool CUIWeaponCellItem::is_forend() {
 }
 bool CUIWeaponCellItem::is_magazine() {
 	return object()->HasDetachableMagazine() && object()->IsMagazineAttached() &&
-		!!object()->GetMagazineIconSect();//pSettings->line_exist(object()->GetMagazineName(), "mag_icon_sect");
+		!!object()->GetMagazineIconSect();
 }
 
 void CUIWeaponCellItem::CreateIcon(eAddonType t, CIconParams &params)

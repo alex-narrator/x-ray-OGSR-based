@@ -250,7 +250,7 @@ public:
 	virtual bool	HasDetachableMagazine	() const;
 	virtual bool	IsMagazineAttached		() const;
 	//у оружия есть патронник
-	virtual bool	HasChamber				() { return /*ParentIsActor() &&*/ m_bHasChamber; };
+	virtual bool	HasChamber				() { return m_bHasChamber; };
 	//разрядить кол-во патронов
 	virtual void	UnloadAmmo(int unload_count, bool spawn_ammo = true, bool detach_magazine = false);
 	//

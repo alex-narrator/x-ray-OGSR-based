@@ -103,4 +103,5 @@ public:
 	virtual void	PlayAnimKick		() override;
 	//оружие использует отъёмный магазин
 	virtual bool	HasDetachableMagazine() { return inherited::HasDetachableMagazine() && !IsGrenadeMode(); };
+	virtual bool	IsDirectReload		(CWeaponAmmo*);
 };

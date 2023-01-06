@@ -217,7 +217,6 @@ public:
 	virtual void		UpdateArtefactPanel	();
 	virtual void		UpdateSlotPanel		();
 	virtual void		UpdateVestPanel		();
-	virtual void		UpdateQuickSlotPanel();
 protected:
 	//звук тяжелого дыхания
 	ref_sound			m_HeavyBreathSnd;

@@ -41,7 +41,6 @@ public:
 	virtual bool	CanAttach			(PIItem pIItem);
 	virtual bool	CanDetach			(const char* item_section_name);
 	virtual void	InitAddons			();
-
 protected:
 	virtual void	OnAnimationEnd		(u32 state);
 	void			TriStateReload		();

@@ -1376,7 +1376,6 @@ void CActor::OnItemRuck		(CInventoryItem *inventory_item, EItemPlace previous_pl
 	if (previous_place == eItemPlaceBelt)
 		UpdateArtefactPanel();
 	else if (previous_place == eItemPlaceSlot) {
-		UpdateQuickSlotPanel();
 		UpdateSlotPanel();
 	}
 	else if (previous_place == eItemPlaceVest) {
@@ -1388,7 +1387,6 @@ void CActor::OnItemBelt		(CInventoryItem *inventory_item, EItemPlace previous_pl
 
 	UpdateArtefactPanel();
 	if (previous_place == eItemPlaceSlot) {
-		UpdateQuickSlotPanel();
 		UpdateSlotPanel();
 	}
 	else if (previous_place == eItemPlaceVest) {
@@ -1400,7 +1398,6 @@ void CActor::OnItemVest(CInventoryItem* inventory_item, EItemPlace previous_plac
 
 	UpdateVestPanel();
 	if (previous_place == eItemPlaceSlot) {
-		UpdateQuickSlotPanel();
 		UpdateSlotPanel();
 	}
 	else if (previous_place == eItemPlaceBelt) {
@@ -1411,7 +1408,6 @@ void CActor::OnItemVest(CInventoryItem* inventory_item, EItemPlace previous_plac
 void CActor::OnItemSlot(CInventoryItem* inventory_item, EItemPlace previous_place){
 	CInventoryOwner::OnItemSlot(inventory_item, previous_place);
 
-	UpdateQuickSlotPanel();
 	UpdateSlotPanel();
 	if (previous_place == eItemPlaceBelt) {
 		UpdateArtefactPanel();
@@ -1438,11 +1434,6 @@ void CActor::UpdateVestPanel() {
 	if (Level().CurrentViewEntity() && Level().CurrentViewEntity() == this) { //Оно надо вообще без мультиплеера?
 		HUD().GetUI()->UIMainIngameWnd->m_vestPanel->Update();
 	}
-}
-
-void CActor::UpdateQuickSlotPanel(){
-	if (Level().CurrentViewEntity() && Level().CurrentViewEntity() == this) //Оно надо вообще без мультиплеера?
-		HUD().GetUI()->UIMainIngameWnd->m_quickSlotPanel->Update();
 }
 
 constexpr auto ITEMS_BOOST_TIME = 0.100f;

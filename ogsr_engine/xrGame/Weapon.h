@@ -574,7 +574,7 @@ public:
 	float					GetAmmoInMagazineWeight		(const decltype(m_magazine)& mag) const;
 
 		bool				m_bDirectReload{};
-	virtual void			DirectReload				(CWeaponAmmo*);
+	virtual bool			IsDirectReload				(CWeaponAmmo*);
 
 protected:
 	u32						m_ef_main_weapon_type{ u32(-1) };
@@ -664,6 +664,7 @@ public:
 	virtual bool		HasDetachableMagazine	() const { return false; };
 	virtual bool		IsMagazineAttached		() const { return false; };
 	virtual bool		IsSingleReloading		() { return false; };
+	virtual bool		CanBeReloaded			();
 	//
 	IC void ReloadWeapon() { Reload(); };
 	virtual	bool TryToGetAmmo(u32) { return true; };

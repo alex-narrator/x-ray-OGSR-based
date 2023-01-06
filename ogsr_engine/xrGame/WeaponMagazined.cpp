@@ -307,7 +307,7 @@ void CWeaponMagazined::Reload()
 // Real Wolf: Одна реализация на все участки кода.20.01.15
 bool CWeaponMagazined::TryToGetAmmo(u32 id){
 	if(!m_bDirectReload)
-		m_pAmmo = smart_cast<CWeaponAmmo*>(m_pCurrentInventory->GetAmmoByLimit(*m_ammoTypes[id], ParentIsActor(), true));
+		m_pAmmo = smart_cast<CWeaponAmmo*>(m_pCurrentInventory->GetAmmoByLimit(m_ammoTypes[id].c_str(), ParentIsActor(), true));
 
 	return m_pAmmo && (!HasDetachableMagazine() || AmmoTypeIsMagazine(id) || !iAmmoElapsed);
 }
@@ -361,7 +361,8 @@ void CWeaponMagazined::OnMagazineEmpty()
 }
 
 void CWeaponMagazined::UnloadMagazine(bool spawn_ammo){
-	UnloadAmmo(iAmmoElapsed - HasChamber(), spawn_ammo, !!GetMagazineEmptySect());
+	int chamber_ammo = HasChamber() && HasDetachableMagazine();
+	UnloadAmmo(iAmmoElapsed - chamber_ammo, spawn_ammo, !!GetMagazineEmptySect());
 }
 
 void CWeaponMagazined::ReloadMagazine()
@@ -392,12 +393,12 @@ void CWeaponMagazined::ReloadMagazine()
 
 	if (!unlimited_ammo() && !m_bDirectReload) {
 		//попытаться найти в инвентаре патроны текущего типа
-		m_pAmmo = smart_cast<CWeaponAmmo*>(m_pCurrentInventory->GetAmmoByLimit(*m_ammoTypes[m_ammoType], ParentIsActor(), HasDetachableMagazine() && !IsSingleReloading()));
+		m_pAmmo = smart_cast<CWeaponAmmo*>(m_pCurrentInventory->GetAmmoByLimit(m_ammoTypes[m_ammoType].c_str(), ParentIsActor(), HasDetachableMagazine() && !IsSingleReloading()));
 
 		if (!m_pAmmo && !m_bLockType) {
 			for (u32 i = 0; i < m_ammoTypes.size(); ++i) {
 				//проверить патроны всех подходящих типов
-				m_pAmmo = smart_cast<CWeaponAmmo*>(m_pCurrentInventory->GetAmmoByLimit(*m_ammoTypes[m_ammoType], ParentIsActor(), HasDetachableMagazine() && !IsSingleReloading()));
+				m_pAmmo = smart_cast<CWeaponAmmo*>(m_pCurrentInventory->GetAmmoByLimit(m_ammoTypes[m_ammoType].c_str(), ParentIsActor(), HasDetachableMagazine() && !IsSingleReloading()));
 
 				if (m_pAmmo) {
 					m_ammoType = i;
@@ -417,7 +418,7 @@ void CWeaponMagazined::ReloadMagazine()
 
 	//разрядить магазин, если загружаем патронами другого типа
 	if (!m_bLockType && !m_magazine.empty() &&
-		(!m_pAmmo || xr_strcmp(m_pAmmo->cNameSect(), *m_magazine.back().m_ammoSect)) ||
+		(!m_pAmmo || m_pAmmo->cNameSect() != m_magazine.back().m_ammoSect) ||
 		m_magazine.empty() && HasDetachableMagazine() && !unlimited_ammo())	//разрядить пустой магазин
 		UnloadMagazine();
 
@@ -433,7 +434,7 @@ void CWeaponMagazined::ReloadMagazine()
 	VERIFY((u32)iAmmoElapsed == m_magazine.size());
 
 	if (m_DefaultCartridge.m_LocalAmmoType != m_ammoType)
-		m_DefaultCartridge.Load(*m_ammoTypes[m_ammoType], u8(m_ammoType));
+		m_DefaultCartridge.Load(m_ammoTypes[m_ammoType].c_str(), u8(m_ammoType));
 	CCartridge l_cartridge = m_DefaultCartridge;
 	while (iAmmoElapsed < iMagazineSize){
 		if (!unlimited_ammo()){
@@ -906,13 +907,11 @@ bool CWeaponMagazined::Action(s32 cmd, u32 flags)
 	{
 		if (flags & CMD_START)
 		{
-			if (Level().IR_GetKeyState(get_action_dik(kADDITIONAL_ACTION)))
-			{
+			if (Level().IR_GetKeyState(get_action_dik(kADDITIONAL_ACTION))){
 				OnShutter();
 				return true;
 			}
-			else if (iAmmoElapsed < iMagazineSize || IsMisfire() || HasDetachableMagazine())
-			{
+			else if (CanBeReloaded()){
 				Reload();
 				return true;
 			}

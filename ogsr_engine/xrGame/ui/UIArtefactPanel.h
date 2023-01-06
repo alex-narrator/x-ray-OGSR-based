@@ -20,6 +20,9 @@ protected:
 	Fvector2					m_cell_size;
 	xr_vector<CIconParams*>      m_vRects;
 	CUIStaticItem               m_si;
+	xr_vector<int>				m_count;
+	bool						m_bGroupSimilar{};
+	Fvector2					m_counter_offset;
 };
 //quick slot panel
 class CUISlotPanel : public CUIWindow
@@ -38,6 +41,8 @@ protected:
 	xr_vector<CIconParams*>      m_vRects;
 	CUIStatic					m_st;
 	xr_vector<shared_str>		m_action_key;
+	xr_vector<int>				m_count;
+	Fvector2					m_counter_offset;
 };
 //vest slot panel
 class CUIVestPanel : public CUIWindow
@@ -55,4 +60,7 @@ protected:
 	Fvector2					m_cell_size;
 	xr_vector<CIconParams*>      m_vRects;
 	CUIStaticItem				m_st;
+	xr_vector<int>				m_count;
+	bool						m_bGroupSimilar{};
+	Fvector2					m_counter_offset;
 };

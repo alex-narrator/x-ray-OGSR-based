@@ -482,6 +482,12 @@ void CWeaponMagazinedWGrenade::ReloadMagazine()
 	}
 }
 
+bool CWeaponMagazinedWGrenade::IsDirectReload(CWeaponAmmo* ammo) {
+	auto _it = std::find(m_ammoTypes2.begin(), m_ammoTypes2.end(), ammo->cNameSect());
+	if (_it != m_ammoTypes2.end() && IsGrenadeLauncherAttached())
+		PerformSwitchGL();
+	return inherited::IsDirectReload(ammo);
+}
 
 void CWeaponMagazinedWGrenade::OnStateSwitch(u32 S, u32 oldState)
 {

@@ -550,22 +550,8 @@ bool CUIInventoryWnd::OnItemDrop(CUICellItem* itm)
 			  auto wpn = smart_cast<CWeaponMagazined*>(_iitem_in_slot);
 			  auto ammo = item->cast_weapon_ammo();
 			  if (wpn && ammo) {
-				  for (const auto& ammo_sect : wpn->m_ammoTypes) {
-					  if (item->object().cNameSect() == ammo_sect) {
-						  wpn->DirectReload(ammo);
-						  return true;
-					  }
-				  }
-				  if (wpn->IsGrenadeLauncherAttached()) {
-					  auto wpn_gl = smart_cast<CWeaponMagazinedWGrenade*>(wpn);
-					  for (const auto& ammo_sect : wpn_gl->m_ammoTypes2) {
-						  if (item->object().cNameSect() == ammo_sect) {
-							  wpn_gl->PerformSwitchGL();
-							  wpn_gl->DirectReload(ammo);
-							  return true;
-						  }
-					  }
-				  }
+				  if (wpn->IsDirectReload(ammo))
+					  return true;
 			  }
 		  }
 

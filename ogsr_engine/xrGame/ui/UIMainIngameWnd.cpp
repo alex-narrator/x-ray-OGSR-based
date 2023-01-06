@@ -107,7 +107,6 @@ CUIMainIngameWnd::CUIMainIngameWnd()
 	m_artefactPanel					= xr_new<CUIArtefactPanel>();
 	m_slotPanel						= xr_new<CUISlotPanel>();
 	m_vestPanel						= xr_new<CUIVestPanel>();
-	m_quickSlotPanel				= xr_new<CUIQuickSlotPanel>();
 
 	warn_icon_list[ewiWeaponJammed]	= &UIWeaponJammedIcon;	
 	warn_icon_list[ewiRadiation]	= &UIRadiaitionIcon;
@@ -131,7 +130,6 @@ CUIMainIngameWnd::~CUIMainIngameWnd()
 	xr_delete					(m_artefactPanel);
 	xr_delete					(m_slotPanel);
 	xr_delete					(m_vestPanel);
-	xr_delete					(m_quickSlotPanel);
 	HUD_SOUND::DestroySound		(m_contactSnd);
 	xr_delete					(g_MissileForceShape);
 }
@@ -305,10 +303,6 @@ void CUIMainIngameWnd::Init()
 
 	m_vestPanel->InitFromXML				(uiXml, "vest_panel", 0);
 	this->AttachChild						(m_vestPanel);
-
-	m_quickSlotPanel->Init					();
-	m_quickSlotPanel->SetWindowName			("quick_slot_panel");
-	this->AttachChild						(m_quickSlotPanel);
 
 	HUD_SOUND::LoadSound					("maingame_ui", "snd_new_contact"		, m_contactSnd		, SOUND_TYPE_IDLE);
 }
@@ -518,7 +512,6 @@ void CUIMainIngameWnd::Update()
 	UpdatePickUpItem				();
 
 	bool show_panels = IsHUDElementAllowed(eGear);
-	m_quickSlotPanel->Show	(show_panels);
 	m_artefactPanel->Show	(show_panels); //отрисовка панели артефактов
 	m_slotPanel->Show		(show_panels); //отрисовка панели слотів
 	m_vestPanel->Show		(show_panels); //отрисовка панели розгрузки
@@ -945,234 +938,4 @@ void CUIMainIngameWnd::script_register(lua_State *L)
 			, def("setup_game_icon", &SetupGameIcon)
 		];
 
-}
-
-
-using namespace InventoryUtilities;
-
-CUIQuickSlotPanel::CUIQuickSlotPanel(){}
-
-CUIQuickSlotPanel::~CUIQuickSlotPanel(){}
-
-void CUIQuickSlotPanel::Init()
-{
-	CUIXml uiXml;
-	bool xml_result = uiXml.Init(CONFIG_PATH, UI_PATH, "quick_slot_wnd.xml");
-	R_ASSERT2(xml_result, "xml file not found 'quick_slot_wnd.xml'");
-
-	CUIXmlInit	xml_init;
-
-	xml_init.InitWindow(uiXml, "quick_slot_panel", 0, this);
-	//
-	m_QuickSlotPanelBackground = xr_new<CUIStatic>();
-	m_QuickSlotPanelBackground->SetAutoDelete(true);
-	AttachChild(m_QuickSlotPanelBackground);
-	xml_init.InitStatic(uiXml, "quick_slot_panel:quick_slot_panel_background", 0, m_QuickSlotPanelBackground);
-	//
-	m_QuickSlot_0_Icon = xr_new<CUIStatic>();
-	m_QuickSlot_0_Icon->SetAutoDelete(true);
-	m_QuickSlotPanelBackground->AttachChild(m_QuickSlot_0_Icon);
-	xml_init.InitStatic(uiXml, "quick_slot_panel:image_static_quick_slot_0", 0, m_QuickSlot_0_Icon);
-	m_QuickSlot_0_Icon->TextureAvailable(true);
-	m_QuickSlot_0_Icon->TextureOff();
-	m_QuickSlot_0_Icon->ClipperOn();
-	m_QuickSlot_0_Icon_Size.set(m_QuickSlot_0_Icon->GetWidth(), m_QuickSlot_0_Icon->GetHeight());
-	//
-	m_QuickSlot_1_Icon = xr_new<CUIStatic>();
-	m_QuickSlot_1_Icon->SetAutoDelete(true);
-	m_QuickSlotPanelBackground->AttachChild(m_QuickSlot_1_Icon);
-	xml_init.InitStatic(uiXml, "quick_slot_panel:image_static_quick_slot_1", 0, m_QuickSlot_1_Icon);
-	m_QuickSlot_1_Icon->TextureAvailable(true);
-	m_QuickSlot_1_Icon->TextureOff();
-	m_QuickSlot_1_Icon->ClipperOn();
-	m_QuickSlot_1_Icon_Size.set(m_QuickSlot_1_Icon->GetWidth(), m_QuickSlot_1_Icon->GetHeight());
-	//
-	m_QuickSlot_2_Icon = xr_new<CUIStatic>();
-	m_QuickSlot_2_Icon->SetAutoDelete(true);
-	m_QuickSlotPanelBackground->AttachChild(m_QuickSlot_2_Icon);
-	xml_init.InitStatic(uiXml, "quick_slot_panel:image_static_quick_slot_2", 0, m_QuickSlot_2_Icon);
-	m_QuickSlot_2_Icon->TextureAvailable(true);
-	m_QuickSlot_2_Icon->TextureOff();
-	m_QuickSlot_2_Icon->ClipperOn();
-	m_QuickSlot_2_Icon_Size.set(m_QuickSlot_2_Icon->GetWidth(), m_QuickSlot_2_Icon->GetHeight());
-	//
-	m_QuickSlot_3_Icon = xr_new<CUIStatic>();
-	m_QuickSlot_3_Icon->SetAutoDelete(true);
-	m_QuickSlotPanelBackground->AttachChild(m_QuickSlot_3_Icon);
-	xml_init.InitStatic(uiXml, "quick_slot_panel:image_static_quick_slot_3", 0, m_QuickSlot_3_Icon);
-	m_QuickSlot_3_Icon->TextureAvailable(true);
-	m_QuickSlot_3_Icon->TextureOff();
-	m_QuickSlot_3_Icon->ClipperOn();
-	m_QuickSlot_3_Icon_Size.set(m_QuickSlot_3_Icon->GetWidth(), m_QuickSlot_3_Icon->GetHeight());
-	//
-	m_CountItemQuickSlot_0_Text = xr_new<CUIStatic>();
-	m_CountItemQuickSlot_0_Text->SetAutoDelete(true);
-	m_QuickSlotPanelBackground->AttachChild(m_CountItemQuickSlot_0_Text);
-	xml_init.InitStatic(uiXml, "quick_slot_panel:count_item_quick_slot_0_text", 0, m_CountItemQuickSlot_0_Text);
-	//
-	m_CountItemQuickSlot_1_Text = xr_new<CUIStatic>();
-	m_CountItemQuickSlot_1_Text->SetAutoDelete(true);
-	m_QuickSlotPanelBackground->AttachChild(m_CountItemQuickSlot_1_Text);
-	xml_init.InitStatic(uiXml, "quick_slot_panel:count_item_quick_slot_1_text", 0, m_CountItemQuickSlot_1_Text);
-	//
-	m_CountItemQuickSlot_2_Text = xr_new<CUIStatic>();
-	m_CountItemQuickSlot_2_Text->SetAutoDelete(true);
-	m_QuickSlotPanelBackground->AttachChild(m_CountItemQuickSlot_2_Text);
-	xml_init.InitStatic(uiXml, "quick_slot_panel:count_item_quick_slot_2_text", 0, m_CountItemQuickSlot_2_Text);
-	//
-	m_CountItemQuickSlot_3_Text = xr_new<CUIStatic>();
-	m_CountItemQuickSlot_3_Text->SetAutoDelete(true);
-	m_QuickSlotPanelBackground->AttachChild(m_CountItemQuickSlot_3_Text);
-	xml_init.InitStatic(uiXml, "quick_slot_panel:count_item_quick_slot_3_text", 0, m_CountItemQuickSlot_3_Text);
-	//
-	m_UseQuickSlot_0_Text = xr_new<CUIStatic>();
-	m_UseQuickSlot_0_Text->SetAutoDelete(true);
-	m_QuickSlotPanelBackground->AttachChild(m_UseQuickSlot_0_Text);
-	xml_init.InitStatic(uiXml, "quick_slot_panel:use_quick_slot_0_text", 0, m_UseQuickSlot_0_Text);
-	//
-	m_UseQuickSlot_1_Text = xr_new<CUIStatic>();
-	m_UseQuickSlot_1_Text->SetAutoDelete(true);
-	m_QuickSlotPanelBackground->AttachChild(m_UseQuickSlot_1_Text);
-	xml_init.InitStatic(uiXml, "quick_slot_panel:use_quick_slot_1_text", 0, m_UseQuickSlot_1_Text);
-	//
-	m_UseQuickSlot_2_Text = xr_new<CUIStatic>();
-	m_UseQuickSlot_2_Text->SetAutoDelete(true);
-	m_QuickSlotPanelBackground->AttachChild(m_UseQuickSlot_2_Text);
-	xml_init.InitStatic(uiXml, "quick_slot_panel:use_quick_slot_2_text", 0, m_UseQuickSlot_2_Text);
-	//
-	m_UseQuickSlot_3_Text = xr_new<CUIStatic>();
-	m_UseQuickSlot_3_Text->SetAutoDelete(true);
-	m_QuickSlotPanelBackground->AttachChild(m_UseQuickSlot_3_Text);
-	xml_init.InitStatic(uiXml, "quick_slot_panel:use_quick_slot_3_text", 0, m_UseQuickSlot_3_Text);
-}
-
-void CUIQuickSlotPanel::DrawItemInSlot(const PIItem itm, CUIStatic* m_QuickSlot_Icon, Fvector2 m_QuickSlot_Icon_Size)
-{
-	PIItem iitm = itm;
-
-	m_QuickSlot_Icon->SetShader(GetEquipmentIconsShader());
-	CIconParams icon_params = iitm->m_icon_params;
-	icon_params.set_shader(m_QuickSlot_Icon);
-
-	int iGridWidth = iitm->GetGridWidth();
-	int iGridHeight = iitm->GetGridHeight();
-	int iXPos = iitm->GetXPos();
-	int iYPos = iitm->GetYPos();
-
-	m_QuickSlot_Icon->GetUIStaticItem().SetOriginalRect(float(iXPos * INV_GRID_WIDTH), float(iYPos * INV_GRID_HEIGHT),
-		float(iGridWidth * INV_GRID_WIDTH), float(iGridHeight * INV_GRID_HEIGHT));
-	m_QuickSlot_Icon->TextureOn();
-	m_QuickSlot_Icon->ClipperOn();
-	m_QuickSlot_Icon->SetStretchTexture(true);
-
-	Frect v_r = { 0.0f,
-											0.0f,
-											float(iGridWidth * INV_GRID_WIDTH),
-											float(iGridHeight * INV_GRID_HEIGHT)
-	};
-	if (UI()->is_widescreen())
-		v_r.x2 /= 1.328f;
-
-	m_QuickSlot_Icon->GetUIStaticItem().SetRect(v_r);
-	m_QuickSlot_Icon->SetWidth(_min(v_r.width(), m_QuickSlot_Icon_Size.x));
-	m_QuickSlot_Icon->SetHeight(_min(v_r.height(), m_QuickSlot_Icon_Size.y));
-	m_QuickSlot_Icon->Show(true);
-}
-
-
-void CUIQuickSlotPanel::Update()
-{
-	auto pActor = smart_cast<CActor*>(Level().CurrentViewEntity());
-
-	if (!pActor) return;
-
-	string16	slot_use{};
-	string32	str;
-	shared_str itm_name;
-	u32 count;
-	bool SearchRuck = !psActorFlags.test(AF_QUICK_FROM_BELT);
-
-	u8 slot = QUICK_SLOT_0;
-	sprintf_s(slot_use, "ui_use_slot_%d", slot);
-	auto itm = pActor->inventory().m_slots[slot].m_pIItem;
-
-	if (itm){
-		sprintf_s(str, "%s", CStringTable().translate(slot_use).c_str());
-		m_UseQuickSlot_0_Text->SetText(str);
-		m_UseQuickSlot_0_Text->Show(itm->cast_eatable_item() || itm->cast_hud_item());
-
-		itm_name = itm->object().cNameSect();
-		count = pActor->inventory().GetSameItemCount(itm_name.c_str(), SearchRuck);
-		sprintf(str, "x%d", count);
-		m_CountItemQuickSlot_0_Text->SetText(str);
-		m_CountItemQuickSlot_0_Text->Show(SearchRuck);
-		DrawItemInSlot(itm, m_QuickSlot_0_Icon, m_QuickSlot_0_Icon_Size);
-	}else{
-		m_UseQuickSlot_0_Text->Show(false);
-		m_CountItemQuickSlot_0_Text->Show(false);
-		m_QuickSlot_0_Icon->Show(false);
-	}
-
-	slot = QUICK_SLOT_1;
-	sprintf_s(slot_use, "ui_use_slot_%d", slot);
-	itm = pActor->inventory().m_slots[slot].m_pIItem;
-
-	if (itm){
-		sprintf_s(str, "%s", CStringTable().translate(slot_use).c_str());
-		m_UseQuickSlot_1_Text->SetText(str);
-		m_UseQuickSlot_1_Text->Show(itm->cast_eatable_item() || itm->cast_hud_item());
-
-		itm_name = itm->object().cNameSect();
-		count = pActor->inventory().GetSameItemCount(itm_name.c_str(), SearchRuck);
-		sprintf(str, "x%d", count);
-		m_CountItemQuickSlot_1_Text->SetText(str);
-		m_CountItemQuickSlot_1_Text->Show(SearchRuck);
-		DrawItemInSlot(itm, m_QuickSlot_1_Icon, m_QuickSlot_1_Icon_Size);
-	}else{
-		m_UseQuickSlot_1_Text->Show(false);
-		m_CountItemQuickSlot_1_Text->Show(false);
-		m_QuickSlot_1_Icon->Show(false);
-	}
-
-	slot = QUICK_SLOT_2;
-	sprintf_s(slot_use, "ui_use_slot_%d", slot);
-	itm = pActor->inventory().m_slots[slot].m_pIItem;
-
-	if (itm){
-		sprintf_s(str, "%s", CStringTable().translate(slot_use).c_str());
-		m_UseQuickSlot_2_Text->SetText(str);
-		m_UseQuickSlot_2_Text->Show(itm->cast_eatable_item() || itm->cast_hud_item());
-
-		itm_name = itm->object().cNameSect();
-		count = pActor->inventory().GetSameItemCount(itm_name.c_str(), SearchRuck);
-		sprintf(str, "x%d", count);
-		m_CountItemQuickSlot_2_Text->SetText(str);
-		m_CountItemQuickSlot_2_Text->Show(SearchRuck);
-		DrawItemInSlot(itm, m_QuickSlot_2_Icon, m_QuickSlot_2_Icon_Size);
-	}else{
-		m_UseQuickSlot_2_Text->Show(false);
-		m_CountItemQuickSlot_2_Text->Show(false);
-		m_QuickSlot_2_Icon->Show(false);
-	}
-
-	slot = QUICK_SLOT_3;
-	sprintf_s(slot_use, "ui_use_slot_%d", slot);
-	itm = pActor->inventory().m_slots[slot].m_pIItem;
-
-	if (itm){
-		sprintf_s(str, "%s", CStringTable().translate(slot_use).c_str());
-		m_UseQuickSlot_3_Text->SetText(str);
-		m_UseQuickSlot_3_Text->Show(itm->cast_eatable_item() || itm->cast_hud_item());
-
-		itm_name = itm->object().cNameSect();
-		count = pActor->inventory().GetSameItemCount(itm_name.c_str(), SearchRuck);
-		sprintf(str, "x%d", count);
-		m_CountItemQuickSlot_3_Text->SetText(str);
-		m_CountItemQuickSlot_3_Text->Show(SearchRuck);
-		DrawItemInSlot(itm, m_QuickSlot_3_Icon, m_QuickSlot_3_Icon_Size);
-	}else{
-		m_UseQuickSlot_3_Text->Show(false);
-		m_CountItemQuickSlot_3_Text->Show(false);
-		m_QuickSlot_3_Icon->Show(false);
-	}
 }
