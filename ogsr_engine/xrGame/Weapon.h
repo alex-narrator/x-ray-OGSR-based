@@ -227,8 +227,8 @@ public:
 	const shared_str GetExtenderName			() const { return m_extenders	[m_cur_extender]	; }
 	const shared_str GetForendName				() const { return m_forends		[m_cur_forend]		; }
 
-	const shared_str GetMagazineName			() const { return m_ammoTypes	[m_LastLoadedMagType]; }
-	const shared_str GetMagazineIconSect		() const;
+	virtual shared_str GetMagazineName			(bool = false) const { return m_ammoTypes	[m_LastLoadedMagType]; }
+	const shared_str GetMagazineIconSect		(bool = false) const;
 
 	u8		GetAddonsState						()		const		{return m_flagsAddOnState;};
 	void	SetAddonsState						(u8 st)	{m_flagsAddOnState=st;}
@@ -655,13 +655,13 @@ public:
 	bool IsFlashlightOn() const;
 
 public:
-	bool IsAmmoWasSpawned() { return m_bAmmoWasSpawned; };
-	void SetAmmoWasSpawned(bool value) { m_bAmmoWasSpawned = value; };
+	bool IsAmmoWasSpawned	() { return m_bAmmoWasSpawned; };
+	void SetAmmoWasSpawned	(bool value) { m_bAmmoWasSpawned = value; };
 	//
 	//какие патроны будут заряжены при смене типа боеприпаса
 	u32	GetNextAmmoType(bool looped);
 	//оружие использует отъёмный магазин
-	virtual bool		HasDetachableMagazine	() const { return false; };
+	virtual bool		HasDetachableMagazine	(bool = false) const { return false; };
 	virtual bool		IsMagazineAttached		() const { return false; };
 	virtual bool		IsSingleReloading		() { return false; };
 	virtual bool		CanBeReloaded			();

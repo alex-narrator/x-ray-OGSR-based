@@ -18,6 +18,7 @@
 #ifdef DEBUG
 #include "phdebug.h"
 #endif
+#include "string_table.h"
 
 #include "game_object_space.h"
 #include "script_callback_ex.h"
@@ -111,7 +112,7 @@ BOOL CWeaponMagazinedWGrenade::net_Spawn(CSE_Abstract* DC)
 {
 	BOOL l_res = inherited::net_Spawn(DC);
 
-	UpdateGrenadeVisibility(!!iAmmoElapsed);
+	UpdateGrenadeVisibility(iAmmoElapsed);
 
 	SetPending(FALSE);
 
@@ -133,13 +134,13 @@ BOOL CWeaponMagazinedWGrenade::net_Spawn(CSE_Abstract* DC)
 		StateSwitchCallback( GameObject::eOnActorWeaponSwitchGL, GameObject::eOnNPCWeaponSwitchGL );
 
 		// reloading
-		m_DefaultCartridge.Load(*m_ammoTypes[m_ammoType], u8(m_ammoType));
+		m_DefaultCartridge.Load(m_ammoTypes[m_ammoType].c_str(), u8(m_ammoType));
 		u32 mag_sz = m_magazine.size();
 		m_magazine.clear();
 		while (mag_sz--) 
 			m_magazine.push_back(m_DefaultCartridge);
 
-		m_DefaultCartridge2.Load(*m_ammoTypes2[m_ammoType2], u8(m_ammoType2));
+		m_DefaultCartridge2.Load(m_ammoTypes2[m_ammoType2].c_str(), u8(m_ammoType2));
 		//mag_sz = m_magazine2.size();
 		m_magazine2.clear();
 		while ((u32)iAmmoElapsed2 > m_magazine2.size()) //(mag_sz--)
@@ -240,8 +241,6 @@ void  CWeaponMagazinedWGrenade::PerformSwitchGL()
 
 	m_fZoomFactor		= CurrentZoomFactor();
 
-	iMagazineSize		= m_bGrenadeMode?1:iMagazineSize2;
-
 	m_ammoTypes.swap	(m_ammoTypes2);
 
 	swap				(m_ammoType,m_ammoType2);
@@ -252,6 +251,21 @@ void  CWeaponMagazinedWGrenade::PerformSwitchGL()
 
 	iAmmoElapsed  = (int)m_magazine.size();
 	iAmmoElapsed2 = (int)m_magazine2.size();
+
+	if (m_bGrenadeMode) {
+		iMagazineSize = 1;
+		sprintf_s(m_sCurFireMode, " (%s)", CStringTable().translate("st_gl_firemode").c_str());
+	} else {
+		SetQueueSize(GetCurrentFireMode());
+		if (HasDetachableMagazine()) {
+			int mag_size{};
+			if (IsMagazineAttached() && AmmoTypeIsMagazine(m_ammoType))
+				mag_size = (int)pSettings->r_s32(GetMagazineName(), "box_size");
+			iMagazineSize = mag_size + HasChamber();
+		}
+		else
+			iMagazineSize = iMagazineSize2;
+	}
 }
 
 bool CWeaponMagazinedWGrenade::Action(s32 cmd, u32 flags) 
@@ -476,9 +490,9 @@ void CWeaponMagazinedWGrenade::ReloadMagazine()
 	if(iAmmoElapsed && !getRocketCount() && m_bGrenadeMode) 
 	{
 //.		shared_str fake_grenade_name = pSettings->r_string(*m_pAmmo->cNameSect(), "fake_grenade_name");
-		shared_str fake_grenade_name = pSettings->r_string(*m_ammoTypes[m_ammoType], "fake_grenade_name");
+		shared_str fake_grenade_name = pSettings->r_string(m_ammoTypes[m_ammoType], "fake_grenade_name");
 		
-		CRocketLauncher::SpawnRocket(*fake_grenade_name, this);
+		CRocketLauncher::SpawnRocket(fake_grenade_name.c_str(), this);
 	}
 }
 
@@ -927,4 +941,31 @@ void CWeaponMagazinedWGrenade::PlayAnimKick()
 		else
 			inherited::PlayAnimKick();
 	}
+}
+
+bool CWeaponMagazinedWGrenade::HasDetachableMagazine(bool to_show) const {
+	if (to_show && IsGrenadeMode()) {
+		for (u32 i = 0; i < m_ammoTypes2.size(); ++i)
+			if (AmmoType2IsMagazine(i))
+				return true;
+	}
+	return inherited::HasDetachableMagazine(to_show);
+}
+
+bool CWeaponMagazinedWGrenade::AmmoType2IsMagazine(u32 type) const {
+	return pSettings->line_exist(m_ammoTypes2[type], "ammo_in_box") &&
+		pSettings->line_exist(m_ammoTypes2[type], "empty_box");
+}
+
+shared_str CWeaponMagazinedWGrenade::GetMagazineName(bool to_show) const {
+	if (to_show && IsGrenadeMode())
+		return m_ammoTypes2[m_LastLoadedMagType];
+	return inherited::GetMagazineName();
+}
+
+LPCSTR CWeaponMagazinedWGrenade::GetMagazineEmptySect(bool to_show) const {
+	if (HasDetachableMagazine(to_show) && IsMagazineAttached())
+		return pSettings->r_string(GetMagazineName(to_show), "empty_box");
+	else
+		return inherited::GetMagazineEmptySect(to_show);
 }

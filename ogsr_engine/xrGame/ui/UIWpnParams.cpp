@@ -152,12 +152,12 @@ void CUIWpnParams::SetInfo(CInventoryItem* obj)
 	//тип спорядженого боєприпасу
 	if (!pWeaponKnife && !pWeaponBinoc && (pWeapon->HasDetachableMagazine() && pWeaponMag->IsMagazineAttached() || pWeapon->GetAmmoElapsed())) {
 		_param_name = CStringTable().translate("st_current_ammo_type").c_str();
-		if (pWeapon->HasDetachableMagazine() && pWeaponMag->IsMagazineAttached() && pWeapon->GetAmmoElapsed())
-			sprintf_s(text_to_show, "%s %s, %s", _param_name, pWeapon->GetCurrentAmmo_ShortName(), pWeaponMag->GetCurrentMagazine_ShortName());
+		if (pWeapon->HasDetachableMagazine(true) && pWeaponMag->IsMagazineAttached() && pWeapon->GetAmmoElapsed())
+			sprintf_s(text_to_show, "%s %s, %s", _param_name, pWeapon->GetCurrentAmmo_ShortName(), pWeaponMag->GetCurrentMagazine_ShortName(true));
 		else if (pWeapon->GetAmmoElapsed())
 			sprintf_s(text_to_show, "%s %s", _param_name, pWeapon->GetCurrentAmmo_ShortName());
 		else
-			sprintf_s(text_to_show, "%s %s", _param_name, pWeaponMag->GetCurrentMagazine_ShortName());
+			sprintf_s(text_to_show, "%s %s", _param_name, pWeaponMag->GetCurrentMagazine_ShortName(true));
 		SetStaticParams(_uiXml, _path, _h)->SetText(text_to_show);
 		_h += list_item_h;
 	}

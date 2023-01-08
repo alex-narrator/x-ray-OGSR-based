@@ -413,7 +413,7 @@ CUIWeaponCellItem::CUIWeaponCellItem(CWeapon* itm)
 	if (itm->ForendAttachable())
 		m_addon_offset[eForend].set(object()->GetForendX(), object()->GetForendY());
 
-	if (itm->HasDetachableMagazine())
+	if (itm->HasDetachableMagazine(true))
 		m_addon_offset[eMagazine].set(object()->GetMagazineX(), object()->GetMagazineY());
 }
 
@@ -423,7 +423,9 @@ void CUIWeaponCellItem::UpdateItemText()
 	if (object()->GetAmmoMagSize()) {
 		string32				str;
 		auto pWeaponMag = smart_cast<CWeaponMagazined*>(object());
-		sprintf_s(str, "%d/%d%s", object()->GetAmmoElapsed(), object()->GetAmmoMagSize(), pWeaponMag && pWeaponMag->HasFireModes() ? pWeaponMag->GetCurrentFireModeStr() : "");
+		sprintf_s(str, "%d/%d%s", object()->GetAmmoElapsed(), 
+			object()->GetAmmoMagSize(), 
+			pWeaponMag && (pWeaponMag->HasFireModes() || pWeaponMag->IsGrenadeMode()) ? pWeaponMag->GetCurrentFireModeStr() : "");
 		
 		Fvector2 pos{ GetWidth() - m_text_add->GetWidth(), GetHeight() - m_text_add->GetHeight() };
 
@@ -462,8 +464,8 @@ bool CUIWeaponCellItem::is_forend() {
 	return object()->ForendAttachable() && object()->IsForendAttached();
 }
 bool CUIWeaponCellItem::is_magazine() {
-	return object()->HasDetachableMagazine() && object()->IsMagazineAttached() &&
-		!!object()->GetMagazineIconSect();
+	return object()->HasDetachableMagazine(true) && object()->IsMagazineAttached() &&
+		!!object()->GetMagazineIconSect(true);
 }
 
 void CUIWeaponCellItem::CreateIcon(eAddonType t, CIconParams &params)
@@ -602,10 +604,10 @@ void CUIWeaponCellItem::Update()
 				DestroyIcon(eForend);
 		}
 	}
-	if (object()->HasDetachableMagazine()) {
-		if (object()->IsMagazineAttached() && !!object()->GetMagazineIconSect()) {
+	if (object()->HasDetachableMagazine(true)) {
+		if (object()->IsMagazineAttached() && !!object()->GetMagazineIconSect(true)) {
 			if (!GetIcon(eMagazine) || bForceReInitAddons) {
-				CIconParams params(object()->GetMagazineIconSect());
+				CIconParams params(object()->GetMagazineIconSect(true));
 				CreateIcon(eMagazine, params);
 				InitAddon(GetIcon(eMagazine), params, m_addon_offset[eMagazine], Heading());
 			}
@@ -699,7 +701,7 @@ void CUIWeaponCellItem::InitAllAddons(
 		InitAddon(s_forend, params, m_addon_offset[eForend], b_vertical);
 	}
 	if (s_magazine) {
-		params.Load(object()->GetMagazineIconSect());
+		params.Load(object()->GetMagazineIconSect(true));
 		params.set_shader(s_magazine);
 		InitAddon(s_magazine, params, m_addon_offset[eMagazine], b_vertical);
 	}
@@ -846,7 +848,7 @@ CUIDragItem* CUIWeaponCellItem::CreateDragItem()
 	}
 
 	if (GetIcon(eMagazine)) {
-		params.Load(object()->GetMagazineIconSect());
+		params.Load(object()->GetMagazineIconSect(true));
 		s_magazine = MakeAddonStatic(i, params);
 	}
 

@@ -136,18 +136,24 @@ BOOL CWeaponMagazined::net_Spawn(CSE_Abstract* DC)
 		if (i >= m_magazine.size()) continue;
 		CCartridge& l_cartridge = *(m_magazine.begin() + i);
 		if (LocalAmmoType == l_cartridge.m_LocalAmmoType) continue;
-		l_cartridge.Load(*m_ammoTypes[LocalAmmoType], LocalAmmoType);
+		l_cartridge.Load(m_ammoTypes[LocalAmmoType].c_str(), LocalAmmoType);
 	}
 	//
 	m_bIsMagazineAttached = wpn->m_bIsMagazineAttached;
 //	Msg("weapon [%s] spawned with magazine status [%s]", cName().c_str(), wpn->m_bIsMagazineAttached ? "atached" : "detached");
 
-	if (IsMagazineAttached()) {
-		if (!AmmoTypeIsMagazine(m_ammoType)) {
-			Msg("! [%s] weapon %s detaching magazine due to incorrect ammotype %d|[%s]", __FUNCTION__, cName().c_str(), m_ammoType, m_ammoTypes[m_ammoType].c_str());
-			m_bIsMagazineAttached = false; //костиль від вильоту
-		}else
-			m_LastLoadedMagType = m_ammoType;
+	if (HasDetachableMagazine()) {
+		int mag_size{};
+		if (IsMagazineAttached()) {
+			if (!AmmoTypeIsMagazine(m_ammoType)) {
+				Msg("! [%s] weapon %s detaching magazine due to incorrect ammotype %d|[%s]", __FUNCTION__, cName().c_str(), m_ammoType, m_ammoTypes[m_ammoType].c_str());
+				m_bIsMagazineAttached = false; //костиль від вильоту
+			} else {
+				m_LastLoadedMagType = m_ammoType;
+				mag_size = (int)pSettings->r_s32(GetMagazineName(), "box_size");
+			}
+		}
+		iMagazineSize = mag_size + HasChamber(); //учтём дополнительный патрон в патроннике
 	}
 	//
 	if (IsSilencerAttached())
@@ -160,11 +166,6 @@ BOOL CWeaponMagazined::net_Spawn(CSE_Abstract* DC)
 	}
 	if (IsGrenadeLauncherAttached())
 		m_fAttachedGrenadeLauncherCondition = wpn->m_fAttachedGrenadeLauncherCondition;
-	//
-	if (HasDetachableMagazine() && IsMagazineAttached()){
-		int mag_size = AmmoTypeIsMagazine(m_ammoType) ? (int)pSettings->r_s32(m_ammoTypes[m_ammoType], "box_size") : 0;
-		iMagazineSize = mag_size + HasChamber(); //учтём дополнительный патрон в патроннике
-	}
 	//
 	return bRes;
 }
@@ -1836,7 +1837,7 @@ void CWeaponMagazined::GetBriefInfo(xr_string& str_name, xr_string& icon_sect_na
 	string256 sItemName;
 	strcpy_s(sItemName, CStringTable().translate(AE > 0 ? pSettings->r_string(icon_sect_name.c_str(), "inv_name_short") : "st_not_loaded").c_str());
 
-	if (HasFireModes() && b_wpn_info)
+	if ((HasFireModes() || IsGrenadeMode()) && b_wpn_info)
 		strcat_s(sItemName, GetCurrentFireModeStr());
 
 	str_name = sItemName;
@@ -1883,12 +1884,11 @@ void CWeaponMagazined::net_Relcase(CObject *object)
 
 void CWeaponMagazined::UnloadAmmo(int unload_count, bool spawn_ammo, bool detach_magazine)
 {
-	if (detach_magazine && !unlimited_ammo())
-	{
+	if (detach_magazine && !unlimited_ammo()){
 		if (iAmmoElapsed <= (int)HasChamber() && spawn_ammo)	//spawn mag empty
 			SpawnAmmo(0, GetMagazineEmptySect());
 
-		iMagazineSize = 1;
+		iMagazineSize = HasChamber();
 		m_bIsMagazineAttached = false;
 	}
 
@@ -1934,18 +1934,16 @@ void CWeaponMagazined::UnloadAmmo(int unload_count, bool spawn_ammo, bool detach
 	}
 }
 
-bool CWeaponMagazined::HasDetachableMagazine() const
-{
+bool CWeaponMagazined::HasDetachableMagazine(bool to_show) const {
 	for (u32 i = 0; i < m_ammoTypes.size(); ++i)
 		if (AmmoTypeIsMagazine(i))
 			return true;
-
 	return false;
 }
 
 bool CWeaponMagazined::IsMagazineAttached() const
 {
-	return m_bIsMagazineAttached && HasDetachableMagazine();
+	return m_bIsMagazineAttached/* && HasDetachableMagazine()*/;
 }
 
 void CWeaponMagazined::HandleCartridgeInChamber()
@@ -2128,7 +2126,7 @@ bool CWeaponMagazined::AmmoTypeIsMagazine(u32 type) const{
 		pSettings->line_exist(m_ammoTypes[type], "empty_box");
 }
 
-LPCSTR CWeaponMagazined::GetMagazineEmptySect() const{
+LPCSTR CWeaponMagazined::GetMagazineEmptySect(bool to_show) const{
 	if (HasDetachableMagazine() && IsMagazineAttached())
 		return pSettings->r_string(GetMagazineName(), "empty_box");
 	else
@@ -2238,11 +2236,11 @@ bool CWeaponMagazined::IsGrenadeLauncherBroken() const {
 	return fis_zero(m_fAttachedGrenadeLauncherCondition) || IsGrenadeLauncherAttached() && !GrenadeLauncherAttachable() && fis_zero(GetCondition());
 }
 
-LPCSTR	CWeaponMagazined::GetCurrentMagazine_ShortName(){
+LPCSTR	CWeaponMagazined::GetCurrentMagazine_ShortName(bool to_show){
 	if (!IsMagazineAttached()) return ("");
-	LPCSTR mag_short_name = pSettings->r_string(m_ammoTypes[m_LastLoadedMagType], "inv_name_short");
+	LPCSTR mag_short_name = pSettings->r_string(GetMagazineName(to_show), "inv_name_short");
 	if (iAmmoElapsed <= (int)HasChamber())
-		mag_short_name = pSettings->r_string(GetMagazineEmptySect(), "inv_name_short");
+		mag_short_name = pSettings->r_string(GetMagazineEmptySect(to_show), "inv_name_short");
 	return CStringTable().translate(mag_short_name).c_str();
 }
 

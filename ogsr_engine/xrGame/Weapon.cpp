@@ -2588,7 +2588,7 @@ void CWeapon::ParseCurrentItem(CGameFont* F) {
 	F->OutNext("WEAPON IN STRAPPED MODE: [%d]", m_strapped_mode);
 }
 
-const shared_str CWeapon::GetMagazineIconSect() const {
-	return READ_IF_EXISTS(pSettings, r_string, GetMagazineName(), "mag_icon_sect", nullptr);//pSettings->r_string(GetMagazineName(), "mag_icon_sect");
+const shared_str CWeapon::GetMagazineIconSect(bool to_show) const {
+	return READ_IF_EXISTS(pSettings, r_string, GetMagazineName(to_show), "mag_icon_sect", nullptr);
 }
 

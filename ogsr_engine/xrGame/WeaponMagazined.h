@@ -247,7 +247,7 @@ public:
 	virtual float			GetConditionMisfireProbability() const;
 
 	//оружие использует отъёмный магазин
-	virtual bool	HasDetachableMagazine	() const;
+	virtual bool	HasDetachableMagazine	(bool = false) const;
 	virtual bool	IsMagazineAttached		() const;
 	//у оружия есть патронник
 	virtual bool	HasChamber				() { return m_bHasChamber; };
@@ -258,8 +258,8 @@ public:
 	//
 	virtual bool	IsSingleReloading	();
 	virtual bool	AmmoTypeIsMagazine	(u32 type) const;
-	virtual LPCSTR	GetMagazineEmptySect() const;
-	virtual LPCSTR	GetCurrentMagazine_ShortName();
+	virtual LPCSTR	GetMagazineEmptySect(bool = false) const;
+	virtual LPCSTR	GetCurrentMagazine_ShortName(bool = false);
 
 	//действие передёргивания затвора
 	virtual void	ShutterAction();

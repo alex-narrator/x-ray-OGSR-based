@@ -708,8 +708,8 @@ void InventoryUtilities::TryAttachWpnAddonIcons(CUIStatic* _main_icon, PIItem _i
 		_main_icon->AttachChild(addon_statick);
 	}
 
-	if (wpn->HasDetachableMagazine() && wpn->IsMagazineAttached() && !!wpn->GetMagazineIconSect()) {
-		addon_statick = init_addon(cell_item, wpn->GetMagazineIconSect().c_str(), _scale, eAddonType::eMagazine);
+	if (wpn->HasDetachableMagazine(true) && wpn->IsMagazineAttached() && !!wpn->GetMagazineIconSect(true)) {
+		addon_statick = init_addon(cell_item, wpn->GetMagazineIconSect(true).c_str(), _scale, eAddonType::eMagazine);
 		_main_icon->AttachChild(addon_statick);
 	}
 

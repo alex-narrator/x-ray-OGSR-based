@@ -616,13 +616,6 @@ bool CUIInventoryWnd::OnKeyboard(int dik, EUIMessages keyboard_action)
 	if (UIPropertiesBox.GetVisible())
 		UIPropertiesBox.OnKeyboard(dik, keyboard_action);
 
-	if ( is_binded(kDROP, dik) )
-	{
-		if(WINDOW_KEY_PRESSED==keyboard_action)
-			DropCurrentItem(false);
-		return true;
-	}
-
 	if (WINDOW_KEY_PRESSED == keyboard_action)
 	{
 		if (is_binded(kDROP, dik)) {
@@ -633,6 +626,18 @@ bool CUIInventoryWnd::OnKeyboard(int dik, EUIMessages keyboard_action)
 			if (smart_cast<CEatableItem*>(CurrentIItem())) {
 				EatItem(CurrentIItem());
 				return true;
+			}
+		}
+		if (auto wpn = smart_cast<CWeapon*>(CurrentIItem())) {
+			if (GetInventory()->InSlot(wpn)) {
+				if (is_binded(kWPN_RELOAD, dik))
+					return wpn->Action(kWPN_RELOAD, CMD_START);
+				if (is_binded(kWPN_FIREMODE_PREV, dik))
+					return wpn->Action(kWPN_FIREMODE_PREV, CMD_START);
+				if (is_binded(kWPN_FIREMODE_NEXT, dik))
+					return wpn->Action(kWPN_FIREMODE_NEXT, CMD_START);
+				if (is_binded(kWPN_FUNC, dik))
+					return wpn->Action(kWPN_FUNC, CMD_START);
 			}
 		}
 #ifdef DEBUG
