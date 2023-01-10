@@ -278,7 +278,7 @@ void CUICarBodyWnd::Hide()
 		if (g_eFreeHands != eFreeHandsOff){
 			Actor()->SetWeaponHideState(INV_STATE_INV_WND, false);
 		}
-		if (psActorFlags.test(AF_AMMO_FROM_BELT)) {
+		if (psActorFlags.test(AF_ITEMS_FROM_BELT)) {
 			Actor()->SetRuckAmmoPlacement(false); //сбросим флаг перезарядки из рюкзака
 		}
 	}
@@ -691,7 +691,7 @@ void CUICarBodyWnd::Show()
 		if (g_eFreeHands != eFreeHandsOff) {
 			Actor()->SetWeaponHideState(INV_STATE_INV_WND, true);
 		}
-		if (psActorFlags.test(AF_AMMO_FROM_BELT)) {
+		if (psActorFlags.test(AF_ITEMS_FROM_BELT)) {
 			Actor()->SetRuckAmmoPlacement(true); //установим флаг перезарядки из рюкзака
 		}
 		Actor()->RepackAmmo();
@@ -1012,6 +1012,7 @@ bool CUICarBodyWnd::CanMoveToOther(PIItem pItem, CGameObject* owner_to) const {
 void CUICarBodyWnd::UpdateWeightVolume(bool only_for_actor) {
 	InventoryUtilities::UpdateWeight(*m_pUIOurWeightWnd);
 	InventoryUtilities::UpdateVolume(m_pActorGO, *m_pUIOurVolWnd);
+	m_pUIOurVolWnd->SetVisible(psActorFlags.test(AF_INVENTORY_VOLUME));
 	if (only_for_actor) return;
 	InventoryUtilities::UpdateVolume(m_pOtherGO, *m_pUIOthersVolWnd);
 }

@@ -770,10 +770,15 @@
 			<text font="letterica16" r="215" g="195" b="170">ui_mm_ambient</text>
 		</check_ambient>
 
-		<check_ammo_from_belt x="0" y="0" width="415" height="21">
-			<options_item entry="g_ammo_from_belt" group="mm_opt_gameplay"/>
-			<text font="letterica16" r="215" g="195" b="170">ui_mm_ammo_from_belt</text>
-		</check_ammo_from_belt>
+		<check_items_from_belt x="0" y="0" width="415" height="21">
+			<options_item entry="g_items_from_belt" group="mm_opt_gameplay"/>
+			<text font="letterica16" r="215" g="195" b="170">ui_mm_items_from_belt</text>
+		</check_items_from_belt>
+		
+		<check_inventory_volume x="0" y="0" width="415" height="21">
+			<options_item entry="g_inventory_volume" group="mm_opt_gameplay"/>
+			<text font="letterica16" r="215" g="195" b="170">ui_mm_inventory_volume</text>
+		</check_inventory_volume>		
 
 		<check_build_crosshair x="0" y="0" width="415" height="21">
 			<options_item entry="hud_crosshair_build" group="mm_opt_gameplay"/>

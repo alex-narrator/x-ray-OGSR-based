@@ -705,6 +705,7 @@ void CUIInventoryWnd::ClearAllLists()
 void CUIInventoryWnd::UpdateWeightVolume() {
   InventoryUtilities::UpdateWeight(UIWeightWnd, true);
   InventoryUtilities::UpdateVolume(Actor()->cast_game_object(), UIVolumeWnd, true);
+  UIVolumeWnd.SetVisible(psActorFlags.test(AF_INVENTORY_VOLUME));
 }
 
 void CUIInventoryWnd::ReinitVestList() {

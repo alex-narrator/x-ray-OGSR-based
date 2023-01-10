@@ -203,11 +203,8 @@
 	<string id="ui_mm_stop_missile_playing">
 		<text>Отключить анимации подбрасывания болта и гранат</text>
 	</string>
-	<string id="ui_mm_ammo_from_belt">
-		<text>Патроны и гранаты с пояса</text>
-	</string>
-	<string id="ui_mm_quick_slot_from_belt">
-		<text>Предметы для быстрых слотов с пояса</text>
+	<string id="ui_mm_items_from_belt">
+		<text>Використання патронів та предметів у швидких слотах з поясу</text>
 	</string>
 	<string id="ui_mm_artefacts_from_all">
 		<text>Артефакты действуют из всего инвентаря</text>
@@ -393,17 +390,11 @@
 	<string id="gameplay_settings_desc_wpn_actions_reset_sprint">
 		<text>wpn_actions_reset_sprint</text>
 	</string>
-	<string id="gameplay_settings_name_ammo_from_belt">
-		<text>ammo_from_belt</text>
+	<string id="gameplay_settings_name_items_from_belt">
+		<text>items_from_belt</text>
 	</string>
-	<string id="gameplay_settings_desc_ammo_from_belt">
-		<text>ammo_from_belt</text>
-	</string>
-	<string id="gameplay_settings_name_quick_slot_from_belt">
-		<text>quick_slot_from_belt</text>
-	</string>
-	<string id="gameplay_settings_desc_quick_slot_from_belt">
-		<text>quick_slot_from_belt</text>
+	<string id="gameplay_settings_desc_items_from_belt">
+		<text>items_from_belt</text>
 	</string>
 	<string id="gameplay_settings_name_artefacts_from_all">
 		<text>artefacts_from_all</text>

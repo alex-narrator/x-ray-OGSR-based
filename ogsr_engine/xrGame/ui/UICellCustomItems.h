@@ -106,7 +106,7 @@ public:
 		eMaxAddon
 	};
 
-	CUIStatic*					m_addons					[eMaxAddon];
+	CUIStatic*					m_addons					[eMaxAddon]{};
 protected:
 	virtual		void			UpdateItemText();
 	Fvector2					m_addon_offset				[eMaxAddon]{};

@@ -1504,11 +1504,11 @@ void CCC_RegisterCommands()
 	CMD3(CCC_Mask,				"g_pickup_target_only",			&psActorFlags,	AF_PICKUP_TARGET_ONLY			);	//можно подобрать только те предметы на которые непосредственно смотрит прицел
 	CMD3(CCC_Mask,				"g_knife_to_cut_part",			&psActorFlags,	AF_KNIFE_TO_CUT_PART			);	//ніж потрібен для зрізання частин монстрів
 	//инвентарь
-	CMD3(CCC_Mask,				"g_quick_slot_from_belt",		&psActorFlags,	AF_QUICK_FROM_BELT				);	//наполнение быстрых слотов с пояса
 	CMD3(CCC_Mask,				"g_artefacts_from_all",			&psActorFlags,	AF_ARTEFACTS_FROM_ALL			);	//артефакты работают из всего инвентаря
 	CMD3(CCC_Mask,				"g_artefact_detector_check",	&psActorFlags,	AF_ARTEFACT_DETECTOR_CHECK		);	//свойства артефактов отображаются после проверки детектором
+	CMD3(CCC_Mask,				"g_items_from_belt",			&psActorFlags,	AF_ITEMS_FROM_BELT				);	//використання предметів з поясу
+	CMD3(CCC_Mask,				"g_inventory_volume",			&psActorFlags,	AF_INVENTORY_VOLUME				);	//використання обсягу інвентаря
 	//оружие
-	CMD3(CCC_Mask,				"g_ammo_from_belt",				&psActorFlags,	AF_AMMO_FROM_BELT				);	//патрони та гранати з поясу
 	CMD3(CCC_Mask,				"g_no_auto_reload",				&psActorFlags,	AF_NO_AUTO_RELOAD				);	//запрет автоперезарядки оружия
 	CMD3(CCC_Mask,				"g_wpn_actions_reset_sprint",	&psActorFlags,	AF_WPN_ACTIONS_RESET_SPRINT		);	//перезарядка/смена типа патрона/бросок гранаты/болта/удар ножом сбрасывают спринт
 	//параметры персонажа

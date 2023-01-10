@@ -459,7 +459,7 @@ void CUIInventoryWnd::Show()
 		if (g_eFreeHands != eFreeHandsOff) {
 			Actor()->SetWeaponHideState(INV_STATE_INV_WND, true);
 		}
-		if (psActorFlags.test(AF_AMMO_FROM_BELT)) {
+		if (psActorFlags.test(AF_ITEMS_FROM_BELT)) {
 			Actor()->SetRuckAmmoPlacement(true); //установим флаг перезарядки из рюкзака
 		}
 		Actor()->RepackAmmo();
@@ -487,7 +487,7 @@ void CUIInventoryWnd::Hide()
 		if (g_eFreeHands != eFreeHandsOff) {
 			pActor->SetWeaponHideState(INV_STATE_INV_WND, false);
 		}
-		if (psActorFlags.test(AF_AMMO_FROM_BELT)) {
+		if (psActorFlags.test(AF_ITEMS_FROM_BELT)) {
 			pActor->SetRuckAmmoPlacement(false); //сбросим флаг перезарядки из рюкзака
 		}
 	}

@@ -963,7 +963,7 @@ PIItem CInventory::GetAny(const char *name) const
 
 PIItem CInventory::GetAmmo(const char *name, bool forActor) const
 {
-	bool include_ruck = !forActor || !psActorFlags.test(AF_AMMO_FROM_BELT) || Actor()->IsRuckAmmoPlacement();
+	bool include_ruck = !forActor || !psActorFlags.test(AF_ITEMS_FROM_BELT) || Actor()->IsRuckAmmoPlacement();
 
 	PIItem itm = Get(name, include_ruck);
 	if (!include_ruck && !itm)
@@ -1434,7 +1434,7 @@ PIItem CInventory::GetAmmoByLimit(const char* name, bool forActor, bool limit_ma
 		return false;
 	};
 
-	bool include_ruck = !forActor || !psActorFlags.test(AF_AMMO_FROM_BELT) || Actor()->IsRuckAmmoPlacement();
+	bool include_ruck = !forActor || !psActorFlags.test(AF_ITEMS_FROM_BELT) || Actor()->IsRuckAmmoPlacement();
 
 	IterateAmmo(include_ruck, callback);
 
@@ -1601,7 +1601,7 @@ void CInventory::TryAmmoCustomPlacement(CInventoryItem* pIItem)
 
 	//Msg("ammo [%s] with ID [%d] has taken", pIItem->object().cNameSect().c_str(), pIItem->object().ID());
 
-	if (psActorFlags.test(AF_AMMO_FROM_BELT) && pWeapon->IsAmmoWasSpawned() && !pActor->IsRuckAmmoPlacement()) { //если включены патроны с пояса, то для боеприпасов актора, которые спавнятся при разрядке
+	if (psActorFlags.test(AF_ITEMS_FROM_BELT) && pWeapon->IsAmmoWasSpawned() && !pActor->IsRuckAmmoPlacement()) { //если включены патроны с пояса, то для боеприпасов актора, которые спавнятся при разрядке
 		//auto pWarbelt	= pActor->GetWarbelt();
 		//auto pVest		= pActor->GetVest();
 //		bool b_has_drop_pouch = pWarbelt && pWarbelt->HasDropPouch() || pVest && pVest->HasDropPouch();
@@ -1714,7 +1714,9 @@ void CInventory::DropSlotsToRuck(u32 min_slot, u32 max_slot) {
 void CInventory::UpdateVolumeDropOut()
 {
 	auto pActor = smart_cast<CActor*>(m_pOwner);
-	if (!pActor || !IsAllItemsLoaded() || !smart_cast<CEntityAlive*>(m_pOwner)->g_Alive()) return;
+	if (!pActor || m_pOwner->IsVolumeUnlimited() ||
+		!IsAllItemsLoaded() || 
+		!smart_cast<CEntityAlive*>(m_pOwner)->g_Alive()) return;
 
 	float total_volume = TotalVolume();
 

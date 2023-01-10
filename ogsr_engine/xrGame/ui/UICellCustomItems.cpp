@@ -185,7 +185,6 @@ void CUIInventoryCellItem::Update() {
 CUIAmmoCellItem::CUIAmmoCellItem(CWeaponAmmo* itm)
 :inherited(itm){
 	if (itm->IsBoxReloadable() || itm->IsBoxReloadableEmpty()) {
-		m_text_add = nullptr;
 		init_add();
 	}
 }
@@ -254,7 +253,6 @@ void CUIAmmoCellItem::UpdateItemText()
 
 CUIWarbeltCellItem::CUIWarbeltCellItem(CWarbelt* itm)
 	:inherited(itm) {
-	m_text_add = nullptr;
 	init_add();
 }
 void CUIWarbeltCellItem::Update() {
@@ -276,7 +274,6 @@ void CUIWarbeltCellItem::UpdateItemText() {
 
 CUIVestCellItem::CUIVestCellItem(CVest* itm)
 	:inherited(itm) {
-	m_text_add = nullptr;
 	init_add();
 }
 void CUIVestCellItem::Update() {
@@ -298,8 +295,12 @@ void CUIVestCellItem::UpdateItemText() {
 
 CUICBackpackCellItem::CUICBackpackCellItem(CBackpack* itm)
 	:inherited(itm) {
-	m_text_add = nullptr;
-	init_add();
+
+	float add_volume = object()->GetItemEffect(CInventoryItem::eAdditionalVolume);
+	bool b_show = psActorFlags.test(AF_INVENTORY_VOLUME) && !fis_zero(add_volume);
+	if (b_show) {
+		init_add();
+	}
 }
 void CUICBackpackCellItem::Update() {
 	inherited::Update();
@@ -308,7 +309,10 @@ void CUICBackpackCellItem::Update() {
 void CUICBackpackCellItem::UpdateItemText() {
 	inherited::UpdateItemText();
 
-	string32				str;
+	if (!m_text_add) return;
+
+	string32 str;
+
 	sprintf_s(str, "%.0f%s", object()->GetItemEffect(CInventoryItem::eAdditionalVolume), CStringTable().translate("st_l").c_str());
 
 	Fvector2 pos{ GetWidth() - m_text_add->GetWidth(), GetHeight() - m_text_add->GetHeight() };
@@ -316,12 +320,12 @@ void CUICBackpackCellItem::UpdateItemText() {
 	m_text_add->SetWndPos(pos);
 	m_text_add->SetText(str);
 	m_text_add->Show(true);
+
 }
 
 CUIEatableCellItem::CUIEatableCellItem(CEatableItem* itm)
 	:inherited(itm) {
 	if (itm->GetStartPortionsNum()>1) {
-		m_text_add = nullptr;
 		init_add();
 	}
 }
@@ -342,16 +346,17 @@ void CUIEatableCellItem::Update(){
 
 void CUIEatableCellItem::UpdateItemText(){
 	inherited::UpdateItemText();
-	if (object()->GetStartPortionsNum() > 1) {
-		string32				str;
-		sprintf_s(str, "%d/%d", object()->GetPortionsNum(), object()->GetStartPortionsNum());
 
-		Fvector2 pos{ GetWidth() - m_text_add->GetWidth(), GetHeight() - m_text_add->GetHeight() };
+	if (!m_text_add) return;
 
-		m_text_add->SetWndPos(pos);
-		m_text_add->SetText(str);
-		m_text_add->Show(true);
-	}
+	string32				str;
+	sprintf_s(str, "%d/%d", object()->GetPortionsNum(), object()->GetStartPortionsNum());
+
+	Fvector2 pos{ GetWidth() - m_text_add->GetWidth(), GetHeight() - m_text_add->GetHeight() };
+
+	m_text_add->SetWndPos(pos);
+	m_text_add->SetText(str);
+	m_text_add->Show(true);
 }
 
 CUIArtefactCellItem::CUIArtefactCellItem(CArtefact* itm)
@@ -372,20 +377,10 @@ CUIWeaponCellItem::CUIWeaponCellItem(CWeapon* itm)
 :inherited(itm)
 {
 	b_auto_drag_childs		= false;
-	m_addons[eSilencer]		= nullptr;
-	m_addons[eScope]		= nullptr;
-	m_addons[eLauncher]		= nullptr;
-	m_addons[eLaser]		= nullptr;
-	m_addons[eFlashlight]	= nullptr;
-	m_addons[eStock]		= nullptr;
-	m_addons[eExtender]		= nullptr;
-	m_addons[eForend]		= nullptr;
-	m_addons[eMagazine]		= nullptr;
 
 	m_cell_size.set(INV_GRID_WIDTHF, INV_GRID_HEIGHTF);
 
 	if (itm->GetAmmoMagSize()) {
-		m_text_add = nullptr;
 		init_add();
 	}
 
@@ -420,19 +415,20 @@ CUIWeaponCellItem::CUIWeaponCellItem(CWeapon* itm)
 void CUIWeaponCellItem::UpdateItemText()
 {
 	inherited::UpdateItemText();
-	if (object()->GetAmmoMagSize()) {
-		string32				str;
-		auto pWeaponMag = smart_cast<CWeaponMagazined*>(object());
-		sprintf_s(str, "%d/%d%s", object()->GetAmmoElapsed(), 
-			object()->GetAmmoMagSize(), 
-			pWeaponMag && (pWeaponMag->HasFireModes() || pWeaponMag->IsGrenadeMode()) ? pWeaponMag->GetCurrentFireModeStr() : "");
-		
-		Fvector2 pos{ GetWidth() - m_text_add->GetWidth(), GetHeight() - m_text_add->GetHeight() };
 
-		m_text_add->SetWndPos(pos);
-		m_text_add->SetText(str);
-		m_text_add->Show(true);
-	}
+	if (!m_text_add) return;
+
+	string32				str;
+	auto pWeaponMag = smart_cast<CWeaponMagazined*>(object());
+	sprintf_s(str, "%d/%d%s", object()->GetAmmoElapsed(), 
+		object()->GetAmmoMagSize(), 
+		pWeaponMag && (pWeaponMag->HasFireModes() || pWeaponMag->IsGrenadeMode()) ? pWeaponMag->GetCurrentFireModeStr() : "");
+		
+	Fvector2 pos{ GetWidth() - m_text_add->GetWidth(), GetHeight() - m_text_add->GetHeight() };
+
+	m_text_add->SetWndPos(pos);
+	m_text_add->SetText(str);
+	m_text_add->Show(true);
 }
 
 #include "../object_broker.h"
@@ -623,15 +619,15 @@ void CUIWeaponCellItem::OnAfterChild(CUIDragDropListEx* parent_list)
 {
 	const Ivector2 &cs = parent_list->CellSize();
 	m_cell_size.set((float)cs.x, (float)cs.y);
-	CUIStatic* s_silencer	= is_silencer	() ? GetIcon(eSilencer)		: NULL;
-	CUIStatic* s_scope		= is_scope		() ? GetIcon(eScope)		: NULL;
-	CUIStatic* s_launcher	= is_launcher	() ? GetIcon(eLauncher)		: NULL;
-	CUIStatic* s_laser		= is_laser		() ? GetIcon(eLaser)		: NULL;
-	CUIStatic* s_flashlight = is_flashlight	() ? GetIcon(eFlashlight)	: NULL;
-	CUIStatic* s_stock		= is_stock		() ? GetIcon(eStock)		: NULL;
-	CUIStatic* s_extender	= is_extender	() ? GetIcon(eExtender)		: NULL;
-	CUIStatic* s_forend		= is_forend		() ? GetIcon(eForend)		: NULL;
-	CUIStatic* s_magazine	= is_magazine	() ? GetIcon(eMagazine)		: NULL;
+	CUIStatic* s_silencer	= is_silencer	() ? GetIcon(eSilencer)		: nullptr;
+	CUIStatic* s_scope		= is_scope		() ? GetIcon(eScope)		: nullptr;
+	CUIStatic* s_launcher	= is_launcher	() ? GetIcon(eLauncher)		: nullptr;
+	CUIStatic* s_laser		= is_laser		() ? GetIcon(eLaser)		: nullptr;
+	CUIStatic* s_flashlight = is_flashlight	() ? GetIcon(eFlashlight)	: nullptr;
+	CUIStatic* s_stock		= is_stock		() ? GetIcon(eStock)		: nullptr;
+	CUIStatic* s_extender	= is_extender	() ? GetIcon(eExtender)		: nullptr;
+	CUIStatic* s_forend		= is_forend		() ? GetIcon(eForend)		: nullptr;
+	CUIStatic* s_magazine	= is_magazine	() ? GetIcon(eMagazine)		: nullptr;
 	
 	InitAllAddons(
 		s_silencer, 

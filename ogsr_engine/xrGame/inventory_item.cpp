@@ -934,6 +934,8 @@ float CInventoryItem::GetHitTypeProtection(int hit_type){
 }
 
 float CInventoryItem::GetItemEffect(int effect) const {
+	if (!psActorFlags.test(AF_INVENTORY_VOLUME) && effect == eAdditionalVolume)
+		return 0.f;
 	//на випромінення радіації стан предмету не впливає (окрім як для артефактів)
 	float condition_k = (effect == eRadiationRestoreSpeed) ? 1.f : GetCondition();
 	return m_ItemEffect[effect] * condition_k;

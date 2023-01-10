@@ -1315,7 +1315,7 @@ int CWeapon::GetAmmoCurrent(bool use_item_to_spawn) const
 
 	//чтоб не делать лишних пересчетов
 	if (m_pCurrentInventory->ModifyFrame() <= m_dwAmmoCurrentCalcFrame)
-		if (!smart_cast<const CActor*>(H_Parent()) || !psActorFlags.test(AF_AMMO_FROM_BELT)) //очень некрасивый костыль!
+		if (!smart_cast<const CActor*>(H_Parent()) || !psActorFlags.test(AF_ITEMS_FROM_BELT)) //очень некрасивый костыль!
 			return l_count + iAmmoCurrent;
 
 //	Msg("[%s] get ammo current [%d]:[%s] weapon [%s] - before types cycle", m_pCurrentInventory->GetOwner()->Name(), l_count + iAmmoCurrent, *m_ammoTypes[m_ammoType], this->Name_script());
@@ -1358,7 +1358,7 @@ int CWeapon::GetAmmoCount_forType( shared_str const& ammo_type, u32 max ) const 
 
   m_pCurrentInventory->IterateAmmo( false, callback );
   if ( max == 0 || res < max )
-    if ( !smart_cast<const CActor*>( H_Parent() ) || !psActorFlags.test(AF_AMMO_FROM_BELT) )
+    if ( !smart_cast<const CActor*>( H_Parent() ) || !psActorFlags.test(AF_ITEMS_FROM_BELT) )
       m_pCurrentInventory->IterateAmmo( true, callback );
 
   return res;

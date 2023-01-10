@@ -33,8 +33,8 @@ local gameplay_opt_params = {
 	{ "no_auto_reload", 			"check", "gameplay_settings_name_no_auto_reload", 				"gameplay_settings_desc_no_auto_reload"				},
 	{ "wpn_actions_reset_sprint", 	"check", "gameplay_settings_name_wpn_actions_reset_sprint", 	"gameplay_settings_desc_wpn_actions_reset_sprint"	},
 	
-	{ "ammo_from_belt", 			"check", "gameplay_settings_name_ammo_from_belt", 				"gameplay_settings_desc_ammo_from_belt"				},
-	{ "quick_slot_from_belt", 		"check", "gameplay_settings_name_quick_slot_from_belt", 		"gameplay_settings_desc_quick_slot_from_belt"		},
+	{ "inventory_volume", 			"check", "gameplay_settings_name_inventory_volume", 			"gameplay_settings_desc_inventory_volume"			},
+	{ "items_from_belt", 			"check", "gameplay_settings_name_items_belt", 					"gameplay_settings_desc_items_from_belt"			},
 	{ "artefacts_from_all", 		"check", "gameplay_settings_name_artefacts_from_all", 			"gameplay_settings_desc_artefacts_from_all"			},
 	
 	{ "artefact_detector_check", 	"check", "gameplay_settings_name_artefact_detector_check", 		"gameplay_settings_desc_artefact_detector_check"	},

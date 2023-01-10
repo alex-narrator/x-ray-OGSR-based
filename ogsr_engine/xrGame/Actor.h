@@ -787,7 +787,7 @@ public:
 			void	DrawHUDMasks			();
 			void	UpdateVisorEfects		();
 
-	virtual bool	IsVolumeUnlimited		() const { return false; };
+	virtual bool	IsVolumeUnlimited		() const { return !psActorFlags.test(AF_INVENTORY_VOLUME); };
 
 			void	TryPlayAnimItemTake		();
 			void	ActorCheckout			();

@@ -66,7 +66,7 @@ void CUIItemInfo::Init(LPCSTR xml_name){
 		UIWeight->SetAutoDelete(true);
 		xml_init.InitStatic		(uiXml, "static_weight", 0, UIWeight);
 	}
-	if(uiXml.NavigateToNode("static_volume", 0))
+	if(uiXml.NavigateToNode("static_volume", 0) && psActorFlags.test(AF_INVENTORY_VOLUME))
 	{
 		UIVolume				= xr_new<CUIStatic>();
 		AttachChild				(UIVolume);
@@ -151,24 +151,24 @@ void CUIItemInfo::InitItem(CInventoryItem* pInvItem)
 	if(!m_pInvItem)			return;
 
 	string256				str;
-	if(UIName)
-	{
+	if(UIName){
 		UIName->SetText		(pInvItem->Name());
 	}
-	if(UIWeight)
-	{
+	if(UIWeight){
 		sprintf_s			(str, "%3.2f %s", pInvItem->Weight(), CStringTable().translate("st_kg").c_str());
 		UIWeight->SetText	(str);
 	}
-	if (UIVolume)
-	{
-		sprintf_s			(str, "%3.2f %s", pInvItem->Volume(), *CStringTable().translate("st_l"));
+	if (UIVolume){
+		sprintf_s			(str, "%3.2f %s", pInvItem->Volume(), CStringTable().translate("st_l").c_str());
 		UIVolume->SetText	(str);
 	}
-	if( UICost )
-	{
+	if(UICost){
 		sprintf_s			(str, "%d %s", pInvItem->Cost(), CStringTable().translate("ui_st_money_regional").c_str());		// will be owerwritten in multiplayer
 		UICost->SetText		(str);
+	}
+	if (UICondition) {
+		sprintf_s(str, "%.0f%s", pInvItem->GetCondition() * 100.0f, "%");
+		UICondition->SetText(str);
 	}
 
 	if(UICondProgresBar)
@@ -287,6 +287,12 @@ void CUIItemInfo::Update()
 			if (!UICondProgresBar->IsShown())
 				UICondProgresBar->Show(true);
 			UICondProgresBar->SetProgressPos(cond * 100.0f + 1.0f - EPS);
+		}
+
+		if (UICondition) {
+			string256 str;
+			sprintf_s(str, "%.0f%s", m_pInvItem->GetCondition() * 100.0f, "%");
+			UICondition->SetText(str);
 		}
 
 		if (UIArtefactParams) {

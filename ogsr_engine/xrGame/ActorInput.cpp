@@ -239,7 +239,7 @@ void CActor::IR_OnKeyboardPress(int cmd){
 				if (itm->cast_eatable_item()){
 					inventory().TryToHideWeapon(true, false);
 					//
-					bool SearchRuck = !psActorFlags.test(AF_QUICK_FROM_BELT);
+					bool SearchRuck = !psActorFlags.test(AF_ITEMS_FROM_BELT);
 					PIItem iitm = inventory().GetSame(itm, SearchRuck);
 
 					if (iitm){

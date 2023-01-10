@@ -2102,7 +2102,7 @@ int CWeaponMagazined::GetMagazineCount() const{
 	int iMagazinesCount{};
 
 	for (int i = 0; i < (int)m_ammoTypes.size(); ++i){
-		bool b_search_ruck = !psActorFlags.test(AF_AMMO_FROM_BELT);
+		bool b_search_ruck = !psActorFlags.test(AF_ITEMS_FROM_BELT);
 		iMagazinesCount += (int)Actor()->inventory().GetSameItemCount(m_ammoTypes[i].c_str(), b_search_ruck);
 	}
 	return iMagazinesCount;

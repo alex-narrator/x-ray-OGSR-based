@@ -58,7 +58,7 @@ void CUIArtefactPanel::Update(){
 
 	for(const auto& _itm : items_to_show){
 		if (_itm) {
-			bool bSearchRuck = _itm->cast_weapon_ammo() ? !psActorFlags.test(AF_AMMO_FROM_BELT) : !psActorFlags.test(AF_QUICK_FROM_BELT);
+			bool bSearchRuck = !psActorFlags.test(AF_ITEMS_FROM_BELT);
 
 			m_vRects.push_back( &(_itm->m_icon_params ) );
 			auto item_sect = _itm->object().cNameSect().c_str();
@@ -138,7 +138,7 @@ void CUISlotPanel::Update(){
 		case QUICK_SLOT_3:
 		{
 			if (_itm) {
-				bool bSearchRuck = _itm->cast_weapon_ammo() ? !psActorFlags.test(AF_AMMO_FROM_BELT) : !psActorFlags.test(AF_QUICK_FROM_BELT);
+				bool bSearchRuck = !psActorFlags.test(AF_ITEMS_FROM_BELT);
 
 				string16	slot_key{};
 				sprintf_s(slot_key, "ui_use_slot_%d", _itm->GetSlot());
@@ -223,7 +223,7 @@ void CUIVestPanel::Update(){
 
 	for (const auto& _itm : items_to_show) {
 		if (_itm) {
-			bool bSearchRuck = _itm->cast_weapon_ammo() ? !psActorFlags.test(AF_AMMO_FROM_BELT) : !psActorFlags.test(AF_QUICK_FROM_BELT);
+			bool bSearchRuck = !psActorFlags.test(AF_ITEMS_FROM_BELT);
 
 			m_vRects.push_back(&(_itm->m_icon_params));
 			auto item_sect = _itm->object().cNameSect().c_str();

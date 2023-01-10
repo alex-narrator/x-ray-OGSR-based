@@ -617,7 +617,7 @@ void CUITradeWnd::Show()
 	m_uidata->UIDealMsg				= NULL;
 
 	if (Actor()) {
-		if (psActorFlags.test(AF_AMMO_FROM_BELT)) 
+		if (psActorFlags.test(AF_ITEMS_FROM_BELT)) 
 			Actor()->SetRuckAmmoPlacement(true); //установим флаг перезарядки из рюкзака
 		Actor()->RepackAmmo();
 	}
@@ -645,7 +645,7 @@ void CUITradeWnd::Hide()
 	m_uidata->UIOthersTradeList.ClearAll(true);
 
 	if (Actor()) {
-		if (psActorFlags.test(AF_AMMO_FROM_BELT)) 
+		if (psActorFlags.test(AF_ITEMS_FROM_BELT))
 			Actor()->SetRuckAmmoPlacement(false); //сбросим флаг перезарядки из рюкзака
 	}
 	m_bShowAllInv = false;
