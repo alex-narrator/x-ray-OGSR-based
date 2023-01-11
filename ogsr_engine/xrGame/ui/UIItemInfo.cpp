@@ -171,15 +171,13 @@ void CUIItemInfo::InitItem(CInventoryItem* pInvItem)
 		UICondition->SetText(str);
 	}
 
-	if(UICondProgresBar)
-	{
+	if(UICondProgresBar){
 		float cond							= pInvItem->GetConditionToShow();
 		UICondProgresBar->Show				(true);
 		UICondProgresBar->SetProgressPos	( cond*100.0f+1.0f-EPS );
 	}
 
-	if(UIDesc)
-	{
+	if(UIDesc){
 		UIDesc->Clear();
 		VERIFY(0 == UIDesc->GetSize());
 		TryAddWpnInfo		(pInvItem);
@@ -188,8 +186,7 @@ void CUIItemInfo::InitItem(CInventoryItem* pInvItem)
 		TryAddEatableInfo	(pInvItem);
 		TryAddArmorInfo		(pInvItem);
 		TryAddCustomInfo	(pInvItem);
-		if(m_desc_info.bShowDescrText)
-		{
+		if(m_desc_info.bShowDescrText){
 			CUIStatic* pItem					= xr_new<CUIStatic>();
 			pItem->SetTextColor					(m_desc_info.uDescClr);
 			pItem->SetFont						(m_desc_info.pDescFont);
@@ -201,8 +198,7 @@ void CUIItemInfo::InitItem(CInventoryItem* pInvItem)
 		}
 		UIDesc->ScrollToBegin				();
 	}
-	if(UIItemImage)
-	{
+	if(UIItemImage){
 		// Загружаем картинку
 		pInvItem->m_icon_params.set_shader( UIItemImage );
 

@@ -297,7 +297,8 @@ CUICBackpackCellItem::CUICBackpackCellItem(CBackpack* itm)
 	:inherited(itm) {
 
 	float add_volume = object()->GetItemEffect(CInventoryItem::eAdditionalVolume);
-	bool b_show = psActorFlags.test(AF_INVENTORY_VOLUME) && !fis_zero(add_volume);
+	float add_weight = object()->GetItemEffect(CInventoryItem::eAdditionalWeight);
+	bool b_show = !fis_zero(add_volume) || !fis_zero(add_weight);
 	if (b_show) {
 		init_add();
 	}
@@ -313,7 +314,17 @@ void CUICBackpackCellItem::UpdateItemText() {
 
 	string32 str;
 
-	sprintf_s(str, "%.0f%s", object()->GetItemEffect(CInventoryItem::eAdditionalVolume), CStringTable().translate("st_l").c_str());
+	float add_volume = object()->GetItemEffect(CInventoryItem::eAdditionalVolume);
+	float add_weight = object()->GetItemEffect(CInventoryItem::eAdditionalWeight);
+	auto measure_volume = CStringTable().translate("st_l").c_str();
+	auto measure_weight = CStringTable().translate("st_kg").c_str();
+
+	if(!fis_zero(add_weight) && !fis_zero(add_volume))
+		sprintf_s(str, "%.0f%s/%.0f%s", add_weight, measure_weight, add_volume, measure_volume);
+	else if (!fis_zero(add_weight))
+		sprintf_s(str, "%.0f%s", add_weight, measure_weight);
+	else if(!fis_zero(add_volume))
+		sprintf_s(str, "%.0f%s", add_volume, measure_volume);
 
 	Fvector2 pos{ GetWidth() - m_text_add->GetWidth(), GetHeight() - m_text_add->GetHeight() };
 

@@ -19,10 +19,9 @@ inv_weight			= 0.1
 
 inv_grid_width     = 2
 inv_grid_height    = 1
-inv_grid_x         = 10
-inv_grid_y         = 18
+inv_grid_x         = 20
+inv_grid_y         = 22
 
-icon_group = 2
 cost				= 500	;30
 default_to_ruck		= false
 
@@ -30,10 +29,10 @@ default_to_ruck		= false
 visual				= dynamics\equipments\belt_3_art.ogf
 inv_grid_width     = 2
 inv_grid_height    = 1
-inv_grid_x         = 10
-inv_grid_y         = 19
-belt_width 			= 4
-belt_height 		= 2
+inv_grid_width     = 2
+inv_grid_height    = 1
+inv_grid_x         = 26
+inv_grid_y         = 22
 
 [pouch]:warbelt
 description			= pouch_descr
@@ -41,8 +40,8 @@ inv_name			= pouch
 inv_name_short		= pouch_short
 inv_grid_width     = 1
 inv_grid_height    = 1
-inv_grid_x         = 10
-inv_grid_y         = 16
+inv_grid_x         = 31
+inv_grid_y         = 19
 
 belt_width 			= 2
 belt_height 		= 2
@@ -72,9 +71,9 @@ inv_weight			= 0.5
 
 inv_grid_width     = 2
 inv_grid_height    = 2
-inv_grid_x         = 0
-inv_grid_y         = 10
-icon_group = 2
+inv_grid_x         = 24
+inv_grid_y         = 23
+
 inv_show_condition = true
 cost				= 500	;30
 default_to_ruck		= false
@@ -103,6 +102,11 @@ description			= backpack_small_descr
 inv_name			= Backpack_small
 inv_name_short		= Backpack_small
 
+inv_grid_width     = 2
+inv_grid_height    = 2
+inv_grid_x         = 20
+inv_grid_y         = 23
+
 [container]:identity_immunities
 GroupControlSection	= spawn_group
 discovery_dependency = 
@@ -123,13 +127,6 @@ inv_grid_y   = 32
 radius = 1
 max_volume = 20
 
-[shadow_inventory]:container
-cost            = 0
-inv_weight 	= 0
-inv_grid_width  = 0
-inv_grid_height = 0
-quest_item      = true
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;BATTERY;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 [battery]:identity_immunities
 GroupControlSection	= spawn_group
@@ -145,18 +142,16 @@ inv_weight			= 0.1
 
 inv_grid_width     = 1
 inv_grid_height    = 1
-inv_grid_x         = 11
-inv_grid_y         = 4
-icon_group = 2
+inv_grid_x         = 24
+inv_grid_y         = 32
 cost				= 500	;30
-default_to_ruck		= false
 
 [powerbank]:battery
 visual				= dynamics\devices\dev_power_device\dev_universalpowerdevice.ogf
 inv_grid_width     = 1
 inv_grid_height    = 1
-inv_grid_x         = 11
-inv_grid_y         = 5
+inv_grid_x         = 25
+inv_grid_y         = 32
 description			= powerbank_descr
 inv_name			= powerbank
 inv_name_short		= powerbank
@@ -184,11 +179,10 @@ inv_name			= Vest
 inv_name_short		= Vest
 inv_weight			= 0.1
 
-icon_group 			= 2
 inv_grid_width     = 2
 inv_grid_height    = 2
-inv_grid_x         = 18
-inv_grid_y         = 17
+inv_grid_x         = 20
+inv_grid_y         = 18
 
 cost				= 500	;30
 default_to_ruck		= false
@@ -201,8 +195,8 @@ inv_name			= Vest_medium
 inv_name_short		= Vest_medium
 inv_grid_width     = 2
 inv_grid_height    = 2
-inv_grid_x         = 16
-inv_grid_y         = 17
+inv_grid_x         = 22
+inv_grid_y         = 18
 vest_width 			= 3
 vest_height 		= 2
 plates 				= plate_class_2,plate_class_3
@@ -213,8 +207,8 @@ inv_name			= Vest_adv
 inv_name_short		= Vest_adv
 inv_grid_width     = 2
 inv_grid_height    = 2
-inv_grid_x         = 14
-inv_grid_y         = 17
+inv_grid_x         = 24
+inv_grid_y         = 18
 vest_width 			= 4
 vest_height 		= 2
 plates 				= plate_class_3
@@ -225,8 +219,8 @@ inv_name			= Vest_heavy
 inv_name_short		= Vest_heavy
 inv_grid_width     = 2
 inv_grid_height    = 2
-inv_grid_x         = 12
-inv_grid_y         = 17
+inv_grid_x         = 26
+inv_grid_y         = 18
 vest_width 			= 4
 vest_height 		= 3
 plates 				= plate_class_3,plate_class_4
@@ -253,9 +247,8 @@ inv_name_short		= drop_pouch_name_short
 inv_weight			= 0.1
 inv_grid_width     = 1
 inv_grid_height    = 1
-inv_grid_x         = 9
-inv_grid_y         = 13
-icon_group = 2
+inv_grid_x         = 29
+inv_grid_y         = 20
 cost				= 1000
 
 [scabbard]:drop_pouch
@@ -264,8 +257,8 @@ inv_name			= scabbard_name
 inv_name_short		= scabbard_name_short
 inv_grid_width     = 1
 inv_grid_height    = 1
-inv_grid_x         = 11
-inv_grid_y         = 13
+inv_grid_x         = 31
+inv_grid_y         = 20
 slot_enabled 		= 0
 
 [holster]:drop_pouch
@@ -274,8 +267,8 @@ inv_name			= holster_name
 inv_name_short		= holster_name_short
 inv_grid_width     = 1
 inv_grid_height    = 1
-inv_grid_x         = 10
-inv_grid_y         = 13
+inv_grid_x         = 30
+inv_grid_y         = 20
 slot_enabled 		= 4
 
 [grenade_pouch]:drop_pouch
@@ -284,8 +277,8 @@ inv_name			= grenade_pouch_name
 inv_name_short		= grenade_pouch_name_short
 inv_grid_width     = 1
 inv_grid_height    = 1
-inv_grid_x         = 8
-inv_grid_y         = 13
+inv_grid_x         = 28
+inv_grid_y         = 20
 slot_enabled 		= 3
 
 [utility_pouch]:drop_pouch
@@ -294,8 +287,8 @@ inv_name			= utility_pouch_name
 inv_name_short		= utility_pouch_name_short
 inv_grid_width     = 1
 inv_grid_height    = 1
-inv_grid_x         = 11
-inv_grid_y         = 11
+inv_grid_x         = 31
+inv_grid_y         = 18
 slot_enabled 		= 10
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -316,9 +309,8 @@ inv_name_short		= plate_class_2_name_short
 inv_weight			= 4
 inv_grid_width     = 1
 inv_grid_height    = 1
-inv_grid_x         = 8
-inv_grid_y         = 14
-icon_group = 2
+inv_grid_x         = 26
+inv_grid_y         = 31
 cost				= 4000
 
 bones_koeff_protection = actor_plate_class_2
@@ -336,8 +328,8 @@ inv_name			= plate_class_4_name
 inv_name_short		= plate_class_4_name_short
 inv_grid_width     = 1
 inv_grid_height    = 1
-inv_grid_x         = 9
-inv_grid_y         = 14
+inv_grid_x         = 26
+inv_grid_y         = 32
 cost				= 8000
 bones_koeff_protection = actor_plate_class_4
 
@@ -394,8 +386,8 @@ inv_weight           	= 4.0
 
 inv_grid_width     = 2
 inv_grid_height    = 2
-inv_grid_x         = 12
-inv_grid_y         = 29
+inv_grid_x         = 10
+inv_grid_y         = 27
 
 cost			= 1000
 
@@ -437,8 +429,9 @@ inv_weight           	= 4.0
 
 inv_grid_width     = 2
 inv_grid_height    = 2
-inv_grid_x         = 18
+inv_grid_x         = 14
 inv_grid_y         = 27
+
 
 cost			= 1200
 
@@ -481,7 +474,7 @@ inv_weight           	= 4.0
 
 inv_grid_width     = 2
 inv_grid_height    = 2
-inv_grid_x         = 16
+inv_grid_x         = 12
 inv_grid_y         = 27
 
 cost			= 6000
@@ -524,7 +517,7 @@ inv_weight           	= 4.0
 
 inv_grid_width     = 2
 inv_grid_height    = 2
-inv_grid_x         = 14
+inv_grid_x         = 16
 inv_grid_y         = 27
 
 cost			= 7000
@@ -570,7 +563,7 @@ inv_weight           	= 4.0
 
 inv_grid_width     = 2
 inv_grid_height    = 2
-inv_grid_x         = 12
+inv_grid_x         = 18
 inv_grid_y         = 27
 
 cost			= 8000
