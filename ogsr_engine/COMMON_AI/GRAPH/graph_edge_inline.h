@@ -24,19 +24,19 @@ IC	CSGraphEdge::CEdge			(const _edge_weight_type &weight, _vertex_type *vertex)
 }
 
 TEMPLATE_SPECIALIZATION
-IC	typename const CSGraphEdge::_edge_weight_type &CSGraphEdge::weight	() const
+IC	const CSGraphEdge::_edge_weight_type &CSGraphEdge::weight	() const
 {
 	return			(m_weight);
 }
 
 TEMPLATE_SPECIALIZATION
-IC	typename CSGraphEdge::_vertex_type *CSGraphEdge::vertex				() const
+IC	CSGraphEdge::_vertex_type *CSGraphEdge::vertex				() const
 {
 	return			(m_vertex);
 }
 
 TEMPLATE_SPECIALIZATION
-IC	const typename CSGraphEdge::_vertex_id_type &CSGraphEdge::vertex_id	() const
+IC	const CSGraphEdge::_vertex_id_type &CSGraphEdge::vertex_id	() const
 {
 	return			(vertex()->vertex_id());
 }

@@ -8,6 +8,8 @@
 
 #pragma once
 
+#include "enemy_manager.h"
+
 class CVisualMemoryManager;
 class CSoundMemoryManager;
 class CHitMemoryManager;
