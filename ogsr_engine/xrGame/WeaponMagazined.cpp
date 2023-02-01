@@ -1797,8 +1797,7 @@ void CWeaponMagazined::net_Export( CSE_Abstract* E ) {
   wpn->m_u8CurFireMode = u8( m_iCurFireMode&0x00ff );
   //
   wpn->m_AmmoIDs.clear();
-  for (u8 i = 0; i < m_magazine.size(); i++)
-  {
+  for (u8 i = 0; i < m_magazine.size(); i++){
 	  CCartridge& l_cartridge = *(m_magazine.begin() + i);
 	  wpn->m_AmmoIDs.push_back(l_cartridge.m_LocalAmmoType);
   }

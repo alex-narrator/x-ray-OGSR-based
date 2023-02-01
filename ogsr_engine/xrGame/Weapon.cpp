@@ -593,7 +593,7 @@ BOOL CWeapon::net_Spawn		(CSE_Abstract* DC)
 	m_cur_laser = E->m_cur_laser;
 
 	if (FlashlightAttachable() && IsFlashlightAttached() && E->m_cur_flashlight >= m_flashlights.size()) {
-		Msg("! [%s]: %s: wrong laser current [%u/%u]", __FUNCTION__, cName().c_str(), E->m_cur_flashlight, m_flashlights.size() - 1);
+		Msg("! [%s]: %s: wrong flashlight current [%u/%u]", __FUNCTION__, cName().c_str(), E->m_cur_flashlight, m_flashlights.size() - 1);
 		E->m_cur_flashlight = 0;
 	}
 	m_cur_flashlight = E->m_cur_flashlight;
@@ -629,7 +629,7 @@ BOOL CWeapon::net_Spawn		(CSE_Abstract* DC)
 	  }
 	}
 
-	m_DefaultCartridge.Load(*m_ammoTypes[m_ammoType], u8(m_ammoType));	
+	m_DefaultCartridge.Load(m_ammoTypes[m_ammoType].c_str(), u8(m_ammoType));
 	if(iAmmoElapsed) 
 	{
 		// нож автоматически заряжается двумя патронами, хотя

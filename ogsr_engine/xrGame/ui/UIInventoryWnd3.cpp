@@ -55,7 +55,7 @@ void CUIInventoryWnd::ActivatePropertiesBox()
 	const auto& inv = m_pInv;
 
 	bool to_quick{};
-	if (!/*pOutfit*/b_wearable && CurrentIItem()->GetSlot() != NO_ACTIVE_SLOT) {
+	if (!b_wearable && CurrentIItem()->GetSlot() != NO_ACTIVE_SLOT) {
 		auto& slots = CurrentIItem()->GetSlots();
 		for (u8 i = 0; i < (u8)slots.size(); ++i) {
 			auto slot = slots[i];
@@ -88,23 +88,35 @@ void CUIInventoryWnd::ActivatePropertiesBox()
 		b_show = true;
 	}
 
-	if(CurrentIItem()->Ruck() && inv->CanPutInRuck(CurrentIItem()) && (CurrentIItem()->GetSlot() == NO_ACTIVE_SLOT || !inv->m_slots[CurrentIItem()->GetSlot()].m_bPersistent) )
+	if(CurrentIItem()->Ruck() && inv->CanPutInRuck(CurrentIItem()) && 
+		(CurrentIItem()->GetSlot() == NO_ACTIVE_SLOT || !inv->m_slots[CurrentIItem()->GetSlot()].m_bPersistent) )
 	{
-		UIPropertiesBox.AddItem(/*pOutfit*/b_wearable ? "st_undress_outfit" : "st_move_to_bag", NULL, INVENTORY_TO_BAG_ACTION);
+		UIPropertiesBox.AddItem(b_wearable ? "st_undress_outfit" : "st_move_to_bag", NULL, INVENTORY_TO_BAG_ACTION);
 
 		bAlreadyDressed = true;
 		b_show			= true;
 	}
-	if(/*pOutfit*/b_wearable && !bAlreadyDressed )
-	{
+
+	if(b_wearable && !bAlreadyDressed ){
 		UIPropertiesBox.AddItem("st_dress_outfit",  NULL, INVENTORY_TO_SLOT_ACTION);
 		b_show = true;
 	}
 
-	if (pVest && pVest->IsPlateInstalled() && pVest->CanDetach(pVest->GetPlateName().c_str())) {
-		_addon_name = pSettings->r_string(pVest->GetPlateName().c_str(), "inv_name_short");
+	const char* _addon_sect{};
+
+	if (pVest && pVest->CanDetach(pVest->GetPlateName().c_str())) {
+		_addon_sect = pVest->GetPlateName().c_str();
+		_addon_name = pSettings->r_string(_addon_sect, "inv_name_short");
 		sprintf(temp, "%s%s %s", _many, CStringTable().translate(detach_tip).c_str(), CStringTable().translate(_addon_name).c_str());
-		UIPropertiesBox.AddItem(temp, (void*)pVest->GetPlateName().c_str(), INVENTORY_DETACH_ADDON);
+		UIPropertiesBox.AddItem(temp, (void*)_addon_sect, INVENTORY_DETACH_ADDON);
+		b_show = true;
+	}
+
+	if (CurrentIItem()->IsPowerSourceAttachable() && CurrentIItem()->IsPowerSourceAttached() && CurrentIItem()->CanDetach(CurrentIItem()->GetPowerSourceName().c_str())) {
+		_addon_sect = CurrentIItem()->GetPowerSourceName().c_str();
+		_addon_name = pSettings->r_string(_addon_sect, "inv_name_short");
+		sprintf(temp, "%s%s %s", _many, CStringTable().translate(detach_tip).c_str(), CStringTable().translate(_addon_name).c_str());
+		UIPropertiesBox.AddItem(temp, (void*)_addon_sect, INVENTORY_DETACH_ADDON);
 		b_show = true;
 	}
 
@@ -155,52 +167,60 @@ void CUIInventoryWnd::ActivatePropertiesBox()
 			}
 		}
 		//
-		if(pWeapon->GrenadeLauncherAttachable() && pWeapon->IsGrenadeLauncherAttached() && pWeapon->CanDetach(pWeapon->GetGrenadeLauncherName().c_str())){
-			_addon_name = pSettings->r_string(pWeapon->GetGrenadeLauncherName().c_str(), "inv_name_short");
+		if(pWeapon->IsGrenadeLauncherAttached() && pWeapon->GrenadeLauncherAttachable() && pWeapon->CanDetach(pWeapon->GetGrenadeLauncherName().c_str())){
+			_addon_sect = pWeapon->GetGrenadeLauncherName().c_str();
+			_addon_name = pSettings->r_string(_addon_sect, "inv_name_short");
 			sprintf(temp, "%s%s %s", _many, CStringTable().translate(detach_tip).c_str(), CStringTable().translate(_addon_name).c_str());
-			UIPropertiesBox.AddItem(temp, (void*)pWeapon->GetGrenadeLauncherName().c_str(), INVENTORY_DETACH_ADDON);
+			UIPropertiesBox.AddItem(temp, (void*)_addon_sect, INVENTORY_DETACH_ADDON);
 			b_show = true;
 		}
-		if(pWeapon->ScopeAttachable() && pWeapon->IsScopeAttached() && pWeapon->CanDetach(pWeapon->GetScopeName().c_str())){
-			_addon_name = pSettings->r_string(pWeapon->GetScopeName().c_str(), "inv_name_short");
+		if(pWeapon->IsScopeAttached() && pWeapon->ScopeAttachable() && pWeapon->CanDetach(pWeapon->GetScopeName().c_str())){
+			_addon_sect = pWeapon->GetScopeName().c_str();
+			_addon_name = pSettings->r_string(_addon_sect, "inv_name_short");
 			sprintf(temp, "%s%s %s", _many, CStringTable().translate(detach_tip).c_str(), CStringTable().translate(_addon_name).c_str());
-			UIPropertiesBox.AddItem(temp, (void*)pWeapon->GetScopeName().c_str(), INVENTORY_DETACH_ADDON);
+			UIPropertiesBox.AddItem(temp, (void*)_addon_sect, INVENTORY_DETACH_ADDON);
 			b_show = true;
 		}
-		if(pWeapon->SilencerAttachable() && pWeapon->IsSilencerAttached() && pWeapon->CanDetach(pWeapon->GetSilencerName().c_str())){
-			_addon_name = pSettings->r_string(pWeapon->GetSilencerName().c_str(), "inv_name_short");
+		if(pWeapon->IsSilencerAttached() && pWeapon->SilencerAttachable() && pWeapon->CanDetach(pWeapon->GetSilencerName().c_str())){
+			_addon_sect = pWeapon->GetSilencerName().c_str();
+			_addon_name = pSettings->r_string(_addon_sect, "inv_name_short");
 			sprintf(temp, "%s%s %s", _many, CStringTable().translate(detach_tip).c_str(), CStringTable().translate(_addon_name).c_str());
-			UIPropertiesBox.AddItem(temp, (void*)pWeapon->GetSilencerName().c_str(), INVENTORY_DETACH_ADDON);
+			UIPropertiesBox.AddItem(temp, (void*)_addon_sect, INVENTORY_DETACH_ADDON);
 			b_show = true;
 		}
-		if (pWeapon->LaserAttachable() && pWeapon->IsLaserAttached() && pWeapon->CanDetach(pWeapon->GetLaserName().c_str())){
-			_addon_name = pSettings->r_string(pWeapon->GetLaserName().c_str(), "inv_name_short");
+		if (pWeapon->IsLaserAttached() && pWeapon->LaserAttachable() && pWeapon->CanDetach(pWeapon->GetLaserName().c_str())){
+			_addon_sect = pWeapon->GetLaserName().c_str();
+			_addon_name = pSettings->r_string(_addon_sect, "inv_name_short");
 			sprintf(temp, "%s%s %s", _many, CStringTable().translate(detach_tip).c_str(), CStringTable().translate(_addon_name).c_str());
-			UIPropertiesBox.AddItem(temp, (void*)pWeapon->GetLaserName().c_str(), INVENTORY_DETACH_ADDON);
+			UIPropertiesBox.AddItem(temp, (void*)_addon_sect, INVENTORY_DETACH_ADDON);
 			b_show = true;
 		}
-		if (pWeapon->FlashlightAttachable() && pWeapon->IsFlashlightAttached() && pWeapon->CanDetach(pWeapon->GetFlashlightName().c_str())){
-			_addon_name = pSettings->r_string(pWeapon->GetFlashlightName().c_str(), "inv_name_short");
+		if (pWeapon->IsFlashlightAttached() && pWeapon->FlashlightAttachable() && pWeapon->CanDetach(pWeapon->GetFlashlightName().c_str())){
+			_addon_sect = pWeapon->GetFlashlightName().c_str();
+			_addon_name = pSettings->r_string(_addon_sect, "inv_name_short");
 			sprintf(temp, "%s%s %s", _many, CStringTable().translate(detach_tip).c_str(), CStringTable().translate(_addon_name).c_str());
-			UIPropertiesBox.AddItem(temp, (void*)pWeapon->GetFlashlightName().c_str(), INVENTORY_DETACH_ADDON);
+			UIPropertiesBox.AddItem(temp, (void*)_addon_sect, INVENTORY_DETACH_ADDON);
 			b_show = true;
 		}
-		if (pWeapon->StockAttachable() && pWeapon->IsStockAttached() && pWeapon->CanDetach(pWeapon->GetStockName().c_str())) {
-			_addon_name = pSettings->r_string(pWeapon->GetStockName().c_str(), "inv_name_short");
+		if (pWeapon->IsStockAttached() && pWeapon->StockAttachable() && pWeapon->CanDetach(pWeapon->GetStockName().c_str())) {
+			_addon_sect = pWeapon->GetStockName().c_str();
+			_addon_name = pSettings->r_string(_addon_sect, "inv_name_short");
 			sprintf(temp, "%s%s %s", _many, CStringTable().translate(detach_tip).c_str(), CStringTable().translate(_addon_name).c_str());
-			UIPropertiesBox.AddItem(temp, (void*)pWeapon->GetStockName().c_str(), INVENTORY_DETACH_ADDON);
+			UIPropertiesBox.AddItem(temp, (void*)_addon_sect, INVENTORY_DETACH_ADDON);
 			b_show = true;
 		}
-		if (pWeapon->ExtenderAttachable() && pWeapon->IsExtenderAttached() && pWeapon->CanDetach(pWeapon->GetExtenderName().c_str())) {
-			_addon_name = pSettings->r_string(pWeapon->GetExtenderName().c_str(), "inv_name_short");
+		if (pWeapon->IsExtenderAttached() && pWeapon->ExtenderAttachable() && pWeapon->CanDetach(pWeapon->GetExtenderName().c_str())) {
+			_addon_sect = pWeapon->GetExtenderName().c_str();
+			_addon_name = pSettings->r_string(_addon_sect, "inv_name_short");
 			sprintf(temp, "%s%s %s", _many, CStringTable().translate(detach_tip).c_str(), CStringTable().translate(_addon_name).c_str());
-			UIPropertiesBox.AddItem(temp, (void*)pWeapon->GetExtenderName().c_str(), INVENTORY_DETACH_ADDON);
+			UIPropertiesBox.AddItem(temp, (void*)_addon_sect, INVENTORY_DETACH_ADDON);
 			b_show = true;
 		}
-		if (pWeapon->ForendAttachable() && pWeapon->IsForendAttached() && pWeapon->CanDetach(pWeapon->GetForendName().c_str())) {
-			_addon_name = pSettings->r_string(pWeapon->GetForendName().c_str(), "inv_name_short");
+		if (pWeapon->IsForendAttached() && pWeapon->ForendAttachable() && pWeapon->CanDetach(pWeapon->GetForendName().c_str())) {
+			_addon_sect = pWeapon->GetForendName().c_str();
+			_addon_name = pSettings->r_string(_addon_sect, "inv_name_short");
 			sprintf(temp, "%s%s %s", _many, CStringTable().translate(detach_tip).c_str(), CStringTable().translate(_addon_name).c_str());
-			UIPropertiesBox.AddItem(temp, (void*)pWeapon->GetForendName().c_str(), INVENTORY_DETACH_ADDON);
+			UIPropertiesBox.AddItem(temp, (void*)_addon_sect, INVENTORY_DETACH_ADDON);
 			b_show = true;
 		}
 		if(smart_cast<CWeaponMagazined*>(pWeapon)){
@@ -261,11 +281,6 @@ void CUIInventoryWnd::ActivatePropertiesBox()
 		if (tgt->CanAttach(CurrentIItem())) {
 			sprintf(temp, "%s %s", CStringTable().translate(CurrentIItem()->GetAttachMenuTip()).c_str(), tgt->NameShort());
 			UIPropertiesBox.AddItem(temp, (void*)tgt, INVENTORY_ATTACH_ADDON);
-			b_show = true;
-		}
-		if (tgt->CanBeChargedBy(CurrentIItem())) {
-			sprintf(temp, "%s %s", CStringTable().translate("st_charge").c_str(), tgt->NameShort());
-			UIPropertiesBox.AddItem(temp, (void*)tgt, INVENTORY_CHARGE_DEVICE);
 			b_show = true;
 		}
 		if (tgt->CanBeRepairedBy(CurrentIItem())) {
@@ -440,9 +455,6 @@ void CUIInventoryWnd::ProcessPropertiesBoxClicked	()
 				ProcessUnload(child_itm->m_pData);
 			}
 		}break;
-		case INVENTORY_CHARGE_DEVICE:
-			ChargeDevice((PIItem)(UIPropertiesBox.GetClickedItem()->GetData()));
-			break;
 		case INVENTORY_REPAIR_ITEM:
 			RepairItem((PIItem)(UIPropertiesBox.GetClickedItem()->GetData()));
 			break;

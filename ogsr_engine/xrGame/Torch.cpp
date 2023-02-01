@@ -108,8 +108,7 @@ void CTorch::Switch	(bool turn_on)
 	light_omni->set_active		(turn_on);
 	glow_render->set_active		(turn_on);
 
-	if (*light_trace_bone) 
-	{
+	if (!!light_trace_bone) {
 		IKinematics* pVisual				= smart_cast<IKinematics*>(Visual()); VERIFY(pVisual);
 		u16 bi								= pVisual->LL_BoneID(light_trace_bone);
 

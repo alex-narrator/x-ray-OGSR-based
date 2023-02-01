@@ -48,8 +48,19 @@ public:
 	u32								m_last_update_time;
 
 	float 							m_fRadiationRestoreSpeed{};
+
+	//статус джерела живлення
+	enum EPowerSourceStatus {
+		ePowerSourceDisabled		= 0,	//без джерела живлення
+		ePowerSourcePermanent		= 1,	//незнімне джерело
+		ePowerSourceAttachable		= 2		//від'ємне джерело
+	};
+	EPowerSourceStatus				m_power_source_status{};
+	u8								m_cur_power_source{};
 	float							m_fLastTimeCalled{};
-	float							m_fPowerLevel;
+	bool							m_bIsPowerSourceAttached{};
+	float							m_fPowerLevel{};
+	float							m_fAttachedPowerSourceCondition{ 1.f };
 
 									CSE_ALifeInventoryItem	(LPCSTR caSection);
 	virtual							~CSE_ALifeInventoryItem	();
@@ -234,17 +245,17 @@ SERVER_ENTITY_DECLARE_BEGIN(CSE_ALifeItemWeaponMagazined,CSE_ALifeItemWeapon)
 	};
 u8			m_u8CurFireMode;
 //присоединён ли магазин
-bool		m_bIsMagazineAttached;
+bool		m_bIsMagazineAttached{true};
 //для хранения состояния присоединённого прицела
-float		m_fAttachedScopeCondition;
+float		m_fAttachedScopeCondition{1.f};
 //для хранения состояния присоединённого гранатомёта
-float		m_fAttachedGrenadeLauncherCondition;
+float		m_fAttachedGrenadeLauncherCondition{1.f};
 //для хранения состояния присоединённого глушителя
-float		m_fAttachedSilencerCondition;
+float		m_fAttachedSilencerCondition{1.f};
 //
-float		m_fRTZoomFactor;
+float		m_fRTZoomFactor{1.f};
 //
-bool		m_bNightVisionSwitchedOn;
+bool		m_bNightVisionSwitchedOn{true};
 xr_vector<u8> m_AmmoIDs;
 //
 CSE_ALifeItemWeaponMagazined(LPCSTR caSection);

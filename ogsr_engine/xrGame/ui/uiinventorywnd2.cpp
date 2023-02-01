@@ -539,10 +539,6 @@ bool CUIInventoryWnd::OnItemDrop(CUICellItem* itm)
 				  AttachAddon(_iitem_in_slot);
 				  return true;
 			  }
-			  if (_iitem_in_slot->CanBeChargedBy(item)) {
-				  ChargeDevice(_iitem_in_slot);
-				  return true;
-			  }
 			  if (_iitem_in_slot->CanBeRepairedBy(item)) {
 				  RepairItem(_iitem_in_slot);
 				  return true;

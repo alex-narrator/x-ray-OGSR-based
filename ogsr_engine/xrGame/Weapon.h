@@ -178,8 +178,7 @@ public:
 			bool IsExtenderAttached			() const;
 			bool IsForendAttached			() const;
 
-//	bool			IsGrenadeMode() const;
-	virtual bool IsGrenadeMode() const { return false; };
+	virtual bool IsGrenadeMode				() const { return false; };
 
 	virtual bool GrenadeLauncherAttachable	() const;
 	virtual bool ScopeAttachable			() const;

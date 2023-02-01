@@ -178,18 +178,25 @@ void CInventoryItem::Load(LPCSTR section)
 	m_fTTLOnDecrease	= READ_IF_EXISTS(pSettings, r_float, section,	"ttl_on_dec", 0.f);
 	// hands
 	eHandDependence		= EHandDependence(READ_IF_EXISTS(pSettings, r_u32, section, "hand_dependence", hdNone));
-	m_bIsSingleHanded	= !!READ_IF_EXISTS(pSettings, r_bool, section, "single_handed", TRUE);
+	m_bIsSingleHanded	= READ_IF_EXISTS(pSettings, r_bool, section, "single_handed", TRUE);
 
-	if (pSettings->line_exist(section, "power_source")){
-		LPCSTR str = pSettings->r_string(section, "power_source");
-		for (int i = 0; i < _GetItemCount(str); ++i){
-			string128 power_source_section;
-			_GetItem(str, i, power_source_section);
-			m_power_sources.push_back(power_source_section);
+	m_power_source_status	= (ALife::EPowerSourceStatus)READ_IF_EXISTS(pSettings, r_u8, section, "power_source_status", 0);
+	
+	if (m_power_source_status != ALife::ePowerSourceDisabled) {
+		m_fPowerConsumption = READ_IF_EXISTS(pSettings, r_float, section, "power_consumption", 1.f);
+
+		if (m_power_source_status == ALife::ePowerSourceAttachable) {
+			if (pSettings->line_exist(section, "power_source")) {
+				LPCSTR str = pSettings->r_string(section, "power_source");
+				for (int i = 0; i < _GetItemCount(str); ++i) {
+					string128 power_source_section;
+					_GetItem(str, i, power_source_section);
+					m_power_sources.push_back(power_source_section);
+				}
+			}
 		}
 	}
 
-	m_fTTLOnPowerConsumption	= READ_IF_EXISTS(pSettings, r_float, section, "ttl_on_power", 0.f);
 	m_fPowerLowThreshold		= READ_IF_EXISTS(pSettings, r_float, section, "power_low_threshold", 0.1f);
 
 	m_uSlotEnabled				= READ_IF_EXISTS(pSettings, r_u32, section, "slot_enabled", NO_ACTIVE_SLOT);
@@ -300,12 +307,12 @@ void	CInventoryItem::Hit					(SHit* pHDS)
 
 const char* CInventoryItem::Name() 
 {
-	return *m_name;
+	return m_name.c_str();
 }
 
 const char* CInventoryItem::NameShort() 
 {
-	return *m_nameShort;
+	return m_nameShort.c_str();
 }
 
 bool CInventoryItem::Useful() const
@@ -415,12 +422,89 @@ void CInventoryItem::OnEvent (NET_Packet& P, u16 type)
 	}
 }
 
+#include "PowerBattery.h"
+bool CInventoryItem::CanAttach(PIItem pIItem)
+{
+	auto pActor = smart_cast<CActor*>(Level().CurrentViewEntity());
+	if (pActor && !pActor->HasRequiredTool(pIItem))
+		return false;
+
+	auto pPowerBattery = smart_cast<CPowerBattery*>(pIItem);
+
+	if (pPowerBattery && IsPowerSourceAttachable() && !IsPowerSourceAttached() &&
+		std::find(m_power_sources.begin(), m_power_sources.end(), pIItem->object().cNameSect()) != m_power_sources.end())
+		return true;
+	else
+		return false;
+}
+
+bool CInventoryItem::CanDetach(const char* item_section_name)
+{
+	auto pActor = smart_cast<CActor*>(Level().CurrentViewEntity());
+	if (pActor && !pActor->HasRequiredTool(item_section_name))
+		return false;
+
+	if (IsPowerSourceAttachable() && IsPowerSourceAttached() &&
+		std::find(m_power_sources.begin(), m_power_sources.end(), item_section_name) != m_power_sources.end())
+		return true;
+	else
+		return false;
+}
+
+bool CInventoryItem::Attach(PIItem pIItem, bool b_send_event)
+{
+	auto pPowerBattery = smart_cast<CPowerBattery*>(pIItem);
+
+	if (pPowerBattery && !!pPowerBattery->GetCondition() &&
+		IsPowerSourceAttachable() && !IsPowerSourceAttached())
+	{
+		auto it = std::find(m_power_sources.begin(), m_power_sources.end(), pIItem->object().cNameSect());
+		m_cur_power_source = (u8)std::distance(m_power_sources.begin(), it);
+		m_bIsPowerSourceAttached = true;
+
+		m_fAttachedPowerSourceCondition = pIItem->GetCondition();
+
+		m_fPowerLevel = pIItem->m_fPowerLevel;
+
+		InitPowerSource();
+		Switch(true);
+
+		if (b_send_event) {
+			if (OnServer())
+				pIItem->object().DestroyObject();
+		}
+		return true;
+	}
+	else
+		return false;
+}
+
 //процесс отсоединения вещи заключается в спауне новой вещи 
 //в инвентаре и установке соответствующих флагов в родительском
 //объекте, поэтому функция должна быть переопределена
 bool CInventoryItem::Detach(const char* item_section_name, bool b_spawn_item, float item_condition)
 {
 	if (OnClient()) return true;
+
+	float power_level{};
+	if (IsPowerSourceAttachable() && IsPowerSourceAttached() &&
+		std::find(m_power_sources.begin(), m_power_sources.end(), item_section_name) != m_power_sources.end())
+	{
+		m_bIsPowerSourceAttached = false;
+
+		b_spawn_item = !!m_fPowerLevel || READ_IF_EXISTS(pSettings, r_bool, item_section_name, "rechargeable", false);
+
+		m_cur_power_source = 0;
+		if (b_spawn_item) { 
+			item_condition = m_fAttachedPowerSourceCondition; 
+			power_level = m_fPowerLevel;
+		}
+		m_fAttachedPowerSourceCondition = 1.f;
+
+		InitPowerSource();
+		Switch(false);
+	}
+
 	if(b_spawn_item)
 	{
 		CSE_Abstract*		D	= F_entity_Create(item_section_name);
@@ -432,7 +516,10 @@ bool CInventoryItem::Detach(const char* item_section_name, bool b_spawn_item, fl
 		l_tpALifeDynamicObject->m_tNodeID = object().ai_location().level_vertex_id();
 		//
 		CSE_ALifeInventoryItem* item = smart_cast<CSE_ALifeInventoryItem*>(l_tpALifeDynamicObject);
-		if (item) item->m_fCondition = item_condition;
+		if (item) { 
+			item->m_fCondition = item_condition; 
+			item->m_fPowerLevel = power_level;
+		}
 		//
 		// Fill
 		D->s_name			=	item_section_name;
@@ -452,6 +539,7 @@ bool CInventoryItem::Detach(const char* item_section_name, bool b_spawn_item, fl
 		// Destroy
 		F_entity_Destroy	(D);
 	}
+
 	return true;
 }
 
@@ -476,7 +564,25 @@ BOOL CInventoryItem::net_Spawn			(CSE_Abstract* DC)
 	if (fis_zero(pSE_InventoryItem->m_fLastTimeCalled))
 		pSE_InventoryItem->m_fLastTimeCalled = Level().GetGameDayTimeSec();
 	m_fLastTimeCalled = pSE_InventoryItem->m_fLastTimeCalled;
-	m_fPowerLevel = pSE_InventoryItem->m_fPowerLevel;
+
+
+	if(!fis_zero(pSE_InventoryItem->m_fPowerLevel))
+		m_fPowerLevel = pSE_InventoryItem->m_fPowerLevel;
+	if (IsPowerSourceAttachable()) {
+		m_bIsPowerSourceAttached = pSE_InventoryItem->m_bIsPowerSourceAttached;
+		if (IsPowerSourceAttached()) {
+			if (pSE_InventoryItem->m_cur_power_source >= m_power_sources.size()) {
+				Msg("! [%s]: %s: wrong power source current [%u/%u]", __FUNCTION__,
+					object().cName().c_str(),
+					pSE_InventoryItem->m_cur_power_source,
+					m_power_sources.size() - 1);
+				pSE_InventoryItem->m_cur_power_source = 0;
+			}
+			m_cur_power_source				= pSE_InventoryItem->m_cur_power_source;
+			m_fAttachedPowerSourceCondition = pSE_InventoryItem->m_fAttachedPowerSourceCondition;
+		}
+	}
+	InitPowerSource();
 
 	if (!fis_zero(m_fTTLOnDecrease))
 		object().processing_activate();
@@ -515,11 +621,14 @@ void CInventoryItem::save(NET_Packet &packet)
 
 void CInventoryItem::net_Export( CSE_Abstract* E ) {
   CSE_ALifeInventoryItem* item = smart_cast<CSE_ALifeInventoryItem*>( E );
-  item->m_u8NumItems = 0;
-  item->m_fCondition = m_fCondition;
-  item->m_fRadiationRestoreSpeed = m_ItemEffect[eRadiationRestoreSpeed];
-  item->m_fLastTimeCalled = m_fLastTimeCalled;
-  item->m_fPowerLevel = m_fPowerLevel;
+  item->m_u8NumItems					= 0;
+  item->m_fCondition					= m_fCondition;
+  item->m_fRadiationRestoreSpeed		= m_ItemEffect[eRadiationRestoreSpeed];
+  item->m_fLastTimeCalled				= m_fLastTimeCalled;
+  item->m_fPowerLevel					= m_fPowerLevel;
+  item->m_cur_power_source				= m_cur_power_source;
+  item->m_bIsPowerSourceAttached		= m_bIsPowerSourceAttached;
+  item->m_fAttachedPowerSourceCondition = m_fAttachedPowerSourceCondition;
 };
 
 void CInventoryItem::load(IReader &packet)
@@ -879,10 +988,10 @@ void CInventoryItem::TryBreakToPieces(bool play_effects)
 				//играем звук
 				sndBreaking.play_at_pos(cast_game_object(), object().Position(), false);
 				//отыграть партиклы разбивания
-				if (*m_sBreakParticles){
+				if (!!m_sBreakParticles){
 					//показываем эффекты
 					CParticlesObject* pStaticPG;
-					pStaticPG = CParticlesObject::Create(*m_sBreakParticles, TRUE);
+					pStaticPG = CParticlesObject::Create(m_sBreakParticles.c_str(), TRUE);
 					pStaticPG->play_at_pos(object().Position());
 				}
 			}
@@ -908,7 +1017,7 @@ void CInventoryItem::UpdateConditionDecrease()
 	m_fLastTimeCalled = Level().GetGameDayTimeSec();
 
 	float condition_dec =
-		(1.f / (m_fTTLOnDecrease * 3600.f)) *	//приведення до ігрових годин
+		(1.f / (m_fTTLOnDecrease * 3600.f)) * //приведення до ігрових годин
 		delta_time;
 
 	ChangeCondition(-condition_dec);
@@ -957,14 +1066,23 @@ void CInventoryItem::UpdatePowerConsumption() {
 	m_fPowerConsumingUpdateTime = Level().GetGameDayTimeSec();
 
 	float power_dec =
-		(1.f / (m_fTTLOnPowerConsumption * 3600.f)) *	//приведення до ігрових годин
+		(m_fPowerConsumption / 3600.f) * //приведення до ігрових годин
 		delta_time;
 
 	ChangePowerLevel(-power_dec);
 }
 
 bool CInventoryItem::IsPowerConsumer() const {
-	return !fis_zero(m_fTTLOnPowerConsumption);
+	return m_power_source_status != ALife::ePowerSourceDisabled && !fis_zero(m_fPowerConsumption);
+}
+
+bool CInventoryItem::IsPowerSourceAttached() const {
+	return (IsPowerSourceAttachable() && m_bIsPowerSourceAttached) ||
+		CSE_ALifeItem::ePowerSourcePermanent == m_power_source_status;
+}
+
+bool CInventoryItem::IsPowerSourceAttachable() const {
+	return CSE_ALifeItem::ePowerSourceAttachable == m_power_source_status;
 }
 
 bool CInventoryItem::IsPowerOn() const {
@@ -973,7 +1091,8 @@ bool CInventoryItem::IsPowerOn() const {
 
 void CInventoryItem::ChangePowerLevel(float value) {
 	m_fPowerLevel += value;
-	clamp(m_fPowerLevel, 0.f, 1.f);
+
+	clamp(m_fPowerLevel, 0.f, m_fPowerLevel);
 
 	if (fis_zero(m_fPowerLevel) && IsPowerOn())
 		Switch(false);
@@ -981,7 +1100,8 @@ void CInventoryItem::ChangePowerLevel(float value) {
 
 void CInventoryItem::SetPowerLevel(float value) {
 	m_fPowerLevel = value;
-	clamp(m_fPowerLevel, 0.f, 1.f);
+
+	clamp(m_fPowerLevel, 0.f, m_fPowerLevel);
 
 	if (fis_zero(m_fPowerLevel) && IsPowerOn())
 		Switch(false);
@@ -996,24 +1116,24 @@ void CInventoryItem::Switch(bool turn_on) {
 	m_fPowerConsumingUpdateTime = turn_on ? Level().GetGameDayTimeSec() : 0.f;
 }
 
-bool CInventoryItem::CanBeCharged() const {
-	return IsPowerConsumer() && !fis_zero(GetCondition()) && m_fPowerLevel < 0.8f;
-}
-
-bool CInventoryItem::CanBeChargedBy(CInventoryItem* item) const {
-	if (!CanBeCharged() || m_power_sources.empty()) return false;
-	bool is_compatible{};
-	for (const auto& sect : m_power_sources) {
-		if (sect == item->object().cNameSect() && item->Useful()) {
-			is_compatible = true;
-			break;
-		}
-	}
-	return is_compatible;
-}
-
 void CInventoryItem::Recharge() {
-	SetPowerLevel(1.f);
+	SetPowerLevel(m_fPowerCapacity);
+}
+
+bool CInventoryItem::CanBeCharged() const {
+	return IsPowerConsumer() && IsPowerSourceAttached() && !fis_zero(GetCondition()) && m_fPowerLevel < m_fPowerCapacity;
+}
+
+void CInventoryItem::InitPowerSource() {
+	if (!IsPowerConsumer()) return;
+	m_fPowerCapacity = 0.f;
+
+	if (!IsPowerSourceAttached())
+		return;
+
+	const auto power_params_sect = IsPowerSourceAttachable() ? GetPowerSourceName() : object().cNameSect();
+
+	m_fPowerCapacity = READ_IF_EXISTS(pSettings, r_float, power_params_sect, "power_capacity", 0.f);
 }
 
 void CInventoryItem::Disassemble() {
@@ -1076,6 +1196,8 @@ void CInventoryItem::PrepairItem() {
 	if (inv) {
 		if (!inv->InRuck(this))
 			inv->Ruck(this, true);
+		if (IsPowerSourceAttached() && IsPowerSourceAttachable())
+			Detach(GetPowerSourceName().c_str(), true);
 	}
 }
 
@@ -1129,4 +1251,20 @@ bool CInventoryItem::HasArmorToDisplay(int max_bone_idx) {
 			return true;
 	}
 	return false;
+}
+
+u32	CInventoryItem::Cost() const {
+	u32 res = m_cost;
+	if (IsPowerSourceAttachable() && IsPowerSourceAttached()) {
+		res += pSettings->r_u32(GetPowerSourceName(), "cost");
+	}
+	return res;
+}
+
+float CInventoryItem::Weight() const {
+	float res = m_weight;
+	if (IsPowerSourceAttachable() && IsPowerSourceAttached()) {
+		res += pSettings->r_float(GetPowerSourceName(), "inv_weight");
+	}
+	return res;
 }

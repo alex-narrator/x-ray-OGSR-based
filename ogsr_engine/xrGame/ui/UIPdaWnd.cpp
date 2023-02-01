@@ -270,7 +270,7 @@ void CUIPdaWnd::Draw()
 	string16 tmp{};
 	auto act_pda = Actor()->GetPDA();
 	bool pwr_low = act_pda->IsPowerLow();
-	sprintf_s(tmp, "%.f%s", act_pda->GetPowerLevel() * 100.f, "%");
+	sprintf_s(tmp, "%.f%s", act_pda->GetPowerLevelToShow(), "%");
 	m_currentPower->SetText(tmp);
 	m_currentPower->SetVisible(!pwr_low);
 	m_currentPowerLow->SetText(tmp);

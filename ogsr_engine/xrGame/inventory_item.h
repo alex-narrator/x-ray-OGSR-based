@@ -86,12 +86,12 @@ public:
 	virtual void				OnEvent				(NET_Packet& P, u16 type);
 	
 	virtual bool				Useful				() const;									// !!! Переопределить. (см. в Inventory.cpp)
-	virtual bool				Attach				(PIItem pIItem, bool b_send_event) {return false;}
+	virtual bool				Attach				(PIItem, bool) ;
 	virtual bool				Detach				(PIItem pIItem) {return false;}
 	//при детаче спаунится новая вещь при заданно названии секции
 	virtual bool				Detach				(const char* item_section_name, bool b_spawn_item, float item_condition = 1.f);
-	virtual bool				CanAttach			(PIItem pIItem) {return false;}
-	virtual bool				CanDetach			(LPCSTR item_section_name) {return false;}
+	virtual bool				CanAttach			(PIItem);
+	virtual bool				CanDetach			(const char*);
 
 	virtual EHandDependence		HandDependence		()	const	{return eHandDependence;};
 	virtual bool				IsSingleHanded		()	const	{return m_bIsSingleHanded;};
@@ -120,10 +120,10 @@ public:
 
 			BOOL				IsQuestItem			()	const	{return m_flags.test(FIsQuestItem);}	
 
-	virtual u32					Cost				()	const	{ return m_cost;	}
+	virtual u32					Cost				()	const	;//{ return m_cost;	}
 	virtual	void				SetCost				(u32 cost) 	{ m_cost = cost;	}
 
-	virtual float				Weight				()	const	{ return m_weight;	}		
+	virtual float				Weight				()	const;//	{ return m_weight;	}		
 	virtual void                SetWeight			(float w)	{ m_weight = w;		}
 
 	virtual float				Volume				() const	{ return m_volume;	}
@@ -166,7 +166,7 @@ public:
 			int					GetXPos				() const ;
 			int					GetYPos				() const ;
 
-			bool GetInvShowCondition() const;
+			bool				GetInvShowCondition	() const;
 	//---------------------------------------------------------------------
 			float				GetKillMsgXPos		() const ;
 			float				GetKillMsgYPos		() const ;
@@ -323,7 +323,6 @@ public:
 	virtual float					GetItemEffect		(int) const;
 	virtual float					GetHitTypeProtection(int);
 
-	xr_vector<shared_str>			m_power_sources{};
 	xr_vector<shared_str>			m_required_tools{};
 
 	xr_vector<shared_str>			m_repair_items{};
@@ -331,21 +330,34 @@ public:
 			float					repair_condition_threshold{};
 			int						repair_count{};
 
+	//статус джерела живлення
+	ALife::EPowerSourceStatus		m_power_source_status{};
+			u8						m_cur_power_source{};
+			bool					m_bIsPowerSourceAttached{};
+
+	xr_vector<shared_str>			m_power_sources{};
+
+	const shared_str				GetPowerSourceName() const { return m_power_sources[m_cur_power_source]; }
+
+	virtual	bool					IsPowerSourceAttached	() const;
+	virtual bool					IsPowerSourceAttachable	() const;
+
 	virtual bool					IsPowerConsumer		() const;
 			void					ChangePowerLevel	(float);
 			void					SetPowerLevel		(float);
 	virtual float					GetPowerLevel		() const { return m_fPowerLevel; };
-	virtual bool					IsPowerLow			() const { return m_fPowerLevel <= m_fPowerLowThreshold; };
+	virtual float					GetPowerLevelToShow	() const { return m_fPowerLevel/m_fPowerCapacity * 100.f; };
+	virtual float					GetPowerConsumption	() const { return m_fPowerConsumption; };
+	virtual float					GetPowerCapacity	() const { return m_fPowerCapacity; };
+	virtual bool					IsPowerLow			() const { return GetPowerLevelToShow() <= m_fPowerLowThreshold; };
+	virtual bool					CanBeCharged		() const;
+	virtual void					InitPowerSource		();
 
 	virtual	void					Switch			(bool);
 	virtual	void					Switch			();
 	virtual bool					IsPowerOn		() const;
 
-	virtual bool					CanBeCharged	() const;
-	virtual bool					CanBeChargedBy	(CInventoryItem*) const;
-	virtual void					Recharge();
-
-	virtual float					GetPowerTTL		() const { return m_fTTLOnPowerConsumption; };
+	virtual void					Recharge		();
 
 			LPCSTR					GetDetailPartSection() const { return m_detail_part_section; }
 	virtual void					Disassemble			();
@@ -370,10 +382,12 @@ protected:
 
 	svector<float, eEffectMax>		m_ItemEffect;
 
-	float							m_fTTLOnPowerConsumption{};
-	float							m_fPowerLevel{1.f};
+	float							m_fPowerConsumption{};
+	float							m_fPowerLevel{};
+	float							m_fPowerCapacity{};
 	float							m_fPowerLowThreshold;
 	float							m_fPowerConsumingUpdateTime;
+	float							m_fAttachedPowerSourceCondition{ 1.f };
 
 	LPCSTR							m_detail_part_section{};
 	LPCSTR							m_sAttachMenuTip{};

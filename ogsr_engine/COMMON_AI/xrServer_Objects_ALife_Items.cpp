@@ -59,7 +59,25 @@ CSE_ALifeInventoryItem::CSE_ALifeInventoryItem(LPCSTR caSection)
 
 	if (pSettings->line_exist(caSection, "radiation_restore_speed"))
 		m_fRadiationRestoreSpeed	= pSettings->r_float(caSection, "radiation_restore_speed");
-	m_fPowerLevel				= 1.f;
+
+	m_power_source_status		= (EPowerSourceStatus)READ_IF_EXISTS(pSettings, r_u8, caSection, "power_source_status", 0);
+	//preinstalled non-permanent power source
+	if (m_power_source_status == EPowerSourceStatus::ePowerSourceAttachable) {
+		if (pSettings->line_exist(caSection, "power_source_installed")) {
+			m_bIsPowerSourceAttached = true;
+			m_cur_power_source = pSettings->r_u8(caSection, "power_source_installed");
+			LPCSTR str = pSettings->r_string(caSection, "power_source");
+			string128 power_source_sect{};
+			_GetItem(str, m_cur_power_source, power_source_sect);
+			m_fPowerLevel = READ_IF_EXISTS(pSettings, r_float, power_source_sect, "power_capacity", 0.f);
+		}
+	}
+	if (m_power_source_status == EPowerSourceStatus::ePowerSourcePermanent) {
+		if (pSettings->line_exist(caSection, "power_level"))
+			m_fPowerLevel = pSettings->r_float(caSection, "power_level");
+		else
+			m_fPowerLevel = READ_IF_EXISTS(pSettings, r_float, caSection, "power_capacity", 0.f);
+	}
 }
 
 CSE_Abstract *CSE_ALifeInventoryItem::init	()
@@ -78,6 +96,8 @@ void CSE_ALifeInventoryItem::STATE_Write	(NET_Packet &tNetPacket)
 {
 	tNetPacket.w_float			(m_fCondition);
 	State.position				= base()->o_Position;
+
+	tNetPacket.w_float			(m_fPowerLevel);
 }
 
 void CSE_ALifeInventoryItem::STATE_Read		(NET_Packet &tNetPacket, u16 size)
@@ -87,6 +107,9 @@ void CSE_ALifeInventoryItem::STATE_Read		(NET_Packet &tNetPacket, u16 size)
 		tNetPacket.r_float		(m_fCondition);
 
 	State.position				= base()->o_Position;
+
+	if (m_wVersion > 118)
+		tNetPacket.r_float		(m_fPowerLevel);
 }
 
 static inline bool check (const u8 &mask, const u8 &test)
@@ -99,7 +122,10 @@ void CSE_ALifeInventoryItem::UPDATE_Write	(NET_Packet &tNetPacket)
 	tNetPacket.w_float_q8	(m_fCondition, 0.0f, 1.0f);
 	tNetPacket.w_float		(m_fRadiationRestoreSpeed);
 	tNetPacket.w_float		(m_fLastTimeCalled);
-	tNetPacket.w_float_q8	(m_fPowerLevel, 0.0f, 1.0f);
+	tNetPacket.w_float		(m_fPowerLevel);
+	tNetPacket.w_u8			(m_cur_power_source);
+	tNetPacket.w_u8			(m_bIsPowerSourceAttached);
+	tNetPacket.w_float_q8	(m_fAttachedPowerSourceCondition, 0.0f, 1.0f);
 
 	if (!m_u8NumItems) {
 		tNetPacket.w_u8				(0);
@@ -148,7 +174,11 @@ void CSE_ALifeInventoryItem::UPDATE_Read	(NET_Packet &tNetPacket)
 		tNetPacket.r_float_q8	(m_fCondition, 0.0f, 1.0f);
 		tNetPacket.r_float		(m_fRadiationRestoreSpeed);
 		tNetPacket.r_float		(m_fLastTimeCalled);
-		tNetPacket.r_float_q8	(m_fPowerLevel, 0.0f, 1.0f);
+		tNetPacket.r_float		(m_fPowerLevel);
+		tNetPacket.r_u8			(m_cur_power_source);
+		u8 power_source_attached = m_bIsPowerSourceAttached;
+		tNetPacket.r_u8			(power_source_attached);
+		tNetPacket.r_float_q8	(m_fAttachedPowerSourceCondition, 0.0f, 1.0f);
 	}
 
 	tNetPacket.r_u8					(m_u8NumItems);
@@ -662,16 +692,6 @@ CSE_ALifeItemWeaponMagazined::CSE_ALifeItemWeaponMagazined(const char* caSection
 	}
 	//
 	m_AmmoIDs.clear();
-	//
-	m_bIsMagazineAttached				= true;
-	//
-	m_fAttachedSilencerCondition		= 1.f;
-	m_fAttachedScopeCondition			= 1.f;
-	m_fAttachedGrenadeLauncherCondition = 1.f;
-	//
-	m_fRTZoomFactor						= 1.f;
-	//
-	m_bNightVisionSwitchedOn			= true;
 }
 
 CSE_ALifeItemWeaponMagazined::~CSE_ALifeItemWeaponMagazined	()
@@ -682,8 +702,7 @@ void CSE_ALifeItemWeaponMagazined::UPDATE_Read		(NET_Packet& P)
 {
 	inherited::UPDATE_Read(P);
 
-	if (m_wVersion > 118)
-	{
+	if (m_wVersion > 118){
 		m_u8CurFireMode = P.r_u8();
 
 		m_AmmoIDs.clear();
@@ -692,9 +711,9 @@ void CSE_ALifeItemWeaponMagazined::UPDATE_Read		(NET_Packet& P)
 			m_AmmoIDs.push_back(P.r_u8());
 		}
 
-		P.r_float(m_fAttachedSilencerCondition);
-		P.r_float(m_fAttachedScopeCondition);
-		P.r_float(m_fAttachedGrenadeLauncherCondition);
+		P.r_float_q8(m_fAttachedSilencerCondition, 0.f, 1.f);
+		P.r_float_q8(m_fAttachedScopeCondition, 0.f, 1.f);
+		P.r_float_q8(m_fAttachedGrenadeLauncherCondition, 0.f, 1.f);
 
 		P.r_float(m_fRTZoomFactor);
 
@@ -714,9 +733,9 @@ void CSE_ALifeItemWeaponMagazined::UPDATE_Write	(NET_Packet& P)
 		P.w_u8(u8(m_AmmoIDs[i]));
 	}
 
-	P.w_float(m_fAttachedSilencerCondition);
-	P.w_float(m_fAttachedScopeCondition);
-	P.w_float(m_fAttachedGrenadeLauncherCondition);
+	P.w_float_q8(m_fAttachedSilencerCondition, 0.f, 1.f);
+	P.w_float_q8(m_fAttachedScopeCondition, 0.f, 1.f);
+	P.w_float_q8(m_fAttachedGrenadeLauncherCondition, 0.f, 1.f);
 	//
 	P.w_float(m_fRTZoomFactor);
 

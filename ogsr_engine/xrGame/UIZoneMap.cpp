@@ -86,7 +86,7 @@ void CUIZoneMap::Render()
 	string16 tmp{};
 	auto act_pda = Actor()->GetPDA();
 	bool pwr_low = act_pda->IsPowerLow();
-	sprintf_s(tmp, "%.f%s", act_pda->GetPowerLevel() * 100.f, "%");
+	sprintf_s(tmp, "%.f%s", act_pda->GetPowerLevelToShow(), "%");
 	m_CurrentPower.SetText(tmp);
 	m_CurrentPower.SetVisible(!pwr_low);
 	m_CurrentPowerLow.SetText(tmp);

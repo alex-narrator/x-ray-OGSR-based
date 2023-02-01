@@ -182,8 +182,8 @@ void CUIMainIngameWnd::Init()
 	UIZoneMap->Init				();
 	UIZoneMap->SetScale			(DEFAULT_MAP_SCALE);
 
-		xml_init.InitStatic					(uiXml, "static_pda_online", 0, &UIPdaOnline);
-		UIZoneMap->Background().AttachChild	(&UIPdaOnline);
+	xml_init.InitStatic			(uiXml, "static_pda_online", 0, &UIPdaOnline);
+	UIZoneMap->Background().AttachChild	(&UIPdaOnline);
 
 
 	//Полоса прогресса здоровья

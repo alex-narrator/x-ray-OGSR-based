@@ -905,4 +905,17 @@
 		<text>ПГ</text>
 	</string>	
 	
+	<string id="st_power_consumption">
+		<text>Енергоспоживання</text>
+	</string>	
+	<string id="st_power_consumption_units">
+		<text>мА</text>
+	</string>	
+	<string id="st_power_capacity">
+		<text>Ємність АКБ</text>
+	</string>	
+	<string id="st_power_capacity_units">
+		<text>мА*год</text>
+	</string>	
+	
 </string_table>

@@ -140,25 +140,27 @@ inv_name			= battery
 inv_name_short		= battery
 inv_weight			= 0.1
 
+power_capacity 		= 100
+
 inv_grid_width     = 1
 inv_grid_height    = 1
 inv_grid_x         = 24
 inv_grid_y         = 32
 cost				= 500	;30
 
-[powerbank]:battery
+[pda_battery]:battery
 visual				= dynamics\devices\dev_power_device\dev_universalpowerdevice.ogf
 inv_grid_width     = 1
 inv_grid_height    = 1
 inv_grid_x         = 25
 inv_grid_y         = 32
-description			= powerbank_descr
-inv_name			= powerbank
-inv_name_short		= powerbank
+description			= pda_battery_descr
+inv_name			= pda_battery
+inv_name_short		= pda_battery
 inv_weight			= 0.3
 
-charge_count = 5
 rechargeable = true
+power_capacity = 50
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;vest;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 [vest]:identity_immunities

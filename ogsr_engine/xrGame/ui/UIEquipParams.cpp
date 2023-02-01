@@ -87,20 +87,25 @@ void CUIEquipParams::SetInfo(CInventoryItem* obj){
 	float _h{}, _val{};
 	LPCSTR _param_name{}, _sn = "%";
 
-	auto pBattery = smart_cast<CPowerBattery*>(obj);
-	if (obj->IsPowerConsumer() || pBattery && pBattery->IsCharger()) {
-		_val = obj->GetPowerLevel();
-		_val *= 100.f;
+	if (obj->IsPowerConsumer() && obj->IsPowerSourceAttached() || smart_cast<CPowerBattery*>(obj)) {
+		_val = obj->GetPowerLevelToShow();
 		_param_name = CStringTable().translate("st_power_level").c_str();
-		sprintf_s(text_to_show, "%s %.0f%s", _param_name, _val, _sn);
+		sprintf_s(text_to_show, "%s %.0f %s", _param_name, _val, _sn);
+		SetStaticParams(_uiXml, _path, _h)->SetText(text_to_show);
+		_h += list_item_h;
+
+		_val = obj->GetPowerCapacity();
+		_param_name = CStringTable().translate("st_power_capacity").c_str();
+		_sn = CStringTable().translate("st_power_capacity_units").c_str();
+		sprintf_s(text_to_show, "%s %.0f %s", _param_name, _val, _sn);
 		SetStaticParams(_uiXml, _path, _h)->SetText(text_to_show);
 		_h += list_item_h;
 	}
 	if (obj->IsPowerConsumer()) {
-		_val = obj->GetPowerTTL();
-		_param_name = CStringTable().translate("st_power_ttl").c_str();
-		_sn = CStringTable().translate("st_time_hour").c_str();
-		sprintf_s(text_to_show, "%s %.0f%s", _param_name, _val, _sn);
+		_val = obj->GetPowerConsumption();
+		_param_name = CStringTable().translate("st_power_consumption").c_str();
+		_sn = CStringTable().translate("st_power_consumption_units").c_str();
+		sprintf_s(text_to_show, "%s %.0f %s", _param_name, _val, _sn);
 		SetStaticParams(_uiXml, _path, _h)->SetText(text_to_show);
 		_h += list_item_h;
 	}

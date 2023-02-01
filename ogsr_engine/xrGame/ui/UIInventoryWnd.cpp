@@ -437,8 +437,8 @@ void CUIInventoryWnd::Update()
 		CheckForcedWeightVolumeUpdate();
 	}
 
-	auto time_curr_string = Actor()->HasPDAWorkable() ? InventoryUtilities::GetGameTimeAsString(InventoryUtilities::etpTimeToMinutes).c_str() : "";
-	UIStaticTimeString.SetText(time_curr_string);
+	UIStaticTimeString.SetText(InventoryUtilities::GetGameTimeAsString(InventoryUtilities::etpTimeToMinutes).c_str());
+	UIStaticTime.Show(Actor()->HasPDAWorkable());
 
 	CUIWindow::Update					();
 }
@@ -565,12 +565,6 @@ void CUIInventoryWnd::DetachAddon(const char* addon_name, bool for_all)
 		m_iCurrentActiveSlot				= pActor->inventory().GetActiveSlot();
 		pActor->inventory().Activate		(NO_ACTIVE_SLOT);
 	}
-}
-
-void CUIInventoryWnd::ChargeDevice(PIItem item_to_charge) {
-	auto battery = smart_cast<CPowerBattery*>(CurrentIItem());
-	battery->Charge(item_to_charge);
-	SetCurrentItem(nullptr);
 }
 
 void CUIInventoryWnd::RepairItem(PIItem item_to_repair) {

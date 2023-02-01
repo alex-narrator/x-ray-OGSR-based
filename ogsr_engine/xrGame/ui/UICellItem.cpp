@@ -389,11 +389,11 @@ void CUICellItem::ColorizeItems( std::initializer_list<CUIDragDropListEx*> args 
 	  auto Wpn					= smart_cast<CWeaponMagazined*>(inventoryitem);
 	  auto Ammo					= smart_cast<CWeaponAmmo*>(inventoryitem);
 	  auto Vest					= smart_cast<CVest*>(inventoryitem);
-	  bool is_power_consumer	= inventoryitem->IsPowerConsumer();
+	  bool need_battery			= inventoryitem->IsPowerConsumer() && inventoryitem->IsPowerSourceAttachable();
 	  bool need_tool			= !inventoryitem->m_required_tools.empty();
 	  bool can_be_repaired		= !inventoryitem->m_repair_items.empty();
 
-	  bool b_colorize = (Wpn || Ammo || Vest || is_power_consumer || need_tool || can_be_repaired);
+	  bool b_colorize = (Wpn || Ammo || Vest || need_battery || need_tool || can_be_repaired);
 	  if (!b_colorize) return;
 
 	  if (Wpn) {
@@ -417,7 +417,7 @@ void CUICellItem::ColorizeItems( std::initializer_list<CUIDragDropListEx*> args 
 	  if (Vest) {
 		  std::copy(Vest->m_plates.begin(), Vest->m_plates.end(), std::back_inserter(ColorizeSects));
 	  }
-	  if (is_power_consumer) {
+	  if (need_battery) {
 		  std::copy(inventoryitem->m_power_sources.begin(), inventoryitem->m_power_sources.end(), std::back_inserter(ColorizeSects));
 	  }
 	  if (need_tool) {
