@@ -92,7 +92,7 @@ protected:
 	CUIStatic			UIStarvationIcon;
 	CUIStatic			UIPsyHealthIcon;
 	CUIStatic			UIInvincibleIcon;
-	CUIStatic			UIThirstIcon;
+	CUIStatic			UISafehouseIcon;
 //	CUIStatic			UISleepIcon;
 //	CUIStatic			UIArtefactIcon;
 	//
@@ -121,7 +121,7 @@ public:
 		ewiHealth,
 		ewiPower,
 		ewiInvincible,
-		ewiThirst,
+		ewiSafehouse,
 //		ewiSleep,
 //		ewiArtefact,
 	};

@@ -49,7 +49,6 @@ void CEatableItem::Load(LPCSTR section)
 	m_ItemInfluence[eRadiationInfluence]	= READ_IF_EXISTS	(pSettings,r_float,section,"eat_radiation",						0.0f);
 	m_ItemInfluence[ePsyHealthInfluence]	= READ_IF_EXISTS	(pSettings,r_float,section,"eat_psyhealth",						0.0f);
 	m_ItemInfluence[eAlcoholInfluence]		= READ_IF_EXISTS	(pSettings,r_float,section,"eat_alcohol",						0.0f);
-	m_ItemInfluence[eThirstInfluence]		= READ_IF_EXISTS	(pSettings,r_float,section,"eat_thirst",						0.0f);
 	m_ItemInfluence[eWoundsHealInfluence]	= READ_IF_EXISTS	(pSettings,r_float,section,"eat_wounds_heal",					0.0f);
 	//boost
 	m_ItemBoost[eHealthBoost]				= READ_IF_EXISTS	(pSettings,r_float,section,"boost_health",						0.0f);
@@ -59,7 +58,6 @@ void CEatableItem::Load(LPCSTR section)
 	m_ItemBoost[eRadiationBoost]			= READ_IF_EXISTS	(pSettings,r_float,section,"boost_radiation",					0.0f);
 	m_ItemBoost[ePsyHealthBoost]			= READ_IF_EXISTS	(pSettings,r_float,section,"boost_psyhealth",					0.0f);
 	m_ItemBoost[eAlcoholBoost]				= READ_IF_EXISTS	(pSettings,r_float,section,"boost_alcohol",						0.0f);
-	m_ItemBoost[eThirstBoost]				= READ_IF_EXISTS	(pSettings,r_float,section,"boost_thirst",						0.0f);
 	m_ItemBoost[eWoundsHealBoost]			= READ_IF_EXISTS	(pSettings,r_float,section,"boost_wounds_heal",					0.0f);
 
 	m_ItemBoost[eAdditionalWalkAccelBoost]	= READ_IF_EXISTS	(pSettings,r_float,section,"boost_walk_accel",					0.0f);

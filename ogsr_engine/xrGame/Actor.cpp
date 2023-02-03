@@ -2062,3 +2062,33 @@ void CActor::TryGroggyEffect(float hit_power, int hit_type) {
 
 	}
 }
+
+bool CActor::SaveGameAllowed() {
+	switch (g_eSaveGameMode)
+	{
+	case eSaveGameDefault: {
+		return true;
+	}break;
+	case eSaveGameEnemyCheck: {
+		float safe_radius = READ_IF_EXISTS(pSettings, r_float, "features", "safe_radius", 50.f);
+		feel_touch_update(Position(), safe_radius);
+		for (const auto object : feel_touch) {
+			auto entity = smart_cast<CEntity*>(object);
+			if (!entity)
+				continue;
+			if (entity && entity->CheckEnemyStatus(this))
+				return false;
+		}
+		return true;
+	}break;
+	case eSaveGameSafehouseCheck: {
+		return InSafeHouse();
+	}break;
+	default:
+		NODEFAULT;
+	}
+}
+
+bool CActor::InSafeHouse() {
+	return HasInfo("safehouse");
+}

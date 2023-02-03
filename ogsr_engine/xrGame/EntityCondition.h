@@ -18,7 +18,6 @@ enum eInfluenceParams {
 	eRadiationInfluence,
 	ePsyHealthInfluence,
 	eAlcoholInfluence,
-	eThirstInfluence,
 	eWoundsHealInfluence,
 
 	eInfluenceMax,
@@ -33,7 +32,6 @@ enum eBoostParams {
 	eRadiationBoost,
 	ePsyHealthBoost,
 	eAlcoholBoost,
-	eThirstBoost,
 	eWoundsHealBoost,
 
 	eRestoreBoostMax,
@@ -102,7 +100,6 @@ public:
 	IC float 				GetEntityMorale			() const			{return m_fEntityMorale;}
 	virtual float 	GetAlcohol			() { return 0.f; }
 	virtual float			GetSatiety				() { return 0.f; }
-	virtual float			GetThirst				() { return 0.f; }
 
 	IC float 				GetHealthLost			() const			{return m_fHealthLost;}
 
@@ -112,7 +109,6 @@ public:
 	void 					ChangePsyHealth			(float value);
 	virtual void			ChangeSatiety			(float value){};
 	virtual void 			ChangeAlcohol			(float value){};
-	virtual void			ChangeThirst			(float value){};
 			void 			ChangeMaxPower			(float value);
 
 	IC void					MaxPower				()					{m_fPower = m_fPowerMax;};
@@ -256,7 +252,6 @@ public:
 	virtual float GetMaxPowerRestore	() { return 1.f; };
 	virtual float GetSatietyRestore		() { return 1.f; };
 	virtual float GetAlcoholRestore		() { return 1.f; };
-	virtual float GetThirstRestore		() { return 1.f; };
 
 	//застосувати зміни параметрів сутності у абсолюдних значеннях
 	virtual void					ApplyInfluence	(int, float);

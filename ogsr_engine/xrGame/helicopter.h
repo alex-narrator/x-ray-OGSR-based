@@ -204,6 +204,8 @@ public:
 	bool							m_exploded;
 	bool							m_dead;
 
+	virtual bool 				 	CheckEnemyStatus	(CEntityAlive* tgt);
+
 protected:
 	SHeliEnemy						m_enemy;
 	SHeliBodyState					m_body;

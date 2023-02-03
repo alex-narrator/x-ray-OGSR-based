@@ -36,7 +36,6 @@ LPCSTR af_item_sect_names[] = {
 	"radiation_restore_speed",
 	"psy_health_restore_speed",
 	"alcohol_restore_speed",
-	"thirst_restore_speed",
 	"wounds_heal_speed",
 	//
 	"additional_walk_accel",
@@ -64,7 +63,6 @@ LPCSTR af_item_param_names[] = {
 	"ui_inv_radiation",
 	"ui_inv_psy_health",
 	"ui_inv_alcohol",
-	"ui_inv_thirst",
 	"ui_inv_wounds_heal",
 	//
 	"ui_inv_walk_accel",

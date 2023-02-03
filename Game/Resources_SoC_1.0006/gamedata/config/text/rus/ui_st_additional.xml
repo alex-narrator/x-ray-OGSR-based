@@ -918,4 +918,14 @@
 		<text>мА*год</text>
 	</string>	
 	
+	<string id="st_safehouse">
+		<text>Безпечна зона</text>
+	</string>
+	<string id="st_safehouse_in">
+		<text>Ви знаходитесь у безпечній зоні. \nТут можна зберегти гру.</text>
+	</string>	
+	<string id="st_safehouse_out">
+		<text>Ви вийшли з безпечної зони. \nЗбереження гри неможливе.</text>
+	</string>	
+	
 </string_table>

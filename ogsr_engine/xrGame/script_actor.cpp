@@ -123,11 +123,6 @@ void CScriptActor::script_register(lua_State *L)
 			.def_readwrite("satiety_health_v",			&CActorCondition::m_fV_SatietyHealth)
 			.def_readwrite("satiety_power_v",			&CActorCondition::m_fV_SatietyPower)
 
-			.def_readwrite("thirst", &CActorCondition::m_fThirst)
-			.def_readwrite("thirst_v", &CActorCondition::m_fV_Thirst)
-			.def_readwrite("thirst_health_v", &CActorCondition::m_fV_ThirstHealth)
-			.def_readwrite("thirst_power_v", &CActorCondition::m_fV_ThirstPower)
-
 			.def_readwrite("max_power_leak_speed",		&CActorCondition::m_fPowerLeakSpeed)
 			.def_readwrite("jump_power",				&CActorCondition::m_fJumpPower)
 			.def_readwrite("stand_power",				&CActorCondition::m_fStandPower)

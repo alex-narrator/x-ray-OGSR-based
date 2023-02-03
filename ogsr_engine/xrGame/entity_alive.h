@@ -149,6 +149,9 @@ protected:
 public:
 	virtual	ALife::ERelationType tfGetRelationType	(const CEntityAlive *tpEntityAlive) const;
 	virtual	bool				 is_relation_enemy	(const CEntityAlive *tpEntityAlive) const;	
+
+	virtual bool 				CheckEnemyStatus	(CEntityAlive* tgt);
+	virtual bool 				critically_wounded	() { return false; };
 public:	
 	MONSTER_COMMUNITY*			monster_community;
 

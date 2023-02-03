@@ -499,6 +499,13 @@ bool CEntityAlive::is_relation_enemy(const CEntityAlive *tpEntityAlive) const
 		(tfGetRelationType(tpEntityAlive) == ALife::eRelationTypeWorstEnemy));
 }
 
+bool CEntityAlive::CheckEnemyStatus(CEntityAlive* tgt) {
+	if (g_Alive() && !critically_wounded() && is_relation_enemy(tgt)) {
+		Msg("%s: %s is enemy for %s", __FUNCTION__, cName().c_str(), tgt->cName().c_str());
+	}
+	return g_Alive() && !critically_wounded() && is_relation_enemy(tgt);
+}
+
 void CEntityAlive::StartBloodDrops			(CWound* pWound)
 {
 	if(pWound->BloodSize()>m_fStartBloodWoundSize)

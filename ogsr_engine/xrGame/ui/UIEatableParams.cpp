@@ -17,7 +17,6 @@ LPCSTR effect_names[] = {
 	"ui_inv_radiation",
 	"ui_inv_psy_health",
 	"ui_inv_alcohol",
-	"ui_inv_thirst",
 	"ui_inv_wounds_heal",
 	//boost
 	"ui_inv_health_boost",
@@ -27,7 +26,6 @@ LPCSTR effect_names[] = {
 	"ui_inv_radiation",
 	"ui_inv_psy_health",
 	"ui_inv_alcohol",
-	"ui_inv_thirst",
 	"ui_inv_wounds_heal",
 	//
 	"ui_inv_walk_accel",
@@ -57,7 +55,6 @@ LPCSTR static_names[] = {
 	"eat_radiation",
 	"eat_psyhealth",
 	"eat_alcohol",
-	"eat_thirst",
 	"eat_wounds_heal",
 	//boost
 	"boost_health",
@@ -67,7 +64,6 @@ LPCSTR static_names[] = {
 	"boost_radiation",
 	"boost_psyhealth",
 	"boost_alcohol",
-	"boost_thirst",
 	"boost_wounds_heal",
 	//
 	"boost_walk_accel",

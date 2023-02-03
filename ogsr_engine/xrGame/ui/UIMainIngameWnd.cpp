@@ -67,7 +67,7 @@ static CUIMainIngameWnd* GetMainIngameWindow()
 	return nullptr;
 }
 
-static CUIStatic* warn_icon_list[11]{};
+static CUIStatic* warn_icon_list[12]{};
 
 // alpet: для возможности внешнего контроля иконок (используется в NLC6 вместо типичных индикаторов). Никак не влияет на игру для остальных модов.
 static bool external_icon_ctrl = false;
@@ -116,8 +116,8 @@ CUIMainIngameWnd::CUIMainIngameWnd()
 	warn_icon_list[ewiArmor]		= &UIArmorIcon;
 	warn_icon_list[ewiHealth]		= &UIHealthIcon;
 	warn_icon_list[ewiPower]		= &UIPowerIcon;
+	warn_icon_list[ewiSafehouse]	= &UISafehouseIcon;
 	warn_icon_list[ewiInvincible]	= &UIInvincibleIcon;
-	warn_icon_list[ewiThirst]		= &UIThirstIcon;
 }
 
 #include "UIProgressShape.h"
@@ -224,14 +224,11 @@ void CUIMainIngameWnd::Init()
 	xml_init.InitStatic			(uiXml, "wound_static", 0, &UIWoundIcon);
 	UIWoundIcon.Show			(false);
 
+	xml_init.InitStatic			(uiXml, "safehouse_static", 0, &UISafehouseIcon);
+	UISafehouseIcon.Show		(false);
+
 	xml_init.InitStatic			(uiXml, "invincible_static", 0, &UIInvincibleIcon);
 	UIInvincibleIcon.Show		(false);
-
-	if (Core.Features.test(xrCore::Feature::actor_thirst))
-	{
-		xml_init.InitStatic(uiXml, "thirst_static", 0, &UIThirstIcon);
-		UIThirstIcon.Show(false);
-	}
 
 	//--
 	xml_init.InitStatic         (uiXml, "armor_static", 0, &UIArmorIcon);
@@ -255,12 +252,12 @@ void CUIMainIngameWnd::Init()
 		"health",
 		"power",
 		"invincible", // Not used
-		"thirst",
+		"safehouse",
 	};
 
 	// Загружаем пороговые значения для индикаторов
 	EWarningIcons i = ewiWeaponJammed;
-	while (i <= (Core.Features.test(xrCore::Feature::actor_thirst) ? ewiThirst: ewiInvincible))
+	while (i <= ewiInvincible)
 	{
 		// Читаем данные порогов для каждого индикатора
 		const char* cfgRecord = pSettings->r_string("main_ingame_indicators_thresholds", warningStrings[static_cast<int>(i) - 1]);
@@ -387,6 +384,11 @@ void CUIMainIngameWnd::Update()
 			else
 				if (!external_icon_ctrl)
 					TurnOffWarningIcon (ewiInvincible);
+
+			if(m_pActor->InSafeHouse())
+				SetWarningIconColor(ewiSafehouse, 0xffffffff);
+			else
+				TurnOffWarningIcon(ewiSafehouse);
 		}
 
 		// Health bar
@@ -409,7 +411,7 @@ void CUIMainIngameWnd::Update()
 		auto cond = &m_pActor->conditions();
 
 		EWarningIcons i = ewiWeaponJammed;
-		while (!external_icon_ctrl && i <= (Core.Features.test(xrCore::Feature::actor_thirst) ? ewiThirst : ewiInvincible))
+		while (!external_icon_ctrl && i <= ewiInvincible)
 		{
 			float value = 0;
 			switch (i)
@@ -427,9 +429,6 @@ void CUIMainIngameWnd::Update()
 				break;
 			case ewiStarvation:
 				value = 1 - cond->GetSatiety();
-				break;
-			case ewiThirst:
-				value = 1 - cond->GetThirst();
 				break;
 			case ewiPsyHealth:
 				value = 1 - cond->GetPsyHealth();
@@ -640,12 +639,11 @@ void CUIMainIngameWnd::SetWarningIconColor(EWarningIcons icon, const u32 cl)
 		SetWarningIconColor		(&UIPowerIcon, cl);
 		break;
 		//
+	case ewiSafehouse:
+		SetWarningIconColor		(&UISafehouseIcon, cl);
+		break;
 	case ewiInvincible:
 		SetWarningIconColor		(&UIInvincibleIcon, cl);
-		break;
-
-	case ewiThirst:
-		SetWarningIconColor(&UIThirstIcon, cl);
 		break;
 
 	default:

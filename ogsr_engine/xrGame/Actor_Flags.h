@@ -44,10 +44,16 @@ extern Flags32 psCallbackFlags;
 extern BOOL		GodMode	();	
 
 //освобождение рук для взаимодействия с предметами
-enum EFreeHandsMode
-{
+enum EFreeHandsMode{
 	eFreeHandsOff,		//отключено
 	eFreeHandsAuto,		//автоосвобождение
 	eFreeHandsManual	//освобождать вручную
 };
 extern EFreeHandsMode	g_eFreeHands; //освобождение рук для взаимодействия с предметами: 0 - отключено, 1 - автоматически, 2 - вручную
+
+enum ESaveGameMode {
+	eSaveGameDefault,
+	eSaveGameEnemyCheck,
+	eSaveGameSafehouseCheck,
+};
+extern ESaveGameMode g_eSaveGameMode;

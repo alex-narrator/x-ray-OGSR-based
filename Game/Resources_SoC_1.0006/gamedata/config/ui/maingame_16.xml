@@ -81,9 +81,9 @@
 		<texture>ui_hud_icon_goodmode</texture>
 	</invincible_static>
 	
-	<can_sleep_static x="0" y="0" width="48" height="64" stretch="1">
+	<safehouse_static x="0" y="0" width="48" height="64" stretch="1">
 		<texture>ui_hud_icon_sleep</texture>
-	</can_sleep_static>
+	</safehouse_static>
 
 	<artefact_static x="0" y="0" width="48" height="64" stretch="1">
 		<texture>ui_hud_icon_artefact</texture>

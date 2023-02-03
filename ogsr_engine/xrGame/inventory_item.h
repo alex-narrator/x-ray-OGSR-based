@@ -309,7 +309,6 @@ public:
 		eRadiationRestoreSpeed,
 		ePsyHealthRestoreSpeed,
 		eAlcoholRestoreSpeed,
-		eThirstRestoreSpeed,
 		eWoundsHealSpeed,
 		//additional
 		eAdditionalWalkAccel,

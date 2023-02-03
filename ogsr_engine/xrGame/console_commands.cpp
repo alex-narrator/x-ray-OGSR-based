@@ -76,8 +76,8 @@ extern	float	g_bHudAdjustDeltaRot;
 //-----------------------------------------------------------
 extern float	g_fForceGrowSpeed;
 //режимы "свободных рук"
-EFreeHandsMode g_eFreeHands = eFreeHandsOff; //освобождение рук для взаимодействия с предметами: 0 - отключено, 1 - автоматически, 2 - вручную
-xr_token	free_hands_token[] = {
+EFreeHandsMode g_eFreeHands{ eFreeHandsOff }; //освобождение рук для взаимодействия с предметами: 0 - отключено, 1 - автоматически, 2 - вручную
+xr_token	free_hands_token[]{
 	{ "fh_off",		eFreeHandsOff		}, //отключено
 	{ "fh_auto",	eFreeHandsAuto		}, //автоосвобождение
 	{ "fh_manual",	eFreeHandsManual	}, //освобождать вручную
@@ -85,12 +85,20 @@ xr_token	free_hands_token[] = {
 };
 
 //элементы HUD выводятся по нажатию клавиш
-EHudLaconicMode g_eHudLaconic = eHudLaconicOff; //элементы HUD выводятся по нажатию клавиш: 0 - отключено, 1 - только warning-иконки, 2 - иконка положения персонажа в качестве warning-иконки здоровья
-xr_token	hud_laconic_token[] = {
+EHudLaconicMode g_eHudLaconic{ eHudLaconicOff }; //элементы HUD выводятся по нажатию клавиш: 0 - отключено, 1 - только warning-иконки, 2 - иконка положения персонажа в качестве warning-иконки здоровья
+xr_token	hud_laconic_token[]{
 	{ "hl_off",		eHudLaconicOff			}, //отключено
-	{ "hl_warning", eHudLaconicWarning	}, //только warning-иконки
+	{ "hl_warning", eHudLaconicWarning		}, //только warning-иконки
 	{ "hl_motion",	eHudLaconicMotion		}, //иконка положения персонажа в качестве warning-иконки здоровья
 	{ 0,			0						}
+};
+
+ESaveGameMode g_eSaveGameMode{ eSaveGameDefault };
+xr_token save_game_mode_token[]{
+	{ "sg_default",			eSaveGameDefault		}, //класичний режим
+	{ "sg_no_enemies",		eSaveGameEnemyCheck		}, //збереження без ворогів поряд
+	{ "sg_safehouse_only",	eSaveGameSafehouseCheck	}, //збереження тільки у безпечних місцях
+	{ 0,					0						}
 };
 
 BOOL	g_bCheckTime			= FALSE;
@@ -392,6 +400,15 @@ public:
 		if(!g_actor || !Actor()->g_Alive())
 		{
 			Msg("cannot make saved game because actor is dead :(");
+			return;
+		}
+
+		if (!Actor()->SaveGameAllowed()) {
+			SDrawStaticStruct* _s = HUD().GetUI()->UIGame()->AddCustomStatic("game_saved", true);
+			_s->m_endTime = Device.fTimeGlobal + 3.0f;// 3sec
+			string_path					save_name;
+			strconcat(sizeof(save_name), save_name, CStringTable().translate("st_game_save_not_allowed").c_str());
+			_s->wnd()->SetText(save_name);
 			return;
 		}
 
@@ -1389,6 +1406,8 @@ void CCC_RegisterCommands()
 	CMD3(CCC_Mask,			"g_crosshair_dbg",			&psActorFlags,			AF_CROSSHAIR_DBG);
 	CMD3(CCC_Mask,			"g_camera_collision",		&psActorFlags,			AF_CAM_COLLISION);
 	CMD3(CCC_Mask,			"g_bloodmarks_on_dynamics",	&psActorFlags,			AF_BLOODMARKS_ON_DYNAMIC);
+
+	CMD3(CCC_Token,			"g_save_mode",				(u32*)&g_eSaveGameMode, save_game_mode_token);
 
 
 	CMD1(CCC_TimeFactor,	"time_factor")	

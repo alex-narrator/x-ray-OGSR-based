@@ -81,10 +81,10 @@ IC	const u32 &CCustomMonster::critical_wound_type	() const
 	return			(m_critical_wound_type);
 }
 
-IC bool CCustomMonster::critically_wounded			()
-{
-	return			(m_critical_wound_type != u32(-1));
-}
+//IC bool CCustomMonster::critically_wounded			()
+//{
+//	return			(m_critical_wound_type != u32(-1));
+//}
 
 IC void CCustomMonster::critical_wounded_state_stop	() 
 {

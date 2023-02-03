@@ -734,6 +734,20 @@
 			<list_font	 r="216" g="186" b="140" font="letterica16"/>
 		</list_free_hands>
 <!-- free hands end-->
+<!-- game save mode -->
+		<cap_game_save_mode x="20" y="120" width="163" height="21" complex_mode = "1">
+			<text font="letterica16" r="215" g="195" b="170">ui_mm_game_save_mode</text>			
+		</cap_game_save_mode>
+		
+		<list_game_save_mode x="194" y="120" width="261" height="21" always_show_scroll="0" list_length="3">	
+			<options_item entry="g_save_mode" group="mm_opt_gameplay"/>
+			<text_color>
+				<e r="216" g="186" b="140"/>
+			</text_color>
+			<list_font_s r="240" g="217" b="182"/>
+			<list_font	 r="216" g="186" b="140" font="letterica16"/>
+		</list_game_save_mode>
+<!-- game save mode-->
 
  		<check_autopause x="0" y="0" width="415" height="21">
 			<options_item entry="keypress_on_start" group="mm_opt_gameplay"/>

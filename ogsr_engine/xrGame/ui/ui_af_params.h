@@ -23,7 +23,6 @@ protected:
 		_item_radiation_restore,
 		_item_psy_health_restore,
 		_item_alcohol_restore,
-		_item_thirst_restore,
 		_item_wounds_heal,
 		//additional
 		_item_additional_walk_accel,

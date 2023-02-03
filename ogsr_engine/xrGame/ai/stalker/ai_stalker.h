@@ -560,7 +560,7 @@ private:
 	CRITICAL_WOUND_WEIGHTS				m_critical_wound_weights;
 
 public:
-			bool						critically_wounded							();
+	virtual		bool						critically_wounded							();
 	IC		const CRITICAL_WOUND_WEIGHTS&critical_wound_weights						() const;
 
 private:

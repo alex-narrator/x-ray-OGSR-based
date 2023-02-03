@@ -813,6 +813,9 @@ public:
 			float	GetTotalArtefactsEffect		(int);
 
 	virtual void	TryGroggyEffect				(float, int);
+
+			bool	SaveGameAllowed				();
+			bool	InSafeHouse					();
 protected:
 	svector<float, eRestoreBoostMax> m_ActorItemBoostedParam;
 };

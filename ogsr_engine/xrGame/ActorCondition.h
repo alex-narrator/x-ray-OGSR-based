@@ -27,18 +27,15 @@ public:
 			ePhyHealthMinReached			=(1<<6),
 			eCantWalkWeight					=(1<<7),
 
-			eLimping = (1 << 8),
-			eCantWalk = (1 << 9),
-			eCantSprint = (1 << 10),
-
-			eCriticalThirstReached          =(1<<11),
+			eLimping						= (1 << 8),
+			eCantWalk						= (1 << 9),
+			eCantSprint						= (1 << 10),
 			};
 	Flags16											m_condition_flags;
 private:
 	CActor*											m_object;
 	void				UpdateTutorialThresholds	();
 	virtual void 		UpdateSatiety				() override;
-	virtual void		UpdateThirst				();
 	virtual void        UpdateAlcohol				() override;
 	virtual void		UpdateHealth				() override;
 	virtual void		UpdatePower					();
@@ -58,7 +55,6 @@ public:
 
 	virtual void 		ChangeAlcohol				(float value);
 	virtual void 		ChangeSatiety				(float value);
-	virtual void		ChangeThirst				(float value);
 
 	// хромание при потере сил и здоровья
 	virtual	bool		IsLimping					();
@@ -77,7 +73,6 @@ public:
 	float GetAlcohol			()	{return m_fAlcohol;}
 	float GetPsy				()	{return 1.0f-GetPsyHealth();}
 	float				GetSatiety			()	{return m_fSatiety;}
-	float				GetThirst			()	{return m_fThirst;}
 //	void				SetMaxWalkWeight	(float _weight) { m_MaxWalkWeight = _weight; }
 
 	void		AffectDamage_InjuriousMaterialAndMonstersInfluence();
@@ -107,14 +102,6 @@ protected:
 	float m_fV_SatietyPower;
 	float m_fV_SatietyHealth;
 //--
-
-	float m_fThirst;
-	float m_fThirstLightLimit;
-	float m_fThirstCriticalLimit;
-	float m_fV_Thirst;
-	float m_fV_ThirstPower;
-	float m_fV_ThirstHealth;
-
 
 	float m_fPowerLeakSpeed;
 	float m_fV_Power;
@@ -191,5 +178,4 @@ public:
 	virtual float GetMaxPowerRestore	() override;
 	virtual float GetSatietyRestore		() override;
 	virtual float GetAlcoholRestore		() override;
-	virtual float GetThirstRestore		() override;
 };

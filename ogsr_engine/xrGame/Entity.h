@@ -116,6 +116,8 @@ public:
 			bool			is_from_behind		(const Fvector& direction) const;
 			bool			b_disable_death_sound{};
 
+	virtual bool 			CheckEnemyStatus	(CEntityAlive* tgt) { return false; }
+
 private:
 	ALife::_OBJECT_ID		m_killer_id;
 

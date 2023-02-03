@@ -24,7 +24,6 @@ protected:
 		_radiation_influence,
 		_psy_health_influence,
 		_alcohol_influence,
-		_thirst_influence,
 		_wounds_heal_influence,
 
 		_max_influence_index,
@@ -36,7 +35,6 @@ protected:
 		_radiation_boost,
 		_psy_health_boost,
 		_alcohol_boost,
-		_thirst_boost,
 		_wounds_heal_boost,
 
 		_walk_accel_boost,

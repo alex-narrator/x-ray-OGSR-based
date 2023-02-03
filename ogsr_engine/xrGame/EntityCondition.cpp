@@ -756,9 +756,6 @@ void CEntityCondition::ApplyInfluence(int type, float value) {
 	case eAlcoholInfluence: {
 		ChangeAlcohol(value);
 	}break;
-	case eThirstInfluence: {
-		ChangeThirst(value);
-	}break;
 	case eWoundsHealInfluence: {
 		ChangeBleeding(value);
 	}break;
@@ -851,9 +848,6 @@ void CEntityCondition::ApplyRestoreBoost(int type, float value) {
 	}break;
 	case eAlcoholBoost: {
 		ChangeAlcohol(GetAlcoholRestore() * value);
-	}break;
-	case eThirstBoost: {
-		ChangeThirst(GetThirstRestore() * value);
 	}break;
 	case eWoundsHealBoost: {
 		ChangeBleeding(GetWoundIncarnation() * value);

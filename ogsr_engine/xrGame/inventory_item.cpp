@@ -152,7 +152,6 @@ void CInventoryItem::Load(LPCSTR section)
 	m_ItemEffect[eRadiationRestoreSpeed]				= READ_IF_EXISTS(pSettings, r_float, section, "radiation_restore_speed",	0.f);
 	m_ItemEffect[ePsyHealthRestoreSpeed]				= READ_IF_EXISTS(pSettings, r_float, section, "psy_health_restore_speed",	0.f);
 	m_ItemEffect[eAlcoholRestoreSpeed]					= READ_IF_EXISTS(pSettings, r_float, section, "alcohol_restore_speed",		0.f);
-	m_ItemEffect[eThirstRestoreSpeed]					= READ_IF_EXISTS(pSettings, r_float, section, "thirst_restore_speed",		0.f);
 	m_ItemEffect[eWoundsHealSpeed]						= READ_IF_EXISTS(pSettings, r_float, section, "wounds_heal_speed",			0.f);
 	//addition
 	m_ItemEffect[eAdditionalWalkAccel]					= READ_IF_EXISTS(pSettings, r_float, section, "additional_walk_accel",		0.f);
