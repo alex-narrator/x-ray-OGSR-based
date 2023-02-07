@@ -7,11 +7,3 @@
 
 #include "stdafx.h"
 #include "scientificoutfit.h"
-
-CScientificOutfit::CScientificOutfit()
-{
-}
-
-CScientificOutfit::~CScientificOutfit() 
-{
-}

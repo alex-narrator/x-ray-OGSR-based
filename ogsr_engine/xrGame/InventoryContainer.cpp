@@ -78,6 +78,7 @@ BOOL CInventoryContainer::net_Spawn(CSE_Abstract* DC)
 	//	close();
 	//	inherited::set_tip_text("st_pick_rucksack");
 	//}
+	processing_activate();
 	return res;
 }
 void CInventoryContainer::OnEvent(NET_Packet& P, u16 type)
@@ -105,6 +106,7 @@ void CInventoryContainer::open()
 
 void CInventoryContainer::UpdateCL()
 {
+	inherited::UpdateCL();
 	UpdateDropTasks();
 }
 

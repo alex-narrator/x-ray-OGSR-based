@@ -13,6 +13,6 @@ class CScientificOutfit: public CCustomOutfit
 private:
     typedef	CCustomOutfit inherited;
 public:
-	CScientificOutfit(void);
-	virtual ~CScientificOutfit(void);
+	CScientificOutfit(void) {};
+	virtual ~CScientificOutfit(void) {};
 };

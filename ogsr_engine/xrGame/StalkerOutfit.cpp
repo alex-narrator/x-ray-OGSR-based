@@ -1,14 +1,6 @@
 #include "stdafx.h"
 #include "StalkerOutfit.h"
 
-CStalkerOutfit::CStalkerOutfit()
-{
-}
-
-CStalkerOutfit::~CStalkerOutfit() 
-{
-}
-
 using namespace luabind;
 
 #pragma optimize("s",on)

@@ -13,8 +13,8 @@ class CStalkerOutfit : public CCustomOutfit {
 private:
     typedef	CCustomOutfit inherited;
 public:
-	CStalkerOutfit(void);
-	virtual ~CStalkerOutfit(void);
+	CStalkerOutfit(void) {};
+	virtual ~CStalkerOutfit(void) {};
 
 	DECLARE_SCRIPT_REGISTER_FUNCTION
 };
