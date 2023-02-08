@@ -241,12 +241,12 @@ void CArtefact::shedule_Update		(u32 dt)
 }
 
 
-void CArtefact::create_physic_shell	()
-{
-	///create_box2sphere_physic_shell	();
-	m_pPhysicsShell=P_build_Shell(this,false);
-	m_pPhysicsShell->Deactivate();
-}
+//void CArtefact::create_physic_shell	()
+//{
+//	///create_box2sphere_physic_shell	();
+//	m_pPhysicsShell=P_build_Shell(this,false);
+//	m_pPhysicsShell->Deactivate();
+//}
 
 void CArtefact::StartLights()
 {
