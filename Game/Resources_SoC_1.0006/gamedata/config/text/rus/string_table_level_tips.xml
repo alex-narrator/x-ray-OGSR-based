@@ -10,7 +10,7 @@
 		<text>Поговорити [$$ACTION_USE$$]</text>
 	</string>
 	<string id="dead_character_use_or_drag">
-		<text>Обшукати [$$ACTION_USE$$] \n Тягти [$$ACTION_ADDITIONAL_ACTION$$]+[$$ACTION_USE$$]</text>
+		<text>Обшукати [$$ACTION_USE$$] \nТягти [$$ACTION_ADDITIONAL_ACTION$$]+[$$ACTION_USE$$]</text>
 	</string>
 	<string id="dead_character_use">
 		<text>Обшукати [$$ACTION_USE$$]</text>

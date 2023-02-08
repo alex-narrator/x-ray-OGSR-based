@@ -467,7 +467,7 @@ void CArtefact::SwitchAfParticles(bool bOn)
 	}
 }
 
-float	CArtefact::GetHitTypeProtection(int hit_type){
+float	CArtefact::GetHitTypeProtection(int hit_type) const {
 	return inherited::GetHitTypeProtection(hit_type) * GetRandomKoef();
 }
 
@@ -500,7 +500,6 @@ SArtefactActivation::SArtefactActivation(CArtefact* af,u32 owner_id)
 SArtefactActivation::~SArtefactActivation()
 {
 	m_light.destroy();
-
 }
 
 void SArtefactActivation::Load()

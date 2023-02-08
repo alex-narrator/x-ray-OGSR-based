@@ -35,6 +35,7 @@
 #include "medkit.h"
 #include "antirad.h"
 #include "PHCapture.h"
+#include "InventoryContainer.h"
 
 extern int g_bHudAdjustMode;
 
@@ -530,11 +531,18 @@ void CActor::ActorUse() {
 	  }
   }
 
-  if (m_pInvBoxWeLookingAt && m_pInvBoxWeLookingAt->object().nonscript_usable() && m_pInvBoxWeLookingAt->IsOpened()) {
-    // если контейнер открыт
-    CUIGameSP* pGameSP = smart_cast<CUIGameSP*>(HUD().GetUI()->UIGame());
-    if (pGameSP && inventory().IsFreeHands()) pGameSP->StartCarBody(this, m_pInvBoxWeLookingAt);
-    return;
+  if (m_pInvBoxWeLookingAt && m_pInvBoxWeLookingAt->object().nonscript_usable()) {
+	  if (smart_cast<CInventoryContainer*>(m_pInvBoxWeLookingAt) && Level().IR_GetKeyState(get_action_dik(kADDITIONAL_ACTION))) {
+		  PickupModeOn();
+		  PickupModeUpdate_COD();
+		  return;
+	  }
+	  // если контейнер открыт
+	  if (m_pInvBoxWeLookingAt->IsOpened()) {
+		  CUIGameSP* pGameSP = smart_cast<CUIGameSP*>(HUD().GetUI()->UIGame());
+		  if (pGameSP && inventory().IsFreeHands()) pGameSP->StartCarBody(this, m_pInvBoxWeLookingAt);
+		  return;
+	  }
   }
   
   else if (!m_pUsableObject || m_pUsableObject->nonscript_usable()) {

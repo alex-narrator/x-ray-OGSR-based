@@ -10,12 +10,6 @@
 #include "inventory_item.h"
 #include "inventory_item_object.h"
 
-typedef struct _SItemsInfo {
-	float	  weight;
-	u32       cost;
-	float     info[8];
-} SItemsInfo, *PSItemsInfo;
-
 // CInventoryContainer
 class CInventoryContainer : public CCustomInventoryBox <CInventoryItemObject>
 	
@@ -23,8 +17,6 @@ class CInventoryContainer : public CCustomInventoryBox <CInventoryItemObject>
 private:
 	typedef CCustomInventoryBox		<CInventoryItemObject>				inherited;
 	bool							m_opened;
-
-	virtual	u32						CalcItems							(SItemsInfo &info) const;
 public:			
 
 									CInventoryContainer					();
@@ -43,6 +35,8 @@ public:
 	void							close								();
 
 	virtual	void					UpdateCL							();
+
+	virtual float					GetItemEffect						(int) const;
 
 protected:
 			void					UpdateDropTasks						();

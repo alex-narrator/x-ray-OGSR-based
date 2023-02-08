@@ -687,7 +687,7 @@ void CUITradeWnd::StopTrade()
 #include "../trade_parameters.h"
 bool CUITradeWnd::CanMoveToOther( PIItem pItem, bool our )
 {
-	if (pItem->m_flags.test(CInventoryItem::FIAlwaysUntradable))
+	if (pItem->m_flags.test(CInventoryItem::FIAlwaysUntradable) || !pItem->CanTrade())
 		return false;
 	if ( !our ) return true;
 
@@ -953,10 +953,12 @@ void CUITradeWnd::UpdateLists(EListType mode)
 	if(mode==eBoth||mode==e1st){
 		ruck_list.clear					();
 		if (m_bShowAllInv)
-   			m_pInv->AddAvailableItems		(ruck_list, true);
+   			m_pInv->AddAvailableItems		(ruck_list, false);
 		else {
-			for (const auto& item : m_pInv->m_ruck)
-				ruck_list.push_back(item);
+			for (const auto& item : m_pInv->m_ruck) {
+				if(item->CanTrade())
+					ruck_list.push_back(item);
+			}
 		}
 		std::sort						(ruck_list.begin(),ruck_list.end(),InventoryUtilities::GreaterRoomInRuck);
 		FillList						(ruck_list, m_uidata->UIOurBagList, true);

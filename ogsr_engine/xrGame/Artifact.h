@@ -83,7 +83,7 @@ protected:
 	float							m_fTrailLightRange{};
 
 	float							GetTrailLightRange	() { return m_fTrailLightRange * GetCondition(); };
-	bool							IsLightsEnabled		() { return m_bLightsEnabled && !fis_zero(GetCondition()); }
+	bool							IsLightsEnabled		() { return m_bLightsEnabled && !!GetCondition(); }
 
 	SArtefactDetectorsSupport*		m_detectorObj{};
 	u8 m_af_rank{};
@@ -107,7 +107,7 @@ public:
 	float							m_fRandomK{ 1.f };
 	float							GetRandomKoef() const { return m_fRandomK; };
 
-	virtual float					GetHitTypeProtection(int);
+	virtual float					GetHitTypeProtection(int) const;
 	virtual float					GetItemEffect		(int) const;
 
 	virtual void					UpdateConditionDecrease() override;

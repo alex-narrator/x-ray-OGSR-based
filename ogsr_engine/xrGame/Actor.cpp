@@ -68,6 +68,7 @@
 #include "Game_Object_Space.h"
 #include "script_callback_ex.h"
 #include "InventoryBox.h"
+#include "InventoryContainer.h"
 #include "location_manager.h"
 #include "PHCapture.h"
 #include "CustomDetector.h"
@@ -82,9 +83,12 @@ constexpr const char* m_sInventoryItemUseAction			= "inventory_item_use";
 constexpr const char* m_sInventoryItemUseOrDragAction	= "inventory_item_use_or_drag";
 constexpr const char* m_sGameObjectDragAction			= "game_object_drag";
 
-constexpr const char* m_sGameObjectThrowDropAction		= "game_object_throw_drop";			//Отбросить/отпустить предмет
-constexpr const char* m_sHandsNotFree					= "hands_not_free";					//руки заняты
-constexpr const char* m_sNoPlaceAvailable				= "no_place_available";				//нет места
+constexpr const char* m_sInventoryContainerUseOrTakeAction	= "inventory_container_use_or_take"; //обшукати/підібрати контейнер
+constexpr const char* m_sInventoryBoxUseAction			= "inventory_box_use";				//обшукати скриньку
+constexpr const char* m_sGameObjectThrowDropAction		= "game_object_throw_drop";			//Відкинути/відпустити предмет
+constexpr const char* m_sHandsNotFree					= "hands_not_free";					//руки зайняті
+constexpr const char* m_sNoPlaceAvailable				= "no_place_available";				//немає місця
+constexpr const char* m_sLocked							= "locked";							//зачинено
 
 const u32		patch_frames	= 50;
 const float		respawn_delay	= 1.f;
@@ -1128,6 +1132,18 @@ void CActor::shedule_Update	(u32 DT)
 		else if (m_pVehicleWeLookingAt)
 		{
 			m_sDefaultObjAction = b_free_hands ? m_sCarCharacterUseAction : m_sHandsNotFree;
+		}
+		else if (m_pInvBoxWeLookingAt) {
+			if (!b_free_hands)
+				m_sDefaultObjAction = m_sHandsNotFree;
+			else if (m_pInvBoxWeLookingAt->IsOpened()) {
+				if (smart_cast<CInventoryContainer*>(m_pInvBoxWeLookingAt))
+					m_sDefaultObjAction = m_sInventoryContainerUseOrTakeAction;
+				else
+					m_sDefaultObjAction = m_sInventoryBoxUseAction;
+			}
+			else
+				m_sDefaultObjAction = m_sLocked;
 		}
 		else if (inventory().m_pTarget && inventory().m_pTarget->CanTake())
 		{

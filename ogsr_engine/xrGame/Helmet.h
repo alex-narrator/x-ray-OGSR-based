@@ -17,7 +17,7 @@ public:
 	//если на персонаже надет костюм
 	float							GetPowerLoss();
 
-	virtual float					GetHitTypeProtection(int) override;
+	virtual float					GetHitTypeProtection(int) const override;
 
 	virtual	BOOL					BonePassBullet(int boneID);
 

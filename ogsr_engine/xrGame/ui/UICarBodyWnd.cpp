@@ -294,7 +294,7 @@ void CUICarBodyWnd::UpdateLists()
 
 	ruck_list.clear								();
 	if (m_bShowAllInv) 
-		m_pActorInventoryOwner->inventory().AddAvailableItems(ruck_list, true);
+		m_pActorInventoryOwner->inventory().AddAvailableItems(ruck_list, false);
 	else{
 		for (const auto& item : m_pActorInventoryOwner->inventory().m_ruck)
 			ruck_list.push_back(item);

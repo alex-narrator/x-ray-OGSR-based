@@ -1037,7 +1037,7 @@ bool CInventoryItem::NeedForcedDescriptionUpdate() const {
 		IsPowerConsumer() && IsPowerOn();
 }
 
-float CInventoryItem::GetHitTypeProtection(int hit_type){
+float CInventoryItem::GetHitTypeProtection(int hit_type) const {
 	return m_HitTypeProtection[hit_type] * GetCondition();
 }
 

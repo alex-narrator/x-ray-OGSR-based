@@ -11,7 +11,7 @@ protected:
 				void					ProcessEvent					(CGameObject *O, NET_Packet& P, u16 type);	
 				float					m_fMaxVolume{};
 public:
-				bool	m_in_use;
+				bool					m_in_use;
 										IInventoryBox					();
 				void					AddAvailableItems				(TIItemContainer& items_container) const;
 				bool					IsEmpty							() const;
@@ -47,7 +47,6 @@ public:
 		inherited::net_Spawn(DC);		
 		inherited::setVisible	 (TRUE);
 		inherited::setEnabled	 (TRUE);
-		inherited::set_tip_text	 ("inventory_box_use");
 		return TRUE;
 	}
 

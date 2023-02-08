@@ -184,7 +184,7 @@
 		<text>Обшукати схованку [$$ACTION_USE$$]</text>
 	</string>
 	<string id="inventory_item_use">
-		<text>Поднять предмет [$$ACTION_USE$$]</text>
+		<text>Підібрати [$$ACTION_USE$$]</text>
 	</string>
 	<string id="ui_mm_check_updates">
 		<text>Обновления</text>

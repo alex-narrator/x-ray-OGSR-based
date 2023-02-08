@@ -152,14 +152,12 @@ void add_online_impl						(CSE_ALifeDynamicObject *object, const bool &update_re
 	ClientID					clientID;
 	clientID.set				(object->alife().server().GetServerClient() ? object->alife().server().GetServerClient()->ID.value() : 0);
 
-	ALife::OBJECT_IT			I = object->children.begin();
-	ALife::OBJECT_IT			E = object->children.end();
-	for ( ; I != E; ++I) {
+	for(const auto& child_id : object->children){
 //	this was for the car only
 //		if (*I == ai().alife().graph().actor()->ID)
 //			continue;
 //
-		CSE_ALifeDynamicObject	*l_tpALifeDynamicObject = ai().alife().objects().object(*I);
+		CSE_ALifeDynamicObject	*l_tpALifeDynamicObject = ai().alife().objects().object(child_id);
 		CSE_ALifeInventoryItem	*l_tpALifeInventoryItem = smart_cast<CSE_ALifeInventoryItem*>(l_tpALifeDynamicObject);
 		R_ASSERT2				(l_tpALifeInventoryItem,"Non inventory item object has parent?!");
 		l_tpALifeInventoryItem->base()->s_flags.Or(M_SPAWN_UPDATE);
@@ -187,6 +185,10 @@ void add_online_impl						(CSE_ALifeDynamicObject *object, const bool &update_re
 		object->alife().server().Process_spawn	(tNetPacket,clientID,FALSE,l_tpALifeInventoryItem->base());
 		l_tpALifeDynamicObject->s_flags.And		(u16(-1) ^ M_SPAWN_UPDATE);
 		l_tpALifeDynamicObject->m_bOnline		= true;
+
+		//щоб вміст контейнерів завантажився коли контейнер у персонажа в інвентарі
+		if (auto l_tpIC = smart_cast<CSE_InventoryContainer*>(l_tpALifeDynamicObject))
+			l_tpIC->add_online(update_registries);
 	}
 
 	if (!update_registries)

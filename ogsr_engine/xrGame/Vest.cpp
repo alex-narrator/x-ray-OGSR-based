@@ -63,7 +63,7 @@ void CVest::OnMoveToRuck(EItemPlace prevPlace) {
 	}
 }
 
-float CVest::GetHitTypeProtection(int hit_type) {
+float CVest::GetHitTypeProtection(int hit_type) const {
 	return (hit_type == ALife::eHitTypeFireWound) ? 0.f : inherited::GetHitTypeProtection(hit_type);
 }
 

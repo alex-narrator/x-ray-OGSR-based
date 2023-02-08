@@ -928,4 +928,8 @@
 		<text>Ви вийшли з безпечної зони. \nЗбереження гри неможливе.</text>
 	</string>	
 	
+	<string id="inventory_container_use_or_take">
+		<text>Обшукати [$$ACTION_USE$$] \nПідібрати [$$ACTION_ADDITIONAL_ACTION$$]+[$$ACTION_USE$$]</text>
+	</string>
+	
 </string_table>

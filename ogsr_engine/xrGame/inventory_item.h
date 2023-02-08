@@ -196,7 +196,7 @@ const xr_vector<u8>&			GetSlots			(){ return m_slots;      }
 			bool				RuckDefault			()							{return !!m_flags.test(FRuckDefault);}
 			
 	virtual bool				CanTake				() const					{return !!m_flags.test(FCanTake);}
-			bool				CanTrade			() const;
+	virtual	bool				CanTrade			() const;
 	virtual bool 				IsNecessaryItem	    (CInventoryItem* item);
 	virtual bool				IsNecessaryItem	    (const shared_str& item_sect){return false;};
 
@@ -320,7 +320,7 @@ public:
 	};
 
 	virtual float					GetItemEffect		(int) const;
-	virtual float					GetHitTypeProtection(int);
+	virtual float					GetHitTypeProtection(int) const;
 
 	xr_vector<shared_str>			m_required_tools{};
 
