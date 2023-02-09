@@ -1986,6 +1986,10 @@ float CActor::GetTotalArtefactsEffect(int i) {
 		if (artefact && !fis_zero(artefact->GetCondition())) {
 				res += artefact->GetItemEffect(i);
 		}
+		auto container = smart_cast<CInventoryContainer*>(item);
+		if (container) {
+			res += container->GetContainmentArtefactEffect(i);
+		}
 	}
 	return res;
 }

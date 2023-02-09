@@ -475,17 +475,33 @@ float CArtefact::GetItemEffect(int effect) const {
 	return m_ItemEffect[effect] * GetCondition() * GetRandomKoef();
 }
 
-void CArtefact::UpdateConditionDecrease()
-{
-	if (!m_pCurrentInventory || !psActorFlags.test(AF_ARTEFACTS_FROM_ALL) && !m_pCurrentInventory->InBelt(this) ||
-		!smart_cast<CActor*>(H_Parent()))
-	{
-		m_fLastTimeCalled = Level().GetGameDayTimeSec();
-		return;
+#include "InventoryContainer.h"
+void CArtefact::UpdateConditionDecrease(){
+	bool can_be_decreased{};
+	if (H_Parent()) {
+		bool from_all = psActorFlags.test(AF_ARTEFACTS_FROM_ALL);
+		if (auto container = smart_cast<CInventoryContainer*>(H_Parent())) {
+			if (container->H_Parent()) { 
+				if (auto actor = smart_cast<CActor*>(container->H_Parent())) {
+					if (from_all || actor->inventory().InBelt(container)) {
+						can_be_decreased = true;
+					}
+				}
+			}
+		}
+		else if (auto actor = smart_cast<CActor*>(H_Parent())) {
+			if(from_all || actor->inventory().InBelt(this))
+				can_be_decreased = true;
+		}
 	}
-
-	inherited::UpdateConditionDecrease();
-	//	Msg("! Artefact [%s] change condition on [%.6f]|current condition [%.6f]|delta_time  [%.6f]|time_factor [%.6f]", cName().c_str(), condition_dec, GetCondition(), Device.fTimeDelta, Level().GetGameTimeFactor());
+	if (can_be_decreased) {
+		inherited::UpdateConditionDecrease();
+		//Msg("! %s for artefact [%s] with parent [%s] | current condition [%.6f] | delta_time  [%.6f] | time_factor [%.6f]", 
+		//	__FUNCTION__,  cName().c_str(), GetCondition(), H_Parent()->cName().c_str(), Device.fTimeDelta, Level().GetGameTimeFactor());
+	} else {
+		m_fLastTimeCalled = Level().GetGameDayTimeSec();
+	}
+	return;
 }
 
 //---SArtefactActivation----

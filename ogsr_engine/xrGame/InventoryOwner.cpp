@@ -31,6 +31,7 @@
 #include "CustomOutfit.h"
 #include "Backpack.h"
 #include "EntityCondition.h"
+#include "InventoryContainer.h"
 
 CInventoryOwner::CInventoryOwner			()
 {
@@ -349,10 +350,14 @@ float  CInventoryOwner::MaxCarryWeight () const
 
 	if (inventory().OwnerIsActor()){
 		auto &placement = psActorFlags.test(AF_ARTEFACTS_FROM_ALL) ? inventory().m_all : inventory().m_belt;
-		for (const auto& it : placement) {
-			auto artefact = smart_cast<CArtefact*>(it);
+		for (const auto& item : placement) {
+			auto artefact = smart_cast<CArtefact*>(item);
 			if (artefact && !fis_zero(artefact->GetCondition()))
 				res += artefact->GetItemEffect(CInventoryItem::eAdditionalWeight);
+			auto container = smart_cast<CInventoryContainer*>(item);
+			if (container) {
+				res += container->GetContainmentArtefactEffect(CInventoryItem::eAdditionalWeight);
+			}
 		}
 	}
 

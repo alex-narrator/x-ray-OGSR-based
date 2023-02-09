@@ -27,6 +27,7 @@
 #include "CameraEffector.h"
 #include "ActorEffector.h"
 #include "player_hud.h"
+#include "InventoryContainer.h"
 
 static const float	s_fLandingTime1		= 0.1f;// через сколько снять флаг Landing1 (т.е. включить следующую анимацию)
 static const float	s_fLandingTime2		= 0.3f;// через сколько снять флаг Landing2 (т.е. включить следующую анимацию)
@@ -231,6 +232,10 @@ void CActor::g_cl_CheckControls(u32 mstate_wf, Fvector &vControlAccel, float &Ju
 					auto artefact = smart_cast<CArtefact*>(item);
 					if (artefact && !fis_zero(artefact->GetCondition()))
 						jump_speed += m_fJumpSpeed * artefact->GetItemEffect(CInventoryItem::eAdditionalJumpSpeed);
+					auto container = smart_cast<CInventoryContainer*>(item);
+					if (container) {
+						jump_speed += m_fJumpSpeed * container->GetContainmentArtefactEffect(CInventoryItem::eAdditionalJumpSpeed);
+					}
 				}
 
 				auto outfit = GetOutfit();
@@ -361,10 +366,14 @@ void CActor::g_cl_CheckControls(u32 mstate_wf, Fvector &vControlAccel, float &Ju
 				walk_accel += conditions().GetBoostedParams(eAdditionalWalkAccelBoost);
 
 				auto &placement = psActorFlags.test(AF_ARTEFACTS_FROM_ALL) ? inventory().m_all : inventory().m_belt;
-				for (const auto& it : placement) {
-					auto artefact = smart_cast<CArtefact*>(it);
+				for (const auto& item : placement) {
+					auto artefact = smart_cast<CArtefact*>(item);
 					if (artefact && !fis_zero(artefact->GetCondition()))
 						walk_accel += m_fWalkAccel * artefact->GetItemEffect(CInventoryItem::eAdditionalWalkAccel);
+					auto container = smart_cast<CInventoryContainer*>(item);
+					if (container) {
+						walk_accel += m_fWalkAccel * container->GetContainmentArtefactEffect(CInventoryItem::eAdditionalWalkAccel);
+					}
 				}
 
 				auto outfit = GetOutfit();

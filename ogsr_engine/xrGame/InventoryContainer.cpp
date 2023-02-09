@@ -9,15 +9,10 @@
 #include "Level.h"
 #include "InventoryContainer.h"
 
-CInventoryContainer::CInventoryContainer():
-		CCustomInventoryBox<CInventoryItemObject>()
-{
-	open();
-}
+#include "Artifact.h"
 
 void CInventoryContainer::Load(LPCSTR section){
 	inherited::Load(section);
-	m_fMaxVolume = READ_IF_EXISTS(pSettings, r_float, section, "max_volume", .0f);
 }
 
 u32 CInventoryContainer::Cost() const
@@ -69,16 +64,6 @@ void CInventoryContainer::OnEvent(NET_Packet& P, u16 type)
 	inherited::OnEvent(P, type);
 }
 
-
-void CInventoryContainer::close(){
-	m_opened = false;
-}
-
-
-void CInventoryContainer::open(){
-	m_opened = true;
-}
-
 void CInventoryContainer::UpdateCL()
 {
 	inherited::UpdateCL();
@@ -109,19 +94,47 @@ void CInventoryContainer::UpdateDropItem(PIItem pIItem)
 }
 
 float CInventoryContainer::GetItemEffect(int effect) const {
+	bool for_rad = effect == eRadiationRestoreSpeed;
 	float res = inherited::GetItemEffect(effect);
-
 	for (const auto& item_id : m_items) {
 		PIItem itm = smart_cast<PIItem>(Level().Objects.net_Find(item_id));
 		if (itm) {
-			if (effect == eRadiationRestoreSpeed) {
+			if (for_rad) {
 				float rad = itm->GetItemEffect(effect);
 				rad *= (1.f - GetHitTypeProtection(ALife::eHitTypeRadiation));
 				res += rad;
 			}
-			else
+			else if(smart_cast<CArtefact*>(itm))
 				res += itm->GetItemEffect(effect);
 		}
 	}
 	return res;
+}
+
+bool CInventoryContainer::NeedForcedDescriptionUpdate() const {
+	for (const auto& item_id : m_items) {
+		auto item = smart_cast<PIItem>(Level().Objects.net_Find(item_id));
+		if (item) {
+			if (auto artefact = smart_cast<CArtefact*>(item)) {
+				if (!!artefact->GetCondition() && !!artefact->m_fTTLOnDecrease)
+					return true;
+			}
+		}
+	}
+	return inherited::NeedForcedDescriptionUpdate();
+}
+
+float CInventoryContainer::GetContainmentArtefactEffect(int effect) const {
+	float res{};
+	for (const auto& item_id : m_items) {
+		PIItem itm = smart_cast<PIItem>(Level().Objects.net_Find(item_id));
+		if (itm && smart_cast<CArtefact*>(itm)) {
+			res += itm->GetItemEffect(effect);
+		}
+	}
+	return res;
+}
+
+float CInventoryContainer::MaxCarryVolume() const {
+	return GetItemEffect(eAdditionalVolume);
 }

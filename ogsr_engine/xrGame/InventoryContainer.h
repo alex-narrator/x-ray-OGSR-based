@@ -12,14 +12,12 @@
 
 // CInventoryContainer
 class CInventoryContainer : public CCustomInventoryBox <CInventoryItemObject>
-	
 {
 private:
 	typedef CCustomInventoryBox		<CInventoryItemObject>				inherited;
-	bool							m_opened;
 public:			
-
-									CInventoryContainer					();
+									CInventoryContainer					() {};
+	virtual							~CInventoryContainer				() {};
 	virtual void					Load								(LPCSTR section);
 	virtual bool					CanTrade							() const;
 	virtual	u32						Cost								() const;
@@ -28,15 +26,14 @@ public:
 	virtual	void					OnEvent								(NET_Packet& P, u16 type);
 	virtual	BOOL					net_Spawn							(CSE_Abstract* DC);
 
-	virtual bool					IsClosed							() const { return !m_opened; };	  // alpet: если закрыт - можно подобрать в инвентарь
-	virtual bool					IsOpened							() const { return m_opened; };	  // alpet: если открыт - в нем можно ковыряться
-	
-	void							open								();
-	void							close								();
-
 	virtual	void					UpdateCL							();
 
 	virtual float					GetItemEffect						(int) const;
+	virtual bool					NeedForcedDescriptionUpdate			() const;
+	//окремий підрахунок діючих параметрів від артефактів у контейнері
+	virtual float					GetContainmentArtefactEffect		(int) const;
+
+	virtual	float					MaxCarryVolume						() const;
 
 protected:
 			void					UpdateDropTasks						();
