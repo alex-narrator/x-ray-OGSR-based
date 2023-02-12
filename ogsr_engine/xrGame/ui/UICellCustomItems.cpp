@@ -293,7 +293,7 @@ void CUIVestCellItem::UpdateItemText() {
 	m_text_add->Show(true);
 }
 
-CUICBackpackCellItem::CUICBackpackCellItem(CBackpack* itm)
+CUIContainerCellItem::CUIContainerCellItem(CInventoryContainer* itm)
 	:inherited(itm) {
 
 	float add_volume = object()->GetItemEffect(CInventoryItem::eAdditionalVolume);
@@ -303,11 +303,11 @@ CUICBackpackCellItem::CUICBackpackCellItem(CBackpack* itm)
 		init_add();
 	}
 }
-void CUICBackpackCellItem::Update() {
+void CUIContainerCellItem::Update() {
 	inherited::Update();
 	UpdateItemText();
 }
-void CUICBackpackCellItem::UpdateItemText() {
+void CUIContainerCellItem::UpdateItemText() {
 	inherited::UpdateItemText();
 
 	if (!m_text_add) return;

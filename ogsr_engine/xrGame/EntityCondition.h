@@ -260,7 +260,7 @@ public:
 	virtual void					UpdateBoosters();
 
 	virtual float					GetBoostedParams			(int);
-	virtual float					GetBoostedHitTypeProtection (int, bool = false);
+	virtual float					GetBoostedHitTypeProtection (int);
 	virtual void					BoostParameters			(const SBooster&);
 	virtual void					DisableBoostParameters	(const SBooster&);
 

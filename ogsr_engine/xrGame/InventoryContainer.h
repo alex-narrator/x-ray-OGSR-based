@@ -32,8 +32,18 @@ public:
 	virtual bool					NeedForcedDescriptionUpdate			() const;
 	//окремий підрахунок діючих параметрів від артефактів у контейнері
 	virtual float					GetContainmentArtefactEffect		(int) const;
+	virtual float					GetContainmentArtefactProtection	(int) const;
 
 	virtual	float					MaxCarryVolume						() const;
+
+	virtual bool					can_be_attached						() const override;
+
+	virtual void					Hit									(SHit* pHDS);
+	void							HitItemsInBackPack					(SHit* pHDS);
+	void							HitItemsInContainer					(SHit* pHDS);
+
+	virtual void					OnMoveToSlot						(EItemPlace prevPlace);
+	virtual void					OnMoveOut							(EItemPlace prevPlace);
 
 protected:
 			void					UpdateDropTasks						();

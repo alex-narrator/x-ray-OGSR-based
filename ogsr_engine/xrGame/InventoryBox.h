@@ -30,6 +30,8 @@ public:
 	virtual		float					MaxCarryVolume					() const;
 	virtual		bool					IsVolumeUnlimited				() const;
 	virtual		bool					CanTakeItem						(CInventoryItem*) const;
+
+	virtual xr_vector<u16>				GetItems						() const { return m_items; };
 };
 
 template <class Based>

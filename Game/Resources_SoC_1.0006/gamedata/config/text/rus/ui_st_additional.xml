@@ -179,6 +179,15 @@
 	<string id="kb_quick_knife_stab">
 		<text>Швидкий удар ножем</text>
 	</string>
+	<string id="kb_laser_on">
+		<text>ЛЦВ</text>
+	</string>
+	<string id="kb_flashlight">
+		<text>Збройовий ліхтар</text>
+	</string>
+	<string id="kb_drop_backpack">
+		<text>Скинути рюкзак</text>
+	</string>	
 	
 	<string id="st_not_enough_money_to_trade">
 		<text>бракує грошей</text>
@@ -930,6 +939,10 @@
 	
 	<string id="inventory_container_use_or_take">
 		<text>Обшукати [$$ACTION_USE$$] \nПідібрати [$$ACTION_ADDITIONAL_ACTION$$]+[$$ACTION_USE$$]</text>
+	</string>
+	
+	<string id="st_backpack_dropped">
+		<text>Рюкзак скинуто</text>
 	</string>
 	
 </string_table>

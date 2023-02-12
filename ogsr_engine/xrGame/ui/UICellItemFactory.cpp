@@ -25,8 +25,8 @@ CUICellItem*	create_cell_item(CInventoryItem* itm)
 	CVest* pVest						= smart_cast<CVest*>(itm);
 	if (pVest)							return xr_new<CUIVestCellItem>(pVest);
 
-	CBackpack* pBackpack				= smart_cast<CBackpack*>(itm);
-	if (pBackpack)						return xr_new<CUICBackpackCellItem>(pBackpack);
+	CInventoryContainer* pContainer		= smart_cast<CInventoryContainer*>(itm);
+	if (pContainer)						return xr_new<CUIContainerCellItem>(pContainer);
 
 	return xr_new<CUIInventoryCellItem>(itm);
 }

@@ -7,7 +7,7 @@
 #include "Inventory.h"
 #include "Artifact.h"
 #include "CustomOutfit.h"
-#include "Backpack.h"
+#include "InventoryContainer.h"
 #include "Helmet.h"
 #include "Vest.h"
 #include "ActorCondition.h"
@@ -131,12 +131,11 @@ void CUIOutfitInfo::Update()
 		float _val{};
 
 		if (i < _hit_type_protection_index){
-
 			_val += cond.GetBoostedParams(i);
-
 			if (i < _item_additional_walk_accel){
 				_val += Actor()->GetItemBoostedParams(i);
 			}else{
+				_val += Actor()->GetTotalArtefactsEffect(i);
 				if (outfit)
 					_val += outfit->GetItemEffect(i);
 				if (vest)
@@ -145,15 +144,10 @@ void CUIOutfitInfo::Update()
 					_val += backpack->GetItemEffect(i);
 				if (helmet)
 					_val += helmet->GetItemEffect(i);
-
-				if (!psActorFlags.is(AF_ARTEFACT_DETECTOR_CHECK) || Actor()->HasDetectorWorkable()) {
-					_val += Actor()->GetTotalArtefactsEffect(i);
-				}
 			}
 		} else {
-
-			_val += cond.GetBoostedHitTypeProtection(i - _hit_type_protection_index, true);
-
+			_val += cond.GetBoostedHitTypeProtection(i - _hit_type_protection_index);
+			_val += Actor()->GetArtefactsProtection(i - _hit_type_protection_index);
 			if (outfit)
 				_val += outfit->GetHitTypeProtection(i - _hit_type_protection_index);
 			if (vest)
@@ -162,10 +156,6 @@ void CUIOutfitInfo::Update()
 				_val += backpack->GetHitTypeProtection(i - _hit_type_protection_index);
 			if (helmet)
 				_val += helmet->GetHitTypeProtection(i - _hit_type_protection_index);
-
-			if (!psActorFlags.is(AF_ARTEFACT_DETECTOR_CHECK) || Actor()->HasDetectorWorkable()) {
-				_val += (1.0f - Actor()->GetArtefactsProtection(1.0f, ALife::EHitType(i - _hit_type_protection_index)));
-			}
 		}
 
 		if (fis_zero(_val))

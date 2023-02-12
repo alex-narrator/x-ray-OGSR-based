@@ -2,7 +2,7 @@
 #include "entitycondition.h"
 #include "inventoryowner.h"
 #include "customoutfit.h"
-#include "Backpack.h"
+#include "InventoryContainer.h"
 #include "Helmet.h"
 #include "Vest.h"
 #include "inventory.h"
@@ -416,7 +416,7 @@ CWound* CEntityCondition::ConditionHit(SHit* pHDS)
 	float hit_power = hit_power_org;
 	hit_power = HitOutfitEffect(pHDS);
 
-	hit_power *= GetBoostedHitTypeProtection(pHDS->hit_type);
+	hit_power *= (1.f - GetBoostedHitTypeProtection(pHDS->hit_type));
 
 	bool bAddWound = true;
 	switch(pHDS->hit_type)
@@ -815,9 +815,9 @@ void CEntityCondition::ClearAllBoosters() {
 	}
 }
 
-float CEntityCondition::GetBoostedHitTypeProtection(int hit_type, bool b_val_only) {
+float CEntityCondition::GetBoostedHitTypeProtection(int hit_type) {
 	int boost_protection = hit_type + eHitTypeProtectionBoosterIndex;
-	return b_val_only ? GetBoostedParams(boost_protection) : (1.f - GetBoostedParams(boost_protection));
+	return GetBoostedParams(boost_protection);
 }
 
 float CEntityCondition::GetBoostedParams(int i) {

@@ -29,7 +29,6 @@
 #include "alife_object_registry.h"
 
 #include "CustomOutfit.h"
-#include "Backpack.h"
 #include "EntityCondition.h"
 #include "InventoryContainer.h"
 

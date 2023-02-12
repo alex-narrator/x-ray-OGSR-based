@@ -225,6 +225,8 @@ public:
 	void					DropBeltToRuck		(bool = false);
 	void					DropVestToRuck		(bool = false);
 	void					DropSlotsToRuck		(u32 min_slot, u32 max_slot = NO_ACTIVE_SLOT);
+	void					BackpackItemsTransfer(CInventoryItem*, bool);
+	void					TransferItem		(u16, u16, u16);
 	void					UpdateVolumeDropOut	();
 	bool					IsSlotAllowed		(u32) const;
 	bool					HasModuleForSlot	(u32) const;

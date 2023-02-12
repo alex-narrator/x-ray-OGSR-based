@@ -16,7 +16,7 @@
 #include "UIListBoxItem.h"
 #include "CustomOutfit.h"
 #include "Vest.h"
-#include "Backpack.h"
+#include "InventoryContainer.h"
 #include "Warbelt.h"
 #include "string_table.h"
 #include <regex>
@@ -38,12 +38,15 @@ void CUIInventoryWnd::ActivatePropertiesBox()
 
 	auto pEatableItem	= smart_cast<CEatableItem*>		(CurrentIItem());
 	auto pOutfit		= smart_cast<CCustomOutfit*>	(CurrentIItem());
-	auto pBackpack		= smart_cast<CBackpack*>		(CurrentIItem());
+	auto pContainer		= smart_cast<CInventoryContainer*>(CurrentIItem());
 	auto pWarbelt		= smart_cast<CWarbelt*>			(CurrentIItem());
 	auto pVest			= smart_cast<CVest*>			(CurrentIItem());
 	auto pWeapon		= smart_cast<CWeapon*>			(CurrentIItem());
 	auto pAmmo			= smart_cast<CWeaponAmmo*>		(CurrentIItem());
 	
+	const auto& inv = m_pInv;
+	auto pBackpack = pContainer && inv->CanPutInSlot(pContainer);//pContainer->GetSlot() == BACKPACK_SLOT;
+
 	string1024			temp;
     
 	bool b_show = false;
@@ -52,7 +55,6 @@ void CUIInventoryWnd::ActivatePropertiesBox()
 	LPCSTR _addon_name{};
 	LPCSTR detach_tip = CurrentIItem()->GetDetachMenuTip();
 	bool b_wearable = (pOutfit || pVest || pWarbelt || pBackpack);
-	const auto& inv = m_pInv;
 
 	bool to_quick{};
 	if (!b_wearable && CurrentIItem()->GetSlot() != NO_ACTIVE_SLOT) {

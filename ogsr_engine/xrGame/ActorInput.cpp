@@ -298,6 +298,13 @@ void CActor::IR_OnKeyboardPress(int cmd){
 	{
 		ActorCheckGear();
 	}break;
+	case kDROP_BACKPACK:
+	{
+		if (GetBackpack()) {
+			GetBackpack()->SetDropManual(TRUE);
+			HUD().GetUI()->AddInfoMessage("item_usage", "st_backpack_dropped");
+		}
+	}break;
 	}
 }
 void CActor::IR_OnMouseWheel(int direction){

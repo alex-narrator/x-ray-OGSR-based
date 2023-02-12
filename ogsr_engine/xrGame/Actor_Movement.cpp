@@ -8,7 +8,6 @@
 #include "weapon.h"
 #include "Artifact.h"
 #include "CustomOutfit.h"
-#include "Backpack.h"
 #include "../xr_3da/camerabase.h"
 #include "xrMessages.h"
 

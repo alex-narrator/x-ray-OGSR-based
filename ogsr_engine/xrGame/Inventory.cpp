@@ -1688,17 +1688,19 @@ bool CInventory::OwnerIsActor() const {
 }
 
 void CInventory::DropBeltToRuck(bool skip_volume_check){
+	if (!OwnerIsActor() || !IsAllItemsLoaded()) return;
 	for(const auto& item : m_belt)
 		Ruck(item, skip_volume_check);
 }
 
 void CInventory::DropVestToRuck(bool skip_volume_check) {
+	if (!OwnerIsActor() || !IsAllItemsLoaded()) return;
 	for (const auto& item : m_vest)
 		Ruck(item, skip_volume_check);
 }
 
 void CInventory::DropSlotsToRuck(u32 min_slot, u32 max_slot) {
-	if (!OwnerIsActor()) return;
+	if (!OwnerIsActor() || !IsAllItemsLoaded()) return;
 	
 	if (max_slot == NO_ACTIVE_SLOT)
 		max_slot = min_slot;
@@ -1709,6 +1711,35 @@ void CInventory::DropSlotsToRuck(u32 min_slot, u32 max_slot) {
 		if (min_slot <= s && s <= max_slot)
 			Ruck(ItemFromSlot(s));
 	}
+}
+
+void CInventory::BackpackItemsTransfer(CInventoryItem* container, bool move_to_container) {
+	if (!OwnerIsActor() || !IsAllItemsLoaded()) return;
+	auto actor_id = m_pOwner->object_id();
+	auto container_id = container->object().ID();
+	if (move_to_container) {
+		for (const auto& item : m_ruck) {
+			TransferItem(actor_id, container_id, item->object().ID());
+		}
+	} else {
+		auto cont = smart_cast<CInventoryContainer*>(container);
+		if (!cont) return;
+		for (const auto& item_id : cont->GetItems()) {
+			TransferItem(container_id, actor_id, item_id);
+		}
+	}
+}
+
+void CInventory::TransferItem(u16 from_id, u16 to_id, u16 what_id){
+	NET_Packet P;
+	//віддаємо річ
+	CGameObject::u_EventGen(P, GE_TRANSFER_REJECT, from_id);
+	P.w_u16(what_id);
+	CGameObject::u_EventSend(P);
+	//беремо річ
+	CGameObject::u_EventGen(P, GE_TRANSFER_TAKE, to_id);
+	P.w_u16(what_id);
+	CGameObject::u_EventSend(P);
 }
 
 void CInventory::UpdateVolumeDropOut()

@@ -23,7 +23,6 @@
 #include "character_info.h"
 #include "CustomOutfit.h"
 #include "Warbelt.h"
-#include "Backpack.h"
 #include "Helmet.h"
 #include "Vest.h"
 #include "Torch.h"
@@ -504,55 +503,36 @@ void	CActor::Hit							(SHit* pHDS)
 			mstate_wishful &= ~mcSprint;
 	}
 
-	HitMark(HDS.damage(), HDS.dir, HDS.who, HDS.bone(), HDS.p_in_bone_space, HDS.impulse, HDS.hit_type);
+	HitMark(&HDS);
 
-			float hit_power	= GetArtefactsProtection(HDS.damage(), HDS.hit_type);
-
-			if (GodMode())
-			{
-				HDS.power = 0.0f;
-//				inherited::Hit(0.f,dir,who,element,position_in_bone_space,impulse, hit_type);
-				inherited::Hit(&HDS);
-				return;
-			}
-			else 
-			{
-				//inherited::Hit		(hit_power,dir,who,element,position_in_bone_space, impulse, hit_type);
-				HDS.power = hit_power;
-				inherited::Hit(&HDS);
-			}
+	HDS.power *= GodMode() ? 0.f : (1.f - GetArtefactsProtection(pHDS->hit_type));
+	inherited::Hit(&HDS);
 }
 
-void CActor::HitMark	(float P, 
-						 Fvector dir,			
-						 CObject* who, 
-						 s16 element, 
-						 Fvector position_in_bone_space, 
-						 float impulse,  
-						 ALife::EHitType hit_type)
+void CActor::HitMark(SHit* pHDS)
 {
 	// hit marker
-	if ( (hit_type==ALife::eHitTypeFireWound||hit_type==ALife::eHitTypeWound_2) && g_Alive() && Local() && /*(this!=who) && */(Level().CurrentEntity()==this) )	
+	if ( (pHDS->type() == ALife::eHitTypeFireWound || pHDS->type() == ALife::eHitTypeWound_2) && g_Alive() && Local() && /*(this!=who) && */(Level().CurrentEntity() == this))
 	{
-		HUD().Hit(0, P, dir);
+		HUD().Hit(0, pHDS->damage(), pHDS->direction());
 
 	{
 		CEffectorCam* ce = Cameras().GetCamEffector((ECamEffectorType)effFireHit);
 		if(!ce)
 			{
 			int id						= -1;
-			Fvector						cam_pos,cam_dir,cam_norm;
+			Fvector						cam_pos, cam_dir, cam_norm, hit_dir{ pHDS->direction() };
 			cam_Active()->Get			(cam_pos,cam_dir,cam_norm);
 			cam_dir.normalize_safe		();
-			dir.normalize_safe			();
+			hit_dir.normalize_safe		();
 
-			float ang_diff				= angle_difference	(cam_dir.getH(), dir.getH());
+			float ang_diff				= angle_difference	(cam_dir.getH(), hit_dir.getH());
 			Fvector						cp{};
-			cp.crossproduct				(cam_dir,dir);
+			cp.crossproduct				(cam_dir, hit_dir);
 			bool bUp					=(cp.y>0.0f);
 
 			Fvector cross{};
-			cross.crossproduct			(cam_dir, dir);
+			cross.crossproduct			(cam_dir, hit_dir);
 			VERIFY						(ang_diff>=0.0f && ang_diff<=PI);
 
 			float _s1 = PI_DIV_8;
@@ -580,7 +560,7 @@ void CActor::HitMark	(float P,
 
 			string64 sect_name;
 			sprintf_s(sect_name,"effector_fire_hit_%d",id);
-			AddEffector(this, effFireHit, sect_name, P/100.0f);
+			AddEffector(this, effFireHit, sect_name, pHDS->damage() /100.0f);
 			}
 		}
 	}
@@ -1109,7 +1089,7 @@ void CActor::shedule_Update	(u32 DT)
 		{
 			m_sDefaultObjAction = m_sGameObjectThrowDropAction;
 		}
-		else if (!m_pPersonWeLookingAt && m_pUsableObject && m_pUsableObject->tip_text())
+		else if (/*!m_pPersonWeLookingAt && */m_pUsableObject && m_pUsableObject->tip_text())
 		{
 			m_sDefaultObjAction = b_free_hands ? CStringTable().translate(m_pUsableObject->tip_text()).c_str() : m_sHandsNotFree;
 		}
@@ -1523,20 +1503,20 @@ void CActor::UpdateItemsBoost()
 	callback( GameObject::eUpdateArtefactsOnBelt )( f_update_time );
 }
 
-float	CActor::GetArtefactsProtection(float hit_power, int hit_type) {
-	float res_hit_power_k		= 1.0f;
-	float _af_count				= 0.0f;
-
+float	CActor::GetArtefactsProtection(int hit_type) {
+	float res{};
 	auto &placement = psActorFlags.test(AF_ARTEFACTS_FROM_ALL) ? inventory().m_all : inventory().m_belt;
 	for(const auto& item : placement){
-		CArtefact*	artefact = smart_cast<CArtefact*>(item);
+		auto artefact = smart_cast<CArtefact*>(item);
 		if(artefact && !fis_zero(artefact->GetHitTypeProtection(hit_type)) && !fis_zero(artefact->GetCondition())){
-				res_hit_power_k	+= 1.0f - artefact->GetHitTypeProtection(hit_type);
-				_af_count += 1.0f;
+			res += artefact->GetHitTypeProtection(hit_type);
+		}
+		auto container = smart_cast<CInventoryContainer*>(item);
+		if (container) {
+			res += container->GetContainmentArtefactProtection(hit_type);
 		}
 	}
-	res_hit_power_k -= _af_count;
-	return res_hit_power_k > 0 ? res_hit_power_k * hit_power : 0;
+	return res;
 }
 
 void	CActor::SetZoomRndSeed		(s32 Seed)
@@ -1717,9 +1697,9 @@ CWarbelt* CActor::GetWarbelt() const{
 	return _wb ? smart_cast<CWarbelt*>(_wb) : NULL;
 }
 
-CBackpack* CActor::GetBackpack() const{
+CInventoryContainer* CActor::GetBackpack() const{
 	PIItem _bp = inventory().m_slots[BACKPACK_SLOT].m_pIItem;
-	return _bp ? smart_cast<CBackpack*>(_bp) : NULL;
+	return _bp ? smart_cast<CInventoryContainer*>(_bp) : NULL;
 }
 
 CHelmet* CActor::GetHelmet() const{

@@ -5,7 +5,7 @@
 #include "Artifact.h"
 #include "Warbelt.h"
 #include "Vest.h"
-#include "Backpack.h"
+#include "InventoryContainer.h"
 
 class CUIInventoryCellItem :public CUICellItem{
 	typedef  CUICellItem	inherited;
@@ -49,14 +49,14 @@ public:
 				CVest*			object						() {return (CVest*)m_pData;}
 };
 
-class CUICBackpackCellItem :public CUIInventoryCellItem{
+class CUIContainerCellItem :public CUIInventoryCellItem{
 	typedef  CUIInventoryCellItem	inherited;
 protected:
 	virtual		void			UpdateItemText				();
 public:
-								CUICBackpackCellItem		(CBackpack* itm);
+								CUIContainerCellItem		(CInventoryContainer* itm);
 	virtual		void			Update						();
-				CBackpack*		object						() {return (CBackpack*)m_pData;}
+	CInventoryContainer*		object						() {return (CInventoryContainer*)m_pData;}
 };
 
 class CUIEatableCellItem :public CUIInventoryCellItem{

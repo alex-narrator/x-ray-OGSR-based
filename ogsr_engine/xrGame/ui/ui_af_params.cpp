@@ -109,14 +109,12 @@ void CUIArtefactParams::SetInfo(CInventoryItem* obj)
 {
 	if (!obj) return;
 
-	auto artefact	= smart_cast<CArtefact*>(obj);
-
 //	R_ASSERT2(art, "object is not CArtefact");
 	CActor *pActor = Actor();
 	if (!pActor) return;
 
 	bool show_window = true;
-	if (artefact) {
+	if (smart_cast<CArtefact*>(obj)) {
 		show_window = !psActorFlags.is(AF_ARTEFACT_DETECTOR_CHECK) || pActor->HasDetectorWorkable();
 	}
 

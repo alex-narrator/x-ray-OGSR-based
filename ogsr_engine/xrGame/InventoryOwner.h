@@ -28,7 +28,7 @@ class CTradeParameters;
 class CPurchaseList;
 class CWeapon;
 class CCustomOutfit;
-class CBackpack;
+class CInventoryContainer;
 class CHelmet;
 class CVest;
 struct SHit;
@@ -153,7 +153,7 @@ public:
 	virtual	void TryGroggyEffect			(float,int){};
 
 	virtual CCustomOutfit*					GetOutfit		() const {return nullptr;};
-	virtual CBackpack*						GetBackpack		() const {return nullptr;};
+	virtual CInventoryContainer*			GetBackpack		() const {return nullptr;};
 	virtual CHelmet*						GetHelmet		() const {return nullptr;};
 	virtual CVest*							GetVest			() const {return nullptr;};
 

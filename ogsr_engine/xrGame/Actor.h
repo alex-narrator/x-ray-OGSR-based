@@ -23,7 +23,7 @@ struct GAME_NEWS_DATA;
 class CActorCondition;
 class CCustomOutfit;
 class CWarbelt;
-class CBackpack;
+class CInventoryContainer;
 class CHelmet;
 class CVest;
 class CTorch;
@@ -198,7 +198,7 @@ public:
 	virtual	void						PHHit			(SHit& H);
 	virtual void						HitSignal		(float P, Fvector &vLocalDir,	CObject* who, s16 element);
 			void						HitSector		(CObject* who, CObject* weapon);
-			void						HitMark			(float P, Fvector dir,			CObject* who, s16 element, Fvector position_in_bone_space, float impulse,  ALife::EHitType hit_type);
+			void						HitMark			(SHit* pHDS);
 
 	virtual float						GetMass				() ;
 	virtual float						GetCarryWeight		() const; 
@@ -212,7 +212,7 @@ public:
 	//свойства артефактов
 	virtual void		UpdateItemsBoost	();
 
-	virtual float		GetArtefactsProtection	(float, int);
+	virtual float		GetArtefactsProtection	(int);
 
 	virtual void		UpdateArtefactPanel	();
 	virtual void		UpdateSlotPanel		();
@@ -650,7 +650,7 @@ public:
 		void SetWeaponHideState( u32 State, bool bSet, bool now = false );
 		virtual CCustomOutfit*			GetOutfit	() const;
 		virtual CWarbelt*				GetWarbelt	() const;
-		virtual CBackpack*				GetBackpack	() const;
+		virtual CInventoryContainer*	GetBackpack	() const;
 		virtual CHelmet*				GetHelmet	() const;
 		virtual CVest*					GetVest		() const;
 		virtual CTorch*					GetTorch	() const;
