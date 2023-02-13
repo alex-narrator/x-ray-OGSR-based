@@ -460,7 +460,7 @@ bool CInventoryItem::Attach(PIItem pIItem, bool b_send_event)
 		auto it = std::find(m_power_sources.begin(), m_power_sources.end(), pIItem->object().cNameSect());
 		m_cur_power_source = (u8)std::distance(m_power_sources.begin(), it);
 		m_bIsPowerSourceAttached = true;
-		Msg("%s m_bIsPowerSourceAttached = %s for item %s", __FUNCTION__, m_bIsPowerSourceAttached ? "true" : "false", Name());
+		//Msg("%s m_bIsPowerSourceAttached = %s for item %s", __FUNCTION__, m_bIsPowerSourceAttached ? "true" : "false", Name());
 
 		m_fAttachedPowerSourceCondition = pIItem->GetCondition();
 
@@ -491,7 +491,7 @@ bool CInventoryItem::Detach(const char* item_section_name, bool b_spawn_item, fl
 		std::find(m_power_sources.begin(), m_power_sources.end(), item_section_name) != m_power_sources.end())
 	{
 		m_bIsPowerSourceAttached = false;
-		Msg("%s m_bIsPowerSourceAttached = %s for item %s", __FUNCTION__, m_bIsPowerSourceAttached ? "true" : "false", Name());
+		//Msg("%s m_bIsPowerSourceAttached = %s for item %s", __FUNCTION__, m_bIsPowerSourceAttached ? "true" : "false", Name());
 
 		b_spawn_item = !!m_fPowerLevel || READ_IF_EXISTS(pSettings, r_bool, item_section_name, "rechargeable", false);
 
@@ -572,7 +572,7 @@ BOOL CInventoryItem::net_Spawn			(CSE_Abstract* DC)
 		m_fPowerLevel = pSE_InventoryItem->m_fPowerLevel;
 	if (IsPowerSourceAttachable()) {
 		m_bIsPowerSourceAttached = pSE_InventoryItem->m_bIsPowerSourceAttached;
-		Msg("%s m_bIsPowerSourceAttached = %s for item %s", __FUNCTION__, m_bIsPowerSourceAttached ? "true" : "false", Name());
+//		Msg("%s m_bIsPowerSourceAttached = %s for item %s", __FUNCTION__, m_bIsPowerSourceAttached ? "true" : "false", Name());
 		if (IsPowerSourceAttached()) {
 			if (pSE_InventoryItem->m_cur_power_source >= m_power_sources.size()) {
 				Msg("! [%s]: %s: wrong power source current [%u/%u]", __FUNCTION__,
@@ -583,7 +583,7 @@ BOOL CInventoryItem::net_Spawn			(CSE_Abstract* DC)
 			}
 			m_cur_power_source				= pSE_InventoryItem->m_cur_power_source;
 			m_fAttachedPowerSourceCondition = pSE_InventoryItem->m_fAttachedPowerSourceCondition;
-			Msg("%s attached power source %s power level %.f item %s", __FUNCTION__, GetPowerSourceName().c_str(), m_fPowerLevel, Name());
+//			Msg("%s attached power source %s power level %.f item %s", __FUNCTION__, GetPowerSourceName().c_str(), m_fPowerLevel, Name());
 		}
 	}
 	InitPowerSource();

@@ -9,6 +9,8 @@
 #include "script_callback_ex.h"
 #include "script_game_object.h"
 
+#include "inventory_item.h"
+
 IInventoryBox::IInventoryBox() : m_items ()
 {
 	m_in_use = false;
@@ -81,7 +83,6 @@ void IInventoryBox::ProcessEvent(CGameObject *O, NET_Packet& P, u16 type)
 	};
 }
 
-#include "inventory_item.h"
 void IInventoryBox::AddAvailableItems(TIItemContainer& items_container) const
 {
 	for(const auto& item_id : m_items){

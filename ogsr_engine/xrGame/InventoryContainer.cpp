@@ -88,6 +88,7 @@ void CInventoryContainer::UpdateCL()
 {
 	inherited::UpdateCL();
 	UpdateDropTasks();
+	UpdateVolumeDropOut();
 }
 
 void CInventoryContainer::UpdateDropTasks(){
@@ -102,11 +103,12 @@ void CInventoryContainer::UpdateDropItem(PIItem pIItem)
 	if (pIItem->GetDropManual()){
 		pIItem->SetDropManual(FALSE);
 		if (OnServer()){
+			pIItem->object().Position().set(Position()); //щоб реджектнутий об'єкт з'являвся на позиції батьківського контейнера
 			NET_Packet					P;
 			pIItem->object().u_EventGen(P, GE_OWNERSHIP_REJECT, pIItem->object().H_Parent()->ID());
-			P.w_u16(u16(pIItem->object().ID()));
+			P.w_u16(pIItem->object().ID());
 			pIItem->object().u_EventSend(P);
-			/*Msg("UpdateDropItem for [%s]", pIItem->object().Name_script());*/
+			//Msg("%s for item %s parent %s", __FUNCTION__, pIItem->object().cName().c_str(), pIItem->object().H_Parent()->cName().c_str());
 		}
 	}// dropManual
 }
@@ -289,5 +291,25 @@ void CInventoryContainer::AddUniqueItems(TIItemContainer& items_container) const
 		PIItem itm = smart_cast<PIItem>(Level().Objects.net_Find(item_id)); VERIFY(itm);
 		if (is_unique(items_container, itm))
 			items_container.push_back(itm);
+	}
+}
+
+bool CInventoryContainer::IsVolumeUnlimited() const {
+	return !psActorFlags.test(AF_INVENTORY_VOLUME);
+}
+
+void CInventoryContainer::UpdateVolumeDropOut() {
+	if (IsVolumeUnlimited()) return;
+	float total_volume = GetCarryVolume();
+	if (total_volume > MaxCarryVolume()) {
+		for (const auto& item_id : m_items) {
+			auto item = smart_cast<PIItem>(Level().Objects.net_Find(item_id)); VERIFY(itm);
+			if (fis_zero(item->Volume()) || item->IsQuestItem())
+				continue;
+			item->SetDropManual(true);
+			total_volume -= item->Volume();
+			if (total_volume <= MaxCarryVolume())
+				break;
+		}
 	}
 }

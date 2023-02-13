@@ -51,6 +51,9 @@ public:
 
 			void					AddUniqueItems						(TIItemContainer& items_container) const;
 
+virtual		bool					IsVolumeUnlimited					() const;
+			void					UpdateVolumeDropOut					();
+
 protected:
 			void					UpdateDropTasks						();
 			void					UpdateDropItem						(PIItem pIItem);
