@@ -300,7 +300,7 @@ void CActor::IR_OnKeyboardPress(int cmd){
 	}break;
 	case kDROP_BACKPACK:
 	{
-		if (GetBackpack()) {
+		if (GetBackpack() && GetBackpack()->HasQuickDrop()) {
 			GetBackpack()->SetDropManual(TRUE);
 			HUD().GetUI()->AddInfoMessage("item_usage", "st_backpack_dropped");
 		}

@@ -484,19 +484,27 @@ void CUIEquipParams::SetInfo(CInventoryItem* obj){
 		}
 	}
 
-	auto pContainer = smart_cast<CInventoryContainer*>(obj);
-	if (pContainer && !pContainer->IsEmpty()) {
-		_param_name = CStringTable().translate("st_containment").c_str();
-		SetStaticParams(_uiXml, _path, _h)->SetText(_param_name);
-		_h += list_item_h;
-
-		TIItemContainer	container_list;
-		pContainer->AddAvailableItems(container_list);
-
-		for (const auto& item : container_list) {
-			sprintf_s(text_to_show, "%s%s", marker_, CStringTable().translate(item->Name()).c_str());
+	if (auto pContainer = smart_cast<CInventoryContainer*>(obj)) {
+		if (pContainer->HasQuickDrop()) {
+			_param_name = CStringTable().translate("st_quick_drop").c_str();
+			_sn = CStringTable().translate("st_m").c_str();
+			sprintf_s(text_to_show, "%s", _param_name);
 			SetStaticParams(_uiXml, _path, _h)->SetText(text_to_show);
 			_h += list_item_h;
+		}
+		if (!pContainer->IsEmpty()) {
+			_param_name = CStringTable().translate("st_containment").c_str();
+			SetStaticParams(_uiXml, _path, _h)->SetText(_param_name);
+			_h += list_item_h;
+
+			TIItemContainer	container_list;
+			pContainer->AddAvailableItems(container_list);
+
+			for (const auto& item : container_list) {
+				sprintf_s(text_to_show, "%s%s", marker_, CStringTable().translate(item->Name()).c_str());
+				SetStaticParams(_uiXml, _path, _h)->SetText(text_to_show);
+				_h += list_item_h;
+			}
 		}
 	}
 

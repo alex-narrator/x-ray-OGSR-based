@@ -45,7 +45,10 @@ public:
 	virtual void					OnMoveToSlot						(EItemPlace prevPlace);
 	virtual void					OnMoveOut							(EItemPlace prevPlace);
 
+	virtual bool					HasQuickDrop						() const;
+
 protected:
 			void					UpdateDropTasks						();
 			void					UpdateDropItem						(PIItem pIItem);
+			bool					m_bQuickDrop{};
 };

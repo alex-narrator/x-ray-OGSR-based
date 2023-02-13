@@ -944,5 +944,11 @@
 	<string id="st_backpack_dropped">
 		<text>Рюкзак скинуто</text>
 	</string>
+	<string id="st_quick_drop">
+		<text>Система швидкого скидання</text>
+	</string>
+	<string id="st_containment">
+		<text>Вміст:</text>
+	</string>
 	
 </string_table>

@@ -15,6 +15,7 @@
 
 void CInventoryContainer::Load(LPCSTR section){
 	inherited::Load(section);
+	m_bQuickDrop = READ_IF_EXISTS(pSettings, r_bool, section, "quick_drop", false);
 }
 
 u32 CInventoryContainer::Cost() const
@@ -250,4 +251,12 @@ void CInventoryContainer::OnMoveOut(EItemPlace prevPlace) {
 			inv->BackpackItemsTransfer(this, true);
 		}
 	}
+}
+
+bool CInventoryContainer::HasQuickDrop() const {
+	for (const auto slot : m_slots) {
+		if (slot == BACKPACK_SLOT && m_bQuickDrop)
+			return true;
+	}
+	return false;
 }
