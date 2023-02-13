@@ -226,7 +226,7 @@ void CActor::g_cl_CheckControls(u32 mstate_wf, Fvector &vControlAccel, float &Ju
 
 				jump_speed += conditions().GetBoostedParams(eAdditionalJumpSpeedBoost);
 
-				auto &placement = psActorFlags.test(AF_ARTEFACTS_FROM_ALL) ? inventory().m_all : inventory().m_belt;
+				auto placement = inventory().GetActiveArtefactPlace();
 				for (const auto& item : placement) {
 					auto artefact = smart_cast<CArtefact*>(item);
 					if (artefact && !fis_zero(artefact->GetCondition()))
@@ -364,7 +364,7 @@ void CActor::g_cl_CheckControls(u32 mstate_wf, Fvector &vControlAccel, float &Ju
 
 				walk_accel += conditions().GetBoostedParams(eAdditionalWalkAccelBoost);
 
-				auto &placement = psActorFlags.test(AF_ARTEFACTS_FROM_ALL) ? inventory().m_all : inventory().m_belt;
+				auto placement = inventory().GetActiveArtefactPlace();
 				for (const auto& item : placement) {
 					auto artefact = smart_cast<CArtefact*>(item);
 					if (artefact && !fis_zero(artefact->GetCondition()))

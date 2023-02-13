@@ -260,3 +260,34 @@ bool CInventoryContainer::HasQuickDrop() const {
 	}
 	return false;
 }
+
+u32 CInventoryContainer::GetSameItemCount(shared_str sect) const {
+	u32 count{};
+	for (const auto& item_id : m_items) {
+		auto item = smart_cast<PIItem>(Level().Objects.net_Find(item_id));
+		if (item && item->object().cNameSect() == sect) {
+			++count;
+		}
+	}
+	return count;
+}
+
+void CInventoryContainer::AddUniqueItems(TIItemContainer& items_container) const {
+
+	auto is_unique = [](TIItemContainer& list, PIItem item) {
+		bool res{ true };
+		for (const auto& _itm : list) {
+			if (item->object().cNameSect() == _itm->object().cNameSect()) {
+				res = false;
+				break;
+			}
+		}
+		return res;
+	};
+
+	for (const auto& item_id : m_items) {
+		PIItem itm = smart_cast<PIItem>(Level().Objects.net_Find(item_id)); VERIFY(itm);
+		if (is_unique(items_container, itm))
+			items_container.push_back(itm);
+	}
+}

@@ -348,7 +348,7 @@ float  CInventoryOwner::MaxCarryWeight () const
 		res += backpack->GetItemEffect(CInventoryItem::eAdditionalWeight);
 
 	if (inventory().OwnerIsActor()){
-		auto &placement = psActorFlags.test(AF_ARTEFACTS_FROM_ALL) ? inventory().m_all : inventory().m_belt;
+		auto placement = inventory().GetActiveArtefactPlace();
 		for (const auto& item : placement) {
 			auto artefact = smart_cast<CArtefact*>(item);
 			if (artefact && !fis_zero(artefact->GetCondition()))

@@ -47,6 +47,10 @@ public:
 
 	virtual bool					HasQuickDrop						() const;
 
+	virtual u32						GetSameItemCount					(shared_str) const;
+
+			void					AddUniqueItems						(TIItemContainer& items_container) const;
+
 protected:
 			void					UpdateDropTasks						();
 			void					UpdateDropItem						(PIItem pIItem);

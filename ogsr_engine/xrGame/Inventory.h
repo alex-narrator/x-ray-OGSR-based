@@ -131,6 +131,8 @@ public:
 	TIItemContainer			m_ruck, m_belt, m_vest;
 	TISlotArr				m_slots;
 
+	TIItemContainer			GetActiveArtefactPlace	() const;
+
 	//возвращает все кроме PDA в слоте и болта
 	void				AddAvailableItems			(TIItemContainer& items_container, bool for_trade) const;
 

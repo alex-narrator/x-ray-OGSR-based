@@ -498,10 +498,14 @@ void CUIEquipParams::SetInfo(CInventoryItem* obj){
 			_h += list_item_h;
 
 			TIItemContainer	container_list;
-			pContainer->AddAvailableItems(container_list);
+			pContainer->AddUniqueItems(container_list);
 
 			for (const auto& item : container_list) {
-				sprintf_s(text_to_show, "%s%s", marker_, CStringTable().translate(item->Name()).c_str());
+				u32 count = pContainer->GetSameItemCount(item->object().cNameSect());
+				if(count > 1)
+					sprintf_s(text_to_show, "%s%s x%d", marker_, CStringTable().translate(item->Name()).c_str(), count);
+				else
+					sprintf_s(text_to_show, "%s%s", marker_, CStringTable().translate(item->Name()).c_str());
 				SetStaticParams(_uiXml, _path, _h)->SetText(text_to_show);
 				_h += list_item_h;
 			}

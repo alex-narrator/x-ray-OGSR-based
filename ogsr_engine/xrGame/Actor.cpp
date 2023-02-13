@@ -1505,7 +1505,7 @@ void CActor::UpdateItemsBoost()
 
 float	CActor::GetArtefactsProtection(int hit_type) {
 	float res{};
-	auto &placement = psActorFlags.test(AF_ARTEFACTS_FROM_ALL) ? inventory().m_all : inventory().m_belt;
+	auto placement = inventory().GetActiveArtefactPlace();
 	for(const auto& item : placement){
 		auto artefact = smart_cast<CArtefact*>(item);
 		if(artefact && !fis_zero(artefact->GetHitTypeProtection(hit_type)) && !fis_zero(artefact->GetCondition())){
@@ -1960,7 +1960,7 @@ float CActor::GetItemBoostedParams(int type) {
 
 float CActor::GetTotalArtefactsEffect(int i) {
 	float res{};
-	auto &placement = psActorFlags.test(AF_ARTEFACTS_FROM_ALL) ? inventory().m_all : inventory().m_belt;
+	auto placement = inventory().GetActiveArtefactPlace();
 	for (const auto& item : placement) {
 		auto artefact = smart_cast<CArtefact*>(item);
 		if (artefact && !fis_zero(artefact->GetCondition())) {

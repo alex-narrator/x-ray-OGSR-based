@@ -500,6 +500,7 @@ bool CInventoryItem::Detach(const char* item_section_name, bool b_spawn_item, fl
 			item_condition = m_fAttachedPowerSourceCondition; 
 			power_level = m_fPowerLevel;
 		}
+		m_fPowerLevel = 0.f;
 		m_fAttachedPowerSourceCondition = 1.f;
 
 		InitPowerSource();

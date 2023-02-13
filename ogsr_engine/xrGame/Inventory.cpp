@@ -1861,3 +1861,7 @@ bool CInventory::activate_slot(u32 slot)
 
 	return false;
 }
+
+TIItemContainer CInventory::GetActiveArtefactPlace() const {
+	return psActorFlags.test(AF_ARTEFACTS_FROM_ALL) ? m_all : m_belt;
+}
