@@ -17,13 +17,14 @@ public:
 	float							HitThruArmour		(SHit* pHDS);
 	//коэффициент на который домножается потеря силы
 	//если на персонаже надет костюм
-	float							GetPowerLoss		();
+	virtual float					GetPowerLoss		();
 
 	virtual float					GetHitTypeProtection(int) const override;
 
 	virtual void					OnMoveToSlot		(EItemPlace prevPlace);
 	virtual void					OnMoveToRuck		(EItemPlace prevPlace) override;
 
+	virtual float					GetExoFactor		() const { return 1.f; };
 private:
 	float							m_fPowerLoss{};
 

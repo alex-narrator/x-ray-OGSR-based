@@ -154,8 +154,8 @@ void CInventoryItem::Load(LPCSTR section)
 	m_ItemEffect[eAlcoholRestoreSpeed]					= READ_IF_EXISTS(pSettings, r_float, section, "alcohol_restore_speed",		0.f);
 	m_ItemEffect[eWoundsHealSpeed]						= READ_IF_EXISTS(pSettings, r_float, section, "wounds_heal_speed",			0.f);
 	//addition
-	m_ItemEffect[eAdditionalWalkAccel]					= READ_IF_EXISTS(pSettings, r_float, section, "additional_walk_accel",		0.f);
-	m_ItemEffect[eAdditionalJumpSpeed]					= READ_IF_EXISTS(pSettings, r_float, section, "additional_jump_speed",		0.f);
+	m_ItemEffect[eAdditionalSprint]						= READ_IF_EXISTS(pSettings, r_float, section, "additional_sprint",			0.f);
+	m_ItemEffect[eAdditionalJump]						= READ_IF_EXISTS(pSettings, r_float, section, "additional_jump",			0.f);
 	m_ItemEffect[eAdditionalWeight]						= READ_IF_EXISTS(pSettings, r_float, section, "additional_max_weight",		0.f);
 	m_ItemEffect[eAdditionalVolume]						= READ_IF_EXISTS(pSettings, r_float, section, "additional_max_volume",		0.f);
 	//protection
@@ -1070,10 +1070,11 @@ void CInventoryItem::UpdatePowerConsumption() {
 	m_fPowerConsumingUpdateTime = Level().GetGameDayTimeSec();
 
 	float power_dec =
-		(m_fPowerConsumption / 3600.f) * //приведення до ігрових годин
+		(GetPowerConsumption() / 3600.f) * //приведення до ігрових годин
 		delta_time;
 
 	ChangePowerLevel(-power_dec);
+//	Msg("%s for item %s", __FUNCTION__, object().cName().c_str());
 }
 
 bool CInventoryItem::IsPowerConsumer() const {
@@ -1138,6 +1139,7 @@ void CInventoryItem::InitPowerSource() {
 	const auto power_params_sect = IsPowerSourceAttachable() ? GetPowerSourceName() : object().cNameSect();
 
 	m_fPowerCapacity = READ_IF_EXISTS(pSettings, r_float, power_params_sect, "power_capacity", 0.f);
+	clamp(m_fPowerLevel, 0.f, m_fPowerCapacity);
 }
 
 void CInventoryItem::Disassemble() {

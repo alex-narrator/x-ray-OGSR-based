@@ -311,8 +311,8 @@ public:
 		eAlcoholRestoreSpeed,
 		eWoundsHealSpeed,
 		//additional
-		eAdditionalWalkAccel,
-		eAdditionalJumpSpeed,
+		eAdditionalSprint,
+		eAdditionalJump,
 		eAdditionalWeight,
 		eAdditionalVolume,
 
@@ -335,6 +335,8 @@ public:
 			bool					m_bIsPowerSourceAttached{};
 
 	xr_vector<shared_str>			m_power_sources{};
+
+	float							m_fPowerConsumption{};
 
 	const shared_str				GetPowerSourceName() const { return m_power_sources[m_cur_power_source]; }
 
@@ -376,12 +378,13 @@ public:
 	virtual float					GetArmorByBone		(int);
 	virtual float					GetArmorHitFraction	();
 	virtual bool					HasArmorToDisplay	(int);
+
+	virtual float					GetPowerLoss		() { return 1.f; };
 protected:
 	HitImmunity::HitTypeSVec		m_HitTypeProtection;
 
 	svector<float, eEffectMax>		m_ItemEffect;
 
-	float							m_fPowerConsumption{};
 	float							m_fPowerLevel{};
 	float							m_fPowerCapacity{};
 	float							m_fPowerLowThreshold;

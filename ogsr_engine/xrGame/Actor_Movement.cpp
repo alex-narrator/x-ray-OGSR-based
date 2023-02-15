@@ -163,6 +163,8 @@ void CActor::g_cl_CheckControls(u32 mstate_wf, Fvector &vControlAccel, float &Ju
 	mstate_old = mstate_real;
 	vControlAccel.set(0, 0, 0);
 
+	float exo_factor = GetExoFactor();
+
 	if (!(mstate_real&mcFall) && (character_physics_support()->movement()->Environment() == CPHMovementControl::peInAir))
 	{
 		m_fFallTime -= dt;
@@ -222,37 +224,33 @@ void CActor::g_cl_CheckControls(u32 mstate_wf, Fvector &vControlAccel, float &Ju
 				m_bJumpKeyPressed = TRUE;
 				//custom jump speed
 				float jump_speed = m_fJumpSpeed;
-				//Msg("m_fJumpSpeed = %.2f", m_fJumpSpeed);
 
-				jump_speed += conditions().GetBoostedParams(eAdditionalJumpSpeedBoost);
+				jump_speed += m_fJumpSpeed * conditions().GetBoostedParams(eAdditionalJumpBoost);
 
 				auto placement = inventory().GetActiveArtefactPlace();
 				for (const auto& item : placement) {
 					auto artefact = smart_cast<CArtefact*>(item);
 					if (artefact && !fis_zero(artefact->GetCondition()))
-						jump_speed += m_fJumpSpeed * artefact->GetItemEffect(CInventoryItem::eAdditionalJumpSpeed);
+						jump_speed += m_fJumpSpeed * artefact->GetItemEffect(CInventoryItem::eAdditionalJump);
 					auto container = smart_cast<CInventoryContainer*>(item);
 					if (container) {
-						jump_speed += m_fJumpSpeed * container->GetContainmentArtefactEffect(CInventoryItem::eAdditionalJumpSpeed);
+						jump_speed += m_fJumpSpeed * container->GetContainmentArtefactEffect(CInventoryItem::eAdditionalJump);
 					}
 				}
-
 				auto outfit = GetOutfit();
 				if (outfit && !fis_zero(outfit->GetCondition()))
-					jump_speed += m_fJumpSpeed * outfit->GetItemEffect(CInventoryItem::eAdditionalJumpSpeed);
-
+					jump_speed += m_fJumpSpeed * outfit->GetItemEffect(CInventoryItem::eAdditionalJump);
 				auto backpack = GetBackpack();
 				if (backpack && !fis_zero(backpack->GetCondition()))
-					jump_speed += m_fJumpSpeed * backpack->GetItemEffect(CInventoryItem::eAdditionalJumpSpeed);
+					jump_speed += m_fJumpSpeed * backpack->GetItemEffect(CInventoryItem::eAdditionalJump);
 
-				//Msg("additional jump_speed = %.2f", jump_speed);
 				jump_speed *= conditions().GetSmoothOwerweightKoef();
-				character_physics_support()->movement()->SetJumpUpVelocity(jump_speed);
+				jump_speed *= exo_factor;
 				clamp(jump_speed, 0.0f, jump_speed);
-				//debug
-				//Msg("jump_speed = %.2f", jump_speed);
-				//
-				Jump = jump_speed/*m_fJumpSpeed*/;
+
+				character_physics_support()->movement()->SetJumpUpVelocity(jump_speed);
+
+				Jump = jump_speed;
 				m_fJumpTime = s_fJumpTime;
 
 				//уменьшить силу игрока из-за выполненого прыжка
@@ -358,57 +356,52 @@ void CActor::g_cl_CheckControls(u32 mstate_wf, Fvector &vControlAccel, float &Ju
 			// normalize and analyze crouch and run
 			float	scale = vControlAccel.magnitude();
 			if (scale > EPS) {
-				//custom walk accel
-				float walk_accel = m_fWalkAccel;
-				//Msg("m_fWalkAccel = %.2f", m_fWalkAccel);
 
-				walk_accel += conditions().GetBoostedParams(eAdditionalWalkAccelBoost);
-
-				auto placement = inventory().GetActiveArtefactPlace();
-				for (const auto& item : placement) {
-					auto artefact = smart_cast<CArtefact*>(item);
-					if (artefact && !fis_zero(artefact->GetCondition()))
-						walk_accel += m_fWalkAccel * artefact->GetItemEffect(CInventoryItem::eAdditionalWalkAccel);
-					auto container = smart_cast<CInventoryContainer*>(item);
-					if (container) {
-						walk_accel += m_fWalkAccel * container->GetContainmentArtefactEffect(CInventoryItem::eAdditionalWalkAccel);
-					}
-				}
-
-				auto outfit = GetOutfit();
-				if (outfit && !fis_zero(outfit->GetCondition()))
-					walk_accel += m_fWalkAccel * outfit->GetItemEffect(CInventoryItem::eAdditionalWalkAccel);
-
-				auto backpack = GetBackpack();
-				if (backpack && !fis_zero(backpack->GetCondition()))
-					walk_accel += m_fWalkAccel * backpack->GetItemEffect(CInventoryItem::eAdditionalWalkAccel);
-
-				//Msg("additional walk_accel = %.2f", walk_accel);
+				float walk_accel{ m_fWalkAccel };
 				walk_accel *= conditions().GetSmoothOwerweightKoef();
 				clamp(walk_accel, 0.0f, walk_accel);
-				//debug
-				//Msg("walk_accel = %.2f", walk_accel);
-				//
-				scale =	/*m_fWalkAccel*/walk_accel / scale;
+
+				scale = walk_accel / scale;
 				if (bAccelerated)
 					if (mstate_real&mcBack)
-						scale *= m_fRunBackFactor * m_fExoFactor;
+						scale *= m_fRunBackFactor;
 					else
-						scale *= m_fRunFactor * m_fExoFactor;
+						scale *= m_fRunFactor;
 				else
 					if (mstate_real&mcBack)
 						scale *= m_fWalkBackFactor;
 
-
-
 				if (mstate_real&mcCrouch)	scale *= m_fCrouchFactor;
 				if (mstate_real&mcClimb)	scale *= m_fClimbFactor;
-				if (mstate_real&mcSprint)	scale *= m_fSprintFactor * m_fExoFactor;
+
+				//custom sprint factor
+				float sprint_k{ m_fSprintFactor };
+				sprint_k += m_fSprintFactor * conditions().GetBoostedParams(eAdditionalSprintBoost);
+				auto placement = inventory().GetActiveArtefactPlace();
+				for (const auto& item : placement) {
+					auto artefact = smart_cast<CArtefact*>(item);
+					if (artefact && !fis_zero(artefact->GetCondition()))
+						sprint_k += m_fSprintFactor * artefact->GetItemEffect(CInventoryItem::eAdditionalSprint);
+					auto container = smart_cast<CInventoryContainer*>(item);
+					if (container) {
+						sprint_k += m_fSprintFactor * container->GetContainmentArtefactEffect(CInventoryItem::eAdditionalSprint);
+					}
+				}
+				auto outfit = GetOutfit();
+				if (outfit && !fis_zero(outfit->GetCondition()))
+					sprint_k += m_fSprintFactor * outfit->GetItemEffect(CInventoryItem::eAdditionalSprint);
+				auto backpack = GetBackpack();
+				if (backpack && !fis_zero(backpack->GetCondition()))
+					sprint_k += m_fSprintFactor * backpack->GetItemEffect(CInventoryItem::eAdditionalSprint);
+				sprint_k *= exo_factor;
+				clamp(m_fSprintFactor, 0.0f, m_fSprintFactor);
+
+				if (mstate_real&mcSprint)	scale *= sprint_k;
 
 				if (mstate_real&(mcLStrafe | mcRStrafe) && !(mstate_real&mcCrouch))
 				{
 					if (bAccelerated)
-						scale *= m_fRun_StrafeFactor * m_fExoFactor;
+						scale *= m_fRun_StrafeFactor;
 					else
 						scale *= m_fWalk_StrafeFactor;
 				}
@@ -628,7 +621,7 @@ void CActor::g_cl_Orientate	(u32 mstate_rl, float dt)
 
 bool	isActorAccelerated			(u32 mstate, bool ZoomMode) 
 {
-	bool res = false;
+	bool res{};
 	if (mstate&mcAccel)
 		res = psActorFlags.test(AF_ALWAYSRUN)?false:true;
 	else

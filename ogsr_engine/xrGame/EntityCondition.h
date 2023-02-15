@@ -36,8 +36,8 @@ enum eBoostParams {
 
 	eRestoreBoostMax,
 
-	eAdditionalWalkAccelBoost = eRestoreBoostMax,
-	eAdditionalJumpSpeedBoost,
+	eAdditionalSprintBoost = eRestoreBoostMax,
+	eAdditionalJumpBoost,
 	eAdditionalWeightBoost,
 
 	eHitTypeProtectionBoosterIndex,

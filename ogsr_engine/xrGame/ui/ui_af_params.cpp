@@ -38,8 +38,8 @@ LPCSTR af_item_sect_names[] = {
 	"alcohol_restore_speed",
 	"wounds_heal_speed",
 	//
-	"additional_walk_accel",
-	"additional_jump_speed",
+	"additional_sprint",
+	"additional_jump",
 	//
 	"additional_max_weight",
 	"additional_max_volume",
@@ -65,8 +65,8 @@ LPCSTR af_item_param_names[] = {
 	"ui_inv_alcohol",
 	"ui_inv_wounds_heal",
 	//
-	"ui_inv_walk_accel",
-	"ui_inv_jump_speed",
+	"ui_inv_sprint",
+	"ui_inv_jump",
 	//
 	"ui_inv_weight",
 	"ui_inv_volume",
@@ -109,7 +109,6 @@ void CUIArtefactParams::SetInfo(CInventoryItem* obj)
 {
 	if (!obj) return;
 
-//	R_ASSERT2(art, "object is not CArtefact");
 	CActor *pActor = Actor();
 	if (!pActor) return;
 

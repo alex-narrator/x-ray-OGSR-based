@@ -11,6 +11,7 @@
 
 #include "inventory_item.h"
 #include "CustomOutfit.h"
+#include "Helmet.h"
 #include "Warbelt.h"
 #include "Vest.h"
 #include "WeaponAmmo.h"
@@ -48,6 +49,7 @@ bool CUIEquipParams::Check(CInventoryItem* obj){
 		smart_cast<CWarbelt*>			(obj)		||
 		smart_cast<CVest*>				(obj)		||
 		smart_cast<CCustomOutfit*>		(obj)		||
+		smart_cast<CHelmet*>			(obj)		||
 		smart_cast<CScope*>				(obj)		||
 		smart_cast<CSilencer*>			(obj)		||
 		smart_cast<CStock*>				(obj)		||
@@ -102,7 +104,7 @@ void CUIEquipParams::SetInfo(CInventoryItem* obj){
 		_h += list_item_h;
 	}
 	if (obj->IsPowerConsumer()) {
-		_val = obj->GetPowerConsumption();
+		_val = obj->m_fPowerConsumption;
 		_param_name = CStringTable().translate("st_power_consumption").c_str();
 		_sn = CStringTable().translate("st_power_consumption_units").c_str();
 		sprintf_s(text_to_show, "%s %.0f %s", _param_name, _val, _sn);
@@ -276,11 +278,21 @@ void CUIEquipParams::SetInfo(CInventoryItem* obj){
 	}
 
 	auto pOutfit = smart_cast<CCustomOutfit*>(obj);
-	if (pOutfit && pOutfit->m_bIsHelmetBuiltIn) {
-		_param_name = CStringTable().translate("st_inbuild_helmet").c_str();
-		sprintf_s(text_to_show, "%s", _param_name);
-		SetStaticParams(_uiXml, _path, _h)->SetText(text_to_show);
-		_h += list_item_h;
+	if (pOutfit) {
+		if (pOutfit->m_bIsHelmetBuiltIn) {
+			_param_name = CStringTable().translate("st_inbuild_helmet").c_str();
+			sprintf_s(text_to_show, "%s", _param_name);
+			SetStaticParams(_uiXml, _path, _h)->SetText(text_to_show);
+			_h += list_item_h;
+		}
+
+		_val = pOutfit->GetExoFactor();
+		if (_val > 1.f) {
+			_param_name = CStringTable().translate("st_exo_factor").c_str();
+			sprintf_s(text_to_show, "%s x%.1f", _param_name, _val);
+			SetStaticParams(_uiXml, _path, _h)->SetText(text_to_show);
+			_h += list_item_h;
+		}
 	}
 
 	auto pWarbelt	= smart_cast<CWarbelt*>(obj);
@@ -309,6 +321,17 @@ void CUIEquipParams::SetInfo(CInventoryItem* obj){
 		for (const auto& plate : pVest->m_plates) {
 			auto plate_name = pSettings->r_string(plate, "inv_name");
 			sprintf_s(text_to_show, "%s%s", marker_, CStringTable().translate(plate_name).c_str());
+			SetStaticParams(_uiXml, _path, _h)->SetText(text_to_show);
+			_h += list_item_h;
+		}
+	}
+
+	auto pHelmet = smart_cast<CHelmet*>(obj);
+	if (pOutfit || pVest || pHelmet) {
+		_val = obj->GetPowerLoss();
+		if (_val > 1.f) {
+			_param_name = CStringTable().translate("st_power_loss").c_str();
+			sprintf_s(text_to_show, "%s x%.1f", _param_name, _val);
 			SetStaticParams(_uiXml, _path, _h)->SetText(text_to_show);
 			_h += list_item_h;
 		}

@@ -60,8 +60,8 @@ void CEatableItem::Load(LPCSTR section)
 	m_ItemBoost[eAlcoholBoost]				= READ_IF_EXISTS	(pSettings,r_float,section,"boost_alcohol",						0.0f);
 	m_ItemBoost[eWoundsHealBoost]			= READ_IF_EXISTS	(pSettings,r_float,section,"boost_wounds_heal",					0.0f);
 
-	m_ItemBoost[eAdditionalWalkAccelBoost]	= READ_IF_EXISTS	(pSettings,r_float,section,"boost_walk_accel",					0.0f);
-	m_ItemBoost[eAdditionalJumpSpeedBoost]	= READ_IF_EXISTS	(pSettings,r_float,section,"boost_jump_speed",					0.0f);
+	m_ItemBoost[eAdditionalSprintBoost]		= READ_IF_EXISTS	(pSettings,r_float,section,"boost_sprint",						0.0f);
+	m_ItemBoost[eAdditionalJumpBoost]		= READ_IF_EXISTS	(pSettings,r_float,section,"boost_jump",						0.0f);
 	m_ItemBoost[eAdditionalWeightBoost]		= READ_IF_EXISTS	(pSettings,r_float,section,"boost_max_weight",					0.0f);
 
 	m_ItemBoost[eBurnImmunityBoost]			= READ_IF_EXISTS	(pSettings,r_float,section,"boost_burn_protection",				0.0f);

@@ -15,7 +15,7 @@ public:
 	float							HitThruArmour(SHit* pHDS);
 	//коэффициент на который домножается потеря силы
 	//если на персонаже надет костюм
-	float							GetPowerLoss();
+	virtual float					GetPowerLoss();
 
 	virtual float					GetHitTypeProtection(int) const override;
 

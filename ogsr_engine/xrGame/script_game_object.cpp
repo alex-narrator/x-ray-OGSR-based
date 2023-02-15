@@ -707,15 +707,6 @@ void CScriptGameObject::SetActorJumpSpeed(float _factor)
 	}
 	act->SetJumpSpeed(_factor);
 }
-void CScriptGameObject::SetActorExoFactor(float _factor)
-{
-	CActor	*act = smart_cast<CActor*>(&object());
-	if (!act) {
-		ai().script_engine().script_log(ScriptStorage::eLuaMessageTypeError, "CActor : cannot perform SlowDownActor!");
-		return;
-	}
-	act->SetExoFactor(_factor);
-}
 
 
 CUIStatic* CScriptGameObject::GetCellItem() const

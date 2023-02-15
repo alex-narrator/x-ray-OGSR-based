@@ -23,7 +23,7 @@ public:
 
     virtual float				GetHitTypeProtection(int) const override;
             float				HitThruArmour       (SHit* pHDS);
-            float				GetPowerLoss        ();
+    virtual float				GetPowerLoss        ();
 
             bool                IsBoneArmored       (u16 bone) const;
 

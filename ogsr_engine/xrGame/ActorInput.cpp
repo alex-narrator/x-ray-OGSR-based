@@ -708,7 +708,7 @@ void CActor::ActorThrow(){
 
 	float throw_impulse = drop_not_throw ?
 		0.5f :											//отпустить
-		m_fThrowImpulse * conditions().GetPowerKoef();	//бросить
+		m_fThrowImpulse * conditions().GetPowerKoef() * GetExoFactor();	//бросить
 
 	Fvector dir = Direction();	//направлении взгляда актора
 	if (drop_not_throw)
@@ -742,7 +742,7 @@ void CActor::ActorKick(){
 	//if (EA && EA->g_Alive() && mass_f > 20.0f) //ability to kick tuskano and rat
 	//	return;
 
-	float kick_impulse = m_fKickImpulse * conditions().GetPowerKoef();
+	float kick_impulse = m_fKickImpulse * conditions().GetPowerKoef() * GetExoFactor();
 	Fvector dir = Direction();
 	dir.y = sin(15.f * PI / 180.f);
 	dir.normalize();
@@ -763,7 +763,7 @@ void CActor::ActorKick(){
 	if(inventory().ActiveItem() && inventory().ActiveItem()->Weight() > 1.f)
 		act_item_weight = inventory().ActiveItem()->Weight();
 	clamp(act_item_weight, 1.f, act_item_weight);
-	float hit_power = m_fKickPower * conditions().GetPowerKoef() * act_item_weight;
+	float hit_power = m_fKickPower * conditions().GetPowerKoef() * act_item_weight * GetExoFactor();
 
 	//shell->applyForce(dir, kick_power * conditions().GetPower());
 	Fvector h_pos = O->Position();

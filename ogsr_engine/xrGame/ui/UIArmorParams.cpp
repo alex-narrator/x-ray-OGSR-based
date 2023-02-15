@@ -4,6 +4,8 @@
 
 #include "string_table.h"
 #include "inventory_item.h"
+#include "CustomOutfit.h"
+#include "Helmet.h"
 
 constexpr auto ARMOR_PARAMS = "armor_params.xml";
 
@@ -105,6 +107,13 @@ void CUIArmorParams::SetInfo(CInventoryItem* obj) {
 			obj->GetArmorByBone(i);
 		
 		if (fis_zero(_val)) continue;
+
+		if (auto outfit = smart_cast<CCustomOutfit*>(obj)) {
+			if (!outfit->m_bIsHelmetBuiltIn && i < _neck)
+				continue;
+		}
+		if (auto helmet = smart_cast<CHelmet*>(obj) && i > _jav)
+			continue;
 
 		auto zone_name = CStringTable().translate(armor_zone_names[i]).c_str();
 

@@ -303,8 +303,6 @@ void CActor::Load	(LPCSTR section )
 
 	m_hit_slowmo_jump = READ_IF_EXISTS( pSettings, r_bool, section, "hit_slowmo_jump", false );
 
-	m_fExoFactor = 1.0f;
-
 	m_fCamHeightFactor			= pSettings->r_float(section,"camera_height_factor");
 	character_physics_support()->movement()		->SetJumpUpVelocity(m_fJumpSpeed);
 	float AirControlParam		= pSettings->r_float	(section,"air_control_param"	);
@@ -2091,4 +2089,11 @@ bool CActor::SaveGameAllowed() {
 
 bool CActor::InSafeHouse() {
 	return HasInfo("safehouse");
+}
+
+float CActor::GetExoFactor() const {
+	float res{ 1.f };
+	if (GetOutfit())
+		res = GetOutfit()->GetExoFactor();
+	return res;
 }

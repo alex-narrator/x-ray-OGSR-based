@@ -284,7 +284,7 @@ void CUITradeWnd::ActivatePropertiesBox()
 	const char* _addon_sect{};
 
 	if (b_actor_inv) {
-		if (pVest && pVest->CanDetach(pVest->GetPlateName().c_str())) {
+		if (pVest && pVest->IsPlateInstalled() && pVest->CanDetach(pVest->GetPlateName().c_str())) {
 			_addon_sect = pVest->GetPlateName().c_str();
 			_addon_name = pSettings->r_string(_addon_sect, "inv_name_short");
 			sprintf(temp, "%s%s %s", _many, CStringTable().translate(detach_tip).c_str(), CStringTable().translate(_addon_name).c_str());

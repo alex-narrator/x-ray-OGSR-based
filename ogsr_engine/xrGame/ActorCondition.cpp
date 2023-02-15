@@ -17,9 +17,6 @@
 #include "PDA.h"
 #include "ai/monsters/BaseMonster/base_monster.h"
 
-#define MAX_SATIETY					1.0f
-#define START_SATIETY				0.5f
-
 BOOL	GodMode	()	
 { 
 	return psActorFlags.test(AF_GODMODE); 
@@ -28,20 +25,6 @@ BOOL	GodMode	()
 CActorCondition::CActorCondition(CActor *object) :
 	inherited	(object)
 {
-	m_fJumpPower				= 0.f;
-	m_fStandPower				= 0.f;
-	m_fWalkPower				= 0.f;
-	m_fJumpWeightPower			= 0.f;
-	m_fWalkWeightPower			= 0.f;
-	m_fOverweightWalkK			= 0.f;
-	m_fOverweightJumpK			= 0.f;
-	m_fAccelK					= 0.f;
-	m_fSprintK					= 0.f;
-	m_fAlcohol					= 0.f;
-	m_fSatiety					= 1.0f;
-
-	m_bJumpRequirePower			= false;
-
 	VERIFY						(object);
 	m_object					= object;
 	m_condition_flags.zero		();
@@ -49,7 +32,6 @@ CActorCondition::CActorCondition(CActor *object) :
 	m_f_time_affected = Device.fTimeGlobal;
 
 	monsters_feel_touch  = xr_new<Feel::Touch>();
-	monsters_aura_radius = 0.f;
 
 	m_bFlagState = !!psActorFlags.test(AF_SURVIVAL);
 }
@@ -113,8 +95,6 @@ void CActorCondition::LoadCondition(LPCSTR entity_section)
 	{
 		m_fSatietyCriticalLimit = m_fSatietyLightLimit;
 	}
-
-	//m_MaxWalkWeight					= pSettings->r_float(section,"max_walk_weight");
 
 	m_fBleedingPowerDecrease		= READ_IF_EXISTS(pSettings, r_float, "actor_survival", "bleeding_power_dec", 0.f);
 	//
@@ -274,8 +254,7 @@ float CActorCondition::GetInjuriousMaterialDamage()
 
 void CActorCondition::UpdateSatiety()
 {
-	if (m_fSatiety > 0)
-	{
+	if (m_fSatiety > 0){
 		m_fSatiety -= m_fV_Satiety * m_fDeltaTime;
 		clamp(m_fSatiety, 0.0f, 1.0f);
 	}
@@ -329,6 +308,7 @@ void CActorCondition::ConditionJump(float weight)
 {
 	float power			=	m_fJumpPower;
 	power				+=	m_fJumpWeightPower*weight*(weight>1.f?m_fOverweightJumpK:1.f);
+	power				/= object().GetExoFactor();
 	m_fPower			-=	HitPowerEffect(power);
 }
 void CActorCondition::ConditionWalk(float weight, bool accel, bool sprint)
@@ -336,6 +316,7 @@ void CActorCondition::ConditionWalk(float weight, bool accel, bool sprint)
 	float power			=	m_fWalkPower;
 	power				+=	m_fWalkWeightPower*weight*(weight>1.f?m_fOverweightWalkK:1.f);
 	power				*=	m_fDeltaTime*(accel?(sprint?m_fSprintK:m_fAccelK):1.f);
+	power				/= object().GetExoFactor();
 	m_fPower			-=	HitPowerEffect(power);
 }
 
@@ -343,6 +324,7 @@ void CActorCondition::ConditionStand(float weight)
 {	
 	float power			= m_fStandPower * GetRegenKoef();
 	power				*= m_fDeltaTime;
+	power				/= weight > 1.f ? weight : 1.f;
 	m_fPower			+= power;
 }
 
@@ -633,7 +615,7 @@ void CActorCondition::UpdatePower()
 	//задержка дыхания
 	if (object().IsHardHold() && !object().is_actor_creep() && GetPower() > m_fCantWalkPowerEnd){
 		float inertion_factor = object().inventory().ActiveItem()->GetControlInertionFactor();
-		m_fDeltaPower -= m_fDeltaTime * m_fV_HardHoldPower * inertion_factor;
+		m_fDeltaPower -= m_fDeltaTime * (m_fV_HardHoldPower / object().GetExoFactor()) * inertion_factor;
 	}
 	else
 		object().SetHardHold(false);

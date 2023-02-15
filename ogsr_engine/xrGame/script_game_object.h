@@ -782,7 +782,6 @@ public:
 			float				GetActorWalkAccel() const;
 			void				SetActorWalkAccel(float _factor);
 			float				GetActorExoFactor() const; 					// влияет на бег в экзе
-			void				SetActorExoFactor(float _factor);		// влияет на бег в экзе
 			// KD
 
 			// Real Wolf 07.07.2014.

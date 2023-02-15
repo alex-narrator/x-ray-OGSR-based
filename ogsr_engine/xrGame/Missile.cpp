@@ -68,9 +68,7 @@ void CMissile::Load(LPCSTR section)
 	inherited::Load		(section);
 
 	m_fMinForce			= pSettings->r_float(section,"force_min");
-	m_fConstForce		= pSettings->r_float(section,"force_const");
 	m_fMaxForce			= pSettings->r_float(section,"force_max");
-//	m_fForceGrowSpeed	= pSettings->r_float(section,"force_grow_speed");
 
 	m_dwDestroyTimeMax	= pSettings->r_u32(section,"destroy_time");
 	
@@ -219,8 +217,8 @@ void CMissile::UpdateCL()
 			CActor* actor = smart_cast<CActor*>(H_Parent());
 			if (actor)
 			{
-				m_fThrowForce += (/*m_fForceGrowSpeed*/g_fForceGrowSpeed * Device.dwTimeDelta) * .001f;
-				clamp(m_fThrowForce, m_fMinForce, m_fMaxForce);
+				m_fThrowForce += (g_fForceGrowSpeed * Device.dwTimeDelta) * .001f;
+				clamp(m_fThrowForce, m_fMinForce, m_fMaxForce * actor->GetExoFactor());
 			}
 		}
 	}
@@ -540,8 +538,8 @@ void CMissile::Throw()
 	if (inventory_owner->use_default_throw_force())
 	{
 		//
-		float f_const_force = (m_fMinForce + m_fMaxForce) / 2;
 		auto pActor = smart_cast<CActor*>(H_Parent());
+		float f_const_force = (m_fMinForce + m_fMaxForce * pActor->GetExoFactor()) / 2;
 		float power_k = pActor ? pActor->conditions().GetPowerKoef() : 1.f;
 		//
 		m_fake_missile->m_fThrowForce = (m_constpower ? f_const_force : m_fThrowForce) * power_k;
@@ -748,7 +746,7 @@ void CMissile::OnDrawUI()
 		CActor	*actor = smart_cast<CActor*>(H_Parent());
 		if (actor) {
 			if(!g_MissileForceShape) create_force_progress();
-			float k = (m_fThrowForce-m_fMinForce)/(m_fMaxForce-m_fMinForce);
+			float k = (m_fThrowForce - m_fMinForce) / (m_fMaxForce * actor->GetExoFactor() - m_fMinForce);
 			g_MissileForceShape->SetPos	(k);
 			g_MissileForceShape->Draw	();
 		}

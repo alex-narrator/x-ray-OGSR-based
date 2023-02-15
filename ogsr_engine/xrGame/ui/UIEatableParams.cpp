@@ -28,8 +28,8 @@ LPCSTR effect_names[] = {
 	"ui_inv_alcohol",
 	"ui_inv_wounds_heal",
 	//
-	"ui_inv_walk_accel",
-	"ui_inv_jump_speed",
+	"ui_inv_sprint",
+	"ui_inv_jump",
 	//
 	"ui_inv_weight",
 	//
@@ -66,8 +66,8 @@ LPCSTR static_names[] = {
 	"boost_alcohol",
 	"boost_wounds_heal",
 	//
-	"boost_walk_accel",
-	"boost_jump_speed",
+	"boost_sprint",
+	"boost_jump",
 	//
 	"boost_max_weight",
 	//

@@ -25,8 +25,8 @@ protected:
 		_item_alcohol_restore,
 		_item_wounds_heal,
 		//additional
-		_item_additional_walk_accel,
-		_item_additional_jump_speed,
+		_item_additional_sprint,
+		_item_additional_jump,
 		_item_additional_weight,
 		_item_additional_volume,
 

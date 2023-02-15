@@ -36,11 +36,8 @@ LPCSTR _imm_names []={
 	"alcohol_restore_speed",
 	"wounds_heal_speed",
 	//
-	"additional_walk_accel",
-	"additional_jump_speed",
-	//
-	//"additional_max_weight",
-	//"additional_max_volume",
+	"additional_sprint",
+	"additional_jump",
 	//
 	"burn_immunity",
 	"shock_immunity",
@@ -63,11 +60,8 @@ LPCSTR _imm_st_names[]={
 	"ui_inv_alcohol",
 	"ui_inv_wounds_heal",
 	//
-	"ui_inv_walk_accel",
-	"ui_inv_jump_speed",
-	//
-	//"ui_inv_weight",
-	//"ui_inv_volume",
+	"ui_inv_sprint",
+	"ui_inv_jump",
 	//
 	"ui_inv_burn_protection",
 	"ui_inv_shock_protection",
@@ -132,7 +126,7 @@ void CUIOutfitInfo::Update()
 
 		if (i < _hit_type_protection_index){
 			_val += cond.GetBoostedParams(i);
-			if (i < _item_additional_walk_accel){
+			if (i < _item_additional_sprint){
 				_val += Actor()->GetItemBoostedParams(i);
 			}else{
 				_val += Actor()->GetTotalArtefactsEffect(i);

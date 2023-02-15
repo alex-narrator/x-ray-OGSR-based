@@ -240,6 +240,8 @@ void CUIMainIngameWnd::Init()
 	xml_init.InitStatic         (uiXml, "power_static", 0, &UIPowerIcon);
 	UIPowerIcon.Show(false);
 	//--
+	AttachChild					(&UIOutfitPowerStatic);
+	xml_init.InitStatic			(uiXml, "outfit_power_static", 0, &UIOutfitPowerStatic);
 
 	constexpr const char* warningStrings[] =
 	{
@@ -404,6 +406,15 @@ void CUIMainIngameWnd::Update()
 		UIStaticArmor.Show				(show_bar);
 		if(show_bar)
 			UIArmorBar.SetProgressPos		(pOutfit->GetCondition()*100);
+		//armor power
+		show_bar = IsHUDElementAllowed(eArmorPower);
+		UIOutfitPowerStatic.Show(show_bar);
+		if (show_bar) {
+			auto power_descr = CStringTable().translate("st_power_descr").c_str();
+			string256 text_str;
+			sprintf_s(text_str, "%s %.0f%s", power_descr, pOutfit->GetPowerLevelToShow(), "%");
+			UIOutfitPowerStatic.SetText(text_str);
+		}
 
 		UpdateActiveItemInfo				();
 
@@ -860,6 +871,10 @@ bool CUIMainIngameWnd::IsHUDElementAllowed(EHUDElement element)
 	case eArmor: //Иконка состояния брони
 	{
 		return eHudLaconicOff != g_eHudLaconic && m_pActor->GetOutfit() && m_pActor->m_bShowGearInfo;
+	}break;
+	case eArmorPower:
+	{
+		return m_pActor->GetOutfit() && m_pActor->GetOutfit()->IsPowerConsumer() && allow_devices_hud;
 	}break;
 	default:
 		Msg("! unknown hud element");

@@ -82,7 +82,7 @@ class_<CScriptGameObject> script_register_game_object1(class_<CScriptGameObject>
 			// Actor State
 		//.property("jump_speed",				&CScriptGameObject::GetActorJumpSpeed,	&CScriptGameObject::SetActorJumpSpeed)
 		//.property("walk_accel",				&CScriptGameObject::GetActorWalkAccel,	&CScriptGameObject::SetActorWalkAccel)
-		.property("exo_factor",				&CScriptGameObject::GetActorExoFactor,	&CScriptGameObject::SetActorExoFactor)
+		.def("exo_factor",					&CScriptGameObject::GetActorExoFactor)
 
 			// Other
 		.def("get_bleeding",				&CScriptGameObject::GetBleeding)

@@ -77,11 +77,11 @@
 	<string id="ui_inv_alcohol">
 		<text>Сп'яніння</text>
 	</string>
-	<string id="ui_inv_walk_accel">
-		<text>Швидкість</text>
+	<string id="ui_inv_sprint">
+		<text>Швидкість бігу</text>
 	</string>
-	<string id="ui_inv_jump_speed">
-		<text>Стрибок</text>
+	<string id="ui_inv_jump">
+		<text>Висота стрибка</text>
 	</string>
 	<string id="ui_inv_volume">
 		<text>Обсяг</text>
@@ -951,4 +951,14 @@
 		<text>Вміст:</text>
 	</string>
 	
+	<string id="st_exo_factor">
+		<text>Посилення</text>
+	</string>
+	<string id="st_power_loss">
+		<text>Втрата сил</text>
+	</string>	
+	
+	<string id="st_power_descr">
+		<text>Батарея костюму:</text>
+	</string>	
 </string_table>

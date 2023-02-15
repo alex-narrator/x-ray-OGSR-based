@@ -37,8 +37,8 @@ protected:
 		_alcohol_boost,
 		_wounds_heal_boost,
 
-		_walk_accel_boost,
-		_jump_speed_boost,
+		_sprint_boost,
+		_jump_boost,
 		_max_weight_boost,
 
 		_burn_imm_boost,

@@ -40,6 +40,7 @@ enum EHUDElement
 	eActiveItem,
 	eGear,
 	eArmor,
+	eArmorPower,
 };
 
 class CUIMainIngameWnd: public CUIWindow  
@@ -74,6 +75,8 @@ protected:
 	CUIStatic			UIWeaponSignAmmo;
 	CUIStatic			UIWeaponIcon;
 	Frect				UIWeaponIcon_rect{};
+	//заряд екзоскелету
+	CUIStatic			UIOutfitPowerStatic;
 public:
 	CUIStatic*			GetPDAOnline					() { return &UIPdaOnline; };
 	CUIZoneMap*			GetUIZoneMap					() { return UIZoneMap; }
