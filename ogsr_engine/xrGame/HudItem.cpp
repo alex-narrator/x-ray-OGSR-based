@@ -1098,11 +1098,11 @@ JUMP_EFFECT:
 
 		if (iMovingState & mcJump)
 		{ // Прыжок
-			m_fJump_MovingFactor += fJumpPerUpd;
+			m_fJump_MovingFactor -= fJumpPerUpd;
 		}
 		else if (iMovingState & mcFall)
 		{ // Падание
-			m_fJump_MovingFactor -= fFallPerUpd;
+			m_fJump_MovingFactor += fFallPerUpd;
 		}
 		else
 		{ // Двигаемся в любом другом направлении
