@@ -96,6 +96,7 @@ void InitConsole	()
 	CORE_FEATURE_SET( no_progress_bar_animation,  "features" );
 	CORE_FEATURE_SET( disable_dialog_break,       "features" );
 	CORE_FEATURE_SET( small_font,				  "features" );
+	CORE_FEATURE_SET(no_zone_posteffect,		  "features");
 }
 
 void InitInput()

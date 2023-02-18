@@ -27,11 +27,7 @@ class CScientificDetector : public CEliteDetector
 public:
     CScientificDetector();
     virtual ~CScientificDetector();
-    virtual void Load(LPCSTR section) override;
-    virtual void OnH_B_Independent(bool just_before_destroy) override;
-    virtual void shedule_Update(u32 dt) override;
     virtual LPCSTR ui_xml_tag() const override { return "scientific"; }
 protected:
     virtual void UpdateWork() override;
-    CZoneList m_zones;
 };

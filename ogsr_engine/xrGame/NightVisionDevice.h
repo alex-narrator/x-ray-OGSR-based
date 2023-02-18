@@ -27,7 +27,7 @@ public:
 	virtual void	Switch		();
 	virtual void	Switch		(bool);
 			void	UpdateSwitch();
-	virtual bool	IsPowerOn	() { return m_bNightVisionOn; };
+	virtual bool	IsPowerOn	() const { return m_bNightVisionOn; };
 protected:
 			bool					m_bNightVisionOn{};
 

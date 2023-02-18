@@ -181,6 +181,8 @@ CCustomDetector::~CCustomDetector()
     HUD_SOUND::DestroySound(sndHide);
 
     m_artefacts.destroy();
+    m_zones.destroy();
+
     TurnDetectorInternal(false);
     xr_delete(m_ui);
 }
@@ -196,10 +198,14 @@ void CCustomDetector::Load(LPCSTR section)
     m_animation_slot = 7;
     inherited::Load(section);
 
+    m_fZoneDetectRadius = READ_IF_EXISTS(pSettings, r_float, section, "zone_radius", 10.0f);
     m_fAfDetectRadius = READ_IF_EXISTS(pSettings, r_float, section, "af_radius", 30.0f);
     m_fAfVisRadius = READ_IF_EXISTS(pSettings, r_float, section, "af_vis_radius", 2.0f);
     m_fDecayRate = READ_IF_EXISTS(pSettings, r_float, section, "decay_rate", 0.f); //Alundaio
     m_artefacts.load(section, "af");
+    m_zones.load(section, "zone");
+
+    m_nightvision_particle = READ_IF_EXISTS(pSettings, r_string, section, "night_vision_particle", nullptr);
 
     HUD_SOUND::LoadSound(section, "snd_draw", sndShow, SOUND_TYPE_ITEM_TAKING);
     HUD_SOUND::LoadSound(section, "snd_holster", sndHide, SOUND_TYPE_ITEM_HIDING);
@@ -221,6 +227,7 @@ void CCustomDetector::shedule_Update(u32 dt)
         return;
 
     m_artefacts.feel_touch_update(P, m_fAfDetectRadius);
+    m_zones.feel_touch_update(P, m_fZoneDetectRadius);
 }
 
 bool CCustomDetector::IsWorking() const { return m_bWorking && H_Parent() && H_Parent() == Level().CurrentViewEntity(); }
@@ -228,6 +235,8 @@ bool CCustomDetector::IsWorking() const { return m_bWorking && H_Parent() && H_P
 void CCustomDetector::UpdateWork()
 {
     UpdateAf();
+    UpdateZones();
+    UpdateNightVisionMode();
     m_ui->update();
 }
 
@@ -292,6 +301,7 @@ void CCustomDetector::OnH_B_Independent(bool just_before_destroy)
     inherited::OnH_B_Independent(just_before_destroy);
 
     m_artefacts.clear();
+    m_zones.clear();
 
     if (GetState() != eHidden)
     {
@@ -321,7 +331,7 @@ void CCustomDetector::TurnDetectorInternal(bool b)
     if (b && !m_ui)
         CreateUI();
 
-    //UpdateNightVisionMode(b);
+    UpdateNightVisionMode();
 }
 
 //void CCustomDetector::UpdateNightVisionMode(bool b_on) {}
@@ -336,6 +346,51 @@ Fvector CCustomDetector::GetPositionForCollision() {
 Fvector CCustomDetector::GetDirectionForCollision() {
     //Пока и так нормально, в будущем мб придумаю решение получше.
     return Device.vCameraDirection;
+}
+
+void CCustomDetector::TryMakeArtefactVisible(CArtefact* artefact) {
+    if (artefact->CanBeInvisible()){
+        float dist = Position().distance_to(artefact->Position());
+        if (dist < m_fAfVisRadius)
+            artefact->SwitchVisibility(true);
+    }
+}
+
+void CCustomDetector::UpdateNightVisionMode(){
+
+    auto pActor = smart_cast<CActor*>(H_Parent());
+    if (!pActor) return;
+
+    auto& actor_cam = pActor->Cameras();
+    bool bNightVision = pActor &&
+        actor_cam.GetPPEffector(EEffectorPPType(effNightvision)) ||
+        actor_cam.GetPPEffector(EEffectorPPType(effNightvisionScope));
+
+    bool bOn = bNightVision &&
+        pActor == Level().CurrentViewEntity() &&
+        IsWorking() &&
+        //IsPowerOn() &&
+        m_nightvision_particle.size();
+
+    for (auto& item : m_zones.m_ItemInfos){
+        auto pZone = item.first;
+        auto& zone_info = item.second;
+
+        if (bOn) {
+            if (!zone_info.pParticle)
+                zone_info.pParticle = CParticlesObject::Create(m_nightvision_particle.c_str(), FALSE);
+
+            zone_info.pParticle->UpdateParent(pZone->XFORM(), Fvector{});
+            if (!zone_info.pParticle->IsPlaying())
+                zone_info.pParticle->Play();
+        }
+        else {
+            if (zone_info.pParticle) {
+                zone_info.pParticle->Stop();
+                CParticlesObject::Destroy(zone_info.pParticle);
+            }
+        }
+    }
 }
 
 BOOL CAfList::feel_touch_contact(CObject* O)

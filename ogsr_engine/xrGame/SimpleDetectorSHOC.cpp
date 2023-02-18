@@ -101,8 +101,7 @@ void CCustomDetectorSHOC::shedule_Update(u32 dt)
 	Position().set(H_Parent()->Position());
 
 	if (H_Parent() && H_Parent() == Level().CurrentViewEntity()){
-		Fvector P{};
-		P.set(H_Parent()->Position());
+		Fvector P{ H_Parent()->Position() };
 		feel_touch_update(P, m_fRadius);
 		UpdateNightVisionMode();
 	}
@@ -126,12 +125,9 @@ void CCustomDetectorSHOC::UpdateCL()
 
 	if (!m_pCurrentActor) return;
 
-	ZONE_INFO_MAP_IT it;
-	for (it = m_ZoneInfoMap.begin(); m_ZoneInfoMap.end() != it; ++it)
-	{
-		CCustomZone* pZone = it->first;
-		ZONE_INFO_SHOC& zone_info = it->second;
-
+	for (auto& item : m_ZoneInfoMap){
+		CCustomZone* pZone = item.first;
+		ZONE_INFO_SHOC& zone_info = item.second;
 
 		//такой тип зон не обнаруживается
 		if (m_ZoneTypeMap.find(pZone->CLS_ID) == m_ZoneTypeMap.end() ||
@@ -141,7 +137,7 @@ void CCustomDetectorSHOC::UpdateCL()
 		ZONE_TYPE_SHOC& zone_type = m_ZoneTypeMap[pZone->CLS_ID];
 
 		CSpaceRestrictor* pSR = smart_cast<CSpaceRestrictor*>(pZone);
-		float dist_to_zone = pSR->distance_to(H_Parent()->Position()); //H_Parent()->Position().distance_to(pZone->Position()) - 0.8f*pZone->Radius();
+		float dist_to_zone = pSR->distance_to(H_Parent()->Position());
 		if (dist_to_zone > zone_type.m_fRadius)
 			continue;
 		if (dist_to_zone < 0) dist_to_zone = 0;
@@ -155,11 +151,9 @@ void CCustomDetectorSHOC::UpdateCL()
 
 		float current_snd_time = 1000.f * 1.f / zone_info.cur_freq;
 
-		if ((float)zone_info.snd_time > current_snd_time)
-		{
+		if ((float)zone_info.snd_time > current_snd_time){
 			zone_info.snd_time = 0;
 			HUD_SOUND::PlaySound(zone_type.detect_snds, Fvector().set(0, 0, 0), this, true, false);
-
 		}
 		else
 			zone_info.snd_time += Device.dwTimeDelta;
@@ -282,20 +276,16 @@ void CCustomDetectorSHOC::UpdateNightVisionMode()
 		IsPowerOn() &&
 		m_nightvision_particle.size();
 
-	ZONE_INFO_MAP_IT it;
-	for (it = m_ZoneInfoMap.begin(); m_ZoneInfoMap.end() != it; ++it)
+	for (auto& item : m_ZoneInfoMap)
 	{
-		CCustomZone* pZone = it->first;
-		ZONE_INFO_SHOC& zone_info = it->second;
+		CCustomZone* pZone = item.first;
+		ZONE_INFO_SHOC& zone_info = item.second;
 
 		if (bOn) {
-			Fvector zero_vector;
-			zero_vector.set(0.f, 0.f, 0.f);
-
 			if (!zone_info.pParticle)
-				zone_info.pParticle = CParticlesObject::Create(*m_nightvision_particle, FALSE);
+				zone_info.pParticle = CParticlesObject::Create(m_nightvision_particle.c_str(), FALSE);
 
-			zone_info.pParticle->UpdateParent(pZone->XFORM(), zero_vector);
+			zone_info.pParticle->UpdateParent(pZone->XFORM(), Fvector{});
 			if (!zone_info.pParticle->IsPlaying())
 				zone_info.pParticle->Play();
 		}

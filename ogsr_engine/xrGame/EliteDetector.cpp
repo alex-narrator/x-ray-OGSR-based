@@ -23,25 +23,14 @@ void CEliteDetector::UpdateAf()
     if (m_artefacts.m_ItemInfos.empty())
         return;
 
-    auto it_b = m_artefacts.m_ItemInfos.begin();
-    auto it_e = m_artefacts.m_ItemInfos.end();
-    auto it = it_b;
-
-    Fvector detector_pos = Position();
-    for (; it_b != it_e; ++it_b)
+    for (auto& item : m_artefacts.m_ItemInfos)
     {
-        CArtefact* pAf = it_b->first;
+        CArtefact* pAf = item.first;
         if (pAf->H_Parent())
             continue;
 
         ui().RegisterItemToDraw(pAf->Position(), "af_sign");
-
-        if (pAf->CanBeInvisible())
-        {
-            float d = detector_pos.distance_to(pAf->Position());
-            if (d < m_fAfVisRadius)
-                pAf->SwitchVisibility(true);
-        }
+        TryMakeArtefactVisible(pAf);
     }
 }
 
@@ -216,7 +205,7 @@ void CUIArtefactDetectorElite::RegisterItemToDraw(const Fvector& p, const shared
     auto it = m_palette.find(palette_idx);
     if (it == m_palette.end())
     {
-        //Msg("! RegisterItemToDraw. static not found for [%s]", palette_idx.c_str());
+        Msg("! RegisterItemToDraw. static not found for [%s]", palette_idx.c_str());
         return;
     }
     CUIStatic* S = m_palette[palette_idx];
@@ -225,64 +214,26 @@ void CUIArtefactDetectorElite::RegisterItemToDraw(const Fvector& p, const shared
 }
 
 CScientificDetector::CScientificDetector() { m_artefacts.m_af_rank = 3; }
-CScientificDetector::~CScientificDetector() { m_zones.destroy(); }
-void CScientificDetector::Load(LPCSTR section)
-{
-    inherited::Load(section);
-    m_zones.load(section, "zone");
-}
+CScientificDetector::~CScientificDetector() {}
 
 void CScientificDetector::UpdateWork()
 {
     ui().Clear();
 
-    auto ait_b = m_artefacts.m_ItemInfos.begin();
-    auto ait_e = m_artefacts.m_ItemInfos.end();
-    auto ait = ait_b;
-    Fvector detector_pos = Position();
-    for (; ait_b != ait_e; ++ait_b)
-    {
-        CArtefact* pAf = ait_b->first;
+    for (auto& item : m_artefacts.m_ItemInfos){
+        CArtefact* pAf = item.first;
         if (pAf->H_Parent())
             continue;
 
         ui().RegisterItemToDraw(pAf->Position(), pAf->cNameSect());
 
-        if (pAf->CanBeInvisible())
-        {
-            float d = detector_pos.distance_to(pAf->Position());
-            if (d < m_fAfVisRadius)
-                pAf->SwitchVisibility(true);
-        }
+        TryMakeArtefactVisible(pAf);
     }
 
-    auto zit_b = m_zones.m_ItemInfos.begin();
-    auto zit_e = m_zones.m_ItemInfos.end();
-    auto zit = zit_b;
-
-    for (; zit_b != zit_e; ++zit_b)
-    {
-        CCustomZone* pZone = zit_b->first;
+    for (auto& item : m_zones.m_ItemInfos){
+        CCustomZone* pZone = item.first;
         ui().RegisterItemToDraw(pZone->Position(), pZone->cNameSect());
     }
 
     m_ui->update();
-}
-
-void CScientificDetector::shedule_Update(u32 dt)
-{
-    inherited::shedule_Update(dt);
-
-    if (!H_Parent())
-        return;
-    Fvector P;
-    P.set(H_Parent()->Position());
-    m_zones.feel_touch_update(P, m_fAfDetectRadius);
-}
-
-void CScientificDetector::OnH_B_Independent(bool just_before_destroy)
-{
-    inherited::OnH_B_Independent(just_before_destroy);
-
-    m_zones.clear();
 }

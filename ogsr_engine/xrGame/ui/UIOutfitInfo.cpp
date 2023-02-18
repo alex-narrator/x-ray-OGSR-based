@@ -97,6 +97,8 @@ void CUIOutfitInfo::InitFromXml(CUIXml& xml_doc)
 			_s->SetAutoDelete(false);
 			CUIXmlInit::InitStatic(xml_doc, _buff, 0, _s);
 		}
+		else
+			Msg("! can't find static name %s", _buff);
 	}
 
 }

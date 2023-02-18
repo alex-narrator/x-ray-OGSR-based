@@ -189,7 +189,8 @@ public:
 	  npc_simplified_shooting    = 1ull << 16,
 	  show_objectives_ondemand   = 1ull << 17,
 	  disable_dialog_break       = 1ull << 18,
-	  no_progress_bar_animation  = 1ull << 19;
+	  no_progress_bar_animation  = 1ull << 19,
+	  no_zone_posteffect		 = 1ull << 20;
 	};
 
 	void		_initialize	(LPCSTR ApplicationName, LogCallback cb=0, BOOL init_fs=TRUE, LPCSTR fs_fname=0);

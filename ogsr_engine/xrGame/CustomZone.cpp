@@ -179,7 +179,7 @@ void CCustomZone::Load(LPCSTR section)
 	if(pSettings->line_exist(section,"idle_particles_dont_stop"))
 		m_bIdleObjectParticlesDontStop=pSettings->r_bool(section,"idle_particles_dont_stop");
 
-	if(pSettings->line_exist(section,"postprocess")) 
+	if(pSettings->line_exist(section,"postprocess") && !Core.Features.test(xrCore::Feature::no_zone_posteffect))
 	{
 		m_effector					= xr_new<CZoneEffector>();
 		m_effector->Load			(pSettings->r_string(section,"postprocess"));
