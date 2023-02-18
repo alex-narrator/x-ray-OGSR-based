@@ -158,9 +158,9 @@ bool IInventoryBox::IsEmpty() const
 	return m_items.empty(); 
 }
 
-void CInventoryBox::UpdateCL()
+void CInventoryBox::shedule_Update(u32 dt)
 {
-	//Msg("UpdateCL() for InventoryBox [%s]", object().Name_script());
+	CGameObject::shedule_Update(dt);
 	UpdateDropTasks();
 }
 

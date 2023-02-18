@@ -52,7 +52,6 @@ float CInventoryContainer::Weight() const
 	return res;
 }
 
-
 bool CInventoryContainer::CanTrade() const
 {	
 	if (!IsEmpty()) // продавать можно только пустым
@@ -67,26 +66,9 @@ bool CInventoryContainer::CanTrade() const
 	return inherited::CanTrade();
 }
 
-DLL_Pure* CInventoryContainer::_construct()
+void CInventoryContainer::shedule_Update(u32 dt)
 {
-	return inherited::_construct();
-}
-
-
-BOOL CInventoryContainer::net_Spawn(CSE_Abstract* DC)
-{
-	BOOL res = inherited::net_Spawn(DC);
-	processing_activate();
-	return res;
-}
-void CInventoryContainer::OnEvent(NET_Packet& P, u16 type)
-{
-	inherited::OnEvent(P, type);
-}
-
-void CInventoryContainer::UpdateCL()
-{
-	inherited::UpdateCL();
+	inherited::shedule_Update(dt);
 	UpdateDropTasks();
 	UpdateVolumeDropOut();
 }

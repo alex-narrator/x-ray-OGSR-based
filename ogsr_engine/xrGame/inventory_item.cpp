@@ -367,8 +367,6 @@ void CInventoryItem::UpdateCL()
 	}
 
 #endif
-	if (b_brake_item)
-		object().DestroyObject();
 	UpdateConditionDecrease();
 	UpdatePowerConsumption();
 }
@@ -1004,8 +1002,12 @@ void CInventoryItem::TryBreakToPieces(bool play_effects)
 }
 
 constexpr auto CONDITION_DECREASE_UPDATE_TIME = 1.f;
-void CInventoryItem::UpdateConditionDecrease()
-{
+void CInventoryItem::UpdateConditionDecrease(){
+	if (b_brake_item) {
+		object().DestroyObject();
+		return;
+	}
+
 	if (fis_zero(m_fTTLOnDecrease) ||
 		fis_zero(m_fCondition)) return;
 

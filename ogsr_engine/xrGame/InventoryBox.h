@@ -62,7 +62,7 @@ class  CInventoryBox : public CCustomInventoryBox<CGameObject> // CBasicInventor
 public:
 					CInventoryBox			() {};
 
-virtual		void	UpdateCL				();
+virtual void		shedule_Update			(u32 dt);
 
 protected:
 			void	UpdateDropTasks			();

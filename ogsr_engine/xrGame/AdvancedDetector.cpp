@@ -74,7 +74,7 @@ void CAdvancedDetector::UpdateZones() {
 		return;
 	ui().SetValue(0.0f, Fvector{});
 
-	auto pNearestZone = m_zones.m_ItemInfos.begin()->first;
+	CCustomZone* pNearestZone{};
 	float min_dist{flt_max};
 
 	for (auto& item : m_zones.m_ItemInfos) { // all
@@ -100,7 +100,7 @@ void CAdvancedDetector::UpdateZones() {
 		clamp(fRelPow, 0.f, 1.f);
 
 		//current sound frequency
-		zone_info.cur_period = item_type->freq.x + (item_type->freq.y - item_type->freq.x) * (fRelPow * fRelPow * fRelPow * fRelPow);
+		zone_info.cur_period = item_type->freq.x + (item_type->freq.y - item_type->freq.x) * (fRelPow * fRelPow);
 		float min_snd_freq = 0.9f;
 		float max_snd_freq = 1.4f;
 		float snd_freq = min_snd_freq + (max_snd_freq - min_snd_freq) * (1.0f - fRelPow);
@@ -116,13 +116,14 @@ void CAdvancedDetector::UpdateZones() {
 	}
 
 	// direction
+	if (!pNearestZone)
+		return;
 	Fvector dir_to_zone{};
 	dir_to_zone.sub(pNearestZone->Position(), Device.vCameraPosition);
 	dir_to_zone.normalize();
 	float _ang_zone = dir_to_zone.getH();
 	float _ang_cam = Device.vCameraDirection.getH();
 	float _diff = angle_difference_signed(_ang_zone, _ang_cam);
-
 	ui().SetValue(_diff, dir_to_zone);
 }
 

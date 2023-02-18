@@ -22,11 +22,8 @@ public:
 	virtual bool					CanTrade							() const;
 	virtual	u32						Cost								() const;
 	virtual	float					Weight								() const;
-	virtual	DLL_Pure*				_construct							();
-	virtual	void					OnEvent								(NET_Packet& P, u16 type);
-	virtual	BOOL					net_Spawn							(CSE_Abstract* DC);
 
-	virtual	void					UpdateCL							();
+	virtual void					shedule_Update						(u32 dt);
 
 	virtual float					GetItemEffect						(int) const;
 	virtual bool					NeedForcedDescriptionUpdate			() const;

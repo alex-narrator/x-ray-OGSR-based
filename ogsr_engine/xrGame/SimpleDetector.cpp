@@ -82,7 +82,7 @@ void CSimpleDetector::UpdateZones() {
 		clamp(fRelPow, 0.f, 1.f);
 
 		//current sound frequency
-		zone_info.cur_period = item_type->freq.x + (item_type->freq.y - item_type->freq.x) * (fRelPow * fRelPow * fRelPow * fRelPow);
+		zone_info.cur_period = item_type->freq.x + (item_type->freq.y - item_type->freq.x) * (fRelPow * fRelPow);
 
 		float min_snd_freq = 0.9f;
 		float max_snd_freq = 1.4f;
