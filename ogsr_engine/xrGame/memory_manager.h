@@ -13,7 +13,6 @@
 class CVisualMemoryManager;
 class CSoundMemoryManager;
 class CHitMemoryManager;
-class CEnemyManager;
 class CItemManager;
 class CDangerManager;
 class CCustomMonster;
