@@ -38,7 +38,7 @@ public:
 		CParticlesObject* ps = CParticlesObject::Create(ps_name,TRUE);
 
 		Fmatrix pos{};
-		Fvector zero_vel = {0.f,0.f,0.f};
+		Fvector zero_vel{};
 		pos.k.set(*((Fvector*)c.normal));
 		Fvector::generate_orthonormal_basis(pos.k, pos.j, pos.i);
 		pos.c.set(*((Fvector*)c.pos));
@@ -74,8 +74,7 @@ public:
 };
 
 
-// # Hack: limit for sounds and effects
-static u32 lastContactTime = 0;
+
 
 template<class Pars>
 void  TContactShotMark(CDB::TRI* T,dContactGeom* c)
@@ -111,13 +110,6 @@ void  TContactShotMark(CDB::TRI* T,dContactGeom* c)
 				wm_shader WallmarkShader = mtl_pair->m_pCollideMarks->GenerateWallmark();
 				Level().ph_commander().add_call(xr_new<CPHOnesCondition>(),xr_new<CPHWallMarksCall>( *((Fvector*)c->pos),T, WallmarkShader));
 			}
-
-			// # Hack: limit for sounds and effects
-			if (lastContactTime < Device.dwTimeGlobal)
-				return;
-			else
-				lastContactTime = Device.dwTimeGlobal + 500;
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 			if(square_cam_dist<SQUARE_SOUND_EFFECT_DIST)
 			{
