@@ -100,7 +100,7 @@ virtual			void		set_local_form		(const Fmatrix& form)												=0;
 	//build/destroy
 protected:
 				void		init				()																	;
-				void		get_final_tx_bt		(const dReal*	&p,const dReal*	&R,dReal * bufV, dReal* bufM) const		;
+				void		get_final_tx_bt		(const dReal*	&p,const dReal*	&R,dReal * bufV, dReal* bufM)		;
 	virtual		dGeomID		create				()																	=0;
 public:
 	static		void		get_final_tx		(dGeomID g,const dReal*	&p,const dReal*	&R,dReal * bufV, dReal* bufM);
@@ -110,9 +110,6 @@ public:
 				void		destroy				()																	;
 							CODEGeom			()																	;
 	virtual					~ CODEGeom			()																	;
-
-				void		set_local_form_bt	(const Fmatrix& xform);
-	virtual		void		get_xform			(Fmatrix& form) const;
 };
 
 class CBoxGeom : public CODEGeom
@@ -132,9 +129,6 @@ virtual const	Fvector&	local_center		()																	;
 virtual			void		set_local_form		(const Fmatrix& form)												;
 	virtual		dGeomID		create				()																	;
 	virtual		void		set_position		(const Fvector& ref_point)											;
-
-				void		set_size			(const Fvector& half_size);
-				void		get_size			(Fvector& half_size);
 };
 
 class CSphereGeom : public CODEGeom
@@ -170,7 +164,5 @@ virtual const	Fvector&	local_center		()																	;
 	virtual		void		set_local_form		(const Fmatrix& form)												;
 	virtual		dGeomID		create				()																	;
 	virtual		void		set_position		(const Fvector& ref_point)											;
-
-				void		set_radius			(float r);
 };
 #endif //GEOMETRY_H

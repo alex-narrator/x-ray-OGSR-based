@@ -399,7 +399,6 @@
     <ClInclude Include="..\COMMON_AI\random32.h" />
     <ClInclude Include="..\COMMON_AI\server_entity_wrapper.h" />
     <ClInclude Include="..\COMMON_AI\server_entity_wrapper_inline.h" />
-    <ClInclude Include="ActorCameraCollision.h" />
     <ClInclude Include="Addons.h" />
     <ClInclude Include="AdvancedDetector.h" />
     <ClInclude Include="ai\monsters\anti_aim_ability.h" />
@@ -435,7 +434,6 @@
     <ClInclude Include="ai\monsters\states\monster_state_attack_on_run_inline.h" />
     <ClInclude Include="derived_client_classes.h" />
     <ClInclude Include="EliteDetector.h" />
-    <ClInclude Include="GeometryBits.h" />
     <ClInclude Include="Helmet.h" />
     <ClInclude Include="IKFoot.h" />
     <ClInclude Include="IKFoot_inl.h" />
@@ -1668,7 +1666,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\COMMON_AI\random32.cpp" />
-    <ClCompile Include="ActorCameraCollision.cpp" />
     <ClCompile Include="Addons.cpp" />
     <ClCompile Include="AdvancedDetector.cpp" />
     <ClCompile Include="ai\monsters\anti_aim_ability.cpp" />
@@ -1677,7 +1674,6 @@
     <ClCompile Include="action_base_script.cpp" />
     <ClCompile Include="derived_client_classes.cpp" />
     <ClCompile Include="EliteDetector.cpp" />
-    <ClCompile Include="GeometryBits.cpp" />
     <ClCompile Include="Helmet.cpp" />
     <ClCompile Include="IKFoot.cpp" />
     <ClCompile Include="ik_calculate_data.cpp" />

@@ -60,8 +60,6 @@ const	Fvector&					local_mass_Center						()		{return m_mass_center;}											
 		void						setPosition								(const Fvector& pos);
 		void						clear_cashed_tries						();
 		void						get_mc_vs_transform						(Fvector& mc,const Fmatrix& m);
-
-		void						add_geom								(CODEGeom* g);
 protected:
 		void						build									();
 		void						CreateSimulBase							();
@@ -69,9 +67,6 @@ protected:
 		void						build_Geom								(CODEGeom&	V);																	//aux
 		void						build_Geom								(u16 i);							
 		void						set_body								(dBodyID body);
-
-		void						group_add								(CODEGeom& g);
-		void						CreateGroupSpace						();
 
 									CPHGeometryOwner						();
 virtual								~CPHGeometryOwner						();

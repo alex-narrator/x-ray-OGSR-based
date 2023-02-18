@@ -9,7 +9,6 @@
 #include "CameraFirstEye.h"
 
 #include "ActorEffector.h"
-#include "ActorCameraCollision.h"
 
 #include "PHWorld.h"
 #include "level.h"
@@ -299,13 +298,6 @@ void CActor::net_Destroy	()
 	if(g_actor == this) g_actor= NULL;
 
 	Engine.Sheduler.Unregister	(this);
-
-	if (actor_camera_shell &&
-		actor_camera_shell->get_ElementByStoreOrder(0)->PhysicsRefObject()
-		==
-		this
-		)
-		destroy_physics_shell(actor_camera_shell);
 }
 
 void CActor::net_Relcase	(CObject* O)

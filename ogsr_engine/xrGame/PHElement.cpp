@@ -1541,28 +1541,3 @@ void CPHElement::ClearDestroyInfo()
 //	m_fratures_holder->m_fractures
 //	m_fratures_holder->Fracture()
 //}
-
-void CPHElement::add_geom(CODEGeom* g){
-	Fmatrix gf;
-	g->get_xform(gf);
-
-	Fmatrix bf;
-	PHDynamicData::DMXPStoFMX(dBodyGetRotation(m_body), dBodyGetPosition(m_body), bf);
-
-	Fmatrix diff = Fmatrix().mul_43(Fmatrix().invert(bf), gf);
-
-	dMatrix3 m;
-	PHDynamicData::FMXtoDMX(diff, m);
-
-	VERIFY(g->geom());
-	dGeomSetPosition(g->geom(), diff.c.x, diff.c.y, diff.c.z);
-	dGeomSetRotation(g->geom(), m);
-
-	g->set_body(m_body);
-	CPHGeometryOwner::add_geom(g);
-}
-
-void CPHElement::set_local_mass_center(const Fvector& mc){
-	m_mass_center.set(mc);
-	dVectorSet(m_mass.c, cast_fp(mc));
-}

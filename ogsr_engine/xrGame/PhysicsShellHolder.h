@@ -37,7 +37,7 @@ public:
 
 
 	CPhysicsShellHolder							();
-	virtual ~CPhysicsShellHolder();
+	virtual ~CPhysicsShellHolder() {};
 
 
 
@@ -112,9 +112,4 @@ private:
 public:
 	virtual bool			ActivationSpeedOverriden	(Fvector& dest, bool clear_override);
 	virtual void			SetActivationSpeedOverride	(Fvector const& speed);
-
-	virtual	bool			IsInventoryItem				();
-	virtual	bool			IsActor						();
-	virtual bool			IsStalker					();
-	virtual	void			MovementCollisionEnable		(bool enable);
 };

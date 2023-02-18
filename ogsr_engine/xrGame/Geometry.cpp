@@ -382,7 +382,7 @@ float CBoxGeom::radius()
 {
 	return m_box.m_halfsize.x;
 }
-void CODEGeom::get_final_tx_bt(const dReal*	&p,	const dReal*	&R,dReal *bufV, dReal *bufM) const
+void CODEGeom::get_final_tx_bt(const dReal*	&p,	const dReal*	&R,dReal *bufV, dReal *bufM)
 {
 	VERIFY(m_geom_transform);
 	//dGeomID		g		=	geometry_bt()						;
@@ -658,48 +658,4 @@ void CCylinderGeom::set_position(const Fvector& ref_point)
 		Fvector::generate_orthonormal_basis(m33.j,m33.k,m33.i);
 		PHDynamicData::FMX33toDMX(m33,R);
 		dGeomSetRotation(geom(),R);
-}
-
-/////////////////////////////////////////////
-void CODEGeom::set_local_form_bt(const Fmatrix& xform){
-	dMatrix3 R;
-	PHDynamicData::FMXtoDMX(xform, R);
-	dGeomSetRotation(geom(), R);
-	dGeomSetPosition(geom(), xform.c.x, xform.c.y, xform.c.z);
-}
-
-void CODEGeom::get_xform(Fmatrix& form) const{
-	VERIFY(m_geom_transform);
-	const dReal* rot = NULL;
-	const dReal* pos = NULL;
-	dVector3 p;
-	dMatrix3 r;
-	get_final_tx_bt(pos, rot, p, r);
-
-	PHDynamicData::DMXPStoFMX(rot, pos, form);
-}
-
-void CBoxGeom::set_size(const Fvector& half_size){
-	m_box.m_halfsize.set(half_size);
-	VERIFY(geom());
-	dGeomBoxSetLengths(geom(),
-		m_box.m_halfsize.x * 2.f,
-		m_box.m_halfsize.y * 2.f,
-		m_box.m_halfsize.z * 2.f
-	);
-}
-
-void CBoxGeom::get_size(Fvector& half_size){
-	VERIFY(geom());
-	dGeomBoxGetLengths(geom(),
-		cast_fp(half_size)
-	);
-	half_size.mul(0.5f);
-
-}
-
-void CCylinderGeom::set_radius(float r){
-	m_cylinder.m_radius = r;
-	VERIFY(geom());
-	dGeomCylinderSetParams(geom(), m_cylinder.m_radius, m_cylinder.m_height);
 }

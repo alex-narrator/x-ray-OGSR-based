@@ -102,10 +102,6 @@ public:
 	virtual void						get_Extensions							(const Fvector& axis,float center_prg,float& lo_ext, float& hi_ext);			//aux
 	virtual	void						get_MaxAreaDir							(Fvector& dir){CPHGeometryOwner::get_MaxAreaDir(dir);}
 	virtual float						getRadius								();
-
-	virtual void						add_geom								(CODEGeom* g);
-	virtual CODEGeom*					geometry								(u16 i) { return CPHGeometryOwner::Geom(i); }
-	virtual void						set_local_mass_center					(const Fvector& mc);
 ////////////////////////////////////////////////////Mass/////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 private:

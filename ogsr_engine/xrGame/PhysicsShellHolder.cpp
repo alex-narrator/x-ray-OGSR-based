@@ -22,11 +22,6 @@ CPhysicsShellHolder::CPhysicsShellHolder(){
 	init();
 }
 
-CPhysicsShellHolder::~CPhysicsShellHolder(){
-	VERIFY(!m_pPhysicsShell);
-	destroy_physics_shell(m_pPhysicsShell);
-}
-
 void CPhysicsShellHolder::net_Destroy()
 {
 	//remove calls
@@ -195,7 +190,9 @@ void CPhysicsShellHolder::setup_physic_shell	()
 void CPhysicsShellHolder::deactivate_physics_shell()
 {
 	CParticlesPlayer::DestroyParticles(); //удалить партиклы из ParticlePlayer
-	destroy_physics_shell(m_pPhysicsShell);
+	if (m_pPhysicsShell)
+		m_pPhysicsShell->Deactivate();
+	xr_delete(m_pPhysicsShell);
 }
 void CPhysicsShellHolder::PHSetMaterial(u16 m)
 {
@@ -456,25 +453,8 @@ bool CPhysicsShellHolder::ActivationSpeedOverriden(Fvector& dest, bool clear_ove
 	return false;
 }
 
-void CPhysicsShellHolder::SetActivationSpeedOverride(Fvector const& speed){
+void CPhysicsShellHolder::SetActivationSpeedOverride(Fvector const& speed)
+{
 	m_overriden_activation_speed = speed;
 	m_activation_speed_is_overriden = true;
-}
-
-bool CPhysicsShellHolder::IsInventoryItem(){
-	return !!cast_inventory_item();
-}
-
-bool CPhysicsShellHolder::IsActor(){
-	return !!cast_actor();
-}
-
-bool CPhysicsShellHolder::IsStalker(){
-	return !!cast_stalker();
-}
-
-void	CPhysicsShellHolder::MovementCollisionEnable(bool enable){
-	VERIFY(character_physics_support());
-	VERIFY(character_physics_support()->movement());
-	character_physics_support()->movement()->CollisionEnable(enable);
 }

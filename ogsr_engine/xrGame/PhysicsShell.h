@@ -141,12 +141,6 @@ public:
 	virtual		bool							isFixed									()																													= 0;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	virtual										~CPhysicsElement						()																													{};
-
-	virtual		void							set_local_mass_center					(const Fvector& mc) = 0;
-	virtual		void							setQuaternion							(const Fquaternion& quaternion) = 0;
-	virtual		CODEGeom*						geometry								(u16 i) = 0;
-	virtual		void							add_geom								(CODEGeom* g) = 0;
-
 	DECLARE_SCRIPT_REGISTER_FUNCTION
 };
 
@@ -354,5 +348,4 @@ CPhysicsShell*				P_build_Shell				(CGameObject* obj,bool not_active_state,BONE_
 CPhysicsShell*				P_build_SimpleShell			(CGameObject* obj,float mass,bool not_active_state)									;
 		void				ApplySpawnIniToPhysicShell	(CInifile* ini,CPhysicsShell* physics_shell,bool fixed)								;
 		void				fix_bones					(LPCSTR	fixed_bones,CPhysicsShell* shell )											;
-		void __stdcall		destroy_physics_shell		(CPhysicsShell*& p);
 #endif // PhysicsShellH
