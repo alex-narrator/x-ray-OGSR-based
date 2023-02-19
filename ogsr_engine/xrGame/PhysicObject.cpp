@@ -56,7 +56,7 @@ BOOL CPhysicObject::net_Spawn(CSE_Abstract* DC)
 		processing_activate();
 	}
 #endif
-
+	PHObjectPositionUpdate();
     // приложить небольшую силу для того, чтобы объект начал падать
     PPhysicsShell()->applyImpulse( Fvector().set( 0.f, -1.0f, 0.f ), 0.5f * PPhysicsShell()->getMass() );
 

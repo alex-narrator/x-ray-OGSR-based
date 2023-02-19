@@ -22,6 +22,10 @@ CPhysicsShellHolder::CPhysicsShellHolder(){
 	init();
 }
 
+CPhysicsShellHolder::~CPhysicsShellHolder() {
+	xr_delete(m_ph_sound_player);
+}
+
 void CPhysicsShellHolder::net_Destroy()
 {
 	//remove calls
@@ -90,6 +94,7 @@ void CPhysicsShellHolder::init			()
 	m_pPhysicsShell				=	NULL		;
 	b_sheduled					=	false		;
 	m_activation_speed_is_overriden = false;
+	m_ph_sound_player = xr_new<CPHSoundPlayer>(this);
 }
 void CPhysicsShellHolder::correct_spawn_pos()
 {

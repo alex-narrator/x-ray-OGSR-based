@@ -73,15 +73,24 @@ public:
 	virtual bool 			obsolete						()const{return false;}
 };
 
+static CPHSoundPlayer* object_snd_player(dxGeomUserData* data) noexcept { return data->ph_ref_object ? data->ph_ref_object->ph_sound_player() : nullptr; }
 
+static void play_object(dxGeomUserData* data, SGameMtlPair* mtl_pair, const dContactGeom* c, bool check_vel = true, float* vol = nullptr) noexcept
+{
+	auto sp = object_snd_player(data);
+	if (sp)
+		sp->Play(mtl_pair, *(Fvector*)c->pos, check_vel, vol);
+}
 
+// # Hack: limit for effects
+static u32 lastContactTime{};
 
 template<class Pars>
 void  TContactShotMark(CDB::TRI* T,dContactGeom* c)
 {
 	dBodyID b=dGeomGetBody(c->g1);
 	dxGeomUserData* data;
-	bool b_invert_normal=false;
+	bool b_invert_normal{};
 	if(!b) 
 	{
 		b=dGeomGetBody(c->g2);
@@ -113,16 +122,18 @@ void  TContactShotMark(CDB::TRI* T,dContactGeom* c)
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 			if(square_cam_dist<SQUARE_SOUND_EFFECT_DIST)
 			{
-			
 				SGameMtl* static_mtl =  GMLib.GetMaterialByIdx(T->material);
 				if(!static_mtl->Flags.test(SGameMtl::flPassable))
 				{
 					if(vel_cret>Pars::vel_cret_sound)
 					{
-						if(!mtl_pair->CollideSounds.empty())
-						{
-							float volume=collide_volume_min+vel_cret*(collide_volume_max-collide_volume_min)/(_sqrt(mass_limit)*default_l_limit-Pars::vel_cret_sound);
-							GET_RANDOM(mtl_pair->CollideSounds).play_no_feedback(0,0,0,((Fvector*)c->pos),&volume);
+						if (!mtl_pair->CollideSounds.empty()) {
+							float volume = collide_volume_min + vel_cret * (collide_volume_max - collide_volume_min) / (_sqrt(mass_limit) * default_l_limit - Pars::vel_cret_sound);
+							auto sp = object_snd_player(data);
+							if (sp)
+								sp->PlayNext(mtl_pair, ((Fvector*)c->pos), &volume);
+							else
+								GET_RANDOM(mtl_pair->CollideSounds).play_no_feedback(nullptr, 0, 0, ((Fvector*)c->pos), &volume);
 						}
 					}
 				}
@@ -130,13 +141,17 @@ void  TContactShotMark(CDB::TRI* T,dContactGeom* c)
 				{
 					if(data->ph_ref_object&&!mtl_pair->CollideSounds.empty())
 					{
-						CPHSoundPlayer* sp=NULL;
-						sp=data->ph_ref_object->ph_sound_player();
-						if(sp) sp->Play(mtl_pair,*(Fvector*)c->pos);
+						play_object(data, mtl_pair, c);
 					}
 				}
 			}
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+			// # Hack: limit for effects
+			if (lastContactTime > Device.dwTimeGlobal)
+				return;
+			else
+				lastContactTime = Device.dwTimeGlobal + 500;
+
 			if(square_cam_dist<SQUARE_PARTICLE_EFFECT_DIST)
 			{
 				if(vel_cret>Pars::vel_cret_particles && !mtl_pair->CollideParticles.empty())
