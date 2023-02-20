@@ -127,6 +127,13 @@ void CAdvancedDetector::UpdateZones() {
 	ui().SetValue(_diff, dir_to_zone);
 }
 
+void CAdvancedDetector::DisableUIDetection() {
+	if (m_ui) {
+		ui().SetValue(0.0f, Fvector{});
+		ui().update();
+	}
+}
+
 void CUIArtefactDetectorAdv::construct(CAdvancedDetector* p)
 {
 	m_parent = p;
@@ -134,9 +141,12 @@ void CUIArtefactDetectorAdv::construct(CAdvancedDetector* p)
 	m_curr_ang_speed = 0.0f;
 	m_cur_y_rot = 0.0f;
 	m_bid = u16(-1);
+	SetValue(0.0f, Fvector{});
 }
 
-void CUIArtefactDetectorAdv::SetValue(const float val1, const Fvector& val2) { m_target_dir = val2; }
+void CUIArtefactDetectorAdv::SetValue(const float val1, const Fvector& val2) { 
+	m_target_dir = val2; 
+}
 void CUIArtefactDetectorAdv::update()
 {
 	if (!m_parent->HudItemData() || m_bid == u16(-1))

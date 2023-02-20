@@ -106,7 +106,7 @@ void CCustomDetector::ToggleDetector(bool bFastMode)
             else
             {
                 SwitchState(eShowing);
-                TurnDetectorInternal(true);
+                //TurnDetectorInternal(true);
             }
         }
     }
@@ -126,6 +126,8 @@ void CCustomDetector::OnStateSwitch(u32 S, u32 oldState)
         HUD_SOUND::PlaySound(sndShow, Fvector{}, this, !!GetHUDmode(), false, false);
         PlayHUDMotion({ m_bFastAnimMode ? "anm_show_fast" : "anm_show" }, false, GetState());
         SetPending(TRUE);
+        if (!IsPowerOn())
+            DisableUIDetection();
     }
     break;
     case eHiding:
@@ -162,7 +164,7 @@ void CCustomDetector::OnAnimationEnd(u32 state)
     case eHiding:
     {
         SwitchState(eHidden);
-        TurnDetectorInternal(false);
+        //TurnDetectorInternal(false);
         g_player_hud->detach_item(this);
     }
     break;
@@ -183,13 +185,13 @@ CCustomDetector::~CCustomDetector()
     m_artefacts.destroy();
     m_zones.destroy();
 
-    TurnDetectorInternal(false);
+    Switch(false);
     xr_delete(m_ui);
 }
 
 BOOL CCustomDetector::net_Spawn(CSE_Abstract* DC)
 {
-    TurnDetectorInternal(false);
+    Switch(false);
     return inherited::net_Spawn(DC);
 }
 
@@ -215,7 +217,7 @@ void CCustomDetector::shedule_Update(u32 dt)
 {
     inherited::shedule_Update(dt);
 
-    if (!IsWorking())
+    if (!IsPowerOn())
         return;
 
     Position().set(H_Parent()->Position());
@@ -223,14 +225,13 @@ void CCustomDetector::shedule_Update(u32 dt)
     Fvector P;
     P.set(H_Parent()->Position());
 
-    if (GetCondition() <= 0.01f)
-        return;
-
     m_artefacts.feel_touch_update(P, m_fAfDetectRadius);
     m_zones.feel_touch_update(P, m_fZoneDetectRadius);
 }
 
-bool CCustomDetector::IsWorking() const { return m_bWorking && H_Parent() && H_Parent() == Level().CurrentViewEntity(); }
+bool CCustomDetector::IsPowerOn() const { 
+    return m_bWorking && H_Parent() && H_Parent() == Level().CurrentViewEntity(); 
+}
 
 void CCustomDetector::UpdateWork()
 {
@@ -289,8 +290,9 @@ void CCustomDetector::UpdateCL()
         return;
 
     UpdateVisibility();
-    if (!IsWorking())
+    if (!IsPowerOn()) {
         return;
+    }
     UpdateWork();
 }
 
@@ -306,7 +308,7 @@ void CCustomDetector::OnH_B_Independent(bool just_before_destroy)
     if (GetState() != eHidden)
     {
         // Detaching hud item and animation stop in OnH_A_Independent
-        TurnDetectorInternal(false);
+        Switch(false);
         SwitchState(eHidden);
     }
 }
@@ -314,22 +316,35 @@ void CCustomDetector::OnH_B_Independent(bool just_before_destroy)
 void CCustomDetector::OnMoveToRuck(EItemPlace prevPlace)
 {
     inherited::OnMoveToRuck(prevPlace);
-    if (prevPlace == eItemPlaceSlot)
-    {
+    if (prevPlace == eItemPlaceSlot){
         SwitchState(eHidden);
         g_player_hud->detach_item(this);
     }
-    TurnDetectorInternal(false);
+    Switch(false);
     StopCurrentAnimWithoutCallback();
 }
 
-void CCustomDetector::OnMoveToSlot(EItemPlace prevPlace) { inherited::OnMoveToSlot(prevPlace); }
+void CCustomDetector::OnMoveToSlot(EItemPlace prevPlace) { 
+    inherited::OnMoveToSlot(prevPlace); 
+    Switch(true);
+}
 
-void CCustomDetector::TurnDetectorInternal(bool b)
+void CCustomDetector::OnMoveToBelt(EItemPlace prevPlace) {
+    inherited::OnMoveToBelt(prevPlace);
+    Switch(true);
+}
+
+void CCustomDetector::Switch(bool turn_on)
 {
-    m_bWorking = b;
-    if (b && !m_ui)
+    if (turn_on && !m_ui) 
         CreateUI();
+    if(!turn_on)
+        DisableUIDetection();
+
+    if (turn_on && fis_zero(GetPowerLevel())) return;
+    inherited::Switch(turn_on);
+
+    m_bWorking = turn_on;
 
     UpdateNightVisionMode();
 }
@@ -368,8 +383,8 @@ void CCustomDetector::UpdateNightVisionMode(){
 
     bool bOn = bNightVision &&
         pActor == Level().CurrentViewEntity() &&
-        IsWorking() &&
-        //IsPowerOn() &&
+        IsPowerOn() && 
+        GetHUDmode() && //in hud mode only
         m_nightvision_particle.size();
 
     for (auto& item : m_zones.m_ItemInfos){

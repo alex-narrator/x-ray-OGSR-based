@@ -23,18 +23,17 @@ void CEliteDetector::UpdateAf()
     if (m_artefacts.m_ItemInfos.empty())
         return;
 
-    for (auto& item : m_artefacts.m_ItemInfos)
-    {
-        CArtefact* pAf = item.first;
+    for (auto& item : m_artefacts.m_ItemInfos){
+        auto pAf = item.first;
         if (pAf->H_Parent())
             continue;
 
-        ui().RegisterItemToDraw(pAf->Position(), "af_sign");
+        ui().RegisterItemToDraw(pAf->Position(), AF_SIGN);
         TryMakeArtefactVisible(pAf);
     }
 }
 
-bool CEliteDetector::render_item_3d_ui_query() { return IsWorking() && ui().m_wrk_area != nullptr; }
+bool CEliteDetector::render_item_3d_ui_query() { return IsPowerOn() && ui().m_wrk_area != nullptr; }
 void CEliteDetector::render_item_3d_ui()
 {
     R_ASSERT(HudItemData());
@@ -54,13 +53,8 @@ static void fix_ws_wnd_size(CUIWindow* w, float kx)
     p.x /= kx;
     w->SetWndPos(p);
 
-    auto it = w->GetChildWndList().begin();
-    auto it_e = w->GetChildWndList().end();
-
-    for (; it != it_e; ++it)
-    {
-        CUIWindow* w2 = *it;
-        fix_ws_wnd_size(w2, kx);
+    for (const auto child_wnd : w->GetChildWndList()){
+        fix_ws_wnd_size(child_wnd, kx);
     }
 }
 
@@ -163,11 +157,10 @@ void CUIArtefactDetectorElite::Draw()
 
     UI()->ScreenFrustumLIT().CreateFromRect(Frect().set(rp.x, rp.y, wrk_sz.x, wrk_sz.y));
 
-    auto it = m_items_to_draw.cbegin();
-    auto it_e = m_items_to_draw.cend();
-    for (; it != it_e; ++it)
-    {
-        Fvector p = (*it).pos;
+    //auto it = m_items_to_draw.cbegin();
+    //auto it_e = m_items_to_draw.cend();
+    for (const auto& item : m_items_to_draw){
+        Fvector p = item.pos;
         Fvector pt3d;
         M.transform_tiny(pt3d, p);
         float kz = wrk_sz.y / m_parent->m_fAfDetectRadius;
@@ -182,8 +175,8 @@ void CUIArtefactDetectorElite::Draw()
         pos.sub(rp);
         if (1 /* r.in(pos)*/)
         {
-            (*it).pStatic->SetWndPos(pos);
-            (*it).pStatic->Draw();
+            item.pStatic->SetWndPos(pos);
+            item.pStatic->Draw();
         }
     }
 
@@ -203,8 +196,7 @@ void CUIArtefactDetectorElite::Clear() { m_items_to_draw.clear(); }
 void CUIArtefactDetectorElite::RegisterItemToDraw(const Fvector& p, const shared_str& palette_idx)
 {
     auto it = m_palette.find(palette_idx);
-    if (it == m_palette.end())
-    {
+    if (it == m_palette.end()){
         Msg("! RegisterItemToDraw. static not found for [%s]", palette_idx.c_str());
         return;
     }
@@ -221,7 +213,7 @@ void CScientificDetector::UpdateWork()
     ui().Clear();
 
     for (auto& item : m_artefacts.m_ItemInfos){
-        CArtefact* pAf = item.first;
+        auto pAf = item.first;
         if (pAf->H_Parent())
             continue;
 
@@ -231,7 +223,7 @@ void CScientificDetector::UpdateWork()
     }
 
     for (auto& item : m_zones.m_ItemInfos){
-        CCustomZone* pZone = item.first;
+        auto pZone = item.first;
         ui().RegisterItemToDraw(pZone->Position(), pZone->cNameSect());
     }
 

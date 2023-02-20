@@ -18,4 +18,5 @@ protected:
     CUIArtefactDetectorAdv& ui();
 
     virtual void UpdateZones() override;
+    virtual void DisableUIDetection() override;
 };

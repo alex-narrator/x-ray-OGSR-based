@@ -101,6 +101,13 @@ void CSimpleDetector::UpdateZones() {
 	}
 }
 
+void CSimpleDetector::DisableUIDetection() {
+	if (m_ui) {
+		ui().update();
+		ui().Flash(false, 0.f);
+	}
+}
+
 void CUIArtefactDetectorSimple::construct(CSimpleDetector* p)
 {
 	m_parent = p;

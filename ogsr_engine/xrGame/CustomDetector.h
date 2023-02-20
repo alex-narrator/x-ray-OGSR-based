@@ -161,10 +161,12 @@ public:
     virtual void shedule_Update(u32 dt) override;
     virtual void UpdateCL() override;
 
-    bool IsWorking() const;
+    virtual bool IsPowerOn() const;
+    virtual	void Switch(bool);
 
     virtual void OnMoveToSlot(EItemPlace prevPlace) override;
     virtual void OnMoveToRuck(EItemPlace prevPlace) override;
+    virtual void OnMoveToBelt(EItemPlace prevPlace) override;
 
     virtual void OnActiveItem() override;
     virtual void OnHiddenItem() override;
@@ -175,14 +177,14 @@ public:
     void ToggleDetector(bool bFastMode);
     void HideDetector(bool bFastMode);
     void ShowDetector(bool bFastMode);
-    float m_fAfDetectRadius;
-    float m_fZoneDetectRadius;
+    float m_fAfDetectRadius{};
+    float m_fZoneDetectRadius{};
     virtual bool CheckCompatibility(CHudItem* itm) override;
 
     virtual u32 ef_detector_type() const  override { return 1; }
 protected:
     bool CheckCompatibilityInt(CHudItem* itm, u16* slot_to_activate);
-    void TurnDetectorInternal(bool b);
+    //void TurnDetectorInternal(bool b);
     //void UpdateNightVisionMode(bool b_off);
     void UpdateVisibility();
     virtual void UpdateWork();
@@ -193,9 +195,11 @@ protected:
     virtual void UpdateZones() {}
     virtual void UpdateNightVisionMode();
 
-    bool m_bWorking;
-    float m_fAfVisRadius;
-    float m_fDecayRate; //Alundaio
+    virtual void DisableUIDetection() {};
+
+    bool m_bWorking{};
+    float m_fAfVisRadius{};
+    float m_fDecayRate{}; //Alundaio
     CAfList m_artefacts;
     CZoneList m_zones;
 
