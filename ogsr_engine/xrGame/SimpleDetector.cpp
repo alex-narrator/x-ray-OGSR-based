@@ -78,7 +78,7 @@ void CSimpleDetector::UpdateZones() {
 		if (dist < 0.f)
 			dist = 0.f;
 
-		float fRelPow = (dist / m_fAfDetectRadius);
+		float fRelPow = (dist / m_fZoneDetectRadius);
 		clamp(fRelPow, 0.f, 1.f);
 
 		//current sound frequency

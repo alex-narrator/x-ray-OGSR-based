@@ -96,7 +96,7 @@ void CAdvancedDetector::UpdateZones() {
 			pNearestZone = item.first;
 		}
 
-		float fRelPow = (dist / m_fAfDetectRadius);
+		float fRelPow = (dist / m_fZoneDetectRadius);
 		clamp(fRelPow, 0.f, 1.f);
 
 		//current sound frequency

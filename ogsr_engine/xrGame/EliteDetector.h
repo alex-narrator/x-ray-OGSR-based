@@ -18,6 +18,8 @@ protected:
     virtual void UpdateAf() override;
     virtual void CreateUI() override;
     CUIArtefactDetectorElite& ui();
+
+    virtual void UpdateZones() override;
 };
 
 class CScientificDetector : public CEliteDetector
