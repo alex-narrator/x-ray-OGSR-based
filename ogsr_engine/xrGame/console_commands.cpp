@@ -862,14 +862,24 @@ public:
 		if (!g_pGameLevel)
 			return;
 
-		if (!pSettings->section_exist(args))
+		string256 section{};
+		u32 count{1}, to_inv{};
+		sscanf(args, "%s %d %d", &section, &count, &to_inv);
+
+		if (!pSettings->section_exist(section))
 		{
-			Msg("! Can't find section: %s", args);
+			Msg("! Can't find section: %s", section);
 			return;
 		}
 
-		if (auto tpGame = smart_cast<game_sv_Single*>(Level().Server->game))
-			tpGame->alife().spawn_item(args, Actor()->Position(), Actor()->ai_location().level_vertex_id(), Actor()->ai_location().game_vertex_id(), ALife::_OBJECT_ID(-1));
+		if (auto tpGame = smart_cast<game_sv_Single*>(Level().Server->game)) {
+			for (int i = 0; i < count; ++i) {
+				if(to_inv)
+					Level().spawn_item(section, Actor()->Position(), false, Actor()->ID());
+				else
+					tpGame->alife().spawn_item(section, Actor()->Position(), Actor()->ai_location().level_vertex_id(), Actor()->ai_location().game_vertex_id(), ALife::_OBJECT_ID(-1));
+			}
+		}
 	}
 };
 //#endif // MASTER_GOLD
