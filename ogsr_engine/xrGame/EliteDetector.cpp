@@ -46,7 +46,7 @@ void CEliteDetector::UpdateAf()
 
     float dist = min_dist;
 
-    float fRelPow = (dist / m_fAfDetectRadius);
+    float fRelPow = (dist / m_fDetectRadius);
     clamp(fRelPow, 0.f, 1.f);
 
     //определить текущую частоту срабатывания сигнала
@@ -86,7 +86,7 @@ void CEliteDetector::UpdateZones() {
         if (dist < 0.f)
             dist = 0.f;
 
-        float fRelPow = (dist / m_fZoneDetectRadius);
+        float fRelPow = (dist / m_fDetectRadius);
         clamp(fRelPow, 0.f, 1.f);
 
         //current sound frequency
@@ -105,6 +105,12 @@ void CEliteDetector::UpdateZones() {
         }
         else
             zone_info.snd_time += Device.fTimeDelta;
+    }
+}
+
+void CEliteDetector::DisableUIDetection() {
+    if (m_ui) {
+        ui().Clear();
     }
 }
 
@@ -232,11 +238,11 @@ void CUIArtefactDetectorElite::Draw()
 
     UI()->ScreenFrustumLIT().CreateFromRect(Frect().set(rp.x, rp.y, wrk_sz.x, wrk_sz.y));
 
-    for (const auto& item : m_items_to_draw){
+    for (auto& item : m_items_to_draw){
         Fvector p = item.pos;
         Fvector pt3d;
         M.transform_tiny(pt3d, p);
-        float kz = wrk_sz.y / m_parent->m_fAfDetectRadius;
+        float kz = wrk_sz.y / m_parent->m_fDetectRadius;
         pt3d.x *= kz;
         pt3d.z *= kz;
 
@@ -250,6 +256,7 @@ void CUIArtefactDetectorElite::Draw()
         {
             item.pStatic->SetWndPos(pos);
             item.pStatic->Draw();
+            Msg("%s pos.x [%.4f] pos.y [%.4f]", __FUNCTION__, item.pStatic->GetWndPos().x, item.pStatic->GetWndPos().y);
         }
     }
 

@@ -1871,7 +1871,7 @@ bool CActor::unlimited_ammo()
 
 bool CActor::IsDetectorActive() const {
 	if (auto det = smart_cast<CCustomDetector*>(inventory().ItemFromSlot(DETECTOR_SLOT)))
-		return det->IsPowerOn();
+		return det->IsPowerOn() && det->GetHUDmode();
 
 	return false;
 }

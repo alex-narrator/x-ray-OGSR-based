@@ -40,7 +40,7 @@ void CAdvancedDetector::UpdateAf() {
 	CArtefact* pCurrentAf = it->first;
 
 	float dist = min_dist;
-	float fRelPow = (dist / m_fAfDetectRadius);
+	float fRelPow = (dist / m_fDetectRadius);
 	clamp(fRelPow, 0.f, 1.f);
 
 	// sounds
@@ -96,7 +96,7 @@ void CAdvancedDetector::UpdateZones() {
 			pNearestZone = item.first;
 		}
 
-		float fRelPow = (dist / m_fZoneDetectRadius);
+		float fRelPow = (dist / m_fDetectRadius);
 		clamp(fRelPow, 0.f, 1.f);
 
 		//current sound frequency

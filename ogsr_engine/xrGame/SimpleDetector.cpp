@@ -39,7 +39,7 @@ void CSimpleDetector::UpdateAf() {
 
 	float dist = min_dist;
 
-	float fRelPow = (dist / m_fAfDetectRadius);
+	float fRelPow = (dist / m_fDetectRadius);
 	clamp(fRelPow, 0.f, 1.f);
 
 	//определить текущую частоту срабатывания сигнала
@@ -78,7 +78,7 @@ void CSimpleDetector::UpdateZones() {
 		if (dist < 0.f)
 			dist = 0.f;
 
-		float fRelPow = (dist / m_fZoneDetectRadius);
+		float fRelPow = (dist / m_fDetectRadius);
 		clamp(fRelPow, 0.f, 1.f);
 
 		//current sound frequency

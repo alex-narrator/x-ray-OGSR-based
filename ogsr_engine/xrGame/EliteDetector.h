@@ -20,6 +20,7 @@ protected:
     CUIArtefactDetectorElite& ui();
 
     virtual void UpdateZones() override;
+    virtual void DisableUIDetection() override;
 };
 
 class CScientificDetector : public CEliteDetector

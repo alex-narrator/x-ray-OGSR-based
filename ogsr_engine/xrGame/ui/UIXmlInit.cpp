@@ -179,15 +179,14 @@ bool CUIXmlInit::InitOptionsItem(CUIXml& xml_doc, const char* paht, int index, C
 }
 
 
-bool CUIXmlInit::InitStatic(CUIXml& xml_doc, LPCSTR path, 
-									int index, CUIStatic* pWnd)
+bool CUIXmlInit::InitStatic(CUIXml& xml_doc, LPCSTR path, int index, CUIStatic* pWnd)
 {
 	R_ASSERT3(xml_doc.NavigateToNode(path,index), "XML node not found", path);
 
 	InitWindow			(xml_doc, path, index, pWnd);
 	InitMultiText		(xml_doc, path, index, pWnd);
 	InitTexture			(xml_doc, path, index, pWnd);
-	InitTextureOffset	(xml_doc,path,index,pWnd);
+	InitTextureOffset	(xml_doc, path, index, pWnd);
 
 	pWnd->EnableHeading(!!xml_doc.ReadAttribInt(path, index, "heading", 0));
 
@@ -731,7 +730,7 @@ CUIXmlInit::StaticsVec CUIXmlInit::InitAutoStaticGroup(CUIXml& xml_doc, LPCSTR p
 	{
 		pUIStatic						= xr_new<CUIStatic>();
 		InitStatic						(xml_doc, "auto_static", i, pUIStatic);
-		sprintf_s							(sname,"auto_static_%d", i);
+		sprintf_s						(sname, "auto_static_%d", i);
 		pUIStatic->SetWindowName		(sname);
 		pUIStatic->SetAutoDelete		(true);
 		pParentWnd->AttachChild			(pUIStatic);
@@ -1103,15 +1102,19 @@ bool CUIXmlInit::InitAnimatedStatic(CUIXml &xml_doc, const char *path, int index
 
 bool CUIXmlInit::InitTexture(CUIXml& xml_doc, const char* path, int index, IUIMultiTextureOwner* pWnd){
 	string256 buf;	
-	shared_str texture;
+	shared_str texture, shader;
 
 	strconcat(sizeof(buf),buf, path, ":texture");
-	if (xml_doc.NavigateToNode(buf))
+	if (xml_doc.NavigateToNode(buf)) {
 		texture = xml_doc.Read(buf, index, NULL);
+		shader = xml_doc.ReadAttrib(buf, index, "shader", NULL);
+	}
 
-	if (!!texture)
-	{
-        pWnd->InitTexture(*texture);
+	if (!!texture){
+		if (!!shader)
+			smart_cast<IUISingleTextureOwner*>(pWnd)->InitTextureEx(texture.c_str(), shader.c_str());
+		else
+			pWnd->InitTexture(texture.c_str());
 		return true;
 	}
 

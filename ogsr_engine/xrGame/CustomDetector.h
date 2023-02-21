@@ -177,8 +177,7 @@ public:
     void ToggleDetector(bool bFastMode);
     void HideDetector(bool bFastMode);
     void ShowDetector(bool bFastMode);
-    float m_fAfDetectRadius{};
-    float m_fZoneDetectRadius{};
+    float m_fDetectRadius{};
     virtual bool CheckCompatibility(CHudItem* itm) override;
 
     virtual u32 ef_detector_type() const  override { return 1; }
