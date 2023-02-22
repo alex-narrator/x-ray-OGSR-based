@@ -1560,7 +1560,7 @@
     <ClInclude Include="ui\UIEncyclopediaWnd.h" />
     <ClInclude Include="ui\UINewsItemWnd.h" />
     <ClInclude Include="ui\UINewsWnd.h" />
-    <ClInclude Include="ui\UIArtefactPanel.h" />
+    <ClInclude Include="ui\UIPanels.h" />
     <ClInclude Include="ui\UICarPanel.h" />
     <ClInclude Include="ui\UIMainIngameWnd.h" />
     <ClInclude Include="ui\UIMessagesWindow.h" />
@@ -2507,7 +2507,7 @@
     <ClCompile Include="ui\UIEncyclopediaWnd.cpp" />
     <ClCompile Include="ui\UINewsItemWnd.cpp" />
     <ClCompile Include="ui\UINewsWnd.cpp" />
-    <ClCompile Include="ui\UIArtefactPanel.cpp" />
+    <ClCompile Include="ui\UIPanels.cpp" />
     <ClCompile Include="ui\UICarPanel.cpp" />
     <ClCompile Include="ui\UIMainIngameWnd.cpp" />
     <ClCompile Include="ui\UIMessagesWindow.cpp" />

@@ -167,6 +167,7 @@ public:
     virtual void OnMoveToSlot(EItemPlace prevPlace) override;
     virtual void OnMoveToRuck(EItemPlace prevPlace) override;
     virtual void OnMoveToBelt(EItemPlace prevPlace) override;
+    virtual void OnMoveToVest(EItemPlace prevPlace) override;
 
     virtual void OnActiveItem() override;
     virtual void OnHiddenItem() override;

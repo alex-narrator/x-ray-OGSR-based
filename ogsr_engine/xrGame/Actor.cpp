@@ -59,7 +59,7 @@
 #include "material_manager.h"
 #include "IColisiondamageInfo.h"
 #include "ui/UIMainIngameWnd.h"
-#include "ui/UIArtefactPanel.h"
+#include "ui/UIPanels.h"
 #include "map_manager.h"
 #include "GameTaskManager.h"
 #include "actor_memory.h"
@@ -1347,9 +1347,7 @@ void CActor::OnItemTake			(CInventoryItem *inventory_item)
 void CActor::OnItemDrop			(CInventoryItem *inventory_item)
 {
 	CInventoryOwner::OnItemDrop(inventory_item);
-
-	if ( inventory_item->m_eItemPlace == eItemPlaceBelt )
-		UpdateArtefactPanel();
+	UpdateUIPanels(inventory_item->m_eItemPlace);
 }
 
 
@@ -1366,67 +1364,43 @@ void CActor::OnItemDropUpdate ()
 
 void CActor::OnItemRuck		(CInventoryItem *inventory_item, EItemPlace previous_place){
 	CInventoryOwner::OnItemRuck(inventory_item, previous_place);
-
-	if (previous_place == eItemPlaceBelt)
-		UpdateArtefactPanel();
-	else if (previous_place == eItemPlaceSlot) {
-		UpdateSlotPanel();
-	}
-	else if (previous_place == eItemPlaceVest) {
-		UpdateVestPanel();
-	}
+	UpdateUIPanels(previous_place);
 }
 void CActor::OnItemBelt		(CInventoryItem *inventory_item, EItemPlace previous_place){
 	CInventoryOwner::OnItemBelt(inventory_item, previous_place);
-
-	UpdateArtefactPanel();
-	if (previous_place == eItemPlaceSlot) {
-		UpdateSlotPanel();
-	}
-	else if (previous_place == eItemPlaceVest) {
-		UpdateVestPanel();
-	}
+	UpdateUIPanels(previous_place);
 }
 void CActor::OnItemVest(CInventoryItem* inventory_item, EItemPlace previous_place) {
 	CInventoryOwner::OnItemVest(inventory_item, previous_place);
-
-	UpdateVestPanel();
-	if (previous_place == eItemPlaceSlot) {
-		UpdateSlotPanel();
-	}
-	else if (previous_place == eItemPlaceBelt) {
-		UpdateArtefactPanel();
-	}
+	UpdateUIPanels(previous_place);
 }
 
 void CActor::OnItemSlot(CInventoryItem* inventory_item, EItemPlace previous_place){
 	CInventoryOwner::OnItemSlot(inventory_item, previous_place);
-
-	UpdateSlotPanel();
-	if (previous_place == eItemPlaceBelt) {
-		UpdateArtefactPanel();
-	}
-	else if (previous_place == eItemPlaceVest) {
-		UpdateVestPanel();
-	}
+	UpdateUIPanels(previous_place);
 }
 
-
-void CActor::UpdateArtefactPanel(){
-	if (Level().CurrentViewEntity() && Level().CurrentViewEntity() == this) { //Оно надо вообще без мультиплеера?
-		HUD().GetUI()->UIMainIngameWnd->m_artefactPanel->Update();
-	}
-}
-
-void CActor::UpdateSlotPanel() {
-	if (Level().CurrentViewEntity() && Level().CurrentViewEntity() == this) { //Оно надо вообще без мультиплеера?
-		HUD().GetUI()->UIMainIngameWnd->m_slotPanel->Update();
-	}
-}
-
-void CActor::UpdateVestPanel() {
-	if (Level().CurrentViewEntity() && Level().CurrentViewEntity() == this) { //Оно надо вообще без мультиплеера?
-		HUD().GetUI()->UIMainIngameWnd->m_vestPanel->Update();
+void CActor::UpdateUIPanels(int place) {
+	auto main_wnd = HUD().GetUI()->UIMainIngameWnd;
+	switch (place)
+	{
+	case eItemPlaceUndefined:
+		main_wnd->m_slotPanel->Update();
+		main_wnd->m_beltPanel->Update();
+		main_wnd->m_vestPanel->Update();
+		break;
+	case eItemPlaceSlot:
+		main_wnd->m_slotPanel->Update();
+		break;
+	case eItemPlaceBelt:
+		main_wnd->m_beltPanel->Update();
+		break;
+	case eItemPlaceVest:
+		main_wnd->m_vestPanel->Update();
+		break;
+	default:
+		Msg("Unknown place %d for %s", place, __FUNCTION__);
+		break;
 	}
 }
 

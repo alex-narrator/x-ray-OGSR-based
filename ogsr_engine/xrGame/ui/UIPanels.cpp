@@ -1,5 +1,5 @@
 #include "StdAfx.h"
-#include "UIArtefactPanel.h"
+#include "UIPanels.h"
 #include "UIInventoryUtilities.h"
 #include "UIXmlInit.h"
 #include "inventory_item.h"
@@ -33,7 +33,7 @@ void TryAddToShowList(TIItemContainer& list, PIItem item, bool group) {
 		list.push_back(item);
 }
 
-void CUIArtefactPanel::InitFromXML	(CUIXml& xml, LPCSTR path, int index){
+void CUIBeltPanel::InitFromXML	(CUIXml& xml, LPCSTR path, int index){
 	CUIXmlInit::InitWindow		(xml, path, index, this);
 	m_cell_size.x				= xml.ReadAttribFlt(path, index, "cell_width");
 	m_cell_size.y				= xml.ReadAttribFlt(path, index, "cell_height");
@@ -43,7 +43,7 @@ void CUIArtefactPanel::InitFromXML	(CUIXml& xml, LPCSTR path, int index){
 	m_counter_offset.y			= xml.ReadAttribFlt(path, index, "counter_y", 0);
 }
 
-void CUIArtefactPanel::Update(){
+void CUIBeltPanel::Update(){
 	m_si.SetShader(InventoryUtilities::GetEquipmentIconsShader());
 	m_vRects.clear();
 	m_count.clear();
@@ -67,7 +67,7 @@ void CUIArtefactPanel::Update(){
 	}
 }
 
-void CUIArtefactPanel::Draw(){
+void CUIBeltPanel::Draw(){
 	const float iIndent = 1.0f;
 	      float x{};
 		  float y{};

@@ -20,7 +20,7 @@ struct					GAME_NEWS_DATA;
 class					CUIPdaMsgListItem;
 class					CLAItem;
 class					CUIZoneMap;
-class					CUIArtefactPanel;
+class					CUIBeltPanel;
 class					CUISlotPanel;
 class					CUIVestPanel;
 class					CUIScrollView;
@@ -105,9 +105,9 @@ protected:
 
 	CUIScrollView*		m_UIIcons{};
 public:	
-	CUIArtefactPanel*		m_artefactPanel;
-	CUISlotPanel*			m_slotPanel;
-	CUIVestPanel*			m_vestPanel;
+	CUIBeltPanel*		m_beltPanel;
+	CUISlotPanel*		m_slotPanel;
+	CUIVestPanel*		m_vestPanel;
 	
 public:
 	

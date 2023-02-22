@@ -252,7 +252,7 @@ void CUIArtefactDetectorElite::Draw()
         Fvector2 pos{};
         pos.set(pt3d.x, -pt3d.z);
         pos.sub(rp);
-        if (1 /* r.in(pos)*/)
+        //if (1 /* r.in(pos)*/)
         {
             item.pStatic->SetWndPos(pos);
             item.pStatic->Draw();

@@ -1456,7 +1456,7 @@ void CInventory::RestoreBeltOrder() {
   );
 
   if ( auto pActor = smart_cast<CActor*>( m_pOwner ) )
-    pActor->UpdateArtefactPanel();
+    pActor->UpdateUIPanels(eItemPlaceBelt);
 }
 
 

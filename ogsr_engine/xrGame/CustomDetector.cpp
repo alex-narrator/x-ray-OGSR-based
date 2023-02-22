@@ -333,6 +333,11 @@ void CCustomDetector::OnMoveToBelt(EItemPlace prevPlace) {
     Switch(true);
 }
 
+void CCustomDetector::OnMoveToVest(EItemPlace prevPlace) {
+    inherited::OnMoveToVest(prevPlace);
+    Switch(true);
+}
+
 void CCustomDetector::Switch(bool turn_on)
 {
     if (turn_on && !m_ui) 

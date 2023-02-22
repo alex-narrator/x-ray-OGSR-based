@@ -5,11 +5,11 @@
 
 class CUIXml;
 //artefact panel
-class CUIArtefactPanel : public CUIWindow
+class CUIBeltPanel : public CUIWindow
 {
 public:
-	CUIArtefactPanel() = default;
-	~CUIArtefactPanel() = default;
+	CUIBeltPanel() = default;
+	~CUIBeltPanel() = default;
 
 	virtual void Update			();
 	virtual void Draw			();

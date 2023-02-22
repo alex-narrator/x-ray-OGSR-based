@@ -214,9 +214,7 @@ public:
 
 	virtual float		GetArtefactsProtection	(int);
 
-	virtual void		UpdateArtefactPanel	();
-	virtual void		UpdateSlotPanel		();
-	virtual void		UpdateVestPanel		();
+	virtual void		UpdateUIPanels(int place = eItemPlaceUndefined);
 protected:
 	//звук тяжелого дыхания
 	ref_sound			m_HeavyBreathSnd;

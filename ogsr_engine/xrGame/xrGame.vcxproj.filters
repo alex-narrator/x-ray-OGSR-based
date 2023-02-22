@@ -5358,7 +5358,7 @@
     <ClInclude Include="ui\UINewsWnd.h">
       <Filter>AI\AScript\ScriptClasses\UI\Common\Diary</Filter>
     </ClInclude>
-    <ClInclude Include="ui\UIArtefactPanel.h">
+    <ClInclude Include="ui\UIPanels.h">
       <Filter>AI\AScript\ScriptClasses\UI\Common\MainIngame</Filter>
     </ClInclude>
     <ClInclude Include="ui\UICarPanel.h">
@@ -8500,7 +8500,7 @@
     <ClCompile Include="ui\UINewsWnd.cpp">
       <Filter>AI\AScript\ScriptClasses\UI\Common\Diary</Filter>
     </ClCompile>
-    <ClCompile Include="ui\UIArtefactPanel.cpp">
+    <ClCompile Include="ui\UIPanels.cpp">
       <Filter>AI\AScript\ScriptClasses\UI\Common\MainIngame</Filter>
     </ClCompile>
     <ClCompile Include="ui\UICarPanel.cpp">
