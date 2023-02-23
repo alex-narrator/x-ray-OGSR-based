@@ -1398,9 +1398,6 @@ void CActor::UpdateUIPanels(int place) {
 	case eItemPlaceVest:
 		main_wnd->m_vestPanel->Update();
 		break;
-	default:
-		Msg("Unknown place %d for %s", place, __FUNCTION__);
-		break;
 	}
 }
 
