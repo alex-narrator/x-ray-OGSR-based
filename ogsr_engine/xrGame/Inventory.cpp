@@ -17,7 +17,6 @@
 #include "game_base_space.h"
 #include "clsid_game.h"
 #include "CustomOutfit.h"
-#include "Warbelt.h"
 #include "Vest.h"
 #include "HudItem.h"
 #include "Grenade.h"
@@ -963,7 +962,7 @@ PIItem CInventory::GetAny(const char *name) const
 
 PIItem CInventory::GetAmmo(const char *name, bool forActor) const
 {
-	bool include_ruck = !forActor || !psActorFlags.test(AF_ITEMS_FROM_BELT) || Actor()->IsRuckAmmoPlacement();
+	bool include_ruck = !forActor || Actor()->IsRuckAmmoPlacement();
 
 	PIItem itm = Get(name, include_ruck);
 	if (!include_ruck && !itm)
@@ -1175,7 +1174,6 @@ bool CInventory::CanPutInBelt(PIItem pIItem) const
 	if (pActor && !pActor->GetWarbelt())		return false;
 	if (!InVest(pIItem) && HasSameModuleEquiped(pIItem))
 		return false;
-//	if (m_belt.size() >= BeltWidth() * BeltHeight())return false;
 	auto belt = static_cast<TIItemContainer>(m_belt);
 
 	return FreeRoom_inBelt(belt, pIItem, BeltWidth(), BeltHeight());
@@ -1191,7 +1189,6 @@ bool CInventory::CanPutInVest(PIItem pIItem) const
 	if (pActor && !pActor->GetVest())			return false;
 	if (!InBelt(pIItem) && HasSameModuleEquiped(pIItem))			
 		return false;
-//	if (m_vest.size() >= VestWidth() * VestHeight())return false;
 	auto vest = static_cast<TIItemContainer>(m_vest);
 
 	return FreeRoom_inVest(vest, pIItem, VestWidth(), VestHeight());
@@ -1434,7 +1431,7 @@ PIItem CInventory::GetAmmoByLimit(const char* name, bool forActor, bool limit_ma
 		return false;
 	};
 
-	bool include_ruck = !forActor || !psActorFlags.test(AF_ITEMS_FROM_BELT) || Actor()->IsRuckAmmoPlacement();
+	bool include_ruck = !forActor || Actor()->IsRuckAmmoPlacement();
 
 	IterateAmmo(include_ruck, callback);
 
@@ -1467,43 +1464,14 @@ bool CInventory::IsActiveSlotBlocked() const {
 	return true;
 }
 
-bool CInventory::IsFreeHands()
-{
-	const auto active_hud_item = smart_cast<CHudItem*>(ActiveItem());
-
-	switch (g_eFreeHands)
-	{
-	case eFreeHandsOff:
-		return true;
-		break;
-	case eFreeHandsAuto:
-		if (active_hud_item && active_hud_item->IsPending())
-			return false;
-		break;
-	case eFreeHandsManual:
-		if (active_hud_item && (active_hud_item->IsPending() || !ActiveItem()->IsSingleHanded()))
-			return false;
-		break;
-	}
-	return true;
-}
-
-void CInventory::TryToHideWeapon(bool b_hide_state, bool b_save_prev_slot)
-{
-	if (g_eFreeHands == eFreeHandsOff) return;
-
-	if (b_hide_state)
-	{
-		if (ActiveItem() && !ActiveItem()->IsSingleHanded())
-		{
+void CInventory::TryToHideWeapon(bool b_hide_state, bool b_save_prev_slot){
+	if (b_hide_state){
+		if (ActiveItem() && !ActiveItem()->IsSingleHanded()){
 			m_iPrevActiveSlot = b_save_prev_slot ? GetActiveSlot() : NO_ACTIVE_SLOT;
 			Activate(NO_ACTIVE_SLOT);
 		}
-	}
-	else
-	{
-		if (m_iPrevActiveSlot != NO_ACTIVE_SLOT)
-		{
+	}else{
+		if (m_iPrevActiveSlot != NO_ACTIVE_SLOT){
 			Activate(m_iPrevActiveSlot);
 			m_iPrevActiveSlot = NO_ACTIVE_SLOT;
 		}
@@ -1601,26 +1569,19 @@ void CInventory::TryAmmoCustomPlacement(CInventoryItem* pIItem)
 
 	//Msg("ammo [%s] with ID [%d] has taken", pIItem->object().cNameSect().c_str(), pIItem->object().ID());
 
-	if (psActorFlags.test(AF_ITEMS_FROM_BELT) && pWeapon->IsAmmoWasSpawned() && !pActor->IsRuckAmmoPlacement()) { //если включены патроны с пояса, то для боеприпасов актора, которые спавнятся при разрядке
-		//auto pWarbelt	= pActor->GetWarbelt();
-		//auto pVest		= pActor->GetVest();
-//		bool b_has_drop_pouch = pWarbelt && pWarbelt->HasDropPouch() || pVest && pVest->HasDropPouch();
-
+	if (pWeapon->IsAmmoWasSpawned() && !pActor->IsRuckAmmoPlacement()) { //если включены патроны с пояса, то для боеприпасов актора, которые спавнятся при разрядке
 		if (pAmmo->IsBoxReloadableEmpty() && HasDropPouch()) //якщо пустий магазин та є сумка для скидання - кладемо до рюкзаку
 			return;
-
 		if (CanPutInVest(pAmmo)){  //спробуємо до розгрузки
-			//Msg("ammo [%s] with ID [%d] was placed to belt", pIItem->object().cNameSect().c_str(), pIItem->object().ID());
+			//Msg("ammo [%s] with ID [%d] was placed to vest", pIItem->object().cNameSect().c_str(), pIItem->object().ID());
 			pAmmo->m_eItemPlace = eItemPlaceVest;
 		}
 		else if (CanPutInBelt(pAmmo)) {  //спробуємо до поясу
 			//Msg("ammo [%s] with ID [%d] was placed to vest", pIItem->object().cNameSect().c_str(), pIItem->object().ID());
 			pAmmo->m_eItemPlace = eItemPlaceBelt;
 		}else{ //попробуем определить свободный слот и положить в него
-			auto& slots = pAmmo->GetSlots();
-			for (u8 i = 0; i < (u8)slots.size(); ++i){
-				pAmmo->SetSlot(slots[i]);
-
+			for (const auto& slot : pAmmo->GetSlots()){
+				pAmmo->SetSlot(slot);
 				if (CanPutInSlot(pAmmo)){
 					//Msg("ammo [%s] with ID [%d] was placed to slot [%d]", pIItem->object().cNameSect().c_str(), pIItem->object().ID(), pIItem->GetSlot());
 					pAmmo->m_eItemPlace = eItemPlaceSlot;
@@ -1628,7 +1589,6 @@ void CInventory::TryAmmoCustomPlacement(CInventoryItem* pIItem)
 				}
 			}
 		}
-
 		if (!CanPutInBelt(pAmmo) && !CanPutInVest(pAmmo) && !CanPutInSlot(pAmmo) && !HasDropPouch()) //нікуди не вміщається та немає сумки для скидання - кидаємо на землю
 			pAmmo->SetDropManual(TRUE);
 	}
@@ -1638,45 +1598,41 @@ void CInventory::TryAmmoCustomPlacement(CInventoryItem* pIItem)
 u32  CInventory::BeltWidth() const{
 	auto pActor = smart_cast<CActor*>(m_pOwner);
 	if (pActor){
-		auto warbelt = pActor->GetWarbelt();
-		if(warbelt){
+		if(auto warbelt = pActor->GetWarbelt()){
 			return warbelt->GetBeltWidth();
 		}
 	}
-	return 0; //m_iMaxBeltWidth;
+	return 0;
 }
 
 u32  CInventory::BeltHeight() const {
 	auto pActor = smart_cast<CActor*>(m_pOwner);
 	if (pActor) {
-		auto warbelt = pActor->GetWarbelt();
-		if (warbelt) {
+		if (auto warbelt = pActor->GetWarbelt()) {
 			return warbelt->GetBeltHeight();
 		}
 	}
-	return 0; //m_iMaxBeltWidth;
+	return 0;
 }
 
 u32  CInventory::VestWidth() const {
 	auto pActor = smart_cast<CActor*>(m_pOwner);
 	if (pActor) {
-		auto vest = pActor->GetVest();
-		if (vest) {
+		if (auto vest = pActor->GetVest()) {
 			return vest->GetVestWidth();
 		}
 	}
-	return 0; //m_iMaxBeltWidth;
+	return 0;
 }
 
 u32  CInventory::VestHeight() const {
 	auto pActor = smart_cast<CActor*>(m_pOwner);
 	if (pActor) {
-		auto vest = pActor->GetVest();
-		if (vest) {
+		if (auto vest = pActor->GetVest()) {
 			return vest->GetVestHeight();
 		}
 	}
-	return 0; //m_iMaxBeltWidth;
+	return 0;
 }
 
 bool CInventory::IsAllItemsLoaded() const {
@@ -1763,31 +1719,23 @@ void CInventory::UpdateVolumeDropOut()
 	}
 }
 
-bool CInventory::IsSlotAllowed(u32 slot) const
-{
+bool CInventory::IsSlotAllowed(u32 slot) const{
 	auto pActor = smart_cast<CActor*>(m_pOwner);
 	if (!pActor || !IsAllItemsLoaded()) 
 		return true;
-
-	auto outfit		= pActor->GetOutfit();
-	//auto warbelt	= pActor->GetWarbelt();
-	//auto vest		= pActor->GetVest();
+	auto outfit = pActor->GetOutfit();
 	switch (slot)
 	{
 	case KNIFE_SLOT:
 	case HOLSTER_SLOT:
 	case GRENADE_SLOT:
 	case ARTEFACT_SLOT:
-		return HasModuleForSlot(slot);//(warbelt && warbelt->SlotAllowed(slot));
+		return HasModuleForSlot(slot);
 	break;
-	//case GRENADE_SLOT:
-	//	return (warbelt && warbelt->SlotAllowed(slot) || vest && vest->SlotAllowed(slot));
-	//break;
 	case HELMET_SLOT:
 		return (!outfit || !outfit->m_bIsHelmetBuiltIn);
 	break;
 	}
-
 	return true;
 }
 

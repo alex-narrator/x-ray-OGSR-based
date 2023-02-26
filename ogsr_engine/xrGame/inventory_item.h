@@ -174,7 +174,6 @@ public:
 			float				GetKillMsgHeight	() const ;
 	//---------------------------------------------------------------------
 			float				GetCondition		() const					{return m_fCondition;}
-	virtual	float				GetConditionToShow	() const					{return GetCondition();}
 			void				ChangeCondition		(float fDeltaCondition);
 	virtual	void				SetCondition	    (float fNewCondition) { m_fCondition = fNewCondition; ChangeCondition(0.0f); }		
 

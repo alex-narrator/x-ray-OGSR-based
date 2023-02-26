@@ -14,6 +14,6 @@ class CBottleItem: public CFoodItem
 private:
     typedef	CFoodItem inherited;
 public:
-	CBottleItem(void);
-	virtual ~CBottleItem(void);
+	CBottleItem(void) {};
+	virtual ~CBottleItem(void) {};
 };

@@ -455,14 +455,10 @@ void CUIInventoryWnd::Show()
 
 	m_b_need_update_stats = true;
 
-	if (Actor()){
-		if (g_eFreeHands != eFreeHandsOff) {
-			Actor()->SetWeaponHideState(INV_STATE_INV_WND, true);
-		}
-		if (psActorFlags.test(AF_ITEMS_FROM_BELT)) {
-			Actor()->SetRuckAmmoPlacement(true); //установим флаг перезарядки из рюкзака
-		}
-		Actor()->RepackAmmo();
+	if (const auto& actor = Actor()){
+		actor->SetWeaponHideState(INV_STATE_INV_WND, true);
+		actor->SetRuckAmmoPlacement(true); //установим флаг перезарядки из рюкзака
+		actor->RepackAmmo();
 	}
 }
 
@@ -475,7 +471,7 @@ void CUIInventoryWnd::Hide()
 	ClearAllLists						();
 
 	//достать вещь в активный слот
-	CActor *pActor = smart_cast<CActor*>(Level().CurrentEntity());
+	auto pActor = smart_cast<CActor*>(Level().CurrentEntity());
 	if(pActor && m_iCurrentActiveSlot != NO_ACTIVE_SLOT && 
 		pActor->inventory().m_slots[m_iCurrentActiveSlot].m_pIItem)
 	{
@@ -484,12 +480,8 @@ void CUIInventoryWnd::Hide()
 	}
 
 	if (pActor){
-		if (g_eFreeHands != eFreeHandsOff) {
-			pActor->SetWeaponHideState(INV_STATE_INV_WND, false);
-		}
-		if (psActorFlags.test(AF_ITEMS_FROM_BELT)) {
-			pActor->SetRuckAmmoPlacement(false); //сбросим флаг перезарядки из рюкзака
-		}
+		pActor->SetWeaponHideState(INV_STATE_INV_WND, false);
+		pActor->SetRuckAmmoPlacement(false); //сбросим флаг перезарядки из рюкзака
 	}
 
 	HideSlotsHighlight();

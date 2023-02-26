@@ -22,8 +22,8 @@
 #include "SleepEffector.h"
 #include "character_info.h"
 #include "CustomOutfit.h"
-#include "Warbelt.h"
 #include "Helmet.h"
+#include "Warbelt.h"
 #include "Vest.h"
 #include "Torch.h"
 #include "NightVisionDevice.h"
@@ -85,7 +85,6 @@ constexpr const char* m_sGameObjectDragAction			= "game_object_drag";
 constexpr const char* m_sInventoryContainerUseOrTakeAction	= "inventory_container_use_or_take"; //обшукати/підібрати контейнер
 constexpr const char* m_sInventoryBoxUseAction			= "inventory_box_use";				//обшукати скриньку
 constexpr const char* m_sGameObjectThrowDropAction		= "game_object_throw_drop";			//Відкинути/відпустити предмет
-constexpr const char* m_sHandsNotFree					= "hands_not_free";					//руки зайняті
 constexpr const char* m_sNoPlaceAvailable				= "no_place_available";				//немає місця
 constexpr const char* m_sLocked							= "locked";							//зачинено
 
@@ -979,16 +978,10 @@ void CActor::shedule_Update	(u32 DT)
 		if (!Level().IsDemoPlay())
 		{		
 		//-----------------------------------------------------
-//		mstate_wishful &=~mcAccel;
 		mstate_wishful &=~mcLStrafe;
 		mstate_wishful &=~mcRStrafe;
-//		mstate_wishful &=~mcLLookout;
-//		mstate_wishful &=~mcRLookout;
 		mstate_wishful &=~mcFwd;
 		mstate_wishful &=~mcBack;
-/*		extern bool g_bAutoClearCrouch;
-		if (g_bAutoClearCrouch)
-			mstate_wishful &=~mcCrouch;*/
 		//-----------------------------------------------------
 		}
 	}
@@ -1077,44 +1070,28 @@ void CActor::shedule_Update	(u32 DT)
 
 		bool b_allow_drag = ph_shell_holder && ph_shell_holder->ActorCanCapture();
 
-		bool b_free_hands = inventory().IsFreeHands();
-
-		if (HUD().GetUI()->MainInputReceiver() || m_holder)
-		{
+		if (HUD().GetUI()->MainInputReceiver() || m_holder || !IsFreeHands()){
 			m_sDefaultObjAction = nullptr;
 		}
-		else if (capture && capture->taget_object()) //щось у руках
-		{
+		else if (capture && capture->taget_object()) { //щось у руках
 			m_sDefaultObjAction = m_sGameObjectThrowDropAction;
 		}
-		else if (/*!m_pPersonWeLookingAt && */m_pUsableObject && m_pUsableObject->tip_text())
-		{
-			m_sDefaultObjAction = b_free_hands ? CStringTable().translate(m_pUsableObject->tip_text()).c_str() : m_sHandsNotFree;
+		else if (m_pUsableObject && m_pUsableObject->tip_text()){
+			m_sDefaultObjAction = CStringTable().translate(m_pUsableObject->tip_text()).c_str();
 		}
-		else if (pEntityAlive)
-		{
-			if (m_pPersonWeLookingAt && pEntityAlive->g_Alive() && !smart_cast<CBaseMonster*>(m_pPersonWeLookingAt))
-			{
+		else if (pEntityAlive){
+			if (m_pPersonWeLookingAt && pEntityAlive->g_Alive() && !smart_cast<CBaseMonster*>(m_pPersonWeLookingAt)){
 				m_sDefaultObjAction = m_sCharacterUseAction;
 			}
-			else if (!pEntityAlive->g_Alive())
-			{
-				if (!b_free_hands)
-					m_sDefaultObjAction = m_sHandsNotFree;
-				else if (b_allow_drag)
-					m_sDefaultObjAction = m_sDeadCharacterUseOrDragAction;
-				else
-					m_sDefaultObjAction = m_sDeadCharacterUseAction;
+			else if (!pEntityAlive->g_Alive()){
+				m_sDefaultObjAction = b_allow_drag ? m_sDeadCharacterUseOrDragAction : m_sDeadCharacterUseAction;
 			}
 		}
-		else if (m_pVehicleWeLookingAt)
-		{
-			m_sDefaultObjAction = b_free_hands ? m_sCarCharacterUseAction : m_sHandsNotFree;
+		else if (m_pVehicleWeLookingAt){
+			m_sDefaultObjAction = m_sCarCharacterUseAction;
 		}
 		else if (m_pInvBoxWeLookingAt) {
-			if (!b_free_hands)
-				m_sDefaultObjAction = m_sHandsNotFree;
-			else if (m_pInvBoxWeLookingAt->IsOpened()) {
+			if (m_pInvBoxWeLookingAt->IsOpened()) {
 				if (smart_cast<CInventoryContainer*>(m_pInvBoxWeLookingAt))
 					m_sDefaultObjAction = m_sInventoryContainerUseOrTakeAction;
 				else
@@ -1123,25 +1100,16 @@ void CActor::shedule_Update	(u32 DT)
 			else
 				m_sDefaultObjAction = m_sLocked;
 		}
-		else if (inventory().m_pTarget && inventory().m_pTarget->CanTake())
-		{
-			if (inventory().CanTakeItem(inventory().m_pTarget))
-			{
-				if (!b_free_hands)
-					m_sDefaultObjAction = m_sHandsNotFree;
-				else if (b_allow_drag)
-					m_sDefaultObjAction = m_sInventoryItemUseOrDragAction;
-				else
-					m_sDefaultObjAction = m_sInventoryItemUseAction;
+		else if (inventory().m_pTarget && inventory().m_pTarget->CanTake()){
+			if (inventory().CanTakeItem(inventory().m_pTarget)){
+				m_sDefaultObjAction = b_allow_drag ? m_sInventoryItemUseOrDragAction : m_sInventoryItemUseAction;
 			}
 			else m_sDefaultObjAction = m_sNoPlaceAvailable;
 		}
-		else if (b_allow_drag)
-		{
-			m_sDefaultObjAction = b_free_hands ? m_sGameObjectDragAction : m_sHandsNotFree;
+		else if (b_allow_drag){
+			m_sDefaultObjAction = m_sGameObjectDragAction;
 		}
-		else
-		{
+		else{
 			m_sDefaultObjAction = nullptr;
 		}
 	}
@@ -1374,7 +1342,6 @@ void CActor::OnItemVest(CInventoryItem* inventory_item, EItemPlace previous_plac
 	CInventoryOwner::OnItemVest(inventory_item, previous_place);
 	UpdateUIPanels(previous_place);
 }
-
 void CActor::OnItemSlot(CInventoryItem* inventory_item, EItemPlace previous_place){
 	CInventoryOwner::OnItemSlot(inventory_item, previous_place);
 	UpdateUIPanels(previous_place);
@@ -1635,15 +1602,12 @@ CVisualMemoryManager	*CActor::visual_memory	() const
 	return							(&memory().visual());
 }
 
-float		CActor::GetCarryWeight() const
-{
-	float add = 0.f;
-
+float CActor::GetCarryWeight() const{
+	float res{ CInventoryOwner::GetCarryWeight() };
 	CPHCapture* capture = character_physics_support()->movement()->PHCapture();
-	if (capture && capture->taget_object() && psActorFlags.test(AF_SMOOTH_OVERWEIGHT))
-		add = GetTotalMass(capture->taget_object(), 0.1f);
-	
-	return CInventoryOwner::GetCarryWeight() + add;
+	if (capture && capture->taget_object())
+		res += GetTotalMass(capture->taget_object(), 0.1f);
+	return res;
 }
 
 float		CActor::GetMass				()
@@ -1657,38 +1621,31 @@ bool CActor::is_on_ground()
 }
 
 CCustomOutfit* CActor::GetOutfit() const{
-	PIItem _of	= inventory().m_slots[OUTFIT_SLOT].m_pIItem;
-	return _of?smart_cast<CCustomOutfit*>(_of):NULL;
+	return smart_cast<CCustomOutfit*>(inventory().ItemFromSlot(OUTFIT_SLOT));
 }
 
 CWarbelt* CActor::GetWarbelt() const{
-	PIItem _wb = inventory().m_slots[WARBELT_SLOT].m_pIItem;
-	return _wb ? smart_cast<CWarbelt*>(_wb) : NULL;
+	return smart_cast<CWarbelt*>(inventory().ItemFromSlot(WARBELT_SLOT));
 }
 
 CInventoryContainer* CActor::GetBackpack() const{
-	PIItem _bp = inventory().m_slots[BACKPACK_SLOT].m_pIItem;
-	return _bp ? smart_cast<CInventoryContainer*>(_bp) : NULL;
+	return smart_cast<CInventoryContainer*>(inventory().ItemFromSlot(BACKPACK_SLOT));
 }
 
 CHelmet* CActor::GetHelmet() const{
-	PIItem _hl = inventory().m_slots[HELMET_SLOT].m_pIItem;
-	return _hl ? smart_cast<CHelmet*>(_hl) : NULL;
+	return smart_cast<CHelmet*>(inventory().ItemFromSlot(HELMET_SLOT));
 }
 
 CVest* CActor::GetVest() const{
-	PIItem _v = inventory().m_slots[VEST_SLOT].m_pIItem;
-	return _v ? smart_cast<CVest*>(_v) : NULL;
+	return smart_cast<CVest*>(inventory().ItemFromSlot(VEST_SLOT));
 }
 
 CTorch* CActor::GetTorch() const{
-	PIItem _tc = inventory().m_slots[ON_HEAD_SLOT].m_pIItem;
-	return _tc ? smart_cast<CTorch*>(_tc) : NULL;
+	return smart_cast<CTorch*>(inventory().ItemFromSlot(ON_HEAD_SLOT));
 }
 
 CNightVisionDevice* CActor::GetNightVisionDevice() const{
-	PIItem _nv = inventory().m_slots[ON_HEAD_SLOT].m_pIItem;
-	return _nv ? smart_cast<CNightVisionDevice*>(_nv) : NULL;
+	return smart_cast<CNightVisionDevice*>(inventory().ItemFromSlot(ON_HEAD_SLOT));
 }
 
 void CActor::block_action(EGameActions cmd)
@@ -1843,27 +1800,21 @@ bool CActor::unlimited_ammo()
 bool CActor::IsDetectorActive() const {
 	if (auto det = smart_cast<CCustomDetector*>(inventory().ItemFromSlot(DETECTOR_SLOT)))
 		return det->IsPowerOn() && det->GetHUDmode();
-
 	return false;
 }
 
-float CActor::GetZoomEffectorK()
-{
-	float k = 0.f;
-
-	if (IsHardHold()) return k;
-
+float CActor::GetZoomEffectorK(){
+	float k{};
+	if (IsHardHold()) 
+		return k;
+	k = 1.f + (conditions().GetZoomEffectorKoef() * (1.f - conditions().GetPower()));
 	if (is_actor_crouch())
-		k = (1.f + (conditions().GetZoomEffectorKoef() * (1.f - conditions().GetPowerKoef()))) * 0.5f;
-	else
-		k = 1.f + (conditions().GetZoomEffectorKoef() * (1.f - conditions().GetPowerKoef()));
-
+		k *= 0.5f;
 	return k;
 }
 
-void CActor::TryToBlockSprint(bool block)
-{
-	if (psActorFlags.is(AF_WPN_ACTIONS_RESET_SPRINT) && block && mstate_wishful & mcSprint)
+void CActor::TryToBlockSprint(bool block){
+	if (block && mstate_wishful & mcSprint)
 		mstate_wishful &= ~mcSprint;
 }
 
@@ -2067,4 +2018,11 @@ float CActor::GetExoFactor() const {
 	if (GetOutfit())
 		res = GetOutfit()->GetExoFactor();
 	return res;
+}
+
+bool CActor::IsFreeHands() const {
+	const auto active_hud_item = smart_cast<CHudItem*>(inventory().ActiveItem());
+	if (active_hud_item && active_hud_item->IsPending())
+			return false;
+	return true;
 }

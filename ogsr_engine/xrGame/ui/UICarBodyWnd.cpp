@@ -274,13 +274,9 @@ void CUICarBodyWnd::Hide()
 	if(m_pOtherInventoryBox)
 		m_pOtherInventoryBox->m_in_use				= false;
 
-	if (Actor()){
-		if (g_eFreeHands != eFreeHandsOff){
-			Actor()->SetWeaponHideState(INV_STATE_INV_WND, false);
-		}
-		if (psActorFlags.test(AF_ITEMS_FROM_BELT)) {
-			Actor()->SetRuckAmmoPlacement(false); //сбросим флаг перезарядки из рюкзака
-		}
+	if (const auto& actor = Actor()){
+		actor->SetWeaponHideState(INV_STATE_INV_WND, false);
+		actor->SetRuckAmmoPlacement(false); //сбросим флаг перезарядки из рюкзака
 	}
 	m_bShowAllInv = false;
 	PlaySnd(eInvSndClose);
@@ -706,14 +702,10 @@ void CUICarBodyWnd::Show()
 	SetCurrentItem							(NULL);
 	UpdateWeightVolume						();
 
-	if (Actor()){
-		if (g_eFreeHands != eFreeHandsOff) {
-			Actor()->SetWeaponHideState(INV_STATE_INV_WND, true);
-		}
-		if (psActorFlags.test(AF_ITEMS_FROM_BELT)) {
-			Actor()->SetRuckAmmoPlacement(true); //установим флаг перезарядки из рюкзака
-		}
-		Actor()->RepackAmmo();
+	if (const auto& actor = Actor()){
+		actor->SetWeaponHideState(INV_STATE_INV_WND, true);
+		actor->SetRuckAmmoPlacement(true);
+		actor->RepackAmmo();
 	}
 	PlaySnd(eInvSndOpen);
 }

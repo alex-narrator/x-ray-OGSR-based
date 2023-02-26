@@ -720,26 +720,12 @@
 			<list_font	 r="216" g="186" b="140" font="letterica16"/>
 		</list_hud_laconic>
 <!-- laconic hud end-->
-<!-- free hands -->
-		<cap_free_hands x="20" y="90" width="163" height="21" complex_mode = "1">
-			<text font="letterica16" r="215" g="195" b="170">ui_mm_free_hands</text>			
-		</cap_free_hands>
-		
-		<list_free_hands x="194" y="90" width="261" height="21" always_show_scroll="0" list_length="3">	
-			<options_item entry="g_free_hands" group="mm_opt_gameplay"/>
-			<text_color>
-				<e r="216" g="186" b="140"/>
-			</text_color>
-			<list_font_s r="240" g="217" b="182"/>
-			<list_font	 r="216" g="186" b="140" font="letterica16"/>
-		</list_free_hands>
-<!-- free hands end-->
 <!-- game save mode -->
-		<cap_game_save_mode x="20" y="120" width="163" height="21" complex_mode = "1">
+		<cap_game_save_mode x="20" y="90" width="163" height="21" complex_mode = "1">
 			<text font="letterica16" r="215" g="195" b="170">ui_mm_game_save_mode</text>			
 		</cap_game_save_mode>
 		
-		<list_game_save_mode x="194" y="120" width="261" height="21" always_show_scroll="0" list_length="3">	
+		<list_game_save_mode x="194" y="90" width="261" height="21" always_show_scroll="0" list_length="3">	
 			<options_item entry="g_save_mode" group="mm_opt_gameplay"/>
 			<text_color>
 				<e r="216" g="186" b="140"/>
@@ -784,11 +770,6 @@
 			<text font="letterica16" r="215" g="195" b="170">ui_mm_ambient</text>
 		</check_ambient>
 
-		<check_items_from_belt x="0" y="0" width="415" height="21">
-			<options_item entry="g_items_from_belt" group="mm_opt_gameplay"/>
-			<text font="letterica16" r="215" g="195" b="170">ui_mm_items_from_belt</text>
-		</check_items_from_belt>
-		
 		<check_inventory_volume x="0" y="0" width="415" height="21">
 			<options_item entry="g_inventory_volume" group="mm_opt_gameplay"/>
 			<text font="letterica16" r="215" g="195" b="170">ui_mm_inventory_volume</text>
@@ -825,11 +806,6 @@
 			<text font="letterica16" r="215" g="195" b="170">ui_mm_stop_missile_playing</text>
 		</check_stop_missile_playing>
 
-		<check_quick_slot_from_belt x="0" y="0" width="415" height="21">
-			<options_item entry="g_quick_slot_from_belt" group="mm_opt_gameplay"/>
-			<text font="letterica16" r="215" g="195" b="170">ui_mm_quick_slot_from_belt</text>
-		</check_quick_slot_from_belt>
-		
 		<check_artefacts_from_all x="0" y="0" width="415" height="21">
 			<options_item entry="g_artefacts_from_all" group="mm_opt_gameplay"/>
 			<text font="letterica16" r="215" g="195" b="170">ui_mm_artefacts_from_all</text>
@@ -839,26 +815,6 @@
 			<options_item entry="g_artefact_detector_check" group="mm_opt_gameplay"/>
 			<text font="letterica16" r="215" g="195" b="170">ui_mm_artefact_detector_check</text>
 		</check_artefact_detector_check>
-		
-		<check_smooth_overweight x="0" y="0" width="415" height="21">
-			<options_item entry="g_smooth_overweight" group="mm_opt_gameplay"/>
-			<text font="letterica16" r="215" g="195" b="170">ui_mm_smooth_overweight</text>
-		</check_smooth_overweight>
-				
-		<check_survival_mode x="0" y="0" width="415" height="21">
-			<options_item entry="g_survival_mode" group="mm_opt_gameplay"/>
-			<text font="letterica16" r="215" g="195" b="170" complex_mode="1">ui_mm_survival_mode</text>
-		</check_survival_mode>
-
-		<check_no_auto_reload x="0" y="0" width="415" height="21">
-			<options_item entry="g_no_auto_reload" group="mm_opt_gameplay"/>
-			<text font="letterica16" r="215" g="195" b="170">ui_mm_no_auto_reload</text>
-		</check_no_auto_reload>
-		
-		<check_wpn_actions_reset_sprint x="0" y="0" width="415" height="21">
-			<options_item entry="g_wpn_actions_reset_sprint" group="mm_opt_gameplay"/>
-			<text font="letterica16" r="215" g="195" b="170">ui_mm_wpn_actions_reset_sprint</text>
-		</check_wpn_actions_reset_sprint>
 <!-- END Новые опции геймплея -->>
 
 	</tab_gameplay>

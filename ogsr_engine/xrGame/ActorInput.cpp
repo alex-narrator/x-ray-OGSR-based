@@ -41,22 +41,21 @@ extern int g_bHudAdjustMode;
 
 void CActor::IR_OnKeyboardPress(int cmd){
 	if (g_bHudAdjustMode && pInput->iGetAsyncKeyState(DIK_LSHIFT)){
-		if (pInput->iGetAsyncKeyState(DIK_RETURN) || pInput->iGetAsyncKeyState(DIK_BACKSPACE) || pInput->iGetAsyncKeyState(DIK_DELETE))
+		if (pInput->iGetAsyncKeyState(DIK_RETURN) || 
+			pInput->iGetAsyncKeyState(DIK_BACKSPACE) || 
+			pInput->iGetAsyncKeyState(DIK_DELETE))
 			g_player_hud->tune(Ivector{});
-
 		return;
 	}
 
-	if (m_blocked_actions.find((EGameActions)cmd) != m_blocked_actions.end() ) return; // Real Wolf. 14.10.2014
+	if (m_blocked_actions.find((EGameActions)cmd) != m_blocked_actions.end()) 
+		return; // Real Wolf. 14.10.2014
 
-	if (Remote())		return;
-
-//	if (conditions().IsSleeping())	return;
-	if (IsTalking())	return;
+	if (Remote())
+		return;
+	if (IsTalking())
+		return;
 	if (m_input_external_handler && !m_input_external_handler->authorized(cmd))	return;
-
-//	if (psCallbackFlags.test(CF_KEY_PRESS))
-//		callback(GameObject::eOnKeyPress)(cmd);
 	
 	switch (cmd)
 	{
@@ -92,11 +91,6 @@ void CActor::IR_OnKeyboardPress(int cmd){
 		if (mstate_wishful & mcLookout)
 			mstate_wishful &= ~mcLookout;
 		mstate_wishful |= mcJump;
-			{
-//				NET_Packet	P;
-//				u_EventGen(P, GE_ACTOR_JUMPING, ID());
-//				u_EventSend(P);
-			}
 		}break;
 	case kCROUCH:
 	{
@@ -112,10 +106,9 @@ void CActor::IR_OnKeyboardPress(int cmd){
 	}break;
 	case kSPRINT_TOGGLE:	
 		{
-		if (IsZoomAimingMode())
-		{
-			auto pWeapon = smart_cast<CWeapon*>(inventory().ActiveItem());
-			if (pWeapon) pWeapon->OnZoomOut();
+		if (IsZoomAimingMode()){
+			if (auto pWeapon = smart_cast<CWeapon*>(inventory().ActiveItem())) 
+				pWeapon->OnZoomOut();
 		}
 
 		if (mstate_wishful & (mcCrouch | mcAccel | mcLookout))
@@ -171,7 +164,7 @@ void CActor::IR_OnKeyboardPress(int cmd){
 			pActiveWeapon->SwitchNightVision();
 		else{
 			if (GetNightVisionDevice()) {
-				if(inventory().ActiveItem() && inventory().ActiveItem()->cast_hud_item() && inventory().ActiveItem()->cast_hud_item()->IsPending())
+				if(!IsFreeHands())
 					HUD().GetUI()->AddInfoMessage("item_usage", "hands_not_free");
 				else
 					GetNightVisionDevice()->Switch();
@@ -184,7 +177,7 @@ void CActor::IR_OnKeyboardPress(int cmd){
 				wpn->SwitchFlashlight(!wpn->IsFlashlightOn());
 		}
 		else if (GetTorch()) {
-			if (inventory().ActiveItem() && inventory().ActiveItem()->cast_hud_item() && inventory().ActiveItem()->cast_hud_item()->IsPending())
+			if (!IsFreeHands())
 				HUD().GetUI()->AddInfoMessage("item_usage", "hands_not_free");
 			else
 				GetTorch()->Switch();
@@ -240,8 +233,7 @@ void CActor::IR_OnKeyboardPress(int cmd){
 				if (itm->cast_eatable_item()){
 					inventory().TryToHideWeapon(true, false);
 					//
-					bool SearchRuck = !psActorFlags.test(AF_ITEMS_FROM_BELT);
-					PIItem iitm = inventory().GetSame(itm, SearchRuck);
+					PIItem iitm = inventory().GetSame(itm, false);
 
 					if (iitm){
 						inventory().Eat(iitm);
@@ -257,7 +249,6 @@ void CActor::IR_OnKeyboardPress(int cmd){
 						wpn->IsDirectReload(ammo);
 					}
 				}
-
 			}
 			else{
 				HUD().GetUI()->AddInfoMessage("item_usage", "st_quick_slot_empty");
@@ -308,14 +299,10 @@ void CActor::IR_OnKeyboardPress(int cmd){
 	}
 }
 void CActor::IR_OnMouseWheel(int direction){
-	if (g_bHudAdjustMode)
-	{
+	if (g_bHudAdjustMode){
 		g_player_hud->tune(Ivector{ 0, 0, direction });
 		return;
 	}
-
-//	if (psCallbackFlags.test(CF_MOUSE_WHEEL_ROT))
-//		this->callback(GameObject::eOnMouseWheel)(direction);
 
 	if(inventory().Action( (direction>0)? kWPN_ZOOM_DEC:kWPN_ZOOM_INC , CMD_START)) return;
 
@@ -333,21 +320,16 @@ void CActor::IR_OnKeyboardRelease(int cmd){
 
 	if (m_blocked_actions.find((EGameActions)cmd) != m_blocked_actions.end() ) return; // Real Wolf. 14.10.2014
 
-	if (Remote())		return;
+	if (Remote())
+		return;
 
-//	if (conditions().IsSleeping())	return;
 	if (m_input_external_handler && !m_input_external_handler->authorized(cmd))	return;
 
-	if (g_Alive())	
-	{
-//		int dik = get_action_dik((EGameActions)cmd);
-//		if ((dik != DIK_LALT) && (dik != DIK_RALT) && (dik != DIK_F4) /*&& psCallbackFlags.test(CF_KEY_RELEASE)*/)
-//			this->callback(GameObject::eOnKeyRelease)(cmd);
+	if (g_Alive())	{
 		if (cmd == kUSE) 
 			PickupModeOff();
 
-		if(m_holder)
-		{
+		if(m_holder){
 			m_holder->OnKeyboardRelease(cmd);
 			
 			if(m_holder->allowWeapon() && inventory().Action(cmd, CMD_STOP))		return;
@@ -361,7 +343,6 @@ void CActor::IR_OnKeyboardRelease(int cmd){
 		{
 		case kJUMP:		mstate_wishful &=~mcJump;		break;
 		case kDROP:		if(GAME_PHASE_INPROGRESS == Game().Phase()) g_PerformDrop();				break;
-//		case kCROUCH:	g_bAutoClearCrouch = true;
 		}
 	}
 }
@@ -387,13 +368,8 @@ void CActor::IR_OnKeyboardHold(int cmd){
 	if (m_blocked_actions.find((EGameActions)cmd) != m_blocked_actions.end() ) return; // Real Wolf. 14.10.2014
 
 	if (Remote() || !g_Alive())					return;
-//	if (conditions().IsSleeping())				return;
 	if (m_input_external_handler && !m_input_external_handler->authorized(cmd))	return;
 	if (IsTalking())							return;
-
-//	int dik = get_action_dik((EGameActions)cmd);
-//	if ((dik != DIK_LALT) && (dik != DIK_RALT) && (dik != DIK_F4)/* && psCallbackFlags.test(CF_KEY_HOLD)*/)
-//		this->callback(GameObject::eOnKeyHold)(cmd);
 
 	if(m_holder)
 	{
@@ -414,14 +390,10 @@ void CActor::IR_OnKeyboardHold(int cmd){
 	case kRIGHT:
 		if (eacFreeLook!=cam_active) cam_Active()->Move(cmd, 0, LookFactor);	break;
 
-//	case kACCEL:	mstate_wishful |= mcAccel;									break;
 	case kL_STRAFE:	mstate_wishful |= mcLStrafe;								break;
 	case kR_STRAFE:	mstate_wishful |= mcRStrafe;								break;
-//	case kL_LOOKOUT:mstate_wishful |= mcLLookout;								break;
-//	case kR_LOOKOUT:mstate_wishful |= mcRLookout;								break;
 	case kFWD:		mstate_wishful |= mcFwd;									break;
 	case kBACK:		mstate_wishful |= mcBack;									break;
-//	case kCROUCH:	mstate_wishful |= mcCrouch;									break;
 	}
 }
 
@@ -437,13 +409,8 @@ void CActor::IR_OnMouseMove(int dx, int dy){
 		iitem->cast_hud_item()->ResetSubStateTime();
 
 	if (Remote())		return;
-//	if (conditions().IsSleeping())	return;
 
-//	if (psCallbackFlags.test(CF_MOUSE_MOVE))
-//		this->callback(GameObject::eOnMouseMove)(dx, dy);
-
-	if(m_holder) 
-	{
+	if(m_holder) {
 		m_holder->OnMouseMove(dx,dy);
 		return;
 	}
@@ -511,99 +478,98 @@ bool CActor::use_Holder				(CHolderCustom* holder){
 
 extern bool g_bDisableAllInput;
 void CActor::ActorUse() {
-  if (g_bDisableAllInput || HUD().GetUI()->MainInputReceiver()) return;
+	if (g_bDisableAllInput || HUD().GetUI()->MainInputReceiver()) return;
 
-  if (m_holder) {
-    CGameObject*  GO = smart_cast<CGameObject*>(m_holder);
-    NET_Packet    P;
-    CGameObject::u_EventGen(P, GEG_PLAYER_DETACH_HOLDER, ID());
-    P.w_u32(GO->ID());
-    CGameObject::u_EventSend(P);
-    return;
-  }
+	if (m_holder) {
+		CGameObject* GO = smart_cast<CGameObject*>(m_holder);
+		NET_Packet    P;
+		CGameObject::u_EventGen(P, GEG_PLAYER_DETACH_HOLDER, ID());
+		P.w_u32(GO->ID());
+		CGameObject::u_EventSend(P);
+		return;
+	}
 
-  if (character_physics_support()->movement()->PHCapture()) {
-	  ActorThrow();
-	  character_physics_support()->movement()->PHReleaseObject();
-	  return;
-  }
+	if (character_physics_support()->movement()->PHCapture()) {
+		ActorThrow();
+		character_physics_support()->movement()->PHReleaseObject();
+		return;
+	}
 
-  auto pTargetPerson = smart_cast<CEntityAlive*>(m_pPersonWeLookingAt);
-  bool looking_at_alive_person = pTargetPerson && pTargetPerson->g_Alive();
+	auto pTargetPerson = smart_cast<CEntityAlive*>(m_pPersonWeLookingAt);
+	bool looking_at_alive_person = pTargetPerson && pTargetPerson->g_Alive();
+	bool is_free_hands = IsFreeHands();
+	bool is_add_act = Level().IR_GetKeyState(get_action_dik(kADDITIONAL_ACTION));
+	auto pGameSP = smart_cast<CUIGameSP*>(HUD().GetUI()->UIGame());
 
-  if (m_pUsableObject) {
-	  if (looking_at_alive_person || inventory().IsFreeHands()) { //чтобы можно было слышать просьбы убрать оружие при попытке поговорить со сталкерами с оружием в руках
-		  m_pUsableObject->use(this);
-		  if (g_bDisableAllInput || HUD().GetUI()->MainInputReceiver()) return;
-	  }
-  }
+	if (m_pUsableObject) {
+		if (looking_at_alive_person || is_free_hands) { //чтобы можно было слышать просьбы убрать оружие при попытке поговорить со сталкерами с оружием в руках
+			m_pUsableObject->use(this);
+		}
+	}
 
-  if (m_pInvBoxWeLookingAt && m_pInvBoxWeLookingAt->object().nonscript_usable()) {
-	  if (smart_cast<CInventoryContainer*>(m_pInvBoxWeLookingAt) && Level().IR_GetKeyState(get_action_dik(kADDITIONAL_ACTION))) {
-		  PickupModeOn();
-		  PickupModeUpdate_COD();
-		  return;
-	  }
-	  // если контейнер открыт
-	  if (m_pInvBoxWeLookingAt->IsOpened()) {
-		  CUIGameSP* pGameSP = smart_cast<CUIGameSP*>(HUD().GetUI()->UIGame());
-		  if (pGameSP && inventory().IsFreeHands()) pGameSP->StartCarBody(this, m_pInvBoxWeLookingAt);
-		  return;
-	  }
-  }
-  
-  else if (!m_pUsableObject || m_pUsableObject->nonscript_usable()) {
-    if (m_pPersonWeLookingAt) {
-      if (looking_at_alive_person) {
-        TryToTalk();
-        return;
-      }
-      //обыск трупа
-      else if (!Level().IR_GetKeyState(get_action_dik(kADDITIONAL_ACTION))) {
-        //только если находимся в режиме single
-        CUIGameSP* pGameSP = smart_cast<CUIGameSP*>(HUD().GetUI()->UIGame());
-		if (pGameSP && inventory().IsFreeHands()) pGameSP->StartCarBody(this, m_pPersonWeLookingAt);
-        return;
-      }
-    }
+	if (m_pInvBoxWeLookingAt && m_pInvBoxWeLookingAt->object().nonscript_usable()) {
+		if (smart_cast<CInventoryContainer*>(m_pInvBoxWeLookingAt) && is_add_act) {
+			PickupModeOn();
+			PickupModeUpdate_COD();
+			return;
+		}
+		// если контейнер открыт
+		if (m_pInvBoxWeLookingAt->IsOpened()) {
+			if (pGameSP && is_free_hands) pGameSP->StartCarBody(this, m_pInvBoxWeLookingAt);
+			return;
+		}
+	}
 
-    collide::rq_result& RQ      = HUD().GetCurrentRayQuery();
-    CPhysicsShellHolder* object = smart_cast<CPhysicsShellHolder*>(RQ.O);
-    if (object && inventory().IsFreeHands()) {
-      if (Level().IR_GetKeyState(get_action_dik(kADDITIONAL_ACTION))) {
-        if (object->ActorCanCapture()) {
-			if (!conditions().IsCantWalk())
-				//Msg("--[%s] Actor Captured object: [%s]", __FUNCTION__, object->cName().c_str());
-				character_physics_support()->movement()->PHCaptureObject(object, (u16)RQ.element);
-			else 
-				HUD().GetUI()->AddInfoMessage("actor_state", "cant_walk");
-        }
-        return;
-      }
-      else if (smart_cast<CHolderCustom*>(object) && RQ.range < inventory().GetTakeDist()) {
-        NET_Packet P;
-        CGameObject::u_EventGen(P, GEG_PLAYER_ATTACH_HOLDER, ID());
-        P.w_u32(object->ID());
-        CGameObject::u_EventSend(P);
-        return;
-      }
-    }
-  }
+	else if (!m_pUsableObject || m_pUsableObject->nonscript_usable()) {
+		if (m_pPersonWeLookingAt) {
+			if (looking_at_alive_person) {
+				TryToTalk();
+				return;
+			}
+			//обыск трупа
+			else if (!is_add_act) {
+				//только если находимся в режиме single
+				if (pGameSP && IsFreeHands()) pGameSP->StartCarBody(this, m_pPersonWeLookingAt);
+				return;
+			}
+		}
 
-  PickupModeOn();
-  PickupModeUpdate_COD();
+		collide::rq_result& RQ = HUD().GetCurrentRayQuery();
+		CPhysicsShellHolder* object = smart_cast<CPhysicsShellHolder*>(RQ.O);
+		if (object && is_free_hands) {
+			if (is_add_act) {
+				if (object->ActorCanCapture()) {
+					if (!conditions().IsCantWalk())
+						//Msg("--[%s] Actor Captured object: [%s]", __FUNCTION__, object->cName().c_str());
+						character_physics_support()->movement()->PHCaptureObject(object, (u16)RQ.element);
+					else
+						HUD().GetUI()->AddInfoMessage("actor_state", "cant_walk");
+				}
+				return;
+			}
+			else if (smart_cast<CHolderCustom*>(object) && RQ.range < inventory().GetTakeDist()) {
+				NET_Packet P;
+				CGameObject::u_EventGen(P, GEG_PLAYER_ATTACH_HOLDER, ID());
+				P.w_u32(object->ID());
+				CGameObject::u_EventSend(P);
+				return;
+			}
+		}
+	}
+
+	PickupModeOn();
+	PickupModeUpdate_COD();
 }
-BOOL CActor::HUDview				( )const { 
-	return IsFocused()
-		&&(cam_active==eacFirstEye)		
-		&&((!m_holder) || (m_holder && m_holder->allowWeapon() && m_holder->HUDView() ) ); 
+
+BOOL CActor::HUDview()const { 
+	return IsFocused() && (cam_active==eacFirstEye) && (!m_holder || m_holder && m_holder->allowWeapon() && m_holder->HUDView()); 
 }
 
 //void CActor::IR_OnMousePress(int btn)
 constexpr u32 SlotsToCheck[] = {
 		KNIFE_SLOT		,		// 0
-		ON_SHOULDER_SLOT		,		// 1
-		ON_BACK_SLOT		,		// 2
+		ON_SHOULDER_SLOT,		// 1
+		ON_BACK_SLOT	,		// 2
 		GRENADE_SLOT	,		// 3
 		HOLSTER_SLOT	,		// 4
 		BOLT_SLOT		,		// 5
@@ -619,15 +585,12 @@ void	CActor::OnNextWeaponSlot(){
 	
 	constexpr u32 NumSlotsToCheck = sizeof(SlotsToCheck)/sizeof(u32);
 	u32 CurSlot = 0;
-	for (; CurSlot<NumSlotsToCheck; CurSlot++)
-	{
+	for (; CurSlot<NumSlotsToCheck; CurSlot++){
 		if (SlotsToCheck[CurSlot] == ActiveSlot) break;
 	}
 	if (CurSlot >= NumSlotsToCheck) return;
-	for (u32 i=CurSlot+1; i<NumSlotsToCheck; i++)
-	{
-		if (inventory().ItemFromSlot(SlotsToCheck[i]))
-		{
+	for (u32 i=CurSlot+1; i<NumSlotsToCheck; i++){
+		if (inventory().ItemFromSlot(SlotsToCheck[i])){
 			IR_OnKeyboardPress(kWPN_1+(i-KNIFE_SLOT));
 			return;
 		}
@@ -644,15 +607,12 @@ void	CActor::OnPrevWeaponSlot(){
 
 	constexpr u32 NumSlotsToCheck = sizeof(SlotsToCheck)/sizeof(u32);
 	u32 CurSlot = 0;
-	for (; CurSlot<NumSlotsToCheck; CurSlot++)
-	{
+	for (; CurSlot<NumSlotsToCheck; CurSlot++){
 		if (SlotsToCheck[CurSlot] == ActiveSlot) break;
 	}
 	if (CurSlot >= NumSlotsToCheck) return;
-	for (s32 i=s32(CurSlot-1); i>=0; i--)
-	{
-		if (inventory().ItemFromSlot(SlotsToCheck[i]))
-		{
+	for (s32 i=s32(CurSlot-1); i>=0; i--){
+		if (inventory().ItemFromSlot(SlotsToCheck[i])){
 			IR_OnKeyboardPress(kWPN_1+(i-KNIFE_SLOT));
 			return;
 		}
@@ -662,19 +622,12 @@ void	CActor::OnPrevWeaponSlot(){
 float	CActor::GetLookFactor(){
 	if (m_input_external_handler) 
 		return m_input_external_handler->mouse_scale_factor();
-
-	
 	float factor	= 1.f;
-
-	factor += (1.f - conditions().GetPowerKoef());
-
+	factor += (1.f - conditions().GetPower());
 	PIItem pItem	= inventory().ActiveItem();
-
 	if (pItem)
 		factor *= pItem->GetControlInertionFactor();
-
 	VERIFY(!fis_zero(factor));
-
 	return factor;
 }
 
@@ -695,9 +648,7 @@ void CActor::ActorThrow(){
 	CPHCapture* capture = character_physics_support()->movement()->PHCapture();
 	if (!capture->taget_object())
 		return;
-
-	if (conditions().IsCantWalk())
-	{
+	if (conditions().IsCantWalk()){
 		HUD().GetUI()->AddInfoMessage("actor_state", "cant_walk");
 		return;
 	}
@@ -708,7 +659,7 @@ void CActor::ActorThrow(){
 
 	float throw_impulse = drop_not_throw ?
 		0.5f :											//отпустить
-		m_fThrowImpulse * conditions().GetPowerKoef() * GetExoFactor();	//бросить
+		m_fThrowImpulse * conditions().GetPower() * GetExoFactor();	//бросить
 
 	Fvector dir = Direction();	//направлении взгляда актора
 	if (drop_not_throw)
@@ -730,7 +681,6 @@ void CActor::ActorKick(){
 	CGameObject* O = ObjectWeLookingAt();
 	if (!O)
 		return;
-
 	if (conditions().IsCantWalk()){
 		HUD().GetUI()->AddInfoMessage("actor_state", "cant_walk");
 		return;
@@ -738,11 +688,7 @@ void CActor::ActorKick(){
 
 	float mass_f = GetTotalMass(O);
 
-	//CEntityAlive* EA = smart_cast<CEntityAlive*>(O);
-	//if (EA && EA->g_Alive() && mass_f > 20.0f) //ability to kick tuskano and rat
-	//	return;
-
-	float kick_impulse = m_fKickImpulse * conditions().GetPowerKoef() * GetExoFactor();
+	float kick_impulse = m_fKickImpulse * conditions().GetPower() * GetExoFactor();
 	Fvector dir = Direction();
 	dir.y = sin(15.f * PI / 180.f);
 	dir.normalize();
@@ -752,22 +698,16 @@ void CActor::ActorKick(){
 	if (RQ.O == O && RQ.element != 0xffff)
 		bone_id = (u16)RQ.element;
 
-	clamp<float>(mass_f, 1.0f, 100.f); // ограничить параметры хита
-
-	// The smaller the mass, the more damage given capped at 60 mass. 60+ mass take 0 damage
-	//float hit_power = (100.f * ((mass_f / 100.f) - 0.6f) / (0.f - 0.6f)) * conditions().GetPowerKoef();
-	//clamp<float>(hit_power, 0.f, 100.f);
-	//hit_power /= 100;
+	clamp(mass_f, 1.0f, 100.f); // ограничить параметры хита
 
 	float act_item_weight{1.f};
 	if(inventory().ActiveItem() && inventory().ActiveItem()->Weight() > 1.f)
 		act_item_weight = inventory().ActiveItem()->Weight();
 	clamp(act_item_weight, 1.f, act_item_weight);
-	float hit_power = m_fKickPower * conditions().GetPowerKoef() * act_item_weight * GetExoFactor();
+	float hit_power = m_fKickPower * conditions().GetPower() * act_item_weight * GetExoFactor();
 
-	//shell->applyForce(dir, kick_power * conditions().GetPower());
 	Fvector h_pos = O->Position();
-	SHit hit = SHit(hit_power, dir, this, bone_id, h_pos, kick_impulse, ALife::/*eHitTypeStrike*/eHitTypePhysicStrike, 0.f, false);
+	SHit hit = SHit(hit_power, dir, this, bone_id, h_pos, kick_impulse, ALife::eHitTypePhysicStrike, 0.f, false);
 	O->Hit(&hit);
 	CEntityAlive* EA = smart_cast<CEntityAlive*>(O);
 	if (EA){
@@ -779,9 +719,6 @@ void CActor::ActorKick(){
 			EA->character_physics_support()->movement()->ApplyImpulse(dir.normalize(), kick_impulse * alive_kick_power);
 		}
 	}
-
-	Msg("%s hit_power %.4f",__FUNCTION__,hit_power);
-
 	if (!GodMode())
 		conditions().ConditionJump(mass_f / 50);
 }

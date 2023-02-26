@@ -38,14 +38,14 @@ public:
 	};
 
 public:
-	float							m_fCondition;
+	float							m_fCondition{1.f};
 	float							m_fMass;
 	u32								m_dwCost;
 	s32								m_iHealthValue;
 	s32								m_iFoodValue;
-	float							m_fDeteriorationValue;
+	float							m_fDeteriorationValue{};
 	CSE_ALifeObject* m_self{};
-	u32								m_last_update_time;
+	u32								m_last_update_time{};
 
 	float 							m_fRadiationRestoreSpeed{};
 
@@ -158,8 +158,7 @@ SERVER_ENTITY_DECLARE_BEGIN(CSE_ALifeItemWeapon,CSE_ALifeItem)
 	};
 
 	//текущее состояние аддонов
-	enum EWeaponAddonState : u8
-	{
+	enum EWeaponAddonState : u8{
 		eWeaponAddonScope			= 1 << 0,
 		eWeaponAddonGrenadeLauncher = 1 << 1,
 		eWeaponAddonSilencer		= 1 << 2,
@@ -252,8 +251,6 @@ float		m_fAttachedScopeCondition{1.f};
 float		m_fAttachedGrenadeLauncherCondition{1.f};
 //для хранения состояния присоединённого глушителя
 float		m_fAttachedSilencerCondition{1.f};
-//
-float		m_fRTZoomFactor{1.f};
 //
 bool		m_bNightVisionSwitchedOn{true};
 xr_vector<u8> m_AmmoIDs;

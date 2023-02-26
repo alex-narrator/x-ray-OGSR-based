@@ -150,27 +150,17 @@ void CUIPdaWnd::SendMessage(CUIWindow* pWnd, s16 msg, void* pData)
 	}
 }
 
-void CUIPdaWnd::Show()
-{
-	if (g_eFreeHands != eFreeHandsOff) {
-		Actor()->SetWeaponHideState(INV_STATE_PDA, true);
-	}
-
+void CUIPdaWnd::Show(){
+	Actor()->SetWeaponHideState(INV_STATE_PDA, true);
 	InventoryUtilities::SendInfoToActor("ui_pda");
-
 	inherited::Show();
 }
 
-void CUIPdaWnd::Hide()
-{
+void CUIPdaWnd::Hide(){
 	inherited::Hide();
-
 	InventoryUtilities::SendInfoToActor("ui_pda_hide");
 	HUD().GetUI()->UIMainIngameWnd->SetFlashIconState_(CUIMainIngameWnd::efiPdaTask, false);
-
-	if (g_eFreeHands != eFreeHandsOff){
-		Actor()->SetWeaponHideState(INV_STATE_PDA, false);
-	}
+	Actor()->SetWeaponHideState(INV_STATE_PDA, false);
 }
 
 void CUIPdaWnd::UpdateDateTime()

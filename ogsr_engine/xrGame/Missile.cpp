@@ -540,7 +540,7 @@ void CMissile::Throw()
 		//
 		auto pActor = smart_cast<CActor*>(H_Parent());
 		float f_const_force = (m_fMinForce + m_fMaxForce * pActor->GetExoFactor()) / 2;
-		float power_k = pActor ? pActor->conditions().GetPowerKoef() : 1.f;
+		float power_k = pActor ? pActor->conditions().GetPower() : 1.f;
 		//
 		m_fake_missile->m_fThrowForce = (m_constpower ? f_const_force : m_fThrowForce) * power_k;
 	}

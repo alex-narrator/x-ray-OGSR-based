@@ -43,7 +43,7 @@ private:
 	virtual void		UpdatePsyHealth				() override;
 public:
 						CActorCondition				(CActor *object);
-	virtual				~CActorCondition			(void);
+	virtual				~CActorCondition			(void){};
 
 	virtual void		LoadCondition				(LPCSTR section);
 	virtual void		reinit						();
@@ -59,24 +59,18 @@ public:
 	// хромание при потере сил и здоровья
 	virtual	bool		IsLimping					();
 	virtual bool		IsCantWalk					();
-	virtual bool		IsCantWalkWeight			();
 	virtual bool		IsCantSprint				();
 	virtual bool		IsCantJump					(float weight);
 
-	void		PowerHit					(float power, bool apply_outfit);
-//	virtual void		UpdatePower();
+			void		PowerHit					(float power, bool apply_outfit);
 
-	void		ConditionJump				(float weight);
-	void		ConditionWalk				(float weight, bool accel, bool sprint);
-	void		ConditionStand				(float weight);
+			void		ConditionJump				(float weight);
+			void		ConditionWalk				(float weight, bool accel, bool sprint);
+			void		ConditionStand				(float weight);
 	
-	float GetAlcohol			()	{return m_fAlcohol;}
-	float GetPsy				()	{return 1.0f-GetPsyHealth();}
-	float				GetSatiety			()	{return m_fSatiety;}
-//	void				SetMaxWalkWeight	(float _weight) { m_MaxWalkWeight = _weight; }
-
-	void		AffectDamage_InjuriousMaterialAndMonstersInfluence();
-	float		GetInjuriousMaterialDamage	();
+			float		GetAlcohol					()	{return m_fAlcohol;}
+			float		GetPsy						()	{return 1.0f-GetPsyHealth();}
+			float		GetSatiety					()	{return m_fSatiety;}
 
 public:
 	IC		CActor		&object						() const
@@ -86,7 +80,6 @@ public:
 	}
 	virtual void			save					(NET_Packet &output_packet);
 	virtual void			load					(IReader &input_packet);
-//	float	m_MaxWalkWeight;
 
 	bool	DisableSprint							(SHit* pHDS);
 	float	HitSlowmo								(SHit* pHDS);
@@ -96,13 +89,10 @@ protected:
 	float m_fV_Alcohol{};
 //--
 	float m_fSatiety{1.f};
-	float m_fSatietyLightLimit{};
-	float m_fSatietyCriticalLimit{};
 	float m_fV_Satiety{};
 	float m_fV_SatietyPower{};
 	float m_fV_SatietyHealth{};
 //--
-
 	float m_fPowerLeakSpeed{};
 	float m_fV_Power{};
 
@@ -117,8 +107,6 @@ protected:
 	float m_fSprintK{};
 
 	bool m_bJumpRequirePower{};
-
-	float	m_f_time_affected;
 	
 	//порог силы и здоровья меньше которого актер начинает хромать
 	float m_fLimpingPowerBegin{};
@@ -131,17 +119,6 @@ protected:
 
 	float m_fLimpingHealthBegin{};
 	float m_fLimpingHealthEnd{};
-
-protected:
-	Feel::Touch* monsters_feel_touch;
-	float        monsters_aura_radius{};
-
-public:
-	void net_Relcase( CObject* O );
-	void set_monsters_aura_radius( float r ) { if ( r > monsters_aura_radius ) monsters_aura_radius = r; };
-
-protected:
-	bool m_bFlagState;
 
 public:
 	float m_fBleedingPowerDecrease{};
@@ -159,10 +136,8 @@ public:
 	float m_fV_HardHoldPower{};
 
 	float GetSmoothOwerweightKoef();
-	//коэфф. выносливости - для влияния на удар ножа, бросок гранаты и т.д.
-	float GetPowerKoef();
 	//коэфф. регенерации актора - зависит от сытости и дозы облучения
-	float GetRegenKoef();
+	float GetRegenK();
 	//коэффициент нагрузки актора
 	float GetStress();
 	//во сколько раз больше трясутся руки в прицеливании при полном отсутствии выносливости

@@ -34,7 +34,7 @@ public:
 
 	void					InitInventory				();
 	void					InitInventory_delayed		();
-	virtual bool			StopAnyMove					() { return g_eFreeHands != eFreeHandsOff; }
+	virtual bool			StopAnyMove					() { return true; }
 
 	virtual void			SendMessage					(CUIWindow *pWnd, s16 msg, void *pData);
 	virtual bool			OnMouse						(float x, float y, EUIMessages mouse_action);

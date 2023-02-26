@@ -9,13 +9,12 @@ private:
 	typedef CWeaponCustomPistol inherited;
 
 public:
-					CWeaponBinoculars	(); 
-	virtual			~CWeaponBinoculars	();
+					CWeaponBinoculars() : CWeaponCustomPistol("BINOCULARS") {};
+	virtual			~CWeaponBinoculars() {};
 
 	virtual bool	Action				(s32 cmd, u32 flags);
 
 	virtual bool	use_crosshair		()	const {return false;}
-	virtual void	GetBriefInfo		(xr_string& str_name, xr_string& icon_sect_name, xr_string& str_count);
 
 protected:
 	virtual size_t	GetWeaponTypeForCollision	() const override { return Binocular; }

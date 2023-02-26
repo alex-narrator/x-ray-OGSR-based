@@ -172,7 +172,7 @@ void CUIItemInfo::InitItem(CInventoryItem* pInvItem)
 	}
 
 	if(UICondProgresBar){
-		float cond							= pInvItem->GetConditionToShow();
+		float cond							= pInvItem->GetCondition();
 		UICondProgresBar->Show				(true);
 		UICondProgresBar->SetProgressPos	( cond*100.0f+1.0f-EPS );
 	}
@@ -279,7 +279,7 @@ void CUIItemInfo::Update()
 {
 	if (m_pInvItem && m_pInvItem->NeedForcedDescriptionUpdate() && !m_pInvItem->GetDropManual()) {
 		if (UICondProgresBar) {
-			float cond = m_pInvItem->GetConditionToShow();
+			float cond = m_pInvItem->GetCondition();
 			if (!UICondProgresBar->IsShown())
 				UICondProgresBar->Show(true);
 			UICondProgresBar->SetProgressPos(cond * 100.0f + 1.0f - EPS);

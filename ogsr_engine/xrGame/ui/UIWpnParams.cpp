@@ -171,7 +171,7 @@ void CUIWpnParams::SetInfo(CInventoryItem* obj)
 		//зум
 		_param_name = CStringTable().translate("st_scope_zoom").c_str();
 		if (pWeapon->IsScopeDynamicZoom()) {
-			sprintf_s(text_to_show, "%s%s %.1f-%.1fx", marker_, _param_name, pWeapon->GetMinScopeZoomFactor(), pWeapon->GetScopeZoomFactor());
+			sprintf_s(text_to_show, "%s%s %.1f-%.1fx", marker_, _param_name, pWeapon->GetScopeZoomFactor(), pWeapon->GetMaxScopeZoomFactor());
 		}
 		else
 			sprintf_s(text_to_show, "%s%s %.1fx", marker_, _param_name, pWeapon->GetScopeZoomFactor());

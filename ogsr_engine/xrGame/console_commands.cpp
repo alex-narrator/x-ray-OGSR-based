@@ -75,14 +75,6 @@ extern	float	g_bHudAdjustDeltaRot;
 		float	adj_delta_rot = 0.05f;
 //-----------------------------------------------------------
 extern float	g_fForceGrowSpeed;
-//режимы "свободных рук"
-EFreeHandsMode g_eFreeHands{ eFreeHandsOff }; //освобождение рук для взаимодействия с предметами: 0 - отключено, 1 - автоматически, 2 - вручную
-xr_token	free_hands_token[]{
-	{ "fh_off",		eFreeHandsOff		}, //отключено
-	{ "fh_auto",	eFreeHandsAuto		}, //автоосвобождение
-	{ "fh_manual",	eFreeHandsManual	}, //освобождать вручную
-	{ 0,			0					}
-};
 
 //элементы HUD выводятся по нажатию клавиш
 EHudLaconicMode g_eHudLaconic{ eHudLaconicOff }; //элементы HUD выводятся по нажатию клавиш: 0 - отключено, 1 - только warning-иконки, 2 - иконка положения персонажа в качестве warning-иконки здоровья
@@ -1430,10 +1422,6 @@ void CCC_RegisterCommands()
 	CMD4(CCC_Integer,		"g_3d_scopes_fps_factor",	&g_3dscopes_fps_factor, 2, 5);
 	CMD3(CCC_Mask,			"g_crosshair_dbg",			&psActorFlags,			AF_CROSSHAIR_DBG);
 	CMD3(CCC_Mask,			"g_camera_collision",		&psActorFlags,			AF_CAM_COLLISION);
-	CMD3(CCC_Mask,			"g_bloodmarks_on_dynamics",	&psActorFlags,			AF_BLOODMARKS_ON_DYNAMIC);
-
-	CMD3(CCC_Token,			"g_save_mode",				(u32*)&g_eSaveGameMode, save_game_mode_token);
-
 
 	CMD1(CCC_TimeFactor,	"time_factor")	
 	CMD1(CCC_SetWeather,	"set_weather");
@@ -1544,24 +1532,19 @@ void CCC_RegisterCommands()
 	*g_last_saved_game	= 0;
 
 	//взаимодействие с предметами
-	CMD3(CCC_Token,             "g_free_hands",					(u32*)&g_eFreeHands,  free_hands_token			);	//режимы "свободных рук"
 	CMD3(CCC_Mask,				"g_pickup_target_only",			&psActorFlags,	AF_PICKUP_TARGET_ONLY			);	//можно подобрать только те предметы на которые непосредственно смотрит прицел
 	CMD3(CCC_Mask,				"g_knife_to_cut_part",			&psActorFlags,	AF_KNIFE_TO_CUT_PART			);	//ніж потрібен для зрізання частин монстрів
 	//инвентарь
 	CMD3(CCC_Mask,				"g_artefacts_from_all",			&psActorFlags,	AF_ARTEFACTS_FROM_ALL			);	//артефакты работают из всего инвентаря
 	CMD3(CCC_Mask,				"g_artefact_detector_check",	&psActorFlags,	AF_ARTEFACT_DETECTOR_CHECK		);	//свойства артефактов отображаются после проверки детектором
-	CMD3(CCC_Mask,				"g_items_from_belt",			&psActorFlags,	AF_ITEMS_FROM_BELT				);	//використання предметів з поясу
 	CMD3(CCC_Mask,				"g_inventory_volume",			&psActorFlags,	AF_INVENTORY_VOLUME				);	//використання обсягу інвентаря
-	//оружие
-	CMD3(CCC_Mask,				"g_no_auto_reload",				&psActorFlags,	AF_NO_AUTO_RELOAD				);	//запрет автоперезарядки оружия
-	CMD3(CCC_Mask,				"g_wpn_actions_reset_sprint",	&psActorFlags,	AF_WPN_ACTIONS_RESET_SPRINT		);	//перезарядка/смена типа патрона/бросок гранаты/болта/удар ножом сбрасывают спринт
-	//параметры персонажа
-	CMD3(CCC_Mask,				"g_smooth_overweight",			&psActorFlags,	AF_SMOOTH_OVERWEIGHT			);	//плавный перегруз без обездвиживания
-	CMD3(CCC_Mask,				"g_survival_mode",				&psActorFlags,	AF_SURVIVAL						);	//взаимозависимость параметров здоровья ГГ
 	//керування
 	CMD3(CCC_Mask,				"g_hold_to_aim",				&psActorFlags,	AF_HOLD_TO_AIM					);	//утримувати клавішу для прицілювання
 	CMD3(CCC_Mask,				"g_mouse_wheel_switch_slot",	&psActorFlags,	AF_MOUSE_WHEEL_SWITCH_SLOTS		);	//перемикання слотів коліщатком миші
 	CMD4(CCC_Float,				"missile_force_grow_speed",		&g_fForceGrowSpeed,					1.0f, 50.0f	);	//скорость замаха гранатой/болтом
-	CMD4( CCC_Float,			"cam_height_speed",				&cam_HeightInterpolationSpeed,		4.0f, 16.0f	);	//швідкість підняття/опускання камери підчас присідання
-	CMD4( CCC_Float,			"cam_lookout_speed",			&cam_LookoutSpeed,					1.0f,  4.0f	);	//швідкість переміщення камери підчас визирання
+	CMD4(CCC_Float,				"cam_height_speed",				&cam_HeightInterpolationSpeed,		4.0f, 16.0f	);	//швідкість підняття/опускання камери підчас присідання
+	CMD4(CCC_Float,				"cam_lookout_speed",			&cam_LookoutSpeed,					1.0f,  4.0f	);	//швідкість переміщення камери підчас визирання
+	
+	CMD3(CCC_Mask,				"g_bloodmarks_on_dynamics",		&psActorFlags, AF_BLOODMARKS_ON_DYNAMIC);
+	CMD3(CCC_Token,				"g_save_mode",					(u32*)&g_eSaveGameMode, save_game_mode_token);
 }

@@ -207,9 +207,6 @@ private:
 	u32					UpdatesCount{};
 
 public:
-	// AF_FREE_HANDS - свободна ли хотябы одна рука актора
-	bool                    IsFreeHands();
-	//сокрытие/восстановлени показа оружия в режиме AF_FREE_HANDS
 	void                    TryToHideWeapon(bool b_hide_state, bool b_save_prev_slot = true);
 	PIItem					GetSame(const PIItem pIItem, bool bSearchRuck) const;	//получаем айтем из всего инвентаря или с пояса
 	//считаем предметы в рюкзаке или на поясе + в слотах

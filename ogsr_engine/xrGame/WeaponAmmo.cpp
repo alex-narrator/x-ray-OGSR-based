@@ -398,10 +398,7 @@ void CWeaponAmmo::ReloadBox(LPCSTR ammo_sect)
 
 #include "clsid_game.h"
 #include "ai_object_location.h"
-void CWeaponAmmo::SpawnAmmo(u32 boxCurr, LPCSTR ammoSect, u32 ParentID)
-{
-	if (OnClient())					return;
-
+void CWeaponAmmo::SpawnAmmo(u32 boxCurr, LPCSTR ammoSect, u32 ParentID){
 	CSE_Abstract* D = F_entity_Create(ammoSect);
 	CSE_ALifeItemAmmo* l_pA = smart_cast<CSE_ALifeItemAmmo*>(D);
 	if (l_pA){
@@ -426,10 +423,11 @@ void CWeaponAmmo::SpawnAmmo(u32 boxCurr, LPCSTR ammoSect, u32 ParentID)
 		if (boxCurr == 0xffffffff)
 			boxCurr = l_pA->m_boxSize;
 
+		NET_Packet P;
 		if (boxCurr > 0){
 			while (boxCurr){
 				l_pA->a_elapsed = (u16)(boxCurr > l_pA->m_boxSize ? l_pA->m_boxSize : boxCurr);
-				NET_Packet				P;
+
 				D->Spawn_Write(P, TRUE);
 				Level().Send(P, net_flags(TRUE));
 
@@ -439,7 +437,6 @@ void CWeaponAmmo::SpawnAmmo(u32 boxCurr, LPCSTR ammoSect, u32 ParentID)
 					boxCurr = 0;
 			}
 		}else{
-			NET_Packet				P;
 			D->Spawn_Write(P, TRUE);
 			Level().Send(P, net_flags(TRUE));
 		}

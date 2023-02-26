@@ -103,7 +103,6 @@ public:
 
 	virtual void	SetDefaults		();
 	virtual void	FireStart		();
-	virtual void	FireEnd			();
 	virtual void	Reload			();
 	
 
@@ -254,7 +253,7 @@ public:
 	//разрядить кол-во патронов
 	virtual void	UnloadAmmo(int unload_count, bool spawn_ammo = true, bool detach_magazine = false);
 	//
-	int				GetMagazineCount() const;
+	u32				GetMagazineCount() const;
 	//
 	virtual bool	IsSingleReloading	();
 	virtual bool	AmmoTypeIsMagazine	(u32 type) const;
@@ -269,7 +268,7 @@ public:
 	virtual float	Weight() const;
 	virtual float	Volume() const;
 
-	virtual void	LoadZoomParams		(LPCSTR);
+	virtual void	LoadScopeParams		(LPCSTR);
 	virtual void	LoadLaserParams		(LPCSTR);
 	virtual void	LoadFlashlightParams(LPCSTR);
 	//
@@ -308,4 +307,6 @@ protected:
 	virtual void	PlayAnimUnload();
 	virtual void	OnKick();
 	virtual void	switch2_Kick();
+
+	virtual void	UpdateMagazineVisibility();
 };

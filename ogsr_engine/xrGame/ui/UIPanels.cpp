@@ -58,11 +58,9 @@ void CUIBeltPanel::Update(){
 
 	for(const auto& _itm : items_to_show){
 		if (_itm) {
-			bool bSearchRuck = !psActorFlags.test(AF_ITEMS_FROM_BELT);
-
 			m_vRects.push_back( &(_itm->m_icon_params ) );
 			auto item_sect = _itm->object().cNameSect().c_str();
-			m_count.push_back(inv.GetSameItemCount(item_sect, bSearchRuck));
+			m_count.push_back(inv.GetSameItemCount(item_sect, false));
 		}
 	}
 }
@@ -138,14 +136,12 @@ void CUISlotPanel::Update(){
 		case QUICK_SLOT_3:
 		{
 			if (_itm) {
-				bool bSearchRuck = !psActorFlags.test(AF_ITEMS_FROM_BELT);
-
 				string16	slot_key{};
 				sprintf_s(slot_key, "ui_use_slot_%d", _itm->GetSlot());
 				m_action_key.push_back(CStringTable().translate(slot_key).c_str());
 				m_vRects.push_back(&(_itm->m_icon_params));
 				auto item_sect = _itm->object().cNameSect().c_str();
-				m_count.push_back(inv.GetSameItemCount(item_sect, bSearchRuck));
+				m_count.push_back(inv.GetSameItemCount(item_sect, false));
 			}
 		}
 		default:
@@ -223,11 +219,9 @@ void CUIVestPanel::Update(){
 
 	for (const auto& _itm : items_to_show) {
 		if (_itm) {
-			bool bSearchRuck = !psActorFlags.test(AF_ITEMS_FROM_BELT);
-
 			m_vRects.push_back(&(_itm->m_icon_params));
 			auto item_sect = _itm->object().cNameSect().c_str();
-			m_count.push_back(inv.GetSameItemCount(item_sect, bSearchRuck));
+			m_count.push_back(inv.GetSameItemCount(item_sect, false));
 		}
 	}
 }

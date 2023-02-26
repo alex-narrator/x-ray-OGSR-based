@@ -146,9 +146,7 @@ void CActor::g_cl_ValidateMState(float dt, u32 mstate_wf)
 		bool bOnClimbOld			= !!(mstate_old&mcClimb);
 
 		if (bOnClimbNow != bOnClimbOld) {							//если начали карабкаться по лестнице
-			if (g_eFreeHands != eFreeHandsOff){
-				SetWeaponHideState(INV_STATE_LADDER, bOnClimbNow, true);
-			}
+			SetWeaponHideState(INV_STATE_LADDER, bOnClimbNow, true);
 		}
 	};
 };
@@ -522,7 +520,7 @@ void CActor::g_Orientate	(u32 mstate_rl, float dt)
 			tgt_roll	= 0.0f;
 	}
 	if (!fsimilar(tgt_roll,r_torso_tgt_roll,EPS)){
-		float power_factor = conditions().GetPowerKoef();
+		float power_factor = conditions().GetPower();
 		r_torso_tgt_roll = angle_inertion_var(r_torso_tgt_roll, tgt_roll, 0.f, CurrentHeight * PI_MUL_2 * cam_LookoutSpeed * power_factor, PI_DIV_2, dt);
 		r_torso_tgt_roll= angle_normalize_signed(r_torso_tgt_roll);
 	}
@@ -674,26 +672,13 @@ bool	CActor::CanJump(float weight)
 	return can_Jump;
 }
 
-bool	CActor::CanMove				()
-{
-	if( conditions().IsCantWalk() )
-	{
-		if(mstate_wishful&mcAnyMove)
-		{
+bool CActor::CanMove(){
+	if(conditions().IsCantWalk()){
+		if(mstate_wishful&mcAnyMove){
 			HUD().GetUI()->AddInfoMessage("actor_state", "cant_walk");
 		}
 		return false;
-	}else
-	if( conditions().IsCantWalkWeight() )
-	{
-		if(mstate_wishful&mcAnyMove)
-		{
-			HUD().GetUI()->AddInfoMessage("actor_state", "cant_walk_weight");
-		}
-		return false;
-	
 	}
-
 	if(IsTalking())
 		return false;
 	else

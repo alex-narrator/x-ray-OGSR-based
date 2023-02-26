@@ -26,39 +26,19 @@
 ////////////////////////////////////////////////////////////////////////////
 CSE_ALifeInventoryItem::CSE_ALifeInventoryItem(LPCSTR caSection)
 {
-	//текущее состояние вещи
-	m_fCondition				= 1.0f;
-
 	m_fMass						= pSettings->r_float(caSection, "inv_weight");
 	m_dwCost					= pSettings->r_u32(caSection, "cost");
 
-	if (pSettings->line_exist(caSection, "condition"))
-		m_fCondition			= pSettings->r_float(caSection, "condition");
+	m_fCondition				= READ_IF_EXISTS(pSettings, r_float, caSection, "condition", 1.f);
+	m_iHealthValue				= READ_IF_EXISTS(pSettings, r_s32, caSection, "health_value", 0);
+	m_iFoodValue				= READ_IF_EXISTS(pSettings, r_s32, caSection, "food_value", 0);
 
-	if (pSettings->line_exist(caSection, "health_value"))
-		m_iHealthValue			= pSettings->r_s32(caSection, "health_value");
-	else
-		m_iHealthValue			= 0;
+	State.quaternion.set		(0.f, 0.f, 0.f, 1.f);
 
-	if (pSettings->line_exist(caSection, "food_value"))
-		m_iFoodValue			= pSettings->r_s32(caSection, "food_value");
-	else
-		m_iFoodValue			= 0;
+	State.angular_vel.set		(Fvector{});
+	State.linear_vel.set		(Fvector{});
 
-	m_fDeteriorationValue		= 0;
-
-	m_last_update_time			= 0;
-
-	State.quaternion.x			= 0.f;
-	State.quaternion.y			= 0.f;
-	State.quaternion.z			= 1.f;
-	State.quaternion.w			= 0.f;
-
-	State.angular_vel.set		(0.f,0.f,0.f);
-	State.linear_vel.set		(0.f,0.f,0.f);
-
-	if (pSettings->line_exist(caSection, "radiation_restore_speed"))
-		m_fRadiationRestoreSpeed	= pSettings->r_float(caSection, "radiation_restore_speed");
+	m_fRadiationRestoreSpeed	= READ_IF_EXISTS(pSettings, r_float, caSection, "radiation_restore_speed", 0.f);
 
 	m_power_source_status		= (EPowerSourceStatus)READ_IF_EXISTS(pSettings, r_u8, caSection, "power_source_status", 0);
 	//preinstalled non-permanent power source
@@ -119,10 +99,8 @@ static inline bool check (const u8 &mask, const u8 &test)
 
 void CSE_ALifeInventoryItem::UPDATE_Write	(NET_Packet &tNetPacket)
 {
-	tNetPacket.w_float_q8	(m_fCondition, 0.0f, 1.0f);
 	tNetPacket.w_float		(m_fRadiationRestoreSpeed);
 	tNetPacket.w_float		(m_fLastTimeCalled);
-	tNetPacket.w_float		(m_fPowerLevel);
 	tNetPacket.w_u8			(m_cur_power_source);
 	tNetPacket.w_u8			(m_bIsPowerSourceAttached ? 1 : 0);
 	tNetPacket.w_float_q8	(m_fAttachedPowerSourceCondition, 0.0f, 1.0f);
@@ -171,10 +149,8 @@ void CSE_ALifeInventoryItem::UPDATE_Read	(NET_Packet &tNetPacket)
 {
 	u16 m_wVersion = base()->m_wVersion;
 	if (m_wVersion > 118){
-		tNetPacket.r_float_q8	(m_fCondition, 0.0f, 1.0f);
 		tNetPacket.r_float		(m_fRadiationRestoreSpeed);
 		tNetPacket.r_float		(m_fLastTimeCalled);
-		tNetPacket.r_float		(m_fPowerLevel);
 		tNetPacket.r_u8			(m_cur_power_source);
 		m_bIsPowerSourceAttached = !!(tNetPacket.r_u8() & 0x1);
 		tNetPacket.r_float_q8	(m_fAttachedPowerSourceCondition, 0.0f, 1.0f);
@@ -518,7 +494,6 @@ void CSE_ALifeItemWeapon::UPDATE_Read(NET_Packet	&tNetPacket)
 {
 	inherited::UPDATE_Read		(tNetPacket);
 
-//	tNetPacket.r_float_q8		(m_fCondition,0.0f,1.0f);
 	tNetPacket.r_u8				(wpn_flags);
 	tNetPacket.r_u16			(a_elapsed);
 	tNetPacket.r_u8				(m_addon_flags.flags);
@@ -549,7 +524,6 @@ void CSE_ALifeItemWeapon::UPDATE_Write(NET_Packet	&tNetPacket)
 {
 	inherited::UPDATE_Write		(tNetPacket);
 
-//	tNetPacket.w_float_q8		(m_fCondition,0.0f,1.0f);
 	tNetPacket.w_u8				(wpn_flags);
 	tNetPacket.w_u16			(a_elapsed);
 	tNetPacket.w_u8				(m_addon_flags.get());
@@ -714,8 +688,6 @@ void CSE_ALifeItemWeaponMagazined::UPDATE_Read		(NET_Packet& P)
 		P.r_float_q8(m_fAttachedScopeCondition, 0.f, 1.f);
 		P.r_float_q8(m_fAttachedGrenadeLauncherCondition, 0.f, 1.f);
 
-		P.r_float(m_fRTZoomFactor);
-
 		BYTE F = P.r_u8();
 		m_bIsMagazineAttached = !!(F & eMagazineAttached);
 		m_bNightVisionSwitchedOn = !!(F & eNightVisionOn);
@@ -728,15 +700,14 @@ void CSE_ALifeItemWeaponMagazined::UPDATE_Write	(NET_Packet& P)
 	P.w_u8(m_u8CurFireMode);	
 	//
 	P.w_u8(u8(m_AmmoIDs.size()));
-	for (u32 i = 0; i < m_AmmoIDs.size(); i++){
-		P.w_u8(u8(m_AmmoIDs[i]));
+	for(const auto& _item : m_AmmoIDs){
+		P.w_u8(u8(m_AmmoIDs[_item]));
 	}
 
 	P.w_float_q8(m_fAttachedSilencerCondition, 0.f, 1.f);
 	P.w_float_q8(m_fAttachedScopeCondition, 0.f, 1.f);
 	P.w_float_q8(m_fAttachedGrenadeLauncherCondition, 0.f, 1.f);
 	//
-	P.w_float(m_fRTZoomFactor);
 
 	BYTE F = 0;
 	F |= (m_bIsMagazineAttached ? eMagazineAttached : 0);
@@ -937,7 +908,7 @@ void CSE_ALifeItemArtefact::UPDATE_Read		(NET_Packet	&tNetPacket)
 	inherited::UPDATE_Read		(tNetPacket);
 	//
 	if (m_wVersion > 118)
-		m_fRandomK = tNetPacket.r_float();
+		tNetPacket.r_float(m_fRandomK);
 }
 
 void CSE_ALifeItemArtefact::UPDATE_Write	(NET_Packet	&tNetPacket)
@@ -1089,7 +1060,7 @@ void CSE_ALifeItemGrenade::UPDATE_Read		(NET_Packet	&tNetPacket)
 	inherited::UPDATE_Read		(tNetPacket);
 	//
 	if (m_wVersion > 118)
-		m_dwDestroyTimeMax = tNetPacket.r_u32();
+		tNetPacket.r_u32(m_dwDestroyTimeMax);
 }
 
 void CSE_ALifeItemGrenade::UPDATE_Write		(NET_Packet	&tNetPacket)
@@ -1209,13 +1180,11 @@ void CSE_ALifeItemCustomOutfit::STATE_Write		(NET_Packet	&tNetPacket)
 void CSE_ALifeItemCustomOutfit::UPDATE_Read		(NET_Packet	&tNetPacket)
 {
 	inherited::UPDATE_Read			(tNetPacket);
-//	tNetPacket.r_float_q8			(m_fCondition,0.0f,1.0f);
 }
 
 void CSE_ALifeItemCustomOutfit::UPDATE_Write		(NET_Packet	&tNetPacket)
 {
 	inherited::UPDATE_Write			(tNetPacket);
-//	tNetPacket.w_float_q8			(m_fCondition,0.0f,1.0f);
 }
 
 BOOL CSE_ALifeItemCustomOutfit::Net_Relevant		()
@@ -1229,7 +1198,7 @@ BOOL CSE_ALifeItemCustomOutfit::Net_Relevant		()
 ////////////////////////////////////////////////////////////////////////////
 CSE_ALifeItemEatable::CSE_ALifeItemEatable(LPCSTR caSection) : CSE_ALifeItem(caSection)
 {
-	m_portions_num = READ_IF_EXISTS(pSettings, r_s32, caSection, "eat_portions_num", 1);//pSettings->r_s32(caSection, "eat_portions_num");
+	m_portions_num = READ_IF_EXISTS(pSettings, r_s32, caSection, "eat_portions_num", 1);
 }
 
 CSE_ALifeItemEatable::~CSE_ALifeItemEatable()
@@ -1256,7 +1225,7 @@ void CSE_ALifeItemEatable::UPDATE_Read(NET_Packet& tNetPacket)
 {
 	inherited::UPDATE_Read(tNetPacket);
 	if (m_wVersion > 118)
-		m_portions_num = tNetPacket.r_s32();
+		tNetPacket.r_s32(m_portions_num);
 }
 
 void CSE_ALifeItemEatable::UPDATE_Write(NET_Packet& tNetPacket)

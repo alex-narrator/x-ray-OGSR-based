@@ -16,7 +16,7 @@ class IRender_Sector;
 
 extern const Fvector zero_vel;
 
-#define WEAPON_MATERIAL_NAME "objects\\bullet"
+constexpr auto WEAPON_MATERIAL_NAME = "objects\\bullet";
 
 class CShootingObject
 {
@@ -52,9 +52,9 @@ protected:
 	virtual void			FireStart			();
 	virtual void			FireEnd				();
 public:
-	IC BOOL					IsWorking			()	const	{return bWorking;}
-	virtual BOOL			ParentMayHaveAimBullet()		{return FALSE;}
-	virtual BOOL			ParentIsActor()					{return FALSE;}
+	IC BOOL					IsWorking			() const	{return bWorking;}
+	virtual bool			ParentMayHaveAimBullet()		{return false;}
+	virtual bool			ParentIsActor		() const	{return false;}
 
 protected:
 	// Weapon fires now

@@ -167,13 +167,11 @@ void CActor::cam_Update(float dt, float fFOV)
 	current_ik_cam_shift = 0;
 
 	// Alex ADD: smooth crouch fix
-	if (CurrentHeight != CameraHeight())
-	{
-		float power_factor = conditions().GetPowerKoef();
+	if (CurrentHeight != CameraHeight()){
+		float power_factor = conditions().GetPower();
 		float smoothK = cam_HeightInterpolationSpeed * power_factor * dt;
 		if (smoothK > 1.0f)
 			smoothK = 1.0f;
-
 		CurrentHeight = (CurrentHeight * (1.0f - smoothK)) + (CameraHeight() * smoothK);
 	}
 

@@ -22,9 +22,9 @@ class CInfoPortion;
 struct GAME_NEWS_DATA;
 class CActorCondition;
 class CCustomOutfit;
-class CWarbelt;
 class CInventoryContainer;
 class CHelmet;
+class CWarbelt;
 class CVest;
 class CTorch;
 class CNightVisionDevice;
@@ -810,6 +810,8 @@ public:
 
 			bool	SaveGameAllowed				();
 			bool	InSafeHouse					();
+
+			bool	IsFreeHands					()const;
 protected:
 	svector<float, eRestoreBoostMax> m_ActorItemBoostedParam;
 };

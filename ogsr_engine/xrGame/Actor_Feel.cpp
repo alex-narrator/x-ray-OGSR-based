@@ -142,12 +142,12 @@ void	CActor::PickupModeUpdate_COD	()
 
 	//подбирание объекта
 
-	bool b_pickup_allowed = inventory().IsFreeHands() && (!psActorFlags.test(AF_PICKUP_TARGET_ONLY) || inventory().m_pTarget);
+	bool b_pickup_allowed = IsFreeHands() && (!psActorFlags.test(AF_PICKUP_TARGET_ONLY) || inventory().m_pTarget);
 
 	if (inventory().m_pTarget && inventory().m_pTarget->Useful()
 		&& m_pUsableObject && m_pUsableObject->nonscript_usable()
 		&& !Level().m_feel_deny.is_object_denied( smart_cast<CGameObject*>( inventory().m_pTarget ) )
-		&& inventory().IsFreeHands()) {
+		&& IsFreeHands()) {
 		CInventoryItem* pNearestItem = inventory().m_pTarget;
         if ( m_bPickupMode && inventory().CanTakeItem(pNearestItem)) {
 			Game().SendPickUpEvent(ID(), pNearestItem->object().ID());

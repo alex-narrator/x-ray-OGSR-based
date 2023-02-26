@@ -635,10 +635,9 @@ void CUITradeWnd::Show()
 	ResetAll						();
 	m_uidata->UIDealMsg				= NULL;
 
-	if (Actor()) {
-		if (psActorFlags.test(AF_ITEMS_FROM_BELT)) 
-			Actor()->SetRuckAmmoPlacement(true); //установим флаг перезарядки из рюкзака
-		Actor()->RepackAmmo();
+	if (const auto& actor = Actor()) {
+		actor->SetRuckAmmoPlacement(true); //установим флаг перезарядки из рюкзака
+		actor->RepackAmmo();
 	}
 	m_uidata->UIPerformDonationButton.SetVisible(m_pOthersInvOwner->CanTakeDonations());
 	PlaySnd(eInvSndOpen);
@@ -663,9 +662,8 @@ void CUITradeWnd::Hide()
 	m_uidata->UIOthersBagList.ClearAll	(true);
 	m_uidata->UIOthersTradeList.ClearAll(true);
 
-	if (Actor()) {
-		if (psActorFlags.test(AF_ITEMS_FROM_BELT))
-			Actor()->SetRuckAmmoPlacement(false); //сбросим флаг перезарядки из рюкзака
+	if (const auto& actor = Actor()) {
+		Actor()->SetRuckAmmoPlacement(false); //сбросим флаг перезарядки из рюкзака
 	}
 	m_bShowAllInv = false;
 }
@@ -956,7 +954,7 @@ void CUITradeWnd::UpdateLists(EListType mode)
    			m_pInv->AddAvailableItems		(ruck_list, false);
 		else {
 			for (const auto& item : m_pInv->m_ruck) {
-				if(item->CanTrade())
+				if(CanMoveToOther(item, true))
 					ruck_list.push_back(item);
 			}
 		}
@@ -972,14 +970,8 @@ void CUITradeWnd::UpdateLists(EListType mode)
 	}
 }
 
-void CUITradeWnd::FillList	(TIItemContainer& cont, CUIDragDropListEx& dragDropList, bool our)
-{
-	TIItemContainer::iterator it	= cont.begin();
-	TIItemContainer::iterator it_e	= cont.end();
-
-	for(; it != it_e; ++it)
-	{
-		CInventoryItem* item = *it;
+void CUITradeWnd::FillList	(TIItemContainer& cont, CUIDragDropListEx& dragDropList, bool our){
+	for(const auto& item : cont){
 		CUICellItem* itm = create_cell_item( item );
 		if (item->m_highlight_equipped)
 			itm->m_select_equipped = true;

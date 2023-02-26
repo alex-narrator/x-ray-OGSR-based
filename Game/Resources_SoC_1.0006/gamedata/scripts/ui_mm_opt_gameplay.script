@@ -13,7 +13,6 @@ local mm = ui_mm_opt_main
 local gameplay_opt_params = {
 	--"option name", "option control type", "option tip name", "option tip text"
 	{ "game_save_mode", 			"list", "gameplay_settings_name_game_save_mode", 				"gameplay_settings_desc_game_save_mode"				},
-	{ "free_hands", 				"list", "gameplay_settings_name_free_hands", 					"gameplay_settings_desc_free_hands"					},
 	{ "hud_laconic", 				"list", "gameplay_settings_name_hud_laconic", 					"gameplay_settings_desc_hud_laconic"				},
 	{ "difficulty", 				"list", "gameplay_settings_name_difficulty", 					"gameplay_settings_desc_difficulty"					},
 	
@@ -31,17 +30,12 @@ local gameplay_opt_params = {
 	{ "use_luminosity", 			"check", "gameplay_settings_name_use_luminosity", 				"gameplay_settings_desc_use_luminosity"				},
 	
 	{ "stop_missile_playing", 		"check", "gameplay_settings_name_stop_missile_playing", 		"gameplay_settings_desc_stop_missile_playing"		},
-	{ "no_auto_reload", 			"check", "gameplay_settings_name_no_auto_reload", 				"gameplay_settings_desc_no_auto_reload"				},
-	{ "wpn_actions_reset_sprint", 	"check", "gameplay_settings_name_wpn_actions_reset_sprint", 	"gameplay_settings_desc_wpn_actions_reset_sprint"	},
 	
 	{ "inventory_volume", 			"check", "gameplay_settings_name_inventory_volume", 			"gameplay_settings_desc_inventory_volume"			},
-	{ "items_from_belt", 			"check", "gameplay_settings_name_items_belt", 					"gameplay_settings_desc_items_from_belt"			},
 	{ "artefacts_from_all", 		"check", "gameplay_settings_name_artefacts_from_all", 			"gameplay_settings_desc_artefacts_from_all"			},
 	
 	{ "artefact_detector_check", 	"check", "gameplay_settings_name_artefact_detector_check", 		"gameplay_settings_desc_artefact_detector_check"	},
 	
-	{ "smooth_overweight", 			"check", "gameplay_settings_name_smooth_overweight", 			"gameplay_settings_desc_smooth_overweight"			},
-	{ "survival_mode", 				"check", "gameplay_settings_name_survival_mode", 				"gameplay_settings_desc_survival_mode"				},
 	{ "crosshair_hard", 			"check", "gameplay_settings_name_crosshair_hard", 				"gameplay_settings_desc_crosshair_hard"				},
 	{ "ambient", 					"check", "gameplay_settings_name_ambient", 						"gameplay_settings_desc_ambient"					},
 }

@@ -230,16 +230,13 @@ void CInventoryItem::Load(LPCSTR section)
 }
 
 
-void  CInventoryItem::ChangeCondition(float fDeltaCondition)
-{
+void  CInventoryItem::ChangeCondition(float fDeltaCondition){
 	m_fCondition += fDeltaCondition;
 	clamp(m_fCondition, 0.f, 1.f);
 	if (fis_zero(GetCondition()) && IsPowerConsumer() && IsPowerOn())
 		Switch(false);
-	auto se_obj = object().alife_object();
-	if (se_obj)
-	{
-		CSE_ALifeInventoryItem *itm = smart_cast<CSE_ALifeInventoryItem*>(se_obj);
+	if (auto se_obj = object().alife_object()){
+		auto itm = smart_cast<CSE_ALifeInventoryItem*>(se_obj);
 		if (itm)
 			itm->m_fCondition = m_fCondition;
 	}
@@ -367,7 +364,6 @@ void CInventoryItem::UpdateCL()
 	}
 
 #endif
-	UpdateConditionDecrease();
 	UpdatePowerConsumption();
 }
 
@@ -586,9 +582,6 @@ BOOL CInventoryItem::net_Spawn			(CSE_Abstract* DC)
 	}
 	InitPowerSource();
 
-	if (!fis_zero(m_fTTLOnDecrease))
-		object().processing_activate();
-
 	return							TRUE;
 }
 
@@ -624,10 +617,10 @@ void CInventoryItem::save(NET_Packet &packet)
 void CInventoryItem::net_Export( CSE_Abstract* E ) {
   CSE_ALifeInventoryItem* item = smart_cast<CSE_ALifeInventoryItem*>( E );
   item->m_u8NumItems					= 0;
-  item->m_fCondition					= m_fCondition;
+  //item->m_fCondition					= m_fCondition;
   item->m_fRadiationRestoreSpeed		= m_ItemEffect[eRadiationRestoreSpeed];
   item->m_fLastTimeCalled				= m_fLastTimeCalled;
-  item->m_fPowerLevel					= m_fPowerLevel;
+  //item->m_fPowerLevel					= m_fPowerLevel;
   item->m_cur_power_source				= m_cur_power_source;
   item->m_bIsPowerSourceAttached		= m_bIsPowerSourceAttached;
   item->m_fAttachedPowerSourceCondition = m_fAttachedPowerSourceCondition;
@@ -884,7 +877,7 @@ void CInventoryItem::SetLoadedBeltIndex( u8 pos ) {
 
 
 void CInventoryItem::OnMoveToSlot(EItemPlace prevPlace) {
-  if ( smart_cast<CActor*>( object().H_Parent() )) {
+  if (auto Actor = smart_cast<CActor*>( object().H_Parent() )) {
     if ( Core.Features.test( xrCore::Feature::equipped_untradable ) ) {
       m_flags.set( FIAlwaysUntradable, TRUE );
       m_flags.set( FIUngroupable,      TRUE );
@@ -900,8 +893,7 @@ void CInventoryItem::OnMoveToSlot(EItemPlace prevPlace) {
 
 
 void CInventoryItem::OnMoveToBelt(EItemPlace prevPlace) {
-	auto pActor = smart_cast<CActor*>(object().H_Parent());
-	if ( smart_cast<CActor*>( object().H_Parent() ) ) {
+	if (auto pActor = smart_cast<CActor*>(object().H_Parent())) {
 		if ( Core.Features.test( xrCore::Feature::equipped_untradable ) ) {
 			m_flags.set( FIAlwaysUntradable, TRUE );
 			m_flags.set( FIUngroupable,      TRUE );
@@ -919,8 +911,7 @@ void CInventoryItem::OnMoveToBelt(EItemPlace prevPlace) {
 };
 
 void CInventoryItem::OnMoveToVest(EItemPlace prevPlace) {
-	auto pActor = smart_cast<CActor*>(object().H_Parent());
-	if (smart_cast<CActor*>(object().H_Parent())) {
+	if (auto pActor = smart_cast<CActor*>(object().H_Parent())) {
 		if (Core.Features.test(xrCore::Feature::equipped_untradable)) {
 			m_flags.set(FIAlwaysUntradable, TRUE);
 			m_flags.set(FIUngroupable, TRUE);
@@ -938,8 +929,7 @@ void CInventoryItem::OnMoveToVest(EItemPlace prevPlace) {
 };
 
 void CInventoryItem::OnMoveToRuck(EItemPlace prevPlace) {
-	auto pActor = smart_cast<CActor*>(object().H_Parent());
-	if (pActor) {
+	if (auto pActor = smart_cast<CActor*>(object().H_Parent())) {
 		if ( Core.Features.test( xrCore::Feature::equipped_untradable ) ) {
 			m_flags.set( FIAlwaysUntradable, FALSE );
 			m_flags.set( FIUngroupable,      FALSE );
@@ -960,14 +950,11 @@ void CInventoryItem::OnMoveOut(EItemPlace prevPlace) {
 	OnMoveToRuck(prevPlace);
 };
 
-float	CInventoryItem::GetControlInertionFactor()
-{
+float	CInventoryItem::GetControlInertionFactor(){
 	float weight_k = sqrtf(Weight());
 	//чтобы очень лёгкие предметы не давали огромной чувствительности
 	clamp(weight_k, 1.f, weight_k);
-
 	m_fControlInertionFactor = READ_IF_EXISTS(pSettings, r_float, object().cNameSect(), "control_inertion_factor", weight_k);
-
 	return m_fControlInertionFactor;
 }
 
@@ -1034,9 +1021,9 @@ void CInventoryItem::UpdateConditionDecrease(){
 
 void CInventoryItem::GetBriefInfo(xr_string& str_name, xr_string& icon_sect_name, xr_string& str_count)
 {
-	str_name = Name();
+	str_name = NameShort();
 	str_count = "";
-	icon_sect_name = *m_object->cNameSect();
+	icon_sect_name = m_object->cNameSect().c_str();
 }
 
 bool CInventoryItem::NeedForcedDescriptionUpdate() const {
@@ -1098,11 +1085,14 @@ bool CInventoryItem::IsPowerOn() const {
 
 void CInventoryItem::ChangePowerLevel(float value) {
 	m_fPowerLevel += value;
-
 	clamp(m_fPowerLevel, 0.f, m_fPowerLevel);
-
 	if (fis_zero(m_fPowerLevel) && IsPowerOn())
 		Switch(false);
+	if (auto se_obj = object().alife_object()) {
+		auto itm = smart_cast<CSE_ALifeInventoryItem*>(se_obj);
+		if (itm)
+			itm->m_fPowerLevel = m_fPowerLevel;
+	}
 }
 
 void CInventoryItem::SetPowerLevel(float value) {

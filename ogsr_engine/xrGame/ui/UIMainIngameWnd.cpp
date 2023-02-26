@@ -436,7 +436,7 @@ void CUIMainIngameWnd::Update()
 				break;
 			case ewiWeaponJammed:
 				if (IsHUDElementAllowed(eActiveItem))
-					value = 1 - m_pActor->inventory().ActiveItem()->GetConditionToShow();
+					value = 1 - m_pActor->inventory().ActiveItem()->GetCondition();
 				break;
 			case ewiStarvation:
 				value = 1 - cond->GetSatiety();

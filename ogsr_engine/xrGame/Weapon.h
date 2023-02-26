@@ -237,11 +237,15 @@ public:
 	shared_str m_sWpn_launcher_bone;
 	shared_str m_sWpn_laser_bone;
 	shared_str m_sWpn_flashlight_bone;
+	shared_str m_sWpn_magazine_bone;
+	shared_str m_sWpn_stock_bone;
 	xr_vector<shared_str> m_sHud_wpn_scope_bones;
 	shared_str m_sHud_wpn_silencer_bone;
 	shared_str m_sHud_wpn_launcher_bone;
 	shared_str m_sHud_wpn_laser_bone;
 	shared_str m_sHud_wpn_flashlight_bone;
+	shared_str m_sHud_wpn_magazine_bone;
+	shared_str m_sHud_wpn_stock_bone;
 
 	bool
 		m_bGrenadeLauncherRequiresForend{},
@@ -275,8 +279,8 @@ protected:
 	bool			m_bScopeDynamicZoom{};
 	//run-time zoom factor
 	float			m_fRTZoomFactor{ 1.f };
-	float			m_fMinScopeZoomFactor{ 1.f };
-	u32				m_uZoomStepCount{ 3 };
+	float			m_fMaxScopeZoomFactor{ 1.f };
+	u32				m_uZoomStepCount{ 2 };
 	//разрешение режима приближения
 	bool			m_bZoomEnabled;
 	//текущий фактор приближения
@@ -295,7 +299,7 @@ protected:
 	//коэффициент увеличения во втором вьюпорте при зуме
 	float			m_fSecondVPZoomFactor{};
 	//прятать перекрестие в режиме прицеливания
-	bool			m_bHideCrosshairInZoom;
+	bool			m_bHideCrosshairInZoom{true};
 	//разрешить инерцию оружия в режиме прицеливания
 	bool			m_bZoomInertionAllow;
 	// или в режиме прицеливания через оптику
@@ -358,7 +362,7 @@ public:
 
 	virtual bool			IsScopeDynamicZoom		() const { return m_bScopeDynamicZoom; };
 	virtual float			GetScopeZoomFactor		() const { return m_fScopeZoomFactor; };
-	virtual float			GetMinScopeZoomFactor	() const { return m_fMinScopeZoomFactor; };
+	virtual float			GetMaxScopeZoomFactor	() const { return m_fMaxScopeZoomFactor; };
 
 	virtual bool			HasScopeSecond			() const;
 	virtual bool			IsSecondScopeMode		() const;
@@ -451,7 +455,6 @@ public:
 	//параметы оружия в зависимоти от его состояния исправности
 	float					GetConditionDispersionFactor	() const;
 	float					GetConditionMisfireProbability	() const;
-	virtual	float			GetConditionToShow				() const;
 
 public:
 	//отдача при стрельбе 
@@ -599,8 +602,8 @@ public:
 	virtual bool			use_crosshair				()	const {return true;}
 			bool			show_crosshair				();
 			bool			show_indicators				();
-	virtual BOOL			ParentMayHaveAimBullet		();
-	virtual BOOL			ParentIsActor				();
+	virtual bool			ParentMayHaveAimBullet		();
+	virtual bool			ParentIsActor				() const;
 
 private:
 	float					m_hit_probability[egdCount];
@@ -658,7 +661,7 @@ public:
 	void SetAmmoWasSpawned	(bool value) { m_bAmmoWasSpawned = value; };
 	//
 	//какие патроны будут заряжены при смене типа боеприпаса
-	u32	GetNextAmmoType(bool looped);
+	u32	GetNextAmmoType();
 	//оружие использует отъёмный магазин
 	virtual bool		HasDetachableMagazine	(bool = false) const { return false; };
 	virtual bool		IsMagazineAttached		() const { return false; };
