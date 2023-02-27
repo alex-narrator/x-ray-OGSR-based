@@ -2208,7 +2208,10 @@ bool CWeaponMagazined::ShowAmmoCounter() const {
 void CWeaponMagazined::UpdateMagazineVisibility() {
 	if (!HasDetachableMagazine())
 		return;
-	bool show = IsMagazineAttached() || m_set_next_ammoType_on_reload != u32(-1) && AmmoTypeIsMagazine(m_set_next_ammoType_on_reload);
+	bool show = IsMagazineAttached() ||
+		(m_set_next_ammoType_on_reload != u32(-1) && AmmoTypeIsMagazine(m_set_next_ammoType_on_reload) ||
+			m_pAmmo && AmmoTypeIsMagazine(m_ammoType)) &&
+		(GetState() == eReload || GetReloadState() == eShutter || GetState() == eUnload);
 	if (auto pWeaponVisual = smart_cast<IKinematics*>(Visual())) {
 		if (m_sWpn_magazine_bone.size()) {
 			u16 bone_id = pWeaponVisual->LL_BoneID(m_sWpn_magazine_bone);
