@@ -15,7 +15,7 @@
 
 -Встановити актуальну версію Visual Studio 2022, достатньо базової конфігурації для розробки класичних додатків С++:
 
-![image](https://user-images.githubusercontent.com/23098597/189554406-9a324d3b-17be-4d74-80c1-9f5332682605.png)
+![image](https://user-images.githubusercontent.com/23098597/221806357-2e4ce52b-a931-4023-a62e-fc57f26fd32f.png)
 
 -Відкрити файл Engine.sln
 
