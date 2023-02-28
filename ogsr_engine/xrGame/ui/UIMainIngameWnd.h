@@ -96,12 +96,6 @@ protected:
 	CUIStatic			UIPsyHealthIcon;
 	CUIStatic			UIInvincibleIcon;
 	CUIStatic			UISafehouseIcon;
-//	CUIStatic			UISleepIcon;
-//	CUIStatic			UIArtefactIcon;
-	//
-	CUIStatic			UIArmorIcon;
-	CUIStatic			UIHealthIcon;
-	CUIStatic			UIPowerIcon;
 
 	CUIScrollView*		m_UIIcons{};
 public:	
@@ -120,13 +114,8 @@ public:
 		ewiWound,
 		ewiStarvation,
 		ewiPsyHealth,
-		ewiArmor,
-		ewiHealth,
-		ewiPower,
 		ewiInvincible,
 		ewiSafehouse,
-//		ewiSleep,
-//		ewiArtefact,
 	};
 
 	// Задаем цвет соответствующей иконке

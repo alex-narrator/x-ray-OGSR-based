@@ -408,8 +408,8 @@ void CActor::Load	(LPCSTR section )
 	m_fHoldingDistance	= READ_IF_EXISTS(pSettings, r_float, "actor_capture", "holding_distance",	.5f);	//расстояние перед актором на котором находится удерживаемый предмет
 	clamp(m_fHoldingDistance, 0.0f, inventory().GetTakeDist());
 
-	m_uActiveItemInfoTTL	= READ_IF_EXISTS(pSettings, r_u32, section, "active_item_info_ttl", 2000);
-	m_uGearInfoTTL			= READ_IF_EXISTS(pSettings, r_u32, section, "gear_info_ttl",		2000);
+	m_uActiveItemInfoTTL	= READ_IF_EXISTS(pSettings, r_u32, section, "active_item_info_ttl", 0);
+	m_uGearInfoTTL			= READ_IF_EXISTS(pSettings, r_u32, section, "gear_info_ttl",		0);
 }
 
 void CActor::PHHit(SHit& H)
@@ -793,11 +793,8 @@ void CActor::UpdateCL	()
 			g_pGamePersistent->m_pGShaderConstants.hud_params.y = pWeapon->GetSecondVPFov(); //--#SM+#--
 			g_pGamePersistent->m_pGShaderConstants.hud_params.z = pWeapon->GetLastHudFov();
 		}
-	}
-	else
-	{
-		if(Level().CurrentEntity() && this->ID()==Level().CurrentEntity()->ID() )
-		{
+	}else{
+		if(Level().CurrentEntity() && this->ID()==Level().CurrentEntity()->ID() ){
 			HUD().SetCrosshairDisp(0.f);
 			HUD().ShowCrosshair(false);
 
@@ -817,10 +814,8 @@ void CActor::UpdateCL	()
 
 	spatial.type |=STYPE_REACTTOSOUND;
 
-	if(m_sndShockEffector)
-	{
-		if (this == Level().CurrentViewEntity())
-		{
+	if(m_sndShockEffector){
+		if (this == Level().CurrentViewEntity()){
 			m_sndShockEffector->Update();
 
 			if(!m_sndShockEffector->InWork() || !g_Alive())
@@ -831,8 +826,7 @@ void CActor::UpdateCL	()
 	}
 
 	Fmatrix trans;
-	if (cam_Active() == cam_FirstEye())
-	{
+	if (cam_Active() == cam_FirstEye()){
 		Cameras().hud_camera_Matrix(trans);
 	}
 	else
@@ -847,12 +841,16 @@ void CActor::UpdateCL	()
 		RemoveEffector(this, effGroggy);
 	}
 
-	if (m_bShowActiveItemInfo) {
+	if (!m_uActiveItemInfoTTL) {
+		m_bShowActiveItemInfo = true;
+	}else if (m_bShowActiveItemInfo) {
 		if (Device.dwTimeGlobal > m_uActiveItemInfoStartTime + m_uActiveItemInfoTTL) {
 			m_bShowActiveItemInfo = false;
 		}
 	}
-	if (m_bShowGearInfo) {
+	if (!m_uGearInfoTTL) {
+		m_bShowGearInfo = true;
+	}else if (m_bShowGearInfo) {
 		if (Device.dwTimeGlobal > m_uGearInfoStartTime + m_uGearInfoTTL){
 			m_bShowGearInfo = false;
 		}

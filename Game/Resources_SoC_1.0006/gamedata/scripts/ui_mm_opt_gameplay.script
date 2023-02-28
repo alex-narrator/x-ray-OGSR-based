@@ -13,7 +13,6 @@ local mm = ui_mm_opt_main
 local gameplay_opt_params = {
 	--"option name", "option control type", "option tip name", "option tip text"
 	{ "game_save_mode", 			"list", "gameplay_settings_name_game_save_mode", 				"gameplay_settings_desc_game_save_mode"				},
-	{ "hud_laconic", 				"list", "gameplay_settings_name_hud_laconic", 					"gameplay_settings_desc_hud_laconic"				},
 	{ "difficulty", 				"list", "gameplay_settings_name_difficulty", 					"gameplay_settings_desc_difficulty"					},
 	
 	{ "autopause", 					"check", "gameplay_settings_name_autopause", 					"gameplay_settings_desc_autopause"					},

@@ -86,8 +86,7 @@ static bool SetupGameIcon(CUIMainIngameWnd::EWarningIcons icon, u32 cl, float wi
 
 	CUIStatic* sIcon = warn_icon_list[icon];
 
-	if (width > 0 && height > 0)
-	{
+	if (width > 0 && height > 0){
 		sIcon->SetWidth(width);
 		sIcon->SetHeight(height);
 		sIcon->SetStretchTexture(cl > 0);
@@ -113,9 +112,6 @@ CUIMainIngameWnd::CUIMainIngameWnd()
 	warn_icon_list[ewiWound]		= &UIWoundIcon;
 	warn_icon_list[ewiStarvation]	= &UIStarvationIcon;
 	warn_icon_list[ewiPsyHealth]	= &UIPsyHealthIcon;
-	warn_icon_list[ewiArmor]		= &UIArmorIcon;
-	warn_icon_list[ewiHealth]		= &UIHealthIcon;
-	warn_icon_list[ewiPower]		= &UIPowerIcon;
 	warn_icon_list[ewiSafehouse]	= &UISafehouseIcon;
 	warn_icon_list[ewiInvincible]	= &UIInvincibleIcon;
 }
@@ -229,16 +225,6 @@ void CUIMainIngameWnd::Init()
 
 	xml_init.InitStatic			(uiXml, "invincible_static", 0, &UIInvincibleIcon);
 	UIInvincibleIcon.Show		(false);
-
-	//--
-	xml_init.InitStatic         (uiXml, "armor_static", 0, &UIArmorIcon);
-	UIArmorIcon.Show            (false);
-
-	xml_init.InitStatic         (uiXml, "health_static", 0, &UIHealthIcon);
-	UIHealthIcon.Show           (false);
-
-	xml_init.InitStatic         (uiXml, "power_static", 0, &UIPowerIcon);
-	UIPowerIcon.Show(false);
 	//--
 	AttachChild					(&UIOutfitPowerStatic);
 	xml_init.InitStatic			(uiXml, "outfit_power_static", 0, &UIOutfitPowerStatic);
@@ -250,25 +236,20 @@ void CUIMainIngameWnd::Init()
 		"wounds",
 		"starvation",
 		"psy",
-		"armor",
-		"health",
-		"power",
 		"invincible", // Not used
 		"safehouse",
 	};
 
 	// Загружаем пороговые значения для индикаторов
 	EWarningIcons i = ewiWeaponJammed;
-	while (i <= ewiInvincible)
-	{
+	while (i <= ewiInvincible){
 		// Читаем данные порогов для каждого индикатора
 		const char* cfgRecord = pSettings->r_string("main_ingame_indicators_thresholds", warningStrings[static_cast<int>(i) - 1]);
 		u32 count = _GetItemCount(cfgRecord);
 
-		char	singleThreshold[8];
+		char	singleThreshold[5];
 		float	f = 0;
-		for (u32 k = 0; k < count; ++k)
-		{
+		for (u32 k = 0; k < count; ++k){
 			_GetItem(cfgRecord, k, singleThreshold);
 			sscanf(singleThreshold, "%f", &f);
 
@@ -393,23 +374,17 @@ void CUIMainIngameWnd::Update()
 				TurnOffWarningIcon(ewiSafehouse);
 		}
 
-		// Health bar
-		bool show_bar = eHudLaconicOff == g_eHudLaconic;
-		UIHealthBar.Show(show_bar);
-		UIStaticHealth.Show(show_bar);
-		if(show_bar)
-			UIHealthBar.SetProgressPos(m_pActor->GetfHealth() * 100.0f);
+		UIHealthBar.SetProgressPos(m_pActor->GetfHealth() * 100.0f);
 		// Armor bar
 		auto pOutfit = m_pActor->GetOutfit();
-		show_bar = pOutfit && eHudLaconicOff == g_eHudLaconic;
-		UIArmorBar.Show					(show_bar);
-		UIStaticArmor.Show				(show_bar);
-		if(show_bar)
+		UIArmorBar.Show					(pOutfit);
+		UIStaticArmor.Show				(pOutfit);
+		if(pOutfit)
 			UIArmorBar.SetProgressPos		(pOutfit->GetCondition()*100);
 		//armor power
-		show_bar = IsHUDElementAllowed(eArmorPower);
+		bool show_bar = IsHUDElementAllowed(eArmorPower);
 		UIOutfitPowerStatic.Show(show_bar);
-		if (show_bar) {
+		if (show_bar && pOutfit) {
 			auto power_descr = CStringTable().translate("st_power_descr").c_str();
 			string256 text_str;
 			sprintf_s(text_str, "%s %.0f%s", power_descr, pOutfit->GetPowerLevelToShow(), "%");
@@ -418,7 +393,6 @@ void CUIMainIngameWnd::Update()
 
 		UpdateActiveItemInfo				();
 
-		bool b_show_icon = eHudLaconicWarning == g_eHudLaconic;
 		auto cond = &m_pActor->conditions();
 
 		EWarningIcons i = ewiWeaponJammed;
@@ -444,20 +418,6 @@ void CUIMainIngameWnd::Update()
 			case ewiPsyHealth:
 				value = 1 - cond->GetPsyHealth();
 				break;
-				//
-			case ewiArmor:
-				if (IsHUDElementAllowed(eArmor))
-					value = 1 - pOutfit->GetCondition();
-				break;
-			case ewiHealth:
-				if (b_show_icon)
-					value = 1 - cond->GetHealth();
-				break;
-			case ewiPower:
-				if (b_show_icon)
-					value = 1 - cond->GetPower();
-				break;
-				//
 			default:
 				R_ASSERT(!"Unknown type of warning icon");
 			}
@@ -466,8 +426,7 @@ void CUIMainIngameWnd::Update()
 			float min = m_Thresholds[i].front();
 			float max = m_Thresholds[i].back();
 
-			if (m_Thresholds[i].size() > 1)
-			{
+			if (m_Thresholds[i].size() > 1){
 				xr_vector<float>::reverse_iterator	rit;
 
 				// Сначала проверяем на точное соответсвие
@@ -477,23 +436,19 @@ void CUIMainIngameWnd::Update()
 				if (rit == m_Thresholds[i].rend())
 					rit = std::find_if(m_Thresholds[i].rbegin(), m_Thresholds[i].rend(), std::bind(std::less<float>(), std::placeholders::_1, value));
 
-				if (rit != m_Thresholds[i].rend())
-				{
+				if (rit != m_Thresholds[i].rend()){
 					float v = *rit;
 					SetWarningIconColor(i, color_argb(0xFF, clampr<u32>(static_cast<u32>(255 * ((v - min) / (max - min) * 2)), 0, 255), 
 						clampr<u32>(static_cast<u32>(255 * (2.0f - (v - min) / (max - min) * 2)), 0, 255),
 						0));
 				}else
 					TurnOffWarningIcon(i);
-			}
-			else
-			{
+			}else{
 				float val = 1 - value;
 				float treshold = 1 - min;
 				clamp<float>(treshold, 0.01, 1.f);
 
-				if (val <= treshold)
-				{
+				if (val <= treshold){
 					float v = val / treshold;
 					clamp<float>(v, 0.f, 1.f);
 					SetWarningIconColor(i, color_argb(
@@ -502,8 +457,7 @@ void CUIMainIngameWnd::Update()
 						clampr<u32>(static_cast<u32>(255 * v), 0, 255),
 						0
 					));
-				}
-				else
+				}else
 					TurnOffWarningIcon(i);
 			}
 
@@ -639,17 +593,6 @@ void CUIMainIngameWnd::SetWarningIconColor(EWarningIcons icon, const u32 cl)
 	case ewiPsyHealth:
 		SetWarningIconColor		(&UIPsyHealthIcon, cl);
 		break;
-		//
-	case ewiArmor:
-		SetWarningIconColor		(&UIArmorIcon, cl);
-		break;
-	case ewiHealth:
-		SetWarningIconColor		(&UIHealthIcon, cl);
-		break;
-	case ewiPower:
-		SetWarningIconColor		(&UIPowerIcon, cl);
-		break;
-		//
 	case ewiSafehouse:
 		SetWarningIconColor		(&UISafehouseIcon, cl);
 		break;
@@ -834,21 +777,19 @@ void CUIMainIngameWnd::OnConnected()
 	UIZoneMap->SetupCurrentMap		();
 }
 
-void CUIMainIngameWnd::reset_ui()
-{
+void CUIMainIngameWnd::reset_ui(){
 	m_pActor						= NULL;
-	//m_pWeapon						= NULL;
-	//m_pGrenade						= NULL;
-	//m_pItem							= NULL;
 	m_pPickUpItem					= NULL;
 	UIMotionIcon.ResetVisibility	();
 }
 
 bool CUIMainIngameWnd::IsHUDElementAllowed(EHUDElement element)
 {
-	if (Device.Paused() || m_pActor && !m_pActor->g_Alive()) return false;
+	if (Device.Paused() || !m_pActor || m_pActor && !m_pActor->g_Alive()) return false;
 
-	bool allow_devices_hud = eHudLaconicOff == g_eHudLaconic || OnKeyboardHold(get_action_dik(kSCORES)) || m_pActor->inventory().GetActiveSlot() == BOLT_SLOT;
+	bool b_gear_info{ m_pActor->m_bShowGearInfo },
+		b_active_item_info{ m_pActor->m_bShowActiveItemInfo },
+		allow_devices_hud{ b_gear_info && b_active_item_info || OnKeyboardHold(get_action_dik(kSCORES)) || m_pActor->inventory().GetActiveSlot() == BOLT_SLOT };
 
 	switch (element)
 	{
@@ -862,19 +803,19 @@ bool CUIMainIngameWnd::IsHUDElementAllowed(EHUDElement element)
 	}break;
 	case eActiveItem: //Информация об предмете в руках (для оружия - кол-во/тип заряженных патронов, режим огня)
 	{
-		return m_pActor->inventory().ActiveItem() && (eHudLaconicOff == g_eHudLaconic || m_pActor->m_bShowActiveItemInfo);
+		return m_pActor->inventory().ActiveItem() && b_active_item_info;
 	}break;
 	case eGear: //Информация о снаряжении - панель артефактов, наполнение квикслотов, общее кол-во патронов к оружию в руках
 	{
-		return eHudLaconicOff == g_eHudLaconic || m_pActor->m_bShowGearInfo;
+		return b_gear_info;
 	}break;
-	case eArmor: //Иконка состояния брони
+	case eArmor: //Смужка стану костюму
 	{
-		return eHudLaconicOff != g_eHudLaconic && m_pActor->GetOutfit() && m_pActor->m_bShowGearInfo;
+		return m_pActor->GetOutfit();
 	}break;
 	case eArmorPower:
 	{
-		return m_pActor->GetOutfit() && m_pActor->GetOutfit()->IsPowerConsumer() && allow_devices_hud;
+		return m_pActor->GetOutfit() && m_pActor->GetOutfit()->IsPowerConsumer();
 	}break;
 	default:
 		Msg("! unknown hud element");

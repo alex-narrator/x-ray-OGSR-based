@@ -9,20 +9,7 @@
 
 constexpr LPCSTR MOTION_ICON_XML = "motion_icon.xml";
 
-CUIMotionIcon::CUIMotionIcon()
-{
-	m_curren_state	= stLast;
-	m_bchanged		= false;
-	m_luminosity	= 0.0f;
-}
-
-CUIMotionIcon::~CUIMotionIcon()
-{
-
-}
-
-void CUIMotionIcon::ResetVisibility()
-{
+void CUIMotionIcon::ResetVisibility(){
 	m_npc_visibility.clear	();
 	m_bchanged				= true;
 }
@@ -33,50 +20,42 @@ void CUIMotionIcon::Init()
 	bool result = uiXml.Init(CONFIG_PATH, UI_PATH, MOTION_ICON_XML);
 	R_ASSERT3(result, "xml file not found", MOTION_ICON_XML);
 
-	CUIXmlInit	xml_init;
+    CUIXmlInit xml_init;
 
-	AttachChild(&UIStaticLuminocity);
-	xml_init.InitStatic(uiXml, "static_luminosity", 0, &UIStaticLuminocity);
+    xml_init.InitStatic(uiXml, "background", 0, this);
 
-	UIStaticLuminocity.AttachChild(&m_luminosity_progress);
+	AttachChild(&m_power_progress);
+	xml_init.InitProgressBar(uiXml, "power_progress", 0, &m_power_progress);
+
+	AttachChild(&m_luminosity_progress);
 	xml_init.InitProgressBar(uiXml, "luminosity_progress", 0, &m_luminosity_progress);
-	//
-	AttachChild(&UIStaticNoise);
-	xml_init.InitStatic(uiXml, "static_noise", 0, &UIStaticNoise);
 
-	UIStaticNoise.AttachChild(&m_noise_progress);
+	AttachChild(&m_noise_progress);
 	xml_init.InitProgressBar(uiXml, "noise_progress", 0, &m_noise_progress);
 
-	//
-	AttachChild                 (&UIStaticMotionBack);
-	xml_init.InitStatic			(uiXml, "background", 0, &UIStaticMotionBack);	
+	AttachChild(&m_states[stNormal]);
+	xml_init.InitStatic(uiXml, "state_normal", 0, &m_states[stNormal]);
+	m_states[stNormal].Show(false);
 
-	UIStaticMotionBack.AttachChild(&m_power_progress);
-	xml_init.InitProgressBar	(uiXml, "power_progress", 0, &m_power_progress);	
-	
-	UIStaticMotionBack.AttachChild(&m_states[stNormal]);
-	xml_init.InitStatic			(uiXml, "state_normal", 0, &m_states[stNormal]);
-	m_states[stNormal].Show		(false);
+	AttachChild(&m_states[stCrouch]);
+	xml_init.InitStatic(uiXml, "state_crouch", 0, &m_states[stCrouch]);
+	m_states[stCrouch].Show(false);
 
-	UIStaticMotionBack.AttachChild(&m_states[stCrouch]);
-	xml_init.InitStatic			(uiXml, "state_crouch", 0, &m_states[stCrouch]);	
-	m_states[stCrouch].Show		(false);
+	AttachChild(&m_states[stCreep]);
+	xml_init.InitStatic(uiXml, "state_creep", 0, &m_states[stCreep]);
+	m_states[stCreep].Show(false);
 
-	UIStaticMotionBack.AttachChild(&m_states[stCreep]);
-	xml_init.InitStatic			(uiXml, "state_creep", 0, &m_states[stCreep]);	
-	m_states[stCreep].Show		(false);
+	AttachChild(&m_states[stClimb]);
+	xml_init.InitStatic(uiXml, "state_climb", 0, &m_states[stClimb]);
+	m_states[stClimb].Show(false);
 
-	UIStaticMotionBack.AttachChild(&m_states[stClimb]);
-	xml_init.InitStatic			(uiXml, "state_climb", 0, &m_states[stClimb]);	
-	m_states[stClimb].Show		(false);
+	AttachChild(&m_states[stRun]);
+	xml_init.InitStatic(uiXml, "state_run", 0, &m_states[stRun]);
+	m_states[stRun].Show(false);
 
-	UIStaticMotionBack.AttachChild(&m_states[stRun]);
-	xml_init.InitStatic			(uiXml, "state_run", 0, &m_states[stRun]);	
-	m_states[stRun].Show		(false);
-
-	UIStaticMotionBack.AttachChild(&m_states[stSprint]);
-	xml_init.InitStatic			(uiXml, "state_sprint", 0, &m_states[stSprint]);	
-	m_states[stSprint].Show		(false);
+	AttachChild(&m_states[stSprint]);
+	xml_init.InitStatic(uiXml, "state_sprint", 0, &m_states[stSprint]);
+	m_states[stSprint].Show(false);
 
 	ShowState					(stNormal);
 	//
@@ -115,33 +94,19 @@ void CUIMotionIcon::SetLuminosity(float Pos)
 	m_luminosity			= Pos;
 }
 
-void CUIMotionIcon::Update()
-{
-	auto CurrentHUD = HUD().GetUI()->UIMainIngameWnd;
-	bool show_motion_icon = eHudLaconicWarning != g_eHudLaconic;
-	bool show_progress_bar = CurrentHUD->IsHUDElementAllowed(ePDA);
-
-	//статик положения персонажа и выносливости
-	UIStaticMotionBack.Show(show_motion_icon);
+void CUIMotionIcon::Update(){
 	//раскраска иконки положения персонажа
 	SetStateWarningColor(m_curren_state);
-	//статики прогресс-баров освещенности/заметности и шума
-	UIStaticLuminocity.Show(show_progress_bar);
-	UIStaticNoise.Show(show_progress_bar);
 	//
-	CActor* m_pActor = smart_cast<CActor*>(Level().CurrentViewEntity());
+	auto m_pActor = smart_cast<CActor*>(Level().CurrentViewEntity());
 
-	bool has_pda_online = m_pActor->HasPDAWorkable();
-
-	SetNoise(has_pda_online ? (s16)(0xffff & iFloor(m_pActor->m_snd_noise * 100.0f)) : 0.f);
+	SetNoise((s16)(0xffff & iFloor(m_pActor->m_snd_noise * 100.0f)));
 	SetPower(m_pActor->conditions().GetPower() * 100.0f);
 	//
-	if (!has_pda_online) {
-		SetLuminosity(0.f);
-	}else if (!psHUD_Flags.test(HUD_USE_LUMINOSITY)) {
-		if (m_bchanged){
+	if (!psHUD_Flags.test(HUD_USE_LUMINOSITY)) {
+		if (m_bchanged) {
 			m_bchanged = false;
-			if (m_npc_visibility.size()){
+			if (m_npc_visibility.size()) {
 				std::sort(m_npc_visibility.begin(), m_npc_visibility.end());
 				SetLuminosity(m_npc_visibility.back().value);
 			}
@@ -154,25 +119,23 @@ void CUIMotionIcon::Update()
 		luminocity = exp(power);
 
 		static float cur_lum = luminocity;
+		Msg("cur_lum [%.4f]", cur_lum);
 		cur_lum = luminocity * 0.01f + cur_lum * 0.99f;
 		SetLuminosity((s16)iFloor(cur_lum * 100.0f));
 	}
 
-	//m_luminosity_progress 
-	{
-		float len = m_luminosity_progress.GetRange_max() - m_luminosity_progress.GetRange_min();
-		float cur_pos = m_luminosity_progress.GetProgressPos();
-		if (cur_pos != m_luminosity) {
-			float _diff = _abs(m_luminosity - cur_pos);
-			if (m_luminosity > cur_pos) {
-				cur_pos += _min(len * Device.fTimeDelta, _diff);
-			}
-			else {
-				cur_pos -= _min(len * Device.fTimeDelta, _diff);
-			}
-			clamp(cur_pos, m_noise_progress.GetRange_min(), m_noise_progress.GetRange_max());
-			m_luminosity_progress.SetProgressPos(cur_pos);
+	//m_luminosity_progress
+	float len = m_luminosity_progress.GetRange_max() - m_luminosity_progress.GetRange_min();
+	float cur_pos = m_luminosity_progress.GetProgressPos();
+	if (cur_pos != m_luminosity) {
+		float _diff = _abs(m_luminosity - cur_pos);
+		if (m_luminosity > cur_pos) {
+			cur_pos += _min(len * Device.fTimeDelta, _diff);
+		}else{
+			cur_pos -= _min(len * Device.fTimeDelta, _diff);
 		}
+		clamp(cur_pos, m_noise_progress.GetRange_min(), m_noise_progress.GetRange_max());
+		m_luminosity_progress.SetProgressPos(cur_pos);
 	}
 
 	inherited::Update();
@@ -188,20 +151,16 @@ void CUIMotionIcon::SetActorVisibility		(u16 who_id, float value)
 														m_npc_visibility.end(),
 														who_id);
 
-	if(it==m_npc_visibility.end() && value!=0)
-	{
+	if(it==m_npc_visibility.end() && value!=0){
 		m_npc_visibility.resize	(m_npc_visibility.size()+1);
 		_npc_visibility& v		= m_npc_visibility.back();
 		v.id					= who_id;
 		v.value					= value;
-	}
-	else if( fis_zero(value) )
-	{
+	}else if(fis_zero(value)){
 		if (it!=m_npc_visibility.end())
 			m_npc_visibility.erase	(it);
 	}
-	else
-	{
+	else{
 		(*it).value				= value;
 	}
 
@@ -212,24 +171,25 @@ void CUIMotionIcon::InitStateColorize()
 {
 	u_ColorDefault = READ_IF_EXISTS(pSettings, r_color, "main_ingame_indicators_thresholds", "motion_icon_color_default", 0xff31c2b5);
 	// Читаем данные порогов для индикатора
-	shared_str cfgRecord = pSettings->r_string("main_ingame_indicators_thresholds", "motion_icon_health");
-	u32 count = _GetItemCount(*cfgRecord);
+	LPCSTR cfgRecord = READ_IF_EXISTS(pSettings, r_string, "main_ingame_indicators_thresholds", "motion_icon_health", nullptr);
+	if (!cfgRecord) {
+		m_Thresholds.clear();
+		return;
+	}
+	u32 count = _GetItemCount(cfgRecord);
 
-	char	singleThreshold[8];
-	float	f = 0;
-	for (u32 k = 0; k < count; ++k)
-	{
-		_GetItem(*cfgRecord, k, singleThreshold);
+	char	singleThreshold[5];
+	float	f{};
+	for (u32 k = 0; k < count; ++k){
+		_GetItem(cfgRecord, k, singleThreshold);
 		sscanf(singleThreshold, "%f", &f);
-
 		m_Thresholds.push_back(f);
 	}
 }
 
 void CUIMotionIcon::SetStateWarningColor(EState state)
 {
-	if (eHudLaconicMotion != g_eHudLaconic)
-	{
+	if (m_Thresholds.empty()){
 		if (m_states[state].GetColor() != u_ColorDefault)
 			m_states[state].SetColor(u_ColorDefault);
 		return;
@@ -243,8 +203,7 @@ void CUIMotionIcon::SetStateWarningColor(EState state)
 	float min = m_Thresholds.front();
 	float max = m_Thresholds.back();
 
-	if (m_Thresholds.size() > 1)
-	{
+	if (m_Thresholds.size() > 1){
 		xr_vector<float>::reverse_iterator	rit;
 
 		// Сначала проверяем на точное соответсвие
@@ -254,8 +213,7 @@ void CUIMotionIcon::SetStateWarningColor(EState state)
 		if (rit == m_Thresholds.rend())
 			rit = std::find_if(m_Thresholds.rbegin(), m_Thresholds.rend(), std::bind(std::less<float>(), std::placeholders::_1, value));
 
-		if (rit != m_Thresholds.rend())
-		{
+		if (rit != m_Thresholds.rend()){
 			float v = *rit;
 			m_states[state].SetColor(color_argb(
 				0xFF,
@@ -263,18 +221,14 @@ void CUIMotionIcon::SetStateWarningColor(EState state)
 				clampr<u32>(static_cast<u32>(255 * (2.0f - (v - min) / (max - min) * 2)), 0, 255),
 				0
 			));
-		}
-		else
+		}else
 			m_states[state].SetColor(u_ColorDefault);
-	}
-	else
-	{
+	}else{
 		float val = 1 - value;
 		float treshold = 1 - min;
 		clamp<float>(treshold, 0.01, 1.f);
 
-		if (val <= treshold)
-		{
+		if (val <= treshold){
 			float v = val / treshold;
 			clamp<float>(v, 0.f, 1.f);
 			m_states[state].SetColor(color_argb(
@@ -283,8 +237,7 @@ void CUIMotionIcon::SetStateWarningColor(EState state)
 				clampr<u32>(static_cast<u32>(255 * v), 0, 255),
 				0
 			));
-		}
-		else
+		}else
 			m_states[state].SetColor(u_ColorDefault);
 	}
 }

@@ -14,11 +14,8 @@ public:
 						stLast
 					};
 private:
-							EState				m_curren_state;
+							EState				m_curren_state{ stLast };
 							CUIStatic			m_states[stLast];
-							CUIStatic			UIStaticMotionBack;
-							CUIStatic			UIStaticLuminocity;
-							CUIStatic			UIStaticNoise;
 							CUIProgressBar		m_power_progress;
 							CUIProgressBar		m_luminosity_progress;
 							CUIProgressBar		m_noise_progress;
@@ -35,11 +32,11 @@ private:
 			}
 		};
 		xr_vector<_npc_visibility>				m_npc_visibility;
-		bool									m_bchanged;
-		float				m_luminosity;
+		bool									m_bchanged{};
+		float				m_luminosity{};
 public:
-	virtual					~CUIMotionIcon		();
-							CUIMotionIcon		();
+	virtual					~CUIMotionIcon		(){};
+							CUIMotionIcon		(){};
 	virtual	void			Update				();
 			void			Init				();
 			void			ShowState			(EState state);
@@ -50,7 +47,7 @@ public:
 			void			ResetVisibility		();
 			//
 			void			InitStateColorize	();
-			u32             u_ColorDefault;
+			u32             u_ColorDefault{};
 			void			SetStateWarningColor	(EState state); //раскраска иконки положения персонажа
 			xr_vector<float>						m_Thresholds;	//Пороги изменения цвета индикатора, загружаемые из system.ltx
 };

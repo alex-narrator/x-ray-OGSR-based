@@ -52,13 +52,3 @@ public:
 };
 
 extern ENGINE_API CCustomHUD* g_hud;
-
-//элементы HUD выводятся по нажатию клавиш
-enum EHudLaconicMode
-{
-	eHudLaconicOff,			//отключено
-	eHudLaconicWarning,		//только warning-иконки
-	eHudLaconicMotion		//иконка положения персонажа в качестве warning-иконки здоровья
-};
-
-extern EHudLaconicMode g_eHudLaconic; //элементы HUD выводятся по нажатию клавиш: 0 - отключено, 1 - только warning-иконки, 2 - иконка положения персонажа в качестве warning-иконки здоровья

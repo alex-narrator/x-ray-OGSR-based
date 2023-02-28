@@ -688,7 +688,7 @@
 		</btn_default_set>
 	</tab_sound>
 	<tab_gameplay>
-		<scroll_view	x="20" y="130" width="435" height="180" 
+		<scroll_view	x="20" y="90" width="435" height="220" 
 					right_ident="0" left_ident="0" top_indent="0" bottom_indent="0" 
 					vert_interval="2" always_show_scroll="0" flip_vert="0"/>
 					
@@ -706,26 +706,12 @@
 			<list_font r="216" g="186" b="140" font="letterica16"/>
 		</list_difficulty>
 <!-- difficulty end-->		
-<!-- laconic hud -->
-		<cap_hud_laconic x="20" y="60" width="163" height="21" complex_mode = "1">
-			<text font="letterica16" r="215" g="195" b="170">ui_mm_hud_laconic</text>			
-		</cap_hud_laconic>		
-		
-		<list_hud_laconic x="194" y="55" width="261" height="21" always_show_scroll="0" list_length="3">	
-			<options_item entry="hud_laconic" group="mm_opt_gameplay"/>
-			<text_color>
-				<e r="216" g="186" b="140"/>
-			</text_color>
-			<list_font_s r="240" g="217" b="182"/>
-			<list_font	 r="216" g="186" b="140" font="letterica16"/>
-		</list_hud_laconic>
-<!-- laconic hud end-->
 <!-- game save mode -->
-		<cap_game_save_mode x="20" y="90" width="163" height="21" complex_mode = "1">
+		<cap_game_save_mode x="20" y="55" width="163" height="21" complex_mode = "1">
 			<text font="letterica16" r="215" g="195" b="170">ui_mm_game_save_mode</text>			
 		</cap_game_save_mode>
 		
-		<list_game_save_mode x="194" y="90" width="261" height="21" always_show_scroll="0" list_length="3">	
+		<list_game_save_mode x="194" y="50" width="261" height="21" always_show_scroll="0" list_length="3">	
 			<options_item entry="g_save_mode" group="mm_opt_gameplay"/>
 			<text_color>
 				<e r="216" g="186" b="140"/>
@@ -912,7 +898,7 @@
 		<text align="l" font="letterica16" r="255" g="255" b="255" complex_mode="1">hint_caption_adv_text</text>
 	</hint_caption_adv>
 	
-	<frame_gameplay x="18" y="130" width="422" height="180">
+	<frame_gameplay x="18" y="90" width="422" height="220">
 		<texture>ui_cb_listbox</texture>		
 	</frame_gameplay>
 

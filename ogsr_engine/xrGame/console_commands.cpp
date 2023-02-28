@@ -76,15 +76,6 @@ extern	float	g_bHudAdjustDeltaRot;
 //-----------------------------------------------------------
 extern float	g_fForceGrowSpeed;
 
-//элементы HUD выводятся по нажатию клавиш
-EHudLaconicMode g_eHudLaconic{ eHudLaconicOff }; //элементы HUD выводятся по нажатию клавиш: 0 - отключено, 1 - только warning-иконки, 2 - иконка положения персонажа в качестве warning-иконки здоровья
-xr_token	hud_laconic_token[]{
-	{ "hl_off",		eHudLaconicOff			}, //отключено
-	{ "hl_warning", eHudLaconicWarning		}, //только warning-иконки
-	{ "hl_motion",	eHudLaconicMotion		}, //иконка положения персонажа в качестве warning-иконки здоровья
-	{ 0,			0						}
-};
-
 ESaveGameMode g_eSaveGameMode{ eSaveGameDefault };
 xr_token save_game_mode_token[]{
 	{ "sg_default",			eSaveGameDefault		}, //класичний режим
@@ -1298,8 +1289,6 @@ void CCC_RegisterCommands()
 	CMD1(CCC_ALifeObjectsPerUpdate,	"al_objects_per_update"	);		// set process time
 	CMD1(CCC_ALifeSwitchFactor,		"al_switch_factor"		);		// set switch factor
 #endif // MASTER_GOLD
-
-	CMD3(CCC_Token,				"hud_laconic",				(u32*)&g_eHudLaconic,		hud_laconic_token		);	//элементы HUD выводятся по нажатию клавиш
 
 	CMD3(CCC_Mask,				"hud_weapon",				&psHUD_Flags,				HUD_WEAPON				);
 	CMD3(CCC_Mask,				"hud_info",					&psHUD_Flags,				HUD_INFO				);

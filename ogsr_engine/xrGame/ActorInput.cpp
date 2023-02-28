@@ -752,7 +752,7 @@ void CActor::ActorQuickKnifeStab() {
 }
 
 void CActor::ActorCheckout() {
-	if (!inventory().ActiveItem() || g_eHudLaconic == eHudLaconicOff || m_bShowActiveItemInfo)
+	if (!inventory().ActiveItem() || m_bShowActiveItemInfo)
 		return;
 
 	m_bShowActiveItemInfo = true;
@@ -769,7 +769,7 @@ void CActor::ActorCheckout() {
 }
 
 void CActor::ActorCheckGear() {
-	if (g_eHudLaconic == eHudLaconicOff || m_bShowGearInfo)
+	if (m_bShowGearInfo)
 		return;
 
 	m_bShowGearInfo = true;
