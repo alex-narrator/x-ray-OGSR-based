@@ -27,7 +27,8 @@ public:
 		eHiding,
 		eHidden,
 		eBore,
-		eLastBaseState = eBore,
+		eKick,
+		eLastBaseState = eKick,
 	};
 
 private:
@@ -125,13 +126,14 @@ public:
 	virtual void	OnActiveItem		() {};
 	virtual void	OnHiddenItem		() {};
 
-	virtual void	OnAnimationEnd		(u32 state) {};
+	virtual void	OnAnimationEnd		(u32 state);
 	virtual void	OnMotionMark		(u32 state, const motion_marks&) {};
 	virtual void	OnMovementChanged	(ACTOR_DEFS::EMoveCommand cmd);
 
 	virtual void	PlayAnimIdle		();
 	bool			TryPlayAnimIdle		();
 	virtual bool	IsZoomed			() const { return false; }
+	virtual void	OnZoomOut			(bool = false) {};
 	//virtual void	PlayAnimBore		();
 	virtual void	PlayAnimIdleMoving	();
 	virtual void	PlayAnimIdleMovingSlow();
@@ -143,9 +145,10 @@ public:
 	virtual void	PlayAnimCheckout	();
 	virtual void	PlayAnimCheckGear	();
 
-	virtual void	OnKick				() {};
+	virtual void	OnKick				();
+	virtual void	switch2_Kick		();
 	virtual void	PlayAnimKick		();
-	virtual bool	IsKick				() const { return false; }
+	virtual bool	IsKick				() const { return GetState() == eKick; }
 
 	virtual void	UpdateCL			();
 	virtual void	renderable_Render	();

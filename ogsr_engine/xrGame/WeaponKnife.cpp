@@ -74,9 +74,6 @@ void CWeaponKnife::OnStateSwitch(u32 S, u32 oldState)
 		{
 			switch2_Attacking	(S);
 		}break;
-	case eKick:
-		switch2_Kick();
-		break;
 	}
 }
 
@@ -193,6 +190,7 @@ void CWeaponKnife::OnMotionMark(u32 state, const motion_marks& M)
 
 void CWeaponKnife::OnAnimationEnd(u32 state)
 {
+	inherited::OnAnimationEnd(state);
 	switch (state)
 	{
 	case eHiding:	SwitchState(eHidden);	break;
@@ -240,10 +238,6 @@ void CWeaponKnife::OnAnimationEnd(u32 state)
 	case eIdle:	
 		SwitchState(eIdle);
 		break;	
-	case eKick:
-		if (auto actor = smart_cast<CActor*>(H_Parent()))
-			actor->ActorKick();
-		SwitchState(eIdle);
 		break;
 	}
 }
@@ -394,15 +388,4 @@ void CWeaponKnife::GetBriefInfo(xr_string& str_name, xr_string& icon_sect_name, 
 	str_name		= NameShort();
 	str_count		= "";
 	icon_sect_name	= *cNameSect();
-}
-
-void CWeaponKnife::OnKick()
-{
-	SwitchState(eKick);
-}
-//
-void CWeaponKnife::switch2_Kick()
-{
-	PlayAnimKick();
-	SetPending(TRUE);
 }

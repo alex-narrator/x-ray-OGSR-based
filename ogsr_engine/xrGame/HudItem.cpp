@@ -271,6 +271,8 @@ void CHudItem::OnStateSwitch(u32 S, u32 oldState)
 
 	if (S == eHidden)
 		m_nearwall_last_hud_fov = m_base_fov;
+	else if (S == eKick)
+		switch2_Kick();
 }
 
 bool CHudItem::Activate( bool now )
@@ -1338,3 +1340,28 @@ void CHudItem::CorrectDirFromWorldToHud(Fvector& dir) {
 }
 
 bool CHudItem::AnmIdleMovingAllowed() const { return !HudBobbingAllowed() || Actor()->PsyAuraAffect; }
+
+void CHudItem::OnAnimationEnd(u32 state)
+{
+	switch (state)
+	{
+	case eKick:
+		if (auto actor = smart_cast<CActor*>(object().H_Parent()))
+			actor->ActorKick();
+		SwitchState(eIdle);
+		break;
+	}
+}
+
+void CHudItem::OnKick()
+{
+	SwitchState(eKick);
+}
+//
+void CHudItem::switch2_Kick()
+{
+	if (IsZoomed())
+		OnZoomOut();
+	PlayAnimKick();
+	SetPending(TRUE);
+}

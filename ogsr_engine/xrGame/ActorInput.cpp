@@ -211,7 +211,7 @@ void CActor::IR_OnKeyboardPress(int cmd){
 	{
 		if (!GetTrade()->IsInTradeState())
 		{	
-			PIItem itm = nullptr;
+			PIItem itm{};
 			switch (cmd) {
 			case kUSE_QUICK_SLOT_0:
 				itm = inventory().m_slots[QUICK_SLOT_0].m_pIItem;

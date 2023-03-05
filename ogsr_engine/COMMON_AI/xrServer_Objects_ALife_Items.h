@@ -237,11 +237,7 @@ add_to_type_list(CSE_ALifeItemWeapon)
 #define script_type_list save_type_list(CSE_ALifeItemWeapon)
 
 SERVER_ENTITY_DECLARE_BEGIN(CSE_ALifeItemWeaponMagazined,CSE_ALifeItemWeapon)
-	//флаги
-	enum EStats {
-		eMagazineAttached	= (1 << 0),
-		eNightVisionOn		= (1 << 1),
-	};
+//флаги
 u8			m_u8CurFireMode;
 //присоединён ли магазин
 bool		m_bIsMagazineAttached{true};
@@ -252,7 +248,6 @@ float		m_fAttachedGrenadeLauncherCondition{1.f};
 //для хранения состояния присоединённого глушителя
 float		m_fAttachedSilencerCondition{1.f};
 //
-bool		m_bNightVisionSwitchedOn{true};
 xr_vector<u8> m_AmmoIDs;
 //
 CSE_ALifeItemWeaponMagazined(LPCSTR caSection);

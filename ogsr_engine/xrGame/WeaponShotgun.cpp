@@ -494,7 +494,7 @@ bool CWeaponShotgun::Attach(PIItem pIItem, bool b_send_event)
 		m_cur_extender = (u8)std::distance(m_extenders.begin(), it);
 		m_flagsAddOnState |= CSE_ALifeItemWeapon::eWeaponAddonExtender;
 
-		UnloadWeaponFull(true);
+		UnloadWeaponFull();
 
 		if (b_send_event) {
 			//.			pIItem->Drop();
@@ -515,7 +515,7 @@ bool CWeaponShotgun::Detach(const char* item_section_name, bool b_spawn_item, fl
 		0 != (m_flagsAddOnState & CSE_ALifeItemWeapon::eWeaponAddonExtender) &&
 		std::find(m_extenders.begin(), m_extenders.end(), item_section_name) != m_extenders.end())
 	{
-		UnloadWeaponFull(true);
+		UnloadWeaponFull();
 
 		m_flagsAddOnState &= ~CSE_ALifeItemWeapon::eWeaponAddonExtender;
 

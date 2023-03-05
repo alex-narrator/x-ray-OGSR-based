@@ -30,9 +30,6 @@ constexpr const char* grenade_launcher_def_bone_cop = "grenade";
 
 CWeaponMagazinedWGrenade::CWeaponMagazinedWGrenade(LPCSTR name,ESoundTypes eSoundType) : CWeaponMagazined(name, eSoundType)
 {
-	m_ammoType2 = 0;
-	iAmmoElapsed2  = 0;
-	m_bGrenadeMode = false;
 }
 
 CWeaponMagazinedWGrenade::~CWeaponMagazinedWGrenade(void)
@@ -118,7 +115,7 @@ BOOL CWeaponMagazinedWGrenade::net_Spawn(CSE_Abstract* DC)
 
 	const auto wgl = smart_cast<CSE_ALifeItemWeaponMagazinedWGL*>( DC );
 	m_bGrenadeMode = wgl->m_bGrenadeMode;
-	m_ammoType2   = m_ammoType2   > 0 ? m_ammoType2   : wgl->ammo_type2;
+	m_ammoType2	= m_ammoType2 > 0 ? m_ammoType2 : wgl->ammo_type2;
 	iAmmoElapsed2 = iAmmoElapsed2 > 0 ? iAmmoElapsed2 : wgl->a_elapsed2;
 
 	//Msg("~~[%s][%s] net_Spawn", __FUNCTION__, this->Name());
@@ -489,7 +486,6 @@ void CWeaponMagazinedWGrenade::ReloadMagazine()
 	//перезарядка подствольного гранатомета
 	if(iAmmoElapsed && !getRocketCount() && m_bGrenadeMode) 
 	{
-//.		shared_str fake_grenade_name = pSettings->r_string(*m_pAmmo->cNameSect(), "fake_grenade_name");
 		shared_str fake_grenade_name = pSettings->r_string(m_ammoTypes[m_ammoType], "fake_grenade_name");
 		
 		CRocketLauncher::SpawnRocket(fake_grenade_name.c_str(), this);
@@ -527,6 +523,7 @@ void CWeaponMagazinedWGrenade::OnStateSwitch(u32 S, u32 oldState)
 
 void CWeaponMagazinedWGrenade::OnAnimationEnd(u32 state)
 {
+	inherited::OnAnimationEnd(state);
 	switch (state)
 	{
 	case eSwitch:
@@ -534,7 +531,6 @@ void CWeaponMagazinedWGrenade::OnAnimationEnd(u32 state)
 			SwitchState(eIdle);
 		}break;
 	}
-	inherited::OnAnimationEnd(state);
 }
 
 
@@ -862,10 +858,10 @@ void CWeaponMagazinedWGrenade::UpdateGrenadeVisibility(bool visibility)
 
 void CWeaponMagazinedWGrenade::net_Export( CSE_Abstract* E ) {
   inherited::net_Export( E );
-  CSE_ALifeItemWeaponMagazinedWGL* gl = smart_cast<CSE_ALifeItemWeaponMagazinedWGL*>( E );
-  gl->m_bGrenadeMode = m_bGrenadeMode;
-  gl->ammo_type2     = (u8)m_ammoType2;
-  gl->a_elapsed2     = (u16)m_magazine2.size();
+  CSE_ALifeItemWeaponMagazinedWGL* wgl = smart_cast<CSE_ALifeItemWeaponMagazinedWGL*>( E );
+  wgl->m_bGrenadeMode = m_bGrenadeMode;
+  wgl->ammo_type2     = (u8)m_ammoType2;
+  wgl->a_elapsed2     = (u16)m_magazine2.size();
 }
 
 bool CWeaponMagazinedWGrenade::IsNecessaryItem	    (const shared_str& item_sect)

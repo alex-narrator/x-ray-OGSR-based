@@ -119,7 +119,6 @@ void CUIMotionIcon::Update(){
 		luminocity = exp(power);
 
 		static float cur_lum = luminocity;
-		Msg("cur_lum [%.4f]", cur_lum);
 		cur_lum = luminocity * 0.01f + cur_lum * 0.99f;
 		SetLuminosity((s16)iFloor(cur_lum * 100.0f));
 	}

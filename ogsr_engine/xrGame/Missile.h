@@ -67,9 +67,6 @@ protected:
 
 	//для сети
 	virtual void			net_Relcase			(CObject* O );
-
-	virtual void			OnKick				();
-	virtual void			switch2_Kick		();
 protected:
 	bool					m_throw;
 	

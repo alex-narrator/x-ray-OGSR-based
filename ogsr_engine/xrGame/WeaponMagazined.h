@@ -291,9 +291,9 @@ public:
 	virtual void	SwitchLaser				(bool on);
 	virtual void	SwitchFlashlight		(bool on);
 
-	virtual void	UnloadWeaponFull		(bool = false);
+	virtual void	UnloadWeaponFull		();
 
-	virtual void	UnloadAndDetachAllAddons(bool = false);
+	virtual void	UnloadAndDetachAllAddons();
 	virtual void	PrepairItem				();
 protected:
 	bool			m_bNightVisionEnabled{};
@@ -303,10 +303,6 @@ protected:
 	virtual void	switch2_Shutter();
 	virtual void	PlayAnimShutter();
 	virtual void	PlayAnimFiremodes();
-	virtual void	switch2_Unload();
-	virtual void	PlayAnimUnload();
-	virtual void	OnKick();
-	virtual void	switch2_Kick();
 
 	virtual void	UpdateMagazineVisibility();
 };

@@ -414,6 +414,7 @@ void CArtefact::PlayAnimIdle()
 
 void CArtefact::OnAnimationEnd(u32 state)
 {
+	inherited::OnAnimationEnd(state);
 	switch (state)
 	{
 	case eHiding:

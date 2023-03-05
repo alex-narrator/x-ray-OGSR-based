@@ -74,14 +74,14 @@ public:
 	CWeaponAmmo* m_pAmmo2{};
 	shared_str				m_ammoSect2;
 	xr_vector<shared_str>	m_ammoTypes2;
-	u32						m_ammoType2;
+	u32						m_ammoType2{};
 	int						iMagazineSize2{};
 	xr_vector<CCartridge>	m_magazine2;
-	bool					m_bGrenadeMode;
+	bool					m_bGrenadeMode{};
 
 	CCartridge				m_DefaultCartridge2;
 
-	int						iAmmoElapsed2;
+	int						iAmmoElapsed2{};
 
 	virtual void UpdateGrenadeVisibility(bool visibility);
 
