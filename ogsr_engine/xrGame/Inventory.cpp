@@ -29,7 +29,7 @@ using namespace InventoryUtilities;
 
 // what to block
 u32	INV_STATE_BLOCK_ALL		= 0xffffffff;
-u32	INV_STATE_BLOCK_2H		= 1<<ON_SHOULDER_SLOT|1<<ON_BACK_SLOT|1<<ARTEFACT_SLOT; //вважаємо що саме у цих слотах будуть "дворучні" предмети та блокуємо їх
+u32	INV_STATE_BLOCK_2H		= 1<<FIRST_WEAPON_SLOT|1<<SECOND_WEAPON_SLOT|1<<ARTEFACT_SLOT; //вважаємо що саме у цих слотах будуть "дворучні" предмети та блокуємо їх
 u32	INV_STATE_INV_WND		= INV_STATE_BLOCK_2H;
 u32	INV_STATE_BUY_MENU		= INV_STATE_BLOCK_ALL;
 u32	INV_STATE_LADDER		= INV_STATE_BLOCK_2H;
@@ -96,7 +96,7 @@ CInventory::CInventory()
 
 	m_slots[PDA_SLOT].m_bVisible				= false;
 	m_slots[OUTFIT_SLOT].m_bVisible				= false;
-	m_slots[ON_HEAD_SLOT].m_bVisible				= false;
+	m_slots[TORCH_SLOT].m_bVisible				= false;
 	m_slots[HELMET_SLOT].m_bVisible				= false;
 //	m_slots[NIGHT_VISION_SLOT].m_bVisible		= false;
 //	m_slots[BIODETECTOR_SLOT].m_bVisible		= false;
@@ -1623,7 +1623,7 @@ bool CInventory::IsSlotAllowed(u32 slot) const{
 	switch (slot)
 	{
 	case KNIFE_SLOT:
-	case HOLSTER_SLOT:
+	case APPARATUS_SLOT:
 	case GRENADE_SLOT:
 	case ARTEFACT_SLOT:
 		return HasModuleForSlot(slot);
@@ -1690,10 +1690,10 @@ bool CInventory::activate_slot(u32 slot)
 	switch (slot)
 	{
 	case KNIFE_SLOT:
-	case ON_SHOULDER_SLOT:
-	case ON_BACK_SLOT:
+	case FIRST_WEAPON_SLOT:
+	case SECOND_WEAPON_SLOT:
 	case GRENADE_SLOT:
-	case HOLSTER_SLOT:
+	case APPARATUS_SLOT:
 	case BOLT_SLOT:
 	case ARTEFACT_SLOT:
 	case QUICK_SLOT_0:

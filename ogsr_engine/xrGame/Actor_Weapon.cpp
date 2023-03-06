@@ -111,8 +111,8 @@ void CActor::SetWeaponHideState( u32 State, bool bSet, bool now )
 }
 
 static	u16 BestWeaponSlots [] = {
-	ON_BACK_SLOT		,		// 2
-	ON_SHOULDER_SLOT	,		// 1
+	SECOND_WEAPON_SLOT		,		// 2
+	FIRST_WEAPON_SLOT	,		// 1
 	GRENADE_SLOT		,		// 3
 	KNIFE_SLOT			,		// 0
 };

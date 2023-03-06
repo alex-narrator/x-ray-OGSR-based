@@ -46,7 +46,7 @@ CUIInventoryWnd::CUIInventoryWnd() :
 	m_pUIBagList(nullptr), m_pUIBeltList(nullptr), m_pUIVestList(nullptr),
 	m_pUIOutfitList(nullptr), m_pUIHelmetList(nullptr), 
 	m_pUIWarBeltList(nullptr), m_pUIBackPackList(nullptr), m_pUITacticalVestList(nullptr),
-	m_pUIKnifeList(nullptr), m_pUIOnShoulderList(nullptr), m_pUIOnBackList(nullptr), m_pUIHolsterList(nullptr),
+	m_pUIKnifeList(nullptr), m_pUIFirstWeaponList(nullptr), m_pUISecondWeaponList(nullptr), m_pUIBinocularList(nullptr),
 	m_pUIGrenadeList(nullptr), m_pUIArtefactList(nullptr),
 	m_pUIDetectorList(nullptr), m_pUIOnHeadList(nullptr), m_pUIPdaList(nullptr),
 	m_pUIQuickList_0(nullptr), m_pUIQuickList_1(nullptr), m_pUIQuickList_2(nullptr), m_pUIQuickList_3(nullptr)
@@ -168,17 +168,17 @@ void CUIInventoryWnd::Init()
 	xml_init.InitDragDropListEx			(uiXml, "dragdrop_knife", 0, m_pUIKnifeList);
 	BindDragDropListEnents				(m_pUIKnifeList);
 
-	m_pUIOnShoulderList					= xr_new<CUIDragDropListEx>(); AttachChild(m_pUIOnShoulderList); m_pUIOnShoulderList->SetAutoDelete(true);
-	xml_init.InitDragDropListEx			(uiXml, "dragdrop_on_shoulder", 0, m_pUIOnShoulderList);
-	BindDragDropListEnents				(m_pUIOnShoulderList);
+	m_pUIFirstWeaponList				= xr_new<CUIDragDropListEx>(); AttachChild(m_pUIFirstWeaponList); m_pUIFirstWeaponList->SetAutoDelete(true);
+	xml_init.InitDragDropListEx			(uiXml, "dragdrop_first_weapon", 0, m_pUIFirstWeaponList);
+	BindDragDropListEnents				(m_pUIFirstWeaponList);
 
-	m_pUIOnBackList						= xr_new<CUIDragDropListEx>(); AttachChild(m_pUIOnBackList); m_pUIOnBackList->SetAutoDelete(true);
-	xml_init.InitDragDropListEx			(uiXml, "dragdrop_on_back", 0, m_pUIOnBackList);
-	BindDragDropListEnents				(m_pUIOnBackList);
+	m_pUISecondWeaponList				= xr_new<CUIDragDropListEx>(); AttachChild(m_pUISecondWeaponList); m_pUISecondWeaponList->SetAutoDelete(true);
+	xml_init.InitDragDropListEx			(uiXml, "dragdrop_second_weapon", 0, m_pUISecondWeaponList);
+	BindDragDropListEnents				(m_pUISecondWeaponList);
 
-	m_pUIHolsterList					= xr_new<CUIDragDropListEx>(); AttachChild(m_pUIHolsterList); m_pUIHolsterList->SetAutoDelete(true);
-	xml_init.InitDragDropListEx			(uiXml, "dragdrop_holster", 0, m_pUIHolsterList);
-	BindDragDropListEnents				(m_pUIHolsterList);
+	m_pUIBinocularList					= xr_new<CUIDragDropListEx>(); AttachChild(m_pUIBinocularList); m_pUIBinocularList->SetAutoDelete(true);
+	xml_init.InitDragDropListEx			(uiXml, "dragdrop_binocular", 0, m_pUIBinocularList);
+	BindDragDropListEnents				(m_pUIBinocularList);
 
 	m_pUIGrenadeList					= xr_new<CUIDragDropListEx>(); AttachChild(m_pUIGrenadeList); m_pUIGrenadeList->SetAutoDelete(true);
 	xml_init.InitDragDropListEx			(uiXml, "dragdrop_grenade", 0, m_pUIGrenadeList);
@@ -193,7 +193,7 @@ void CUIInventoryWnd::Init()
 	BindDragDropListEnents				(m_pUIDetectorList);
 
 	m_pUIOnHeadList						= xr_new<CUIDragDropListEx>(); AttachChild(m_pUIOnHeadList); m_pUIOnHeadList->SetAutoDelete(true);
-	xml_init.InitDragDropListEx			(uiXml, "dragdrop_on_head", 0, m_pUIOnHeadList);
+	xml_init.InitDragDropListEx			(uiXml, "dragdrop_torch", 0, m_pUIOnHeadList);
 	BindDragDropListEnents				(m_pUIOnHeadList);
 
 	m_pUIPdaList						= xr_new<CUIDragDropListEx>(); AttachChild(m_pUIPdaList); m_pUIPdaList->SetAutoDelete(true);
@@ -225,15 +225,15 @@ void CUIInventoryWnd::Init()
 	m_slots_array[VEST_SLOT]			= m_pUITacticalVestList;
 
 	m_slots_array[KNIFE_SLOT]			= m_pUIKnifeList;
-	m_slots_array[ON_SHOULDER_SLOT]		= m_pUIOnShoulderList;
-	m_slots_array[ON_BACK_SLOT]			= m_pUIOnBackList;
-	m_slots_array[HOLSTER_SLOT]			= m_pUIHolsterList;
+	m_slots_array[FIRST_WEAPON_SLOT]	= m_pUIFirstWeaponList;
+	m_slots_array[SECOND_WEAPON_SLOT]	= m_pUISecondWeaponList;
+	m_slots_array[APPARATUS_SLOT]		= m_pUIBinocularList;
 
 	m_slots_array[GRENADE_SLOT]			= m_pUIGrenadeList;
 	m_slots_array[ARTEFACT_SLOT]		= m_pUIArtefactList;
 
 	m_slots_array[DETECTOR_SLOT]		= m_pUIDetectorList;
-	m_slots_array[ON_HEAD_SLOT]			= m_pUIOnHeadList;
+	m_slots_array[TORCH_SLOT]			= m_pUIOnHeadList;
 	m_slots_array[PDA_SLOT]				= m_pUIPdaList;
 
 	m_slots_array[QUICK_SLOT_0]			= m_pUIQuickList_0;
@@ -246,17 +246,17 @@ void CUIInventoryWnd::Init()
 	m_pUIKnifeList->AttachChild			(m_pKnifeKey);
 	xml_init.InitStatic					(uiXml, "knife_key_static", 0, m_pKnifeKey);
 
-	m_pOnShoulderKey = xr_new<CUIStatic>();
-	m_pUIOnShoulderList->AttachChild	(m_pOnShoulderKey);
-	xml_init.InitStatic					(uiXml, "shoulder_key_static", 0, m_pOnShoulderKey);
+	m_pFirstWeaponKey = xr_new<CUIStatic>();
+	m_pUIFirstWeaponList->AttachChild	(m_pFirstWeaponKey);
+	xml_init.InitStatic					(uiXml, "first_weapon_key_static", 0, m_pFirstWeaponKey);
 
-	m_pOnBackKey = xr_new<CUIStatic>();
-	m_pUIOnBackList->AttachChild		(m_pOnBackKey);
-	xml_init.InitStatic					(uiXml, "back_key_static", 0, m_pOnBackKey);
+	m_pSecondWeaponKey = xr_new<CUIStatic>();
+	m_pUISecondWeaponList->AttachChild	(m_pSecondWeaponKey);
+	xml_init.InitStatic					(uiXml, "second_weapon_key_static", 0, m_pSecondWeaponKey);
 
-	m_pHolsterKey = xr_new<CUIStatic>();
-	m_pUIHolsterList->AttachChild		(m_pHolsterKey);
-	xml_init.InitStatic					(uiXml, "holster_key_static", 0, m_pHolsterKey);
+	m_pBinocularKey = xr_new<CUIStatic>();
+	m_pUIBinocularList->AttachChild		(m_pBinocularKey);
+	xml_init.InitStatic					(uiXml, "binocular_key_static", 0, m_pBinocularKey);
 
 	m_pGrenadeKey = xr_new<CUIStatic>();
 	m_pUIGrenadeList->AttachChild		(m_pGrenadeKey);

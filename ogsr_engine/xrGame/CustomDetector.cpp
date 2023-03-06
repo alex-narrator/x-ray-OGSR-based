@@ -23,29 +23,29 @@ bool CCustomDetector::CheckCompatibilityInt(CHudItem* itm, u16* slot_to_activate
         return true;
 
     CInventoryItem& iitm = itm->item();
-    //u32 slot = iitm.BaseSlot();
-    bool bres = iitm.IsSingleHanded();//(slot == ON_SHOULDER_SLOT || slot == KNIFE_SLOT || slot == BOLT_SLOT);
-    //CActor* pActor = smart_cast<CActor*>(H_Parent());
-    //auto& Inv = pActor->inventory();
+    u32 slot = iitm.BaseSlot();
+    bool bres = (slot == FIRST_WEAPON_SLOT || slot == KNIFE_SLOT || slot == BOLT_SLOT);
+    CActor* pActor = smart_cast<CActor*>(H_Parent());
+    auto& Inv = pActor->inventory();
 
-    //if (!bres && slot_to_activate)
-    //{
-    //    *slot_to_activate = NO_ACTIVE_SLOT;
-    //    if (Inv.ItemFromSlot(BOLT_SLOT))
-    //        *slot_to_activate = BOLT_SLOT;
+    if (!bres && slot_to_activate)
+    {
+        *slot_to_activate = NO_ACTIVE_SLOT;
+        if (Inv.ItemFromSlot(BOLT_SLOT))
+            *slot_to_activate = BOLT_SLOT;
 
-    //    if (Inv.ItemFromSlot(KNIFE_SLOT))
-    //        *slot_to_activate = KNIFE_SLOT;
+        if (Inv.ItemFromSlot(KNIFE_SLOT))
+            *slot_to_activate = KNIFE_SLOT;
 
-    //    if (Inv.ItemFromSlot(ON_BACK_SLOT) && Inv.ItemFromSlot(ON_BACK_SLOT)->BaseSlot() != ON_BACK_SLOT)
-    //        *slot_to_activate = ON_BACK_SLOT;
+        if (Inv.ItemFromSlot(SECOND_WEAPON_SLOT) && Inv.ItemFromSlot(SECOND_WEAPON_SLOT)->BaseSlot() != SECOND_WEAPON_SLOT)
+            *slot_to_activate = SECOND_WEAPON_SLOT;
 
-    //    if (Inv.ItemFromSlot(ON_SHOULDER_SLOT) && Inv.ItemFromSlot(ON_SHOULDER_SLOT)->BaseSlot() != ON_BACK_SLOT)
-    //        *slot_to_activate = ON_SHOULDER_SLOT;
+        if (Inv.ItemFromSlot(FIRST_WEAPON_SLOT) && Inv.ItemFromSlot(FIRST_WEAPON_SLOT)->BaseSlot() != SECOND_WEAPON_SLOT)
+            *slot_to_activate = FIRST_WEAPON_SLOT;
 
-    //    if (*slot_to_activate != NO_ACTIVE_SLOT)
-    //        bres = true;
-    //}
+        if (*slot_to_activate != NO_ACTIVE_SLOT)
+            bres = true;
+    }
 
     if (itm->GetState() != CHUDState::eShowing)
         bres = bres && !itm->IsPending();

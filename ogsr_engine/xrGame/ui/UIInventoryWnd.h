@@ -102,9 +102,9 @@ protected:
 	CUIDragDropListEx*			m_pUITacticalVestList;
 
 	CUIDragDropListEx*			m_pUIKnifeList;
-	CUIDragDropListEx*			m_pUIOnShoulderList;
-	CUIDragDropListEx*			m_pUIOnBackList;
-	CUIDragDropListEx*			m_pUIHolsterList;
+	CUIDragDropListEx*			m_pUIFirstWeaponList;
+	CUIDragDropListEx*			m_pUISecondWeaponList;
+	CUIDragDropListEx*			m_pUIBinocularList;
 
 	CUIDragDropListEx*			m_pUIGrenadeList;
 	CUIDragDropListEx*			m_pUIArtefactList;
@@ -123,9 +123,9 @@ protected:
 
 	//slot key static
 	CUIStatic					*m_pKnifeKey;
-	CUIStatic					*m_pOnShoulderKey;
-	CUIStatic					*m_pOnBackKey;
-	CUIStatic					*m_pHolsterKey;
+	CUIStatic					*m_pFirstWeaponKey;
+	CUIStatic					*m_pSecondWeaponKey;
+	CUIStatic					*m_pBinocularKey;
 	CUIStatic					*m_pGrenadeKey;
 	CUIStatic					*m_pArtefactKey;
 	CUIStatic					*m_pDetectorKey;

@@ -1611,11 +1611,11 @@ CVest* CActor::GetVest() const{
 }
 
 CTorch* CActor::GetTorch() const{
-	return smart_cast<CTorch*>(inventory().ItemFromSlot(ON_HEAD_SLOT));
+	return smart_cast<CTorch*>(inventory().ItemFromSlot(TORCH_SLOT));
 }
 
 CNightVisionDevice* CActor::GetNightVisionDevice() const{
-	return smart_cast<CNightVisionDevice*>(inventory().ItemFromSlot(ON_HEAD_SLOT));
+	return smart_cast<CNightVisionDevice*>(inventory().ItemFromSlot(TORCH_SLOT));
 }
 
 void CActor::block_action(EGameActions cmd)

@@ -554,10 +554,10 @@ BOOL CActor::HUDview()const {
 //void CActor::IR_OnMousePress(int btn)
 constexpr u32 SlotsToCheck[] = {
 		KNIFE_SLOT		,		// 0
-		ON_SHOULDER_SLOT,		// 1
-		ON_BACK_SLOT	,		// 2
+		FIRST_WEAPON_SLOT,		// 1
+		SECOND_WEAPON_SLOT	,		// 2
 		GRENADE_SLOT	,		// 3
-		HOLSTER_SLOT	,		// 4
+		APPARATUS_SLOT	,		// 4
 		BOLT_SLOT		,		// 5
 };
 

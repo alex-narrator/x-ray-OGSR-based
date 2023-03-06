@@ -9,7 +9,7 @@
 #include "ai_sounds.h"
 
 CNightVisionDevice::CNightVisionDevice(void){
-	SetSlot(ON_HEAD_SLOT);
+	SetSlot(TORCH_SLOT);
 }
 
 CNightVisionDevice::~CNightVisionDevice(void){

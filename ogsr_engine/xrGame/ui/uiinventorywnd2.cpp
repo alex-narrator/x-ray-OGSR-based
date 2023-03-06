@@ -94,22 +94,22 @@ void CUIInventoryWnd::InitInventory()
 		m_pUIKnifeList->SetItem(itm);
 	}
 
-	_itm								= m_pInv->m_slots[ON_SHOULDER_SLOT].m_pIItem;
+	_itm								= m_pInv->m_slots[FIRST_WEAPON_SLOT].m_pIItem;
 	if(_itm){
 		CUICellItem* itm				= create_cell_item(_itm);
-		m_pUIOnShoulderList->SetItem		(itm);
+		m_pUIFirstWeaponList->SetItem		(itm);
 	}
 
-	_itm								= m_pInv->m_slots[ON_BACK_SLOT].m_pIItem;
+	_itm								= m_pInv->m_slots[SECOND_WEAPON_SLOT].m_pIItem;
 	if(_itm){
 		CUICellItem* itm				= create_cell_item(_itm);
-		m_pUIOnBackList->SetItem		(itm);
+		m_pUISecondWeaponList->SetItem		(itm);
 	}
 
-	_itm								= m_pInv->m_slots[HOLSTER_SLOT].m_pIItem;
+	_itm								= m_pInv->m_slots[APPARATUS_SLOT].m_pIItem;
 	if (_itm){
 		CUICellItem* itm				= create_cell_item(_itm);
-		m_pUIHolsterList->SetItem		(itm);
+		m_pUIBinocularList->SetItem		(itm);
 	}
 
 	_itm								= m_pInv->m_slots[GRENADE_SLOT].m_pIItem;
@@ -130,7 +130,7 @@ void CUIInventoryWnd::InitInventory()
 		m_pUIDetectorList->SetItem		(itm);
 	}
 
-	_itm								= m_pInv->m_slots[ON_HEAD_SLOT].m_pIItem;
+	_itm								= m_pInv->m_slots[TORCH_SLOT].m_pIItem;
 	if (_itm){
 		CUICellItem* itm				= create_cell_item(_itm);
 		m_pUIOnHeadList->SetItem			(itm);
@@ -497,9 +497,9 @@ bool CUIInventoryWnd::OnItemSelected(CUICellItem* itm)
 		m_pUITacticalVestList,
 		//
 		m_pUIKnifeList,
-		m_pUIOnShoulderList, 
-		m_pUIOnBackList, 
-		m_pUIHolsterList,
+		m_pUIFirstWeaponList, 
+		m_pUISecondWeaponList, 
+		m_pUIBinocularList,
 		// 
 		m_pUIGrenadeList,
 		m_pUIArtefactList,
@@ -683,9 +683,9 @@ void CUIInventoryWnd::ClearAllLists()
 	m_pUITacticalVestList->ClearAll			(true);
 	//
 	m_pUIKnifeList->ClearAll				(true);
-	m_pUIOnShoulderList->ClearAll			(true);
-	m_pUIOnBackList->ClearAll				(true);
-	m_pUIHolsterList->ClearAll				(true);
+	m_pUIFirstWeaponList->ClearAll			(true);
+	m_pUISecondWeaponList->ClearAll			(true);
+	m_pUIBinocularList->ClearAll			(true);
 	//
 	m_pUIGrenadeList->ClearAll				(true);
 	m_pUIArtefactList->ClearAll				(true);

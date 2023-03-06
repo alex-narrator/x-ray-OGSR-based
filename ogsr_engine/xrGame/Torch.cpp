@@ -61,7 +61,7 @@ CTorch::CTorch(void)
 		TORCH_OFFSET.z = 0;
 	}
 
-	SetSlot(ON_HEAD_SLOT);
+	SetSlot(TORCH_SLOT);
 }
 
 CTorch::~CTorch(void) 

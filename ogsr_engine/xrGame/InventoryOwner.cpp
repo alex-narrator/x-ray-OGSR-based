@@ -629,7 +629,7 @@ void CInventoryOwner::SetNextItemSlot( u32 slot ) {
 
 #include "Torch.h"
 CInventoryItem* CInventoryOwner::GetCurrentTorch() const {
-  return smart_cast<CTorch*>(inventory().ItemFromSlot(ON_HEAD_SLOT));
+  return smart_cast<CTorch*>(inventory().ItemFromSlot(TORCH_SLOT));
 }
 
 float CInventoryOwner::deficit(const shared_str& section) const

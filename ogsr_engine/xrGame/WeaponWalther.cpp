@@ -4,7 +4,7 @@
 CWeaponWalther::CWeaponWalther(void) : CWeaponPistol("WALTHER")
 {
 	m_weight = .5f;
-	SetSlot( ON_SHOULDER_SLOT );
+	SetSlot( FIRST_WEAPON_SLOT );
 }
 
 CWeaponWalther::~CWeaponWalther(void)

@@ -4,7 +4,7 @@
 CWeaponVal::CWeaponVal(void) : CWeaponMagazined("VAL",SOUND_TYPE_WEAPON_SUBMACHINEGUN)
 {
 	m_weight = 1.5f;
-	SetSlot( ON_BACK_SLOT );
+	SetSlot( SECOND_WEAPON_SLOT );
 }
 
 CWeaponVal::~CWeaponVal(void)
