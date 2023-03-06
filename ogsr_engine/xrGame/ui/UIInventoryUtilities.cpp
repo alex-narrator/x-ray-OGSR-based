@@ -135,15 +135,6 @@ bool InventoryUtilities::FreeRoom_inBelt	(TIItemContainer& item_list, PIItem _it
 
 			}
 		}
-
-		//разместить элемент на найденном месте
-		if(found_place){
-			for(k=0; k<iHeight; ++k){
-				for(m=0; m<iWidth; ++m){
-					ruck_room[(place_row+k)*width + place_col+m] = true;
-				}
-			}
-		}
 	}
 
 	// remove
@@ -208,15 +199,6 @@ bool InventoryUtilities::FreeRoom_inVest(TIItemContainer& item_list, PIItem _ite
 					place_col = j;
 				}
 
-			}
-		}
-
-		//разместить элемент на найденном месте
-		if (found_place) {
-			for (k = 0; k < iWidth; ++k) {
-				for (m = 0; m < iHeight; ++m) {
-					ruck_room[(place_row + k) * height + place_col + m] = true;
-				}
 			}
 		}
 	}
@@ -635,11 +617,7 @@ u32	InventoryUtilities::GetRelationColor(ALife::ERelationType relation)
 #endif
 }
 
-CUIStatic* init_addon(
-	CUIWeaponCellItem* cell_item,
-	LPCSTR sect,
-	float scale,
-	int idx)
+CUIStatic* init_addon(CUIWeaponCellItem* cell_item, LPCSTR sect, float scale, int idx)
 {
 	CUIStatic* addon = xr_new<CUIStatic>();
 	addon->SetAutoDelete(true);
@@ -714,4 +692,10 @@ void InventoryUtilities::TryAttachWpnAddonIcons(CUIStatic* _main_icon, PIItem _i
 	}
 
 	delete_data(cell_item);
+}
+
+void InventoryUtilities::SendEvent_Item_Drop(PIItem	pItem)
+{
+	pItem->OnMoveOut(pItem->m_eItemPlace);
+	pItem->SetDropManual(TRUE);
 }

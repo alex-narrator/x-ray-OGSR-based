@@ -232,13 +232,16 @@ void CUIInventoryWnd::DropCurrentItem(bool b_all){
 		for(u32 i=0; i<cnt; ++i){
 			CUICellItem*	itm				= CurrentItem()->PopChild();
 			PIItem			iitm			= (PIItem)itm->m_pData;
-			SendEvent_Item_Drop				(iitm);
+			InventoryUtilities::SendEvent_Item_Drop(iitm);
 		}
 	}
 
-	SendEvent_Item_Drop		(CurrentIItem());
+	InventoryUtilities::SendEvent_Item_Drop(CurrentIItem());
 	SetCurrentItem			(NULL);
 	UpdateWeightVolume		();
+
+	PlaySnd(eInvDropItem);
+	m_b_need_update_stats = true;
 }
 
 void CUIInventoryWnd::DisassembleItem(bool b_all) {

@@ -104,7 +104,6 @@ protected:
 	void					TakeAll						();
 	void					MoveItems					(CUICellItem* itm, bool b_all);
 	void					DropItems					(bool b_all);
-	void					SendEvent_Item_Drop			(PIItem	pItem);
 	void					MoveAllFromRuck				();
 	void					DisassembleItem				(bool);
 	void					DetachAddon					(const char* addon_name, bool);

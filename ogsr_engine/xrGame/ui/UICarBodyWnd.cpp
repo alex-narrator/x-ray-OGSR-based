@@ -799,12 +799,6 @@ void CUICarBodyWnd::MoveItems(CUICellItem* itm, bool b_all)
 	SetCurrentItem(NULL);
 }
 
-void CUICarBodyWnd::SendEvent_Item_Drop(PIItem	pItem)
-{
-	pItem->OnMoveOut(pItem->m_eItemPlace);
-	pItem->SetDropManual(TRUE);
-}
-
 void CUICarBodyWnd::DropItems(bool b_all)
 {
 	CActor *pActor = smart_cast<CActor*>(Level().CurrentEntity());
@@ -824,11 +818,11 @@ void CUICarBodyWnd::DropItems(bool b_all)
 		for (u32 i = 0; i < cnt; ++i){
 			CUICellItem* itm = ci->PopChild();
 			PIItem			iitm = (PIItem)itm->m_pData;
-			SendEvent_Item_Drop(iitm);
+			InventoryUtilities::SendEvent_Item_Drop(iitm);
 		}
 	}
 	TryPlayStabbing(CurrentIItem(), m_pOtherGO);
-	SendEvent_Item_Drop(CurrentIItem());
+	InventoryUtilities::SendEvent_Item_Drop(CurrentIItem());
 	old_owner->RemoveItem(ci, b_all);
 
 	SetCurrentItem(NULL);

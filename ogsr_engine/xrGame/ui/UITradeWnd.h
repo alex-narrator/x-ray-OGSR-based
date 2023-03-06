@@ -61,7 +61,6 @@ protected:
 	void				ColorizeItem				(CUICellItem* itm, bool canTrade, bool highlighted);
 	void				MoveItems					(CUICellItem* itm, bool b_all);
 	void				DropItems					(bool b_all);        //выбросить предмет/стак предметов
-	void				SendEvent_Item_Drop			(PIItem	pItem);
 	void				EatItem						();
 	void				PerformDonation				();
 	void				DisassembleItem				(bool);

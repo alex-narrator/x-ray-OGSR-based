@@ -53,6 +53,8 @@ public:
 	virtual void	activate_physic_shell	();
 	virtual void	on_activate_physic_shell();
 
+	virtual void	shedule_Update(u32 dt);
+
 #ifdef DEBUG
 protected:
 	virtual void	OnRender				();

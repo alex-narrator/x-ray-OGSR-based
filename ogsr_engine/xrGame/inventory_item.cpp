@@ -240,6 +240,7 @@ void  CInventoryItem::ChangeCondition(float fDeltaCondition){
 		if (itm)
 			itm->m_fCondition = m_fCondition;
 	}
+
 }
 
 
@@ -954,24 +955,18 @@ float	CInventoryItem::GetControlInertionFactor(){
 	return m_fControlInertionFactor;
 }
 
-bool  CInventoryItem::WillBeBroken()
-{
-	return m_bBreakOnZeroCondition && fis_zero(GetCondition()) && !IsQuestItem();
-}
-
 void CInventoryItem::TryBreakToPieces(bool play_effects)
 {
-	if (WillBeBroken() && !b_brake_item){
+	if (m_bBreakOnZeroCondition && fis_zero(GetCondition()) && !IsQuestItem() && !b_brake_item){
 		b_brake_item = true;
-
 		if (play_effects){
 			if (object().H_Parent()){
 				//играем звук
-				sndBreaking.play_at_pos(object().H_Parent(), object().H_Parent()->Position(), false);
+				sndBreaking.play_no_feedback(object().H_Parent(), u32{}, float{}, &object().H_Parent()->Position());
 				SetDropManual(TRUE);
 			}else{
 				//играем звук
-				sndBreaking.play_at_pos(cast_game_object(), object().Position(), false);
+				sndBreaking.play_no_feedback(cast_game_object(), u32{}, float{}, &object().Position());
 				//отыграть партиклы разбивания
 				if (!!m_sBreakParticles){
 					//показываем эффекты

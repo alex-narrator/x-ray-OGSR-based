@@ -550,14 +550,6 @@ void CUIInventoryWnd::RepairItem(PIItem item_to_repair) {
 	InitInventory_delayed();
 }
 
-void	CUIInventoryWnd::SendEvent_Item_Drop(PIItem	pItem)
-{
-	pItem->SetDropManual			(TRUE);
-
-	g_pInvWnd->PlaySnd				(eInvDropItem);
-	m_b_need_update_stats = true;
-};
-
 void CUIInventoryWnd::BindDragDropListEnents(CUIDragDropListEx* lst)
 {
 	lst->m_f_item_drop = fastdelegate::MakeDelegate(this, &CUIInventoryWnd::OnItemDrop);

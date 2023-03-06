@@ -178,3 +178,8 @@ bool CEatableItemObject::Useful				() const
 {
 	return			(CEatableItem::Useful());
 }
+
+void CEatableItemObject::shedule_Update(u32 dt) {
+	CPhysicItem::shedule_Update(dt);
+	UpdateConditionDecrease();
+}

@@ -168,9 +168,6 @@ public:
 protected:
 	bool						DropItem					(PIItem itm, CUIDragDropListEx* lst);
 	bool						TryUseItem					(PIItem itm);
-	//----------------------	-----------------------------------------------
-	void						SendEvent_Item_Drop			(PIItem	pItem);
-	//---------------------------------------------------------------------
 
 	void						ProcessPropertiesBoxClicked	();
 	void						ActivatePropertiesBox		();
