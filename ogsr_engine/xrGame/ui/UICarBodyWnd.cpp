@@ -803,14 +803,6 @@ void CUICarBodyWnd::SendEvent_Item_Drop(PIItem	pItem)
 {
 	pItem->OnMoveOut(pItem->m_eItemPlace);
 	pItem->SetDropManual(TRUE);
-
-	if (OnClient())
-	{
-		NET_Packet P;
-		pItem->object().u_EventGen(P, GE_OWNERSHIP_REJECT, pItem->object().H_Parent()->ID());
-		P.w_u16(pItem->object().ID());
-		pItem->object().u_EventSend(P);
-	}
 }
 
 void CUICarBodyWnd::DropItems(bool b_all)
@@ -1023,7 +1015,7 @@ bool CUICarBodyWnd::CanMoveToOther(PIItem pItem, CGameObject* owner_to) const {
 void CUICarBodyWnd::UpdateWeightVolume(bool only_for_actor) {
 	InventoryUtilities::UpdateWeight(*m_pUIOurWeightWnd);
 	InventoryUtilities::UpdateVolume(m_pActorGO, *m_pUIOurVolWnd);
-	m_pUIOurVolWnd->SetVisible(psActorFlags.test(AF_INVENTORY_VOLUME));
+	m_pUIOurVolWnd->SetVisible(Core.Features.test(xrCore::Feature::inventory_volume));
 	if (only_for_actor) return;
 	InventoryUtilities::UpdateVolume(m_pOtherGO, *m_pUIOthersVolWnd);
 }
@@ -1079,7 +1071,7 @@ void CUICarBodyWnd::CheckForcedWeightVolumeUpdate() {
 }
 
 bool CUICarBodyWnd::CheckMonsterAndKnife() const {
-	return !psActorFlags.test(AF_KNIFE_TO_CUT_PART)
+	return !Core.Features.test(xrCore::Feature::knife_to_cut_parts)
 		|| !smart_cast<CBaseMonster*>(m_pOtherInventoryOwner)
 		|| smart_cast<CWeaponKnife*>(m_pActorInventoryOwner->inventory().ActiveItem());
 }
@@ -1088,7 +1080,7 @@ void CUICarBodyWnd::TryPlayStabbing(PIItem itm, CGameObject* owner_from) {
 	auto monster = smart_cast<CBaseMonster*>(owner_from);
 	if (!monster) return;
 	bool owner_is_monster = (itm->object().H_Parent() == owner_from);
-	if (psActorFlags.test(AF_KNIFE_TO_CUT_PART) && monster && owner_is_monster) {
+	if (Core.Features.test(xrCore::Feature::knife_to_cut_parts) && monster && owner_is_monster) {
 		auto knife = smart_cast<CWeaponKnife*>(m_pActorInventoryOwner->inventory().ActiveItem());
 		if (knife) {
 			knife->Fire2Start();                                         //нанесём удар ножом

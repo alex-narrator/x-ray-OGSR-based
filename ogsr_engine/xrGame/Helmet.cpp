@@ -63,7 +63,7 @@ void CHelmet::OnMoveToSlot(EItemPlace prevPlace)
 				xr_delete(m_UIVisor);
 			if (!!m_VisorTexture) {
 				m_UIVisor = xr_new<CUIStaticItem>();
-				m_UIVisor->Init(m_VisorTexture.c_str(), psHUD_Flags.test(HUD_TEXTURES_AUTORESIZE) ? "hud\\scope" : "hud\\default", 0, 0, alNone);
+				m_UIVisor->Init(m_VisorTexture.c_str(), Core.Features.test(xrCore::Feature::scope_textures_autoresize) ? "hud\\scope" : "hud\\default", 0, 0, alNone);
 			}
 			pActor->UpdateVisorEfects();
 		}

@@ -79,10 +79,7 @@ BOOL CActor::net_Spawn		(CSE_Abstract* DC)
 	//force actor to be local on server client
 	CSE_Abstract			*e	= (CSE_Abstract*)(DC);
 	CSE_ALifeCreatureActor	*E	= smart_cast<CSE_ALifeCreatureActor*>(e);	
-	if (OnServer())
-	{
-		E->s_flags.set(M_SPAWN_OBJECT_LOCAL, TRUE);
-	}
+	E->s_flags.set(M_SPAWN_OBJECT_LOCAL, TRUE);
 	
 	if(	TRUE == E->s_flags.test(M_SPAWN_OBJECT_LOCAL) && TRUE == E->s_flags.is(M_SPAWN_OBJECT_ASPLAYER))
 		g_actor = this;
@@ -185,27 +182,6 @@ BOOL CActor::net_Spawn		(CSE_Abstract* DC)
 	LastPosH.clear();
 	LastPosL.clear();
 #endif
-//*
-	
-//	if (OnServer())// && E->s_flags.is(M_SPAWN_OBJECT_LOCAL))
-/*	
-	if (OnClient())
-	{
-		if (!pStatGraph)
-		{
-			static g_Y = 0;
-			pStatGraph = xr_new<CStatGraph>();
-			pStatGraph->SetRect(0, g_Y, Device.dwWidth, 100, 0xff000000, 0xff000000);
-			g_Y += 110;
-			if (g_Y > 700) g_Y = 100;
-			pStatGraph->SetGrid(0, 0.0f, 10, 1.0f, 0xff808080, 0xffffffff);
-			pStatGraph->SetMinMax(0, 10, 300);
-			pStatGraph->SetStyle(CStatGraph::stBar);
-			pStatGraph->AppendSubGraph(CStatGraph::stCurve);
-			pStatGraph->AppendSubGraph(CStatGraph::stCurve);
-		}
-	}
-*/	
 	SetDefaultVisualOutfit(cNameVisual());
 
 	smart_cast<IKinematics*>(Visual())->CalculateBones();
@@ -249,10 +225,6 @@ BOOL CActor::net_Spawn		(CSE_Abstract* DC)
 	spatial.type |=STYPE_REACTTOSOUND;
 	psHUD_Flags.set(HUD_WEAPON_RT,TRUE);
 	
-	if (Level().IsDemoPlay() && OnClient())
-	{
-		setLocal(FALSE);
-	};
 	return					TRUE;
 }
 
@@ -325,14 +297,7 @@ void CActor::net_Relcase	(CObject* O)
 
 BOOL	CActor::net_Relevant		()				// relevant for export to server
 { 
-	if (OnServer())
-	{
-		return getSVU() | getLocal(); 
-	}
-	else
-	{
-		return Local() & g_Alive();
-	};
+	return getSVU() | getLocal();
 };
 
 void	CActor::SetCallbacks()

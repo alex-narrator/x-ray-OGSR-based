@@ -126,13 +126,10 @@ void CWeaponRG6::LaunchGrenade(const Fvector& p1, const Fvector& d1)
 		pGrenade->SetInitiator(H_Parent()->ID());
 		pGrenade->SetRealGrenadeName( m_ammoTypes[ m_ammoType ] );
 
-		if (OnServer())
-		{
-			NET_Packet P;
-			u_EventGen(P,GE_LAUNCH_ROCKET,ID());
-			P.w_u16(u16(getCurrentRocket()->ID()));
-			u_EventSend(P);
-		}
+		NET_Packet P;
+		u_EventGen(P, GE_LAUNCH_ROCKET, ID());
+		P.w_u16(u16(getCurrentRocket()->ID()));
+		u_EventSend(P);
 		dropCurrentRocket();
 	}
 }

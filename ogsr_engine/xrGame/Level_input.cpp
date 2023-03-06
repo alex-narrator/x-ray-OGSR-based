@@ -283,16 +283,12 @@ void CLevel::IR_OnKeyboardPress	(int key)
 
 
 	case DIK_DIVIDE:
-		if( OnServer() ){
 //			float NewTimeFactor				= pSettings->r_float("alife","time_factor");
 			Server->game->SetGameTimeFactor(g_fTimeFactor);
-		}
 		break;	
 	case DIK_MULTIPLY:
-		if( OnServer() ){
 			float NewTimeFactor				= 1000.f;
 			Server->game->SetGameTimeFactor(NewTimeFactor);
-		}
 		break;
 #endif
 #ifdef DEBUG

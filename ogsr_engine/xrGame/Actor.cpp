@@ -605,30 +605,31 @@ void start_tutorial(LPCSTR name);
 void CActor::Die(CObject* who)
 {
 	inherited::Die		(who);
-	if (OnServer()){	
-		const auto &slots = inventory().m_slots;
 
-		for (u32 slot_idx = 0; slot_idx < slots.size(); ++slot_idx){
-			auto &item = slots[slot_idx].m_pIItem;
+	const auto& slots = inventory().m_slots;
 
-			if (slot_idx == inventory().GetActiveSlot()) {
-				if(item){
-					item->SetDropManual(TRUE);
-				}
-			continue;
-			}else{
-				if (smart_cast<CCustomOutfit*>(item)) continue;
-				if (smart_cast<CHelmet*>(item)) continue;
+	for (u32 slot_idx = 0; slot_idx < slots.size(); ++slot_idx) {
+		auto& item = slots[slot_idx].m_pIItem;
+
+		if (slot_idx == inventory().GetActiveSlot()) {
+			if (item) {
+				item->SetDropManual(TRUE);
 			}
+			continue;
+		}
+		else {
+			if (item == GetOutfit()) continue;
+			if (item == GetHelmet()) continue;
+			if (item == GetBackpack()) continue;
+		}
 
-			if(item)
-				inventory().Ruck(item);
-		};
+		if (item)
+			inventory().Ruck(item);
+	};
 
-		///!!! чистка пояса
-		inventory().DropBeltToRuck(true);
-		inventory().DropVestToRuck(true);
-	}
+	///!!! чистка пояса
+	inventory().DropBeltToRuck(true);
+	inventory().DropVestToRuck(true);
 
 	cam_Set					(eacFreeLook);
 	UpdateVisorEfects		();
@@ -858,7 +859,7 @@ constexpr u32 TASKS_UPDATE_TIME = 1u;
 float	NET_Jump = 0;
 void CActor::shedule_Update	(u32 DT)
 {
-	setSVU(OnServer());
+	setSVU(TRUE);
 
 	BOOL bHudView = HUDview();
 	if (bHudView)
@@ -905,16 +906,10 @@ void CActor::shedule_Update	(u32 DT)
 	  tasks_update_time += DT;
 	}
 
-	if( /* m_holder || */ !getEnabled() || !Ready() )
+	if(!getEnabled() || !Ready() )
 	{
 		m_sDefaultObjAction = nullptr;
 		inherited::shedule_Update		(DT);
-	
-/*		if (OnServer())
-		{
-			Check_Weapon_ShowHideState();
-		};	
-*/
 		return;
 	}
 
@@ -925,22 +920,11 @@ void CActor::shedule_Update	(u32 DT)
 	// Check controls, create accel, prelimitary setup "mstate_real"
 	
 	//----------- for E3 -----------------------------
-//	if (Local() && (OnClient() || Level().CurrentEntity()==this))
-	if ( Level().CurrentControlEntity() == this && !m_holder && ( !Level().IsDemoPlay() || Level().IsServerDemo() ) )
+	if ( Level().CurrentControlEntity() == this && !m_holder)
 	//------------------------------------------------
 	{
 		g_cl_CheckControls		(mstate_wishful,NET_SavedAccel,NET_Jump,dt);
 		{
-			/*
-			if (mstate_real & mcJump)
-			{
-				NET_Packet	P;
-				u_EventGen(P, GE_ACTOR_JUMPING, ID());
-				P.w_sdir(NET_SavedAccel);
-				P.w_float(NET_Jump);
-				u_EventSend(P);
-			}
-			*/
 		}
 		g_cl_Orientate			(mstate_real,dt);
 		g_Orientate				(mstate_real,dt);
@@ -965,15 +949,12 @@ void CActor::shedule_Update	(u32 DT)
 		} else {
 			f_DropPower			= 0.f;
 		}
-		if (!Level().IsDemoPlay())
-		{		
 		//-----------------------------------------------------
 		mstate_wishful &=~mcLStrafe;
 		mstate_wishful &=~mcRStrafe;
 		mstate_wishful &=~mcFwd;
 		mstate_wishful &=~mcBack;
 		//-----------------------------------------------------
-		}
 	}
 	else if ( !m_holder )
 	{
@@ -1299,7 +1280,6 @@ bool		CActor::use_bolts				() const
 void CActor::OnItemTake			(CInventoryItem *inventory_item)
 {
 	CInventoryOwner::OnItemTake(inventory_item);
-	if (OnClient()) return;
 }
 
 void CActor::OnItemDrop			(CInventoryItem *inventory_item)
@@ -1913,6 +1893,8 @@ void CActor::TryPlayAnimItemTake() {
 	if (!inventory().ActiveItem()) return;
 	const auto hud_item = smart_cast<CHudItem*>(inventory().ActiveItem());
 	if (!hud_item || !hud_item->GetHUDmode()) return;
+	if (hud_item->IsZoomed())
+		hud_item->OnZoomOut();
 	hud_item->PlayAnimOnItemTake();
 }
 

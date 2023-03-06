@@ -480,7 +480,7 @@ float CArtefact::GetItemEffect(int effect) const {
 void CArtefact::UpdateConditionDecrease(){
 	bool can_be_decreased{};
 	if (H_Parent()) {
-		bool from_all = psActorFlags.test(AF_ARTEFACTS_FROM_ALL);
+		bool from_all = Core.Features.test(xrCore::Feature::artefacts_from_all);
 		if (auto container = smart_cast<CInventoryContainer*>(H_Parent())) {
 			if (container->H_Parent()) { 
 				if (auto actor = smart_cast<CActor*>(container->H_Parent())) {
@@ -546,8 +546,7 @@ void SArtefactActivation::Start()
 	NET_Packet						P;
 	CGameObject::u_EventGen			(P,GE_OWNERSHIP_REJECT, m_af->H_Parent()->ID());
 	P.w_u16							(m_af->ID());
-	if (OnServer())
-		CGameObject::u_EventSend		(P);
+	CGameObject::u_EventSend		(P);
 	m_light->set_active				(true);
 	ChangeEffects					();
 }
@@ -571,7 +570,7 @@ void SArtefactActivation::UpdateActivation()
 		ChangeEffects				();
 
 
-	if(m_cur_activation_state==eSpawnZone && OnServer())
+	if(m_cur_activation_state==eSpawnZone)
 		SpawnAnomaly	();
 
 	}

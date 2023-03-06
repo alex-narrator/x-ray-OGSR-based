@@ -28,10 +28,8 @@ void CLevel::remove_objects	()
 
 	Game().reset_ui				();
 
-	if (OnServer()) {
-		VERIFY					(Server);
-		Server->SLS_Clear		();
-	}
+	VERIFY(Server);
+	Server->SLS_Clear();
 	
 	snd_Events.clear			();
 	for (int i=0; i<6; ++i) {
@@ -47,9 +45,6 @@ void CLevel::remove_objects	()
 
 	Device.remove_from_seq_parallel(fastdelegate::MakeDelegate(this, &CLevel::ProcessGameSpawns));
 	delete_data(game_spawn_queue);
-
-	if (OnClient())
-		ClearAllObjects			();
 
 	BulletManager().Clear		();
 	ph_commander().clear		();
@@ -122,7 +117,6 @@ void CLevel::net_Stop		()
 
 
 void CLevel::ClientSend() {
-  ASSERT_FMT( !OnClient(), "" );
   for ( u32 i = 0; i < Objects.o_count(); i++ ) {
     CObject* O = Objects.o_get_by_iterator( i );
     if ( O->net_Relevant() && !O->getDestroy() ) {
@@ -176,7 +170,6 @@ extern		float		phTimefactor;
 
 void CLevel::Send		(NET_Packet& P, u32 dwFlags, u32 dwTimeout)
 {
-	if (IsDemoPlay() && m_bDemoStarted) return;
 	// optimize the case when server located in our memory
 	ClientID	_clid;
 	_clid.set	(1);
@@ -192,7 +185,7 @@ void CLevel::net_Update	()
 		Device.Statistic->netClient2.End		();
 	}
 	// If server - perform server-update
-	if (Server && OnServer())	{
+	if (Server)	{
 		Device.Statistic->netServer.Begin();
 		Server->Update					();
 		Device.Statistic->netServer.End	();
@@ -284,27 +277,7 @@ void			CLevel::OnConnectResult				(NET_Packet*	P)
 	if (!result)				
 		m_bConnectResult = false;	
 
-	m_sConnectResult			= ResultStr;
-	
-	if (IsDemoSave())
-	{
-//		P->r_stringZ(m_sDemoHeader.LevelName);
-//		P->r_stringZ(m_sDemoHeader.GameType);
-		m_sDemoHeader.bServerClient = P->r_u8();
-		P->r_stringZ(m_sDemoHeader.ServerOptions);
-		//-----------------------------------------
-		FILE* fTDemo = fopen(m_sDemoName, "ab");
-		if (fTDemo)
-		{
-			fwrite(&m_sDemoHeader.bServerClient, 32, 1, fTDemo); //-V512
-			
-			DWORD OptLen = m_sDemoHeader.ServerOptions.size();
-			fwrite(&OptLen, 4, 1, fTDemo);
-			fwrite(*m_sDemoHeader.ServerOptions, OptLen, 1, fTDemo);
-			fclose(fTDemo);
-		};
-		//-----------------------------------------
-	};	
+	m_sConnectResult			= ResultStr;	
 };
 
 void			CLevel::ClearAllObjects				()

@@ -112,41 +112,6 @@ CLevel::CLevel():IPureClient	(Device.GetTimerGlobal())
 	m_dwRealPing = 0;
 
 	//---------------------------------------------------------	
-	m_sDemoName[0] = 0;
-	m_bDemoSaveMode = FALSE;
-	m_dwStoredDemoDataSize = 0;
-	m_pStoredDemoData = NULL;
-
-//	if ( !strstr( Core.Params, "-tdemo " ) && !strstr(Core.Params,"-tdemof "))
-//	{
-//		Demo_PrepareToStore();
-//	};
-	//---------------------------------------------------------
-//	m_bDemoPlayMode = FALSE;
-//	m_aDemoData.clear();
-//	m_bDemoStarted	= FALSE;
-
-	/*
-	if (strstr(Core.Params,"-tdemo ") || strstr(Core.Params,"-tdemof ")) {		
-		string1024				f_name;
-		if (strstr(Core.Params,"-tdemo "))
-		{
-			sscanf					(strstr(Core.Params,"-tdemo ")+7,"%[^ ] ",f_name);
-			m_bDemoPlayByFrame = FALSE;
-
-			Demo_Load	(f_name);	
-		}
-		else
-		{
-			sscanf					(strstr(Core.Params,"-tdemof ")+8,"%[^ ] ",f_name);
-			m_bDemoPlayByFrame = TRUE;
-
-			m_lDemoOfs = 0;
-			Demo_Load_toFrame(f_name, 100, m_lDemoOfs);
-		};		
-	}
-	*/
-	//---------------------------------------------------------	
 
 	m_is_removing_objects = false;
 
@@ -229,8 +194,6 @@ CLevel::~CLevel()
 	xr_delete					(m_map_manager);
 //	xr_delete					(m_pFogOfWarMngr);
 	//-----------------------------------------------------------
-	Demo_Clear					();
-	m_aDemoData.clear			();
 
 	// here we clean default trade params
 	// because they should be new for each saved/loaded game
@@ -739,10 +702,6 @@ void CLevel::GetGameTimeForShaders(u32& hours, u32& minutes, u32& seconds, u32& 
 bool CLevel::IsServer ()
 {
 //	return (!!Server);
-	if (IsDemoPlay())
-	{
-		return IsServerDemo();
-	};	
 	if (!Server) return false;
 	return (Server->client_Count() != 0);
 
@@ -751,10 +710,6 @@ bool CLevel::IsServer ()
 bool CLevel::IsClient ()
 {
 //	return (!Server);
-	if (IsDemoPlay())
-	{
-		return IsClientDemo();
-	};	
 	if (!Server) return true;
 	return (Server->client_Count() == 0);
 }

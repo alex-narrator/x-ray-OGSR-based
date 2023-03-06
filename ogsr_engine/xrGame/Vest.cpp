@@ -158,7 +158,7 @@ bool CVest::Attach(PIItem pIItem, bool b_send_event)
 	}
 
 	if (result){
-		if (b_send_event && OnServer()){
+		if (b_send_event){
 			//уничтожить подсоединенную вещь из инвентаря
 			pIItem->object().DestroyObject();
 		};

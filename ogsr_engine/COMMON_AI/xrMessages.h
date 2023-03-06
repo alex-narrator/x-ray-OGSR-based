@@ -46,8 +46,6 @@ enum {
 	M_STATISTIC_UPDATE,
 	M_STATISTIC_UPDATE_RESPOND,
 	//-----------------------------------------------------
-	M_PLAYER_FIRE,
-	//-----------------------------------------------------
 	M_CHANGE_SELF_NAME,
 	M_REMOTE_CONTROL_CMD,
 };
@@ -85,7 +83,6 @@ enum {
 	GE_ZONE_STATE_CHANGE,
 
 	GE_MOVE_ACTOR,				//move actor to desired position instantly
-	GE_ACTOR_JUMPING,			//actor press jump key
 	GE_ACTOR_MAX_POWER,
 
 	GE_CHANGE_POS,
@@ -97,9 +94,6 @@ enum {
 
 	GEG_PLAYER_ITEM_SELL,
 	
-	GEG_PLAYER_ATTACH_HOLDER,
-	GEG_PLAYER_DETACH_HOLDER,
-
 	//-------------------------------------
 	GE_HIT_STATISTIC,
 	//-------------------------------------

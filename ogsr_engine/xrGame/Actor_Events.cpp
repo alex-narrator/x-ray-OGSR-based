@@ -143,32 +143,6 @@ void CActor::OnEvent		(NET_Packet& P, u16 type)
 			conditions().ClearWounds();
 			ClearBloodWounds();
 		}break;
-	case GEG_PLAYER_ATTACH_HOLDER:
-		{
-			u32 id = P.r_u32();
-			CObject* O	= Level().Objects.net_Find	(id);
-			if (!O){
-				Msg("! Error: No object to attach holder [%d]", id);
-				break;
-			}
-			VERIFY(m_holder==NULL);
-			CHolderCustom*	holder = smart_cast<CHolderCustom*>(O);
-			if(!holder->Engaged())	use_Holder		(holder);
-
-		}break;
-	case GEG_PLAYER_DETACH_HOLDER:
-		{
-			if			(!m_holder)	break;
-#ifdef DEBUG
-			u32 id =
-#endif
-			P.r_u32();
-			VERIFY(id == smart_cast<CGameObject*>(m_holder)->ID());
-			use_Holder		(NULL);
-		}break;
-	case GE_ACTOR_JUMPING:
-		{
-		}break;
 	}
 }
 

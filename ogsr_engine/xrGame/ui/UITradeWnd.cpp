@@ -1141,14 +1141,6 @@ void CUITradeWnd::SendEvent_Item_Drop(PIItem	pItem)
 {
 	pItem->OnMoveOut(pItem->m_eItemPlace);
 	pItem->SetDropManual(TRUE);
-
-	if (OnClient())
-	{
-		NET_Packet P;
-		pItem->object().u_EventGen(P, GE_OWNERSHIP_REJECT, pItem->object().H_Parent()->ID());
-		P.w_u16(pItem->object().ID());
-		pItem->object().u_EventSend(P);
-	}
 }
 
 void CUITradeWnd::DropItems(bool b_all)

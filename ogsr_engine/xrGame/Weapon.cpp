@@ -722,21 +722,16 @@ void CWeapon::OnEvent(NET_Packet& P, u16 type)
 	{
 	case GE_WPN_STATE_CHANGE:
 		{
-			u8				state;
-			P.r_u8			(state);
-			P.r_u8			(m_sub_state);		
-//			u8 NewAmmoType = 
-				P.r_u8();
-			u8 AmmoElapsed = P.r_u8();
-			u8 NextAmmo = P.r_u8();
-			if (NextAmmo == u8(-1))
-				m_set_next_ammoType_on_reload = u32(-1);
-			else
-				m_set_next_ammoType_on_reload = u8(NextAmmo);
+		u8 state;
+		P.r_u8(state);
+		P.r_u8(m_sub_state);
+		u8 NextAmmo = P.r_u8();
+		if (NextAmmo == u8(-1))
+			m_set_next_ammoType_on_reload = u32(-1);
+		else
+			m_set_next_ammoType_on_reload = u8(NextAmmo);
 
-			if (OnClient())
-				SetAmmoElapsed(int(AmmoElapsed));			
-			OnStateSwitch(u32(state), GetState());
+		OnStateSwitch(u32(state), GetState());
 		}
 		break;
 	default:
@@ -1117,7 +1112,7 @@ bool CWeapon::Action(s32 cmd, u32 flags)
 			return true;
 		case kWPN_NEXT: 
 			{
-				if(IsPending() || OnClient()) {
+				if(IsPending()) {
 					return false;
 				}
 									
@@ -1342,8 +1337,6 @@ float CWeapon::GetConditionMisfireProbability() const
 
 BOOL CWeapon::CheckForMisfire	()
 {
-	if (OnClient()) return FALSE;
-
 	if ( Core.Features.test( xrCore::Feature::npc_simplified_shooting ) ) {
 	  CActor *actor = smart_cast<CActor*>( H_Parent() );
 	  if ( !actor ) return FALSE;
@@ -1696,11 +1689,9 @@ CUIStaticItem* CWeapon::ZoomTexture(){
 
 void CWeapon::SwitchState(u32 S)
 {
-	if (OnClient()) return;
-
 	SetNextState		( S );	// Very-very important line of code!!! :)
 	if (CHudItem::object().Local() && !CHudItem::object().getDestroy()/* && (S!=NEXT_STATE)*/ 
-		&& m_pCurrentInventory && OnServer())	
+		&& m_pCurrentInventory)	
 	{
 		// !!! Just single entry for given state !!!
 		NET_Packet		P;

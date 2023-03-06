@@ -438,7 +438,7 @@ u8 CWeaponShotgun::AddCartridge		(u8 cnt)
 	VERIFY((u32)iAmmoElapsed == m_magazine.size());
 
 	//выкинуть коробку патронов, если она пустая
-	if(m_pAmmo && !m_pAmmo->m_boxCurr && OnServer()) 
+	if(m_pAmmo && !m_pAmmo->m_boxCurr) 
 		m_pAmmo->SetDropManual(TRUE);
 
 	return cnt;
@@ -497,9 +497,7 @@ bool CWeaponShotgun::Attach(PIItem pIItem, bool b_send_event)
 		UnloadWeaponFull();
 
 		if (b_send_event) {
-			//.			pIItem->Drop();
-			if (OnServer())
-				pIItem->object().DestroyObject();
+			pIItem->object().DestroyObject();
 		}
 		UpdateAddonsVisibility();
 		InitAddons();

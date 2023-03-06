@@ -91,7 +91,6 @@ void CTorch::Load(LPCSTR section)
 
 void CTorch::Switch()
 {
-	if (OnClient()) return;
 	bool bActive			= !m_switched_on;
 	Switch					(bActive);
 }

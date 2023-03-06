@@ -81,7 +81,7 @@ ICF static BOOL info_trace_callback(collide::rq_result& result, LPVOID params)
             return TRUE;
           }
           else {
-            //if ( !Core.Features.test( xrCore::Feature::pickup_check_overlaped ) )
+            if ( !Core.Features.test( xrCore::Feature::pickup_check_overlaped ) )
               return TRUE;
           }
 	}else{
@@ -133,97 +133,109 @@ void CActor::PickupModeUpdate()
 #include "../xr_3da/camerabase.h"
 void	CActor::PickupModeUpdate_COD	()
 {
-	if (Level().CurrentViewEntity() != this) return;
-		
-	if (!g_Alive() || eacFirstEye != cam_active) {
-		HUD().GetUI()->UIMainIngameWnd->SetPickUpItem(nullptr);
-		return;
-	};
-
-	//подбирание объекта
-
-	bool b_pickup_allowed = IsFreeHands() && (!psActorFlags.test(AF_PICKUP_TARGET_ONLY) || inventory().m_pTarget);
-
-	if (inventory().m_pTarget && inventory().m_pTarget->Useful()
-		&& m_pUsableObject && m_pUsableObject->nonscript_usable()
-		&& !Level().m_feel_deny.is_object_denied( smart_cast<CGameObject*>( inventory().m_pTarget ) )
-		&& IsFreeHands()) {
-		CInventoryItem* pNearestItem = inventory().m_pTarget;
-        if ( m_bPickupMode && inventory().CanTakeItem(pNearestItem)) {
-			Game().SendPickUpEvent(ID(), pNearestItem->object().ID());
-			PickupModeOff();
-			pNearestItem = nullptr;
-
-			TryPlayAnimItemTake();
-        }
-        HUD().GetUI()->UIMainIngameWnd->SetPickUpItem(b_pickup_allowed ? pNearestItem : nullptr);
+    if (Level().CurrentViewEntity() != this)
         return;
-	}
-	
-	CFrustum frustum{};
-	frustum.CreateFromMatrix(Device.mFullTransform,FRUSTUM_P_LRTB|FRUSTUM_P_FAR);
 
-	//---------------------------------------------------------------------------
-	ISpatialResult.clear	();
-	g_SpatialSpace->q_frustum(ISpatialResult, 0, STYPE_COLLIDEABLE, frustum);
-	//---------------------------------------------------------------------------
+    if (!g_Alive() || eacFirstEye != cam_active)
+    {
+        HUD().GetUI()->UIMainIngameWnd->SetPickUpItem(NULL);
+        return;
+    };
 
-	float maxlen = 1000.0f;
-	CInventoryItem* pNearestItem = nullptr;
-	for (u32 o_it=0; o_it<ISpatialResult.size(); o_it++){
-		ISpatial*		spatial	= ISpatialResult[o_it];
-		CInventoryItem*	pIItem	= smart_cast<CInventoryItem*> (spatial->dcast_CObject        ());
-		if (0 == pIItem) continue;
-		if (pIItem->object().H_Parent() != NULL) continue;
-		if (!pIItem->CanTake()) continue;
-		if (pIItem->object().CLS_ID == CLSID_OBJECT_G_RPG7 || pIItem->object().CLS_ID == CLSID_OBJECT_G_FAKE)
-			continue;
-
-		CGrenade*	pGrenade	= smart_cast<CGrenade*> (spatial->dcast_CObject        ());
-		if (pGrenade && !pGrenade->Useful()) continue;
-
-		CMissile*	pMissile	= smart_cast<CMissile*> (spatial->dcast_CObject        ());
-		if (pMissile && !pMissile->Useful()) continue;
-		
-		Fvector A{}, B{}, tmp{};
-		pIItem->object().Center			(A);
-		if (A.distance_to_sqr(Position())>4) continue;
-
-		tmp.sub(A, cam_Active()->vPosition);
-		B.mad(cam_Active()->vPosition, cam_Active()->vDirection, tmp.dotproduct(cam_Active()->vDirection));
-		float len = B.distance_to_sqr(A);
-		if (len > 1) continue;
-
-		if (maxlen>len && !pIItem->object().getDestroy())
-		{
-			maxlen = len;
-			pNearestItem = pIItem;
-		};
-	}
-
-	if(pNearestItem){
-		CFrustum					frustum{};
-		frustum.CreateFromMatrix	(Device.mFullTransform,FRUSTUM_P_LRTB|FRUSTUM_P_FAR);
-		if (!CanPickItem(frustum,Device.vCameraPosition,&pNearestItem->object()) || !b_pickup_allowed)
-			pNearestItem = nullptr;
-	}
-
-	if (pNearestItem && pNearestItem->cast_game_object()){
-		if (Level().m_feel_deny.is_object_denied(pNearestItem->cast_game_object()))
-				pNearestItem = nullptr;
-	}
-
-    if ( pNearestItem && m_bPickupMode && inventory().CanTakeItem(pNearestItem)) {
-         //подбирание объекта
-		u16 item_id = psActorFlags.test(AF_PICKUP_TARGET_ONLY) ? inventory().m_pTarget->object().ID() : pNearestItem->object().ID();
-		Game().SendPickUpEvent(ID(), item_id);
-		//если не хардкорный режим подбора, то пусть подбирается всё в радиусе
-		if (psActorFlags.test(AF_PICKUP_TARGET_ONLY))
-			PickupModeOff();
-           pNearestItem = nullptr;
+    //подбирание объекта
+    if (inventory().m_pTarget && inventory().m_pTarget->Useful() && m_pUsableObject && m_pUsableObject->nonscript_usable() &&
+        !Level().m_feel_deny.is_object_denied(smart_cast<CGameObject*>(inventory().m_pTarget)) && inventory().CanTakeItem(inventory().m_pTarget))
+    {
+        CInventoryItem* pNearestItem = inventory().m_pTarget;
+        if (m_bPickupMode)
+        {
+            Game().SendPickUpEvent(ID(), pNearestItem->object().ID());
+            PickupModeOff();
+            pNearestItem = nullptr;
+            TryPlayAnimItemTake();
+        }
+        HUD().GetUI()->UIMainIngameWnd->SetPickUpItem(pNearestItem);
+        return;
     }
 
-	HUD().GetUI()->UIMainIngameWnd->SetPickUpItem(b_pickup_allowed ? pNearestItem : nullptr);
+    CFrustum frustum{};
+    frustum.CreateFromMatrix(Device.mFullTransform, FRUSTUM_P_LRTB | FRUSTUM_P_FAR);
+
+    //---------------------------------------------------------------------------
+    ISpatialResult.clear();
+    g_SpatialSpace->q_frustum(ISpatialResult, 0, STYPE_COLLIDEABLE, frustum);
+    //---------------------------------------------------------------------------
+
+    float maxlen = 1000.0f;
+    CInventoryItem* pNearestItem = nullptr;
+    for (u32 o_it = 0; o_it < ISpatialResult.size(); o_it++)
+    {
+        ISpatial* spatial = ISpatialResult[o_it];
+        CInventoryItem* pIItem = smart_cast<CInventoryItem*>(spatial->dcast_CObject());
+        if (0 == pIItem)
+            continue;
+        if (pIItem->object().H_Parent() != NULL)
+            continue;
+        if (!pIItem->CanTake())
+            continue;
+        if (!inventory().CanTakeItem(pIItem))
+            continue;
+        if (pIItem->object().CLS_ID == CLSID_OBJECT_G_RPG7 || pIItem->object().CLS_ID == CLSID_OBJECT_G_FAKE)
+            continue;
+
+        CGrenade* pGrenade = smart_cast<CGrenade*>(spatial->dcast_CObject());
+        if (pGrenade && !pGrenade->Useful())
+            continue;
+
+        CMissile* pMissile = smart_cast<CMissile*>(spatial->dcast_CObject());
+        if (pMissile && !pMissile->Useful())
+            continue;
+
+        Fvector A, B, tmp;
+        pIItem->object().Center(A);
+        if (A.distance_to_sqr(Position()) > 4)
+            continue;
+
+        tmp.sub(A, cam_Active()->vPosition);
+        B.mad(cam_Active()->vPosition, cam_Active()->vDirection, tmp.dotproduct(cam_Active()->vDirection));
+        float len = B.distance_to_sqr(A);
+        if (len > 1)
+            continue;
+
+        if (maxlen > len && !pIItem->object().getDestroy())
+        {
+            maxlen = len;
+            pNearestItem = pIItem;
+        };
+    }
+
+    if (pNearestItem)
+    {
+        CFrustum frustum;
+        frustum.CreateFromMatrix(Device.mFullTransform, FRUSTUM_P_LRTB | FRUSTUM_P_FAR);
+        if (!CanPickItem(frustum, Device.vCameraPosition, &pNearestItem->object()))
+            pNearestItem = NULL;
+    }
+
+    if (pNearestItem && pNearestItem->cast_game_object())
+    {
+        if (Level().m_feel_deny.is_object_denied(pNearestItem->cast_game_object()))
+            pNearestItem = NULL;
+    }
+
+    if (pNearestItem)
+    {
+        if (m_bPickupMode)
+        {
+            //подбирание объекта
+            Game().SendPickUpEvent(ID(), pNearestItem->object().ID());
+            //PickupModeOff();
+            pNearestItem = nullptr;
+            TryPlayAnimItemTake();
+        }
+    }
+
+    HUD().GetUI()->UIMainIngameWnd->SetPickUpItem(pNearestItem);
 };
 
 void CActor::PickupInfoDraw(CObject* object)
@@ -251,7 +263,7 @@ void CActor::PickupInfoDraw(CObject* object)
 	float x = (1.f + v_res.x)/2.f * (Device.dwWidth);
 	float y = (1.f - v_res.y)/2.f * (Device.dwHeight);
 
-	auto pFont = HUD().Font().pFontLetterica18Russian;//pFontLetterica16Russian;
+	auto pFont = HUD().Font().pFontLetterica16Russian;
 
 	pFont->SetAligment	(CGameFont::alCenter);
 	pFont->SetColor		(PICKUP_INFO_COLOR);

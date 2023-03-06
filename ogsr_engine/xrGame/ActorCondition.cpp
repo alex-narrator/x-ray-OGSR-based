@@ -361,6 +361,9 @@ void CActorCondition::UpdateHealth()
 }
 
 void CActorCondition::UpdatePower(){
+	m_fPower += m_fV_Power * m_fDeltaTime;
+	clamp(m_fPower, 0.0f, 1.0f);
+
 	float weight{ object().GetCarryWeight() }, base_w{ object().MaxCarryWeight() };
 
 	float k_max_power = 1.0f + _min(weight, base_w) / base_w + _max(0.0f, (weight - base_w) / 10.0f);

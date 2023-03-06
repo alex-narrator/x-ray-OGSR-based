@@ -61,14 +61,6 @@ void CActor::IR_OnKeyboardPress(int cmd){
 	{
 	case kWPN_FIRE:
 		{
-			//-----------------------------
-			if (OnServer())
-			{
-				NET_Packet P;
-				P.w_begin(M_PLAYER_FIRE); 
-				P.w_u16(ID());
-				u_EventSend(P);
-			}
 		}break;
 	default:
 		{
@@ -478,14 +470,10 @@ bool CActor::use_Holder				(CHolderCustom* holder){
 
 extern bool g_bDisableAllInput;
 void CActor::ActorUse() {
-	if (g_bDisableAllInput || HUD().GetUI()->MainInputReceiver()) return;
+	if (g_bDisableAllInput || HUD().GetUI()->MainInputReceiver() || !IsFreeHands()) return;
 
 	if (m_holder) {
-		CGameObject* GO = smart_cast<CGameObject*>(m_holder);
-		NET_Packet    P;
-		CGameObject::u_EventGen(P, GEG_PLAYER_DETACH_HOLDER, ID());
-		P.w_u32(GO->ID());
-		CGameObject::u_EventSend(P);
+		use_Holder(nullptr);
 		return;
 	}
 
@@ -495,16 +483,13 @@ void CActor::ActorUse() {
 		return;
 	}
 
-	auto pTargetPerson = smart_cast<CEntityAlive*>(m_pPersonWeLookingAt);
-	bool looking_at_alive_person = pTargetPerson && pTargetPerson->g_Alive();
-	bool is_free_hands = IsFreeHands();
 	bool is_add_act = Level().IR_GetKeyState(get_action_dik(kADDITIONAL_ACTION));
 	auto pGameSP = smart_cast<CUIGameSP*>(HUD().GetUI()->UIGame());
 
 	if (m_pUsableObject) {
-		if (looking_at_alive_person || is_free_hands) { //чтобы можно было слышать просьбы убрать оружие при попытке поговорить со сталкерами с оружием в руках
-			m_pUsableObject->use(this);
-		}
+		m_pUsableObject->use(this);
+		if (g_bDisableAllInput || HUD().GetUI()->MainInputReceiver())
+			return;
 	}
 
 	if (m_pInvBoxWeLookingAt && m_pInvBoxWeLookingAt->object().nonscript_usable()) {
@@ -515,43 +500,44 @@ void CActor::ActorUse() {
 		}
 		// если контейнер открыт
 		if (m_pInvBoxWeLookingAt->IsOpened()) {
-			if (pGameSP && is_free_hands) pGameSP->StartCarBody(this, m_pInvBoxWeLookingAt);
+			if (pGameSP) pGameSP->StartCarBody(this, m_pInvBoxWeLookingAt);
 			return;
 		}
 	}
 
 	else if (!m_pUsableObject || m_pUsableObject->nonscript_usable()) {
 		if (m_pPersonWeLookingAt) {
-			if (looking_at_alive_person) {
+			CEntityAlive* pEntityAliveWeLookingAt = smart_cast<CEntityAlive*>(m_pPersonWeLookingAt);
+			VERIFY(pEntityAliveWeLookingAt);
+			if (pEntityAliveWeLookingAt->g_Alive())
+			{
 				TryToTalk();
 				return;
 			}
 			//обыск трупа
 			else if (!is_add_act) {
 				//только если находимся в режиме single
-				if (pGameSP && IsFreeHands()) pGameSP->StartCarBody(this, m_pPersonWeLookingAt);
+				if (pGameSP) pGameSP->StartCarBody(this, m_pPersonWeLookingAt);
 				return;
 			}
 		}
 
 		collide::rq_result& RQ = HUD().GetCurrentRayQuery();
 		CPhysicsShellHolder* object = smart_cast<CPhysicsShellHolder*>(RQ.O);
-		if (object && is_free_hands) {
+		if (object) {
 			if (is_add_act) {
 				if (object->ActorCanCapture()) {
 					if (!conditions().IsCantWalk())
-						//Msg("--[%s] Actor Captured object: [%s]", __FUNCTION__, object->cName().c_str());
 						character_physics_support()->movement()->PHCaptureObject(object, (u16)RQ.element);
 					else
 						HUD().GetUI()->AddInfoMessage("actor_state", "cant_walk");
 				}
 				return;
 			}
-			else if (smart_cast<CHolderCustom*>(object) && RQ.range < inventory().GetTakeDist()) {
-				NET_Packet P;
-				CGameObject::u_EventGen(P, GEG_PLAYER_ATTACH_HOLDER, ID());
-				P.w_u32(object->ID());
-				CGameObject::u_EventSend(P);
+			else if (auto holder = smart_cast<CHolderCustom*>(object); holder && RQ.range < inventory().GetTakeDist()) {
+				VERIFY(m_holder == NULL);
+				if (!holder->Engaged())	
+					use_Holder(holder);
 				return;
 			}
 		}
@@ -761,9 +747,8 @@ void CActor::ActorCheckout() {
 	const auto hud_item = smart_cast<CHudItem*>(inventory().ActiveItem());
 	if (!hud_item || !hud_item->GetHUDmode() || hud_item->IsPending()) return;
 
-	const auto wpn = smart_cast<CWeapon*>(inventory().ActiveItem());
-	if (wpn && wpn->IsZoomed())
-		wpn->OnZoomOut();
+	if (hud_item && hud_item->IsZoomed())
+		hud_item->OnZoomOut();
 
 	hud_item->PlayAnimCheckout();
 }
@@ -778,9 +763,8 @@ void CActor::ActorCheckGear() {
 	const auto hud_item = smart_cast<CHudItem*>(inventory().ActiveItem());
 	if (!hud_item || !hud_item->GetHUDmode() || hud_item->IsPending()) return;
 
-	const auto wpn = smart_cast<CWeapon*>(inventory().ActiveItem());
-	if (wpn && wpn->IsZoomed())
-		wpn->OnZoomOut();
+	if (hud_item && hud_item->IsZoomed())
+		hud_item->OnZoomOut();
 
 	hud_item->PlayAnimCheckGear();
 }

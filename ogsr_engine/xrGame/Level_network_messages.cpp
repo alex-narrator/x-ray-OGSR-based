@@ -16,11 +16,6 @@
 
 void CLevel::ClientReceive()
 {
-
-	Demo_StartFrame();
-
-	Demo_Update();
-
 	m_dwRPC = 0;
 	m_dwRPS = 0;
 
@@ -70,8 +65,6 @@ void CLevel::ClientReceive()
 		case M_UPDATE:
 			{
 				game->net_import_update	(*P);
-
-				R_ASSERT(OnServer(), "Something strange!");
 			}break;
 		case 	M_SV_CONFIG_NEW_CLIENT:
 			InitializeClientGame(*P);
@@ -138,13 +131,6 @@ void CLevel::ClientReceive()
 		case M_CHANGE_LEVEL_GAME:
 			{
 				Msg("- M_CHANGE_LEVEL_GAME Received");
-
-				if (OnClient())
-				{
-					Engine.Event.Defer	("KERNEL:disconnect");
-					Engine.Event.Defer	("KERNEL:start",m_caServerOptions.size() ? size_t( xr_strdup(*m_caServerOptions)) : 0,m_caClientOptions.size() ? size_t(xr_strdup(*m_caClientOptions)) : 0);
-				}
-				else
 				{
 					const char* m_SO = m_caServerOptions.c_str();
 //					const char* m_CO = m_caClientOptions.c_str();
@@ -184,49 +170,7 @@ void CLevel::ClientReceive()
 
 void				CLevel::OnMessage				(void* data, u32 size)
 {	
-	DemoCS.Enter();
-
-	if (IsDemoPlay() ) 
-	{
-		if (m_bDemoStarted) 
-		{
-			DemoCS.Leave();
-			return;
-		}
-		
-		if (!m_aDemoData.empty() && net_IsSyncronised())
-		{
-//			NET_Packet *P = &(m_aDemoData.front());
-			DemoDataStruct *P = &(m_aDemoData.front());
-			m_bDemoStarted = TRUE;
-			Msg("! ------------- Demo Started ------------");
-			m_dwCurDemoFrame = P->m_dwFrame;
-			DemoCS.Leave();
-			return;
-		}
-	};	
-
-	if (IsDemoSave() && net_IsSyncronised()) 
-	{
-		Demo_StoreData(data, size, DATA_CLIENT_PACKET);
-	}	
-
 	IPureClient::OnMessage(data, size);	
 
-	DemoCS.Leave();
 };
-
-NET_Packet*				CLevel::net_msg_Retreive		()
-{
-	NET_Packet* P = NULL;
-
-	DemoCS.Enter();
-
-	P = IPureClient::net_msg_Retreive();
-	if (!P) Demo_EndFrame();
-
-	DemoCS.Leave();
-
-	return P;
-}
 

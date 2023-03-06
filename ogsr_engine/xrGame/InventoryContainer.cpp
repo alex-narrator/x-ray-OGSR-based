@@ -84,14 +84,11 @@ void CInventoryContainer::UpdateDropItem(PIItem pIItem)
 {
 	if (pIItem->GetDropManual()){
 		pIItem->SetDropManual(FALSE);
-		if (OnServer()){
-			pIItem->object().Position().set(Position()); //щоб реджектнутий об'єкт з'являвся на позиції батьківського контейнера
-			NET_Packet					P;
-			pIItem->object().u_EventGen(P, GE_OWNERSHIP_REJECT, pIItem->object().H_Parent()->ID());
-			P.w_u16(pIItem->object().ID());
-			pIItem->object().u_EventSend(P);
-			//Msg("%s for item %s parent %s", __FUNCTION__, pIItem->object().cName().c_str(), pIItem->object().H_Parent()->cName().c_str());
-		}
+		pIItem->object().Position().set(Position()); //щоб реджектнутий об'єкт з'являвся на позиції батьківського контейнера
+		NET_Packet					P;
+		pIItem->object().u_EventGen(P, GE_OWNERSHIP_REJECT, pIItem->object().H_Parent()->ID());
+		P.w_u16(pIItem->object().ID());
+		pIItem->object().u_EventSend(P);
 	}// dropManual
 }
 
@@ -277,7 +274,7 @@ void CInventoryContainer::AddUniqueItems(TIItemContainer& items_container) const
 }
 
 bool CInventoryContainer::IsVolumeUnlimited() const {
-	return !psActorFlags.test(AF_INVENTORY_VOLUME);
+	return !Core.Features.test(xrCore::Feature::inventory_volume);
 }
 
 void CInventoryContainer::UpdateVolumeDropOut() {

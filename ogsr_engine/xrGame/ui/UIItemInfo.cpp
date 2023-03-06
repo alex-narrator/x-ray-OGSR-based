@@ -66,7 +66,7 @@ void CUIItemInfo::Init(LPCSTR xml_name){
 		UIWeight->SetAutoDelete(true);
 		xml_init.InitStatic		(uiXml, "static_weight", 0, UIWeight);
 	}
-	if(uiXml.NavigateToNode("static_volume", 0) && psActorFlags.test(AF_INVENTORY_VOLUME))
+	if(uiXml.NavigateToNode("static_volume", 0) && Core.Features.test(xrCore::Feature::inventory_volume))
 	{
 		UIVolume				= xr_new<CUIStatic>();
 		AttachChild				(UIVolume);

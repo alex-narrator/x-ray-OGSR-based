@@ -27,9 +27,7 @@ void CLevel::cl_Process_Spawn(NET_Packet& P)
 //	Msg ("M_SPAWN - %s[%d][%x] - %d", *s_name,  E->ID, E,E->ID_Parent);
 //-------------------------------------------------
 	//force object to be local for server client
-	if (OnServer())		{
-		E->s_flags.set(M_SPAWN_OBJECT_LOCAL, TRUE);
-	};
+	E->s_flags.set(M_SPAWN_OBJECT_LOCAL, TRUE);
 
 	if (std::find(m_just_destroyed.begin(), m_just_destroyed.end(), E->ID) != m_just_destroyed.end())
 	{

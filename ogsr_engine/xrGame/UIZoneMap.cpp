@@ -50,8 +50,6 @@ void CUIZoneMap::Init()
 	m_background.AttachChild	(&m_CurrentTime);
 	xml_init.InitStatic			(uiXml, "minimap:background:current_power", 0, &m_CurrentPower);
 	m_background.AttachChild	(&m_CurrentPower);
-	xml_init.InitStatic			(uiXml, "minimap:background:current_power_low", 0, &m_CurrentPowerLow);
-	m_background.AttachChild	(&m_CurrentPowerLow);
 	
 	m_activeMap						= xr_new<CUIMiniMap>();
 	m_clipFrame.AttachChild			(m_activeMap);
@@ -76,7 +74,6 @@ void CUIZoneMap::Render()
 	if (!pda_workable) {
 		m_background.Draw();
 		m_CurrentPower.SetVisible(false);
-		m_CurrentPowerLow.SetVisible(false);
 		m_CurrentTime.SetText("");
 		return;
 	}
@@ -85,12 +82,9 @@ void CUIZoneMap::Render()
 	//
 	string16 tmp{};
 	auto act_pda = Actor()->GetPDA();
-	bool pwr_low = act_pda->IsPowerLow();
 	sprintf_s(tmp, "%.f%s", act_pda->GetPowerLevelToShow(), "%");
 	m_CurrentPower.SetText(tmp);
-	m_CurrentPower.SetVisible(!pwr_low);
-	m_CurrentPowerLow.SetText(tmp);
-	m_CurrentPowerLow.SetVisible(pwr_low);
+	m_CurrentPower.SetVisible(pda_workable);
 	m_CurrentTime.SetText(InventoryUtilities::GetGameTimeAsString(InventoryUtilities::etpTimeToMinutes).c_str());
 	//
 	m_compass.Draw();

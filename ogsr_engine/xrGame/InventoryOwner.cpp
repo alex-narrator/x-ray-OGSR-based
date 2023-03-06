@@ -647,5 +647,5 @@ bool CInventoryOwner::CanPutInSlot(PIItem item, u32 slot) {
 
 bool CInventoryOwner::IsVolumeUnlimited() const {
 	return !pSettings->line_exist(smart_cast<const CGameObject*>(this)->cNameSect(), "inv_max_volume") ||
-		!psActorFlags.test(AF_INVENTORY_VOLUME);
+		!Core.Features.test(xrCore::Feature::inventory_volume);
 }

@@ -756,11 +756,6 @@
 			<text font="letterica16" r="215" g="195" b="170">ui_mm_ambient</text>
 		</check_ambient>
 
-		<check_inventory_volume x="0" y="0" width="415" height="21">
-			<options_item entry="g_inventory_volume" group="mm_opt_gameplay"/>
-			<text font="letterica16" r="215" g="195" b="170">ui_mm_inventory_volume</text>
-		</check_inventory_volume>		
-
 		<check_build_crosshair x="0" y="0" width="415" height="21">
 			<options_item entry="hud_crosshair_build" group="mm_opt_gameplay"/>
 			<text font="letterica16" r="215" g="195" b="170">ui_mm_build_crosshair</text>
@@ -771,38 +766,6 @@
 			<text font="letterica16" r="215" g="195" b="170">ui_mm_crosshair_hard</text>
 		</check_crosshair_hard>
 		
-<!-- BEGIN Новые опции геймплея -->>
-		<check_pickup_target_only x="0" y="0" width="415" height="21">
-			<options_item entry="g_pickup_target_only" group="mm_opt_gameplay"/>
-			<text font="letterica16" r="215" g="195" b="170">ui_mm_pickup_target_only</text>
-		</check_pickup_target_only>
-		
-		<check_knife_to_cut_part x="0" y="0" width="415" height="21">
-			<options_item entry="g_knife_to_cut_part" group="mm_opt_gameplay"/>
-			<text font="letterica16" r="215" g="195" b="170">ui_mm_knife_to_cut_part</text>
-		</check_knife_to_cut_part>
-
-		<check_use_luminosity x="0" y="0" width="415" height="21">
-			<options_item entry="hud_use_luminosity" group="mm_opt_gameplay"/>
-			<text font="letterica16" r="215" g="195" b="170">ui_mm_use_luminosity</text>
-		</check_use_luminosity>
-		
-		<check_stop_missile_playing x="0" y="0" width="415" height="21">
-			<options_item entry="hud_stop_missile_playing" group="mm_opt_gameplay"/>
-			<text font="letterica16" r="215" g="195" b="170">ui_mm_stop_missile_playing</text>
-		</check_stop_missile_playing>
-
-		<check_artefacts_from_all x="0" y="0" width="415" height="21">
-			<options_item entry="g_artefacts_from_all" group="mm_opt_gameplay"/>
-			<text font="letterica16" r="215" g="195" b="170">ui_mm_artefacts_from_all</text>
-		</check_artefacts_from_all>
-
-		<check_artefact_detector_check x="0" y="0" width="415" height="21">
-			<options_item entry="g_artefact_detector_check" group="mm_opt_gameplay"/>
-			<text font="letterica16" r="215" g="195" b="170">ui_mm_artefact_detector_check</text>
-		</check_artefact_detector_check>
-<!-- END Новые опции геймплея -->>
-
 	</tab_gameplay>
 	<tab_controls>
 		<cap_mousesens x="20" y="13" width="430" height="21">

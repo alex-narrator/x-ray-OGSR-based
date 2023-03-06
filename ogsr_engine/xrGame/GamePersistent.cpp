@@ -699,7 +699,7 @@ void CGamePersistent::LoadTitle(const char* str)
 
 bool CGamePersistent::CanBePaused()
 {
-	return (g_pGamePersistent->GameType() == GAME_SINGLE) || (g_pGameLevel && Level().IsDemoPlay());
+	return (g_pGamePersistent->GameType() == GAME_SINGLE);
 }
 
 bool CGamePersistent::OnKeyboardPress(int dik)

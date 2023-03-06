@@ -515,16 +515,7 @@ void CUIInventoryWnd::AttachAddon(PIItem item_to_upgrade)
 {
 	PlaySnd										(eInvAttachAddon);
 	R_ASSERT									(item_to_upgrade);
-	if (OnClient()){
-		NET_Packet								P;
-		item_to_upgrade->object().u_EventGen	(P, GE_ADDON_ATTACH, item_to_upgrade->object().ID());
-		P.w_u32									(CurrentIItem()->object().ID());
-		item_to_upgrade->object().u_EventSend	(P);
-	};
-
 	item_to_upgrade->Attach						(CurrentIItem(), true);
-
-
 	//спрятать вещь из активного слота в инвентарь на время вызова менюшки
 	CActor *pActor								= smart_cast<CActor*>(Level().CurrentEntity());
 	if(pActor && item_to_upgrade == pActor->inventory().ActiveItem()){
@@ -537,13 +528,6 @@ void CUIInventoryWnd::AttachAddon(PIItem item_to_upgrade)
 void CUIInventoryWnd::DetachAddon(const char* addon_name, bool for_all)
 {
 	PlaySnd										(eInvDetachAddon);
-	if (OnClient()){
-		NET_Packet								P;
-		CurrentIItem()->object().u_EventGen		(P, GE_ADDON_DETACH, CurrentIItem()->object().ID());
-		P.w_stringZ								(addon_name);
-		CurrentIItem()->object().u_EventSend	(P);
-	};
-
 	auto itm = CurrentItem();
 	for (u32 i = 0; i < itm->ChildsCount() && for_all; ++i) {
 		auto child_itm = itm->Child(i);
@@ -570,13 +554,6 @@ void	CUIInventoryWnd::SendEvent_Item_Drop(PIItem	pItem)
 {
 	pItem->SetDropManual			(TRUE);
 
-	if( OnClient() )
-	{
-		NET_Packet					P;
-		pItem->object().u_EventGen	(P, GE_OWNERSHIP_REJECT, pItem->object().H_Parent()->ID());
-		P.w_u16						(pItem->object().ID());
-		pItem->object().u_EventSend(P);
-	}
 	g_pInvWnd->PlaySnd				(eInvDropItem);
 	m_b_need_update_stats = true;
 };

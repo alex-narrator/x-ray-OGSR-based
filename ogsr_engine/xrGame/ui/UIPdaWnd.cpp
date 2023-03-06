@@ -86,10 +86,6 @@ void CUIPdaWnd::Init()
 	m_currentPower			= xr_new<CUIStatic>(); m_currentPower->SetAutoDelete(true);
 	UIMainPdaFrame->AttachChild(m_currentPower);
 	xml_init.InitStatic		(uiXml, "power_level", 0, m_currentPower);
-	// Power level low background
-	m_currentPowerLow		= xr_new<CUIStatic>(); m_currentPowerLow->SetAutoDelete(true);
-	UIMainPdaFrame->AttachChild(m_currentPowerLow);
-	xml_init.InitStatic		(uiXml, "power_level_low", 0, m_currentPowerLow);
 	// No power background
 	m_NoPower				= xr_new<CUIStatic>(); m_NoPower->SetAutoDelete(true);
 	UIMainPdaFrame->AttachChild(m_NoPower);
@@ -259,12 +255,9 @@ void CUIPdaWnd::Draw()
 
 	string16 tmp{};
 	auto act_pda = Actor()->GetPDA();
-	bool pwr_low = act_pda->IsPowerLow();
 	sprintf_s(tmp, "%.f%s", act_pda->GetPowerLevelToShow(), "%");
 	m_currentPower->SetText(tmp);
-	m_currentPower->SetVisible(!pwr_low);
-	m_currentPowerLow->SetText(tmp);
-	m_currentPowerLow->SetVisible(pwr_low);
+	m_currentPower->SetVisible(pda_workable);
 }
 
 void CUIPdaWnd::PdaContentsChanged( pda_section::part type, bool flash )

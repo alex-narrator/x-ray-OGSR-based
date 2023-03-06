@@ -208,12 +208,8 @@ public:
 		sscanf(args ,"%f",&id1);
 		if (id1 < EPS_L)
 			Msg("Invalid time factor! (%.4f)",id1);
-		else {
-			if (!OnServer())
-				return;
-
+		else
 			Level().Server->game->SetGameTimeFactor(id1);
-		}
 	}
 };
 
@@ -1296,10 +1292,6 @@ void CCC_RegisterCommands()
 	CMD3(CCC_Mask,				"hud_crosshair_build",		&psHUD_Flags,				HUD_CROSSHAIR_BUILD		); // билдокурсор
 	CMD3(CCC_Mask,				"hud_crosshair_hard",		&psHUD_Flags,				HUD_CROSSHAIR_HARD		);
 
-	CMD3(CCC_Mask,				"hud_stop_missile_playing", &psHUD_Flags,				HUD_STOP_MISSILE_PLAYING);	//отключение анимаций подбрасывания для гранат и болта
-	CMD3(CCC_Mask,				"hud_use_luminosity",		&psHUD_Flags,				HUD_USE_LUMINOSITY		);	//использование освещённости вместо заметности на худовой шкале
-	CMD3(CCC_Mask,				"hud_textures_autoresize",	&psHUD_Flags,				HUD_TEXTURES_AUTORESIZE	);
-
 	CMD3(CCC_Mask,				"hud_crosshair",			&psHUD_Flags,				HUD_CROSSHAIR			);
 	CMD3(CCC_Mask,				"hud_crosshair_dist",		&psHUD_Flags,				HUD_CROSSHAIR_DIST		);
 	
@@ -1520,13 +1512,6 @@ void CCC_RegisterCommands()
 
 	*g_last_saved_game	= 0;
 
-	//взаимодействие с предметами
-	CMD3(CCC_Mask,				"g_pickup_target_only",			&psActorFlags,	AF_PICKUP_TARGET_ONLY			);	//можно подобрать только те предметы на которые непосредственно смотрит прицел
-	CMD3(CCC_Mask,				"g_knife_to_cut_part",			&psActorFlags,	AF_KNIFE_TO_CUT_PART			);	//ніж потрібен для зрізання частин монстрів
-	//инвентарь
-	CMD3(CCC_Mask,				"g_artefacts_from_all",			&psActorFlags,	AF_ARTEFACTS_FROM_ALL			);	//артефакты работают из всего инвентаря
-	CMD3(CCC_Mask,				"g_artefact_detector_check",	&psActorFlags,	AF_ARTEFACT_DETECTOR_CHECK		);	//свойства артефактов отображаются после проверки детектором
-	CMD3(CCC_Mask,				"g_inventory_volume",			&psActorFlags,	AF_INVENTORY_VOLUME				);	//використання обсягу інвентаря
 	//керування
 	CMD3(CCC_Mask,				"g_hold_to_aim",				&psActorFlags,	AF_HOLD_TO_AIM					);	//утримувати клавішу для прицілювання
 	CMD3(CCC_Mask,				"g_mouse_wheel_switch_slot",	&psActorFlags,	AF_MOUSE_WHEEL_SWITCH_SLOTS		);	//перемикання слотів коліщатком миші

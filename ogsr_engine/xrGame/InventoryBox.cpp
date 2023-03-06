@@ -176,13 +176,9 @@ void CInventoryBox::UpdateDropItem(PIItem pIItem)
 {
 	if (pIItem->GetDropManual()){
 		pIItem->SetDropManual(FALSE);
-		if (OnServer()){
-			NET_Packet					P;
-			pIItem->object().u_EventGen(P, GE_OWNERSHIP_REJECT, pIItem->object().H_Parent()->ID());
-			P.w_u16(u16(pIItem->object().ID()));
-			pIItem->object().u_EventSend(P);
-
-			//Msg("UpdateDropItem for [%s]", pIItem->object().Name_script());
-		}
+		NET_Packet					P;
+		pIItem->object().u_EventGen(P, GE_OWNERSHIP_REJECT, pIItem->object().H_Parent()->ID());
+		P.w_u16(u16(pIItem->object().ID()));
+		pIItem->object().u_EventSend(P);
 	}// dropManual
 }

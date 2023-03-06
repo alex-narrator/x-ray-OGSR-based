@@ -370,8 +370,6 @@ void console_log_cb(LPCSTR text)
 
 u32 xrServer::OnDelayedMessage	(NET_Packet& P, ClientID sender)			// Non-Zero means broadcasting with "flags" as returned
 {
-	if (g_pGameLevel && Level().IsDemoSave()) 
-		Level().Demo_StoreServerData(P.B.data, P.B.count);
 	u16						type;
 	P.r_begin				(type);
 
@@ -423,7 +421,6 @@ u32 xrServer::OnDelayedMessage	(NET_Packet& P, ClientID sender)			// Non-Zero me
 extern	float	g_fCatchObjectTime;
 u32 xrServer::OnMessage	(NET_Packet& P, ClientID sender)			// Non-Zero means broadcasting with "flags" as returned
 {
-	if (g_pGameLevel && Level().IsDemoSave()) Level().Demo_StoreServerData(P.B.data, P.B.count);
 	u16			type;
 	P.r_begin	(type);
 
@@ -537,11 +534,6 @@ u32 xrServer::OnMessage	(NET_Packet& P, ClientID sender)			// Non-Zero means bro
 	case M_STATISTIC_UPDATE_RESPOND:
 		{
 			if (SV_Client) SendTo	(SV_Client->ID, P, net_flags(TRUE, TRUE));
-		}break;
-	case M_PLAYER_FIRE:
-		{
-			if (game)
-				game->OnPlayerFire(sender, P);
 		}break;
 	case M_REMOTE_CONTROL_CMD:
 		{

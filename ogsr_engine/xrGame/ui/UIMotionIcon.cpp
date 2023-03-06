@@ -103,7 +103,7 @@ void CUIMotionIcon::Update(){
 	SetNoise((s16)(0xffff & iFloor(m_pActor->m_snd_noise * 100.0f)));
 	SetPower(m_pActor->conditions().GetPower() * 100.0f);
 	//
-	if (!psHUD_Flags.test(HUD_USE_LUMINOSITY)) {
+	if (!Core.Features.test(xrCore::Feature::use_luminocity)) {
 		if (m_bchanged) {
 			m_bchanged = false;
 			if (m_npc_visibility.size()) {

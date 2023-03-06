@@ -76,27 +76,34 @@ void InitConsole	()
 		strcpy_s					(Console->ConfigFile,c_name);
 	}
 
-	CORE_FEATURE_SET( colorize_ammo,              "dragdrop" );
-	CORE_FEATURE_SET( colorize_untradable,        "dragdrop" );
-	CORE_FEATURE_SET( equipped_untradable,        "dragdrop" );
-	CORE_FEATURE_SET( select_mode_1342,           "dragdrop" );
-	CORE_FEATURE_SET( highlight_equipped,         "dragdrop" );
-	CORE_FEATURE_SET( dynamic_sun_movement,       "features" );
-	CORE_FEATURE_SET( wpn_bobbing,                "features" );
-	CORE_FEATURE_SET( show_inv_item_condition,    "features" );
-	CORE_FEATURE_SET( remove_alt_keybinding,      "features" );
-	CORE_FEATURE_SET( corpses_collision,          "features" );
-	CORE_FEATURE_SET( keep_inprogress_tasks_only, "features" );
-	CORE_FEATURE_SET( gd_master_only,             "features" );
-	CORE_FEATURE_SET( ogse_new_slots,             "features" );
-	CORE_FEATURE_SET( wpn_cost_include_addons,    "features" );
-	CORE_FEATURE_SET( old_outfit_slot_style,      "features" );
-	CORE_FEATURE_SET( npc_simplified_shooting,    "features" );
-	CORE_FEATURE_SET( show_objectives_ondemand,   "features" );
-	CORE_FEATURE_SET( no_progress_bar_animation,  "features" );
-	CORE_FEATURE_SET( disable_dialog_break,       "features" );
-	CORE_FEATURE_SET( small_font,				  "features" );
-	CORE_FEATURE_SET(no_zone_posteffect,		  "features");
+	CORE_FEATURE_SET( colorize_ammo,				"dragdrop" );
+	CORE_FEATURE_SET( colorize_untradable,			"dragdrop" );
+	CORE_FEATURE_SET( equipped_untradable,			"dragdrop" );
+	CORE_FEATURE_SET( select_mode_1342,				"dragdrop" );
+	CORE_FEATURE_SET( highlight_equipped,			"dragdrop" );
+	CORE_FEATURE_SET( dynamic_sun_movement,			"features" );
+	CORE_FEATURE_SET( wpn_bobbing,					"features" );
+	CORE_FEATURE_SET( show_inv_item_condition,		"features" );
+	CORE_FEATURE_SET( remove_alt_keybinding,		"features" );
+	CORE_FEATURE_SET( corpses_collision,			"features" );
+	CORE_FEATURE_SET( keep_inprogress_tasks_only,	"features" );
+	CORE_FEATURE_SET( gd_master_only,				"features" );
+	CORE_FEATURE_SET( ogse_new_slots,				"features" );
+	CORE_FEATURE_SET( wpn_cost_include_addons,		"features" );
+	CORE_FEATURE_SET( old_outfit_slot_style,		"features" );
+	CORE_FEATURE_SET( npc_simplified_shooting,		"features" );
+	CORE_FEATURE_SET( show_objectives_ondemand,		"features" );
+	CORE_FEATURE_SET( no_progress_bar_animation,	"features" );
+	CORE_FEATURE_SET( disable_dialog_break,			"features" );
+	CORE_FEATURE_SET( small_font,					"features" );
+	CORE_FEATURE_SET(no_zone_posteffect,			"features");
+	CORE_FEATURE_SET(inventory_volume,				"features");
+	CORE_FEATURE_SET(artefacts_from_all,			"features");
+	CORE_FEATURE_SET(knife_to_cut_parts,			"features");
+	CORE_FEATURE_SET(pickup_check_overlaped,		"features");
+	CORE_FEATURE_SET(stop_anim_playing,				"features");
+	CORE_FEATURE_SET(scope_textures_autoresize,		"features");
+	CORE_FEATURE_SET(use_luminocity,				"features");
 }
 
 void InitInput()

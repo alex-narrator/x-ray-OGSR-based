@@ -375,7 +375,7 @@ void CWeaponAmmo::ReloadBox(LPCSTR ammo_sect)
 
 		++m_boxCurr;
 
-		if (m_pAmmo && !m_pAmmo->m_boxCurr && OnServer())
+		if (m_pAmmo && !m_pAmmo->m_boxCurr)
 			m_pAmmo->DestroyObject();
 	}
 

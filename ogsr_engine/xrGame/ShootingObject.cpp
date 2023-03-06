@@ -396,30 +396,16 @@ void CShootingObject::RenderLight()
 bool CShootingObject::SendHitAllowed		(CObject* pUser)
 {
 	if (Game().IsServerControlHits())
-		return OnServer();
-
-	if (OnServer())
-	{
-		if (pUser->CLS_ID == CLSID_OBJECT_ACTOR)
-		{
-			if (Level().CurrentControlEntity() != pUser)
-			{
-				return false;
-			}
-		}
 		return true;
-	}
-	else
+
+	if (pUser->CLS_ID == CLSID_OBJECT_ACTOR)
 	{
-		if (pUser->CLS_ID == CLSID_OBJECT_ACTOR)
+		if (Level().CurrentControlEntity() != pUser)
 		{
-			if (Level().CurrentControlEntity() == pUser)
-			{
-				return true;
-			}
+			return false;
 		}
-		return false;
 	}
+	return true;
 };
 
 extern void random_dir(Fvector& tgt_dir, const Fvector& src_dir, float dispersion);

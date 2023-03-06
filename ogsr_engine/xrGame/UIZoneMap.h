@@ -21,7 +21,6 @@ class CUIZoneMap
 	CUIStatic					m_NoPower;
 	CUIStatic					m_CurrentTime;
 	CUIStatic					m_CurrentPower;
-	CUIStatic					m_CurrentPowerLow;
 
 public:
 								CUIZoneMap		();

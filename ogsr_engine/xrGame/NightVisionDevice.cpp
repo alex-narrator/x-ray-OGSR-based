@@ -37,7 +37,6 @@ void CNightVisionDevice::Load(LPCSTR section){
 }
 
 void CNightVisionDevice::Switch(){
-	if (OnClient()) return;
 	Switch(!m_bNightVisionOn);
 }
 
@@ -110,7 +109,6 @@ void CNightVisionDevice::Switch(bool turn_on){
 }
 
 void CNightVisionDevice::UpdateSwitch(){
-	if (OnClient()) return;
 	auto* pA = smart_cast<CActor*>(H_Parent());
 	if (pA && m_bNightVisionOn && !pA->Cameras().GetPPEffector((EEffectorPPType)effNightvision))
 		Switch(true);
@@ -169,7 +167,7 @@ void CNightVisionDevice::afterAttach() {
 			xr_delete(m_UINightVision);
 		if (!!m_NightVisionTexture) {
 			m_UINightVision = xr_new<CUIStaticItem>();
-			m_UINightVision->Init(m_NightVisionTexture.c_str(), psHUD_Flags.test(HUD_TEXTURES_AUTORESIZE) ? "hud\\scope" : "hud\\default", 0, 0, alNone);
+			m_UINightVision->Init(m_NightVisionTexture.c_str(), Core.Features.test(xrCore::Feature::scope_textures_autoresize) ? "hud\\scope" : "hud\\default", 0, 0, alNone);
 		}
 	}
 }

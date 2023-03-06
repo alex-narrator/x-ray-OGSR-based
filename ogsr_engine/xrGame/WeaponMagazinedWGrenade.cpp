@@ -445,7 +445,7 @@ void CWeaponMagazinedWGrenade::SwitchState(u32 S)
 		pGrenade->SetRealGrenadeName( m_ammoTypes[ m_ammoType ] );
 
 		
-		if (Local() && OnServer())
+		if (Local())
 		{
 			NET_Packet P;
 			u_EventGen(P,GE_LAUNCH_ROCKET,ID());
@@ -593,9 +593,7 @@ bool CWeaponMagazinedWGrenade::Attach(PIItem pIItem, bool b_send_event)
 
  		//уничтожить подствольник из инвентаря
 		if(b_send_event){
-//.			pIItem->Drop();
-			if (OnServer()) 
-				pIItem->object().DestroyObject	();
+			pIItem->object().DestroyObject	();
 		}
 		InitAddons				();
 		UpdateAddonsVisibility	();

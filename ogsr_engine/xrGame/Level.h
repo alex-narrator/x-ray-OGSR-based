@@ -54,7 +54,6 @@ public:
 
 class CLevel					: public IGame_Level, public IPureClient
 {
-	#include "Level_network_Demo.h"
 	void						ClearAllObjects			();
 private:
 #ifdef DEBUG
@@ -360,9 +359,6 @@ IC CPHCommander & CLevel::ph_commander_scripts()
 	VERIFY(m_ph_commander_scripts);
 	return *m_ph_commander_scripts;
 }
-//by Mad Max 
-IC bool					OnServer()	{ return Level().IsServer();}
-IC bool					OnClient()	{ return Level().IsClient();}
 
 class  CPHWorld;
 extern CPHWorld*				ph_world;

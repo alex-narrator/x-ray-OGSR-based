@@ -112,13 +112,6 @@ void CUIArtefactParams::SetInfo(CInventoryItem* obj)
 	CActor *pActor = Actor();
 	if (!pActor) return;
 
-	bool show_window = true;
-	if (smart_cast<CArtefact*>(obj)) {
-		show_window = !psActorFlags.is(AF_ARTEFACT_DETECTOR_CHECK) || pActor->HasDetectorWorkable();
-	}
-
-	Show(show_window);
-
 	string128					_buff;
 	float						_h{};
 	DetachAll					();
@@ -175,5 +168,5 @@ void CUIArtefactParams::SetInfo(CInventoryItem* obj)
 		_h						+= _s->GetWndSize().y;
 		AttachChild				(_s);
 	}
-	SetHeight					(show_window ? _h : 0.f);
+	SetHeight					(_h);
 }

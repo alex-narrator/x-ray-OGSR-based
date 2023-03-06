@@ -409,7 +409,7 @@ void CWeaponMagazined::ReloadMagazine(){
 	VERIFY((u32)iAmmoElapsed == m_magazine.size());
 
 	//выкинуть коробку патронов, если она пустая
-	if (m_pAmmo && !m_pAmmo->m_boxCurr && OnServer())
+	if (m_pAmmo && !m_pAmmo->m_boxCurr)
 		m_pAmmo->SetDropManual(TRUE);
 
 	//дозарядить оружие до полного магазина
@@ -749,9 +749,6 @@ void CWeaponMagazined::switch2_Fire	()
 	m_iShotNum = 0;
 
 	StateSwitchCallback(GameObject::eOnActorWeaponStartFiring, GameObject::eOnNPCWeaponStartFiring);
-
-    if((OnClient() || Level().IsDemoPlay())&& !IsWorking())
-		FireStart();
 }
 void CWeaponMagazined::switch2_Empty(){
   if (ParentIsActor()) {
@@ -993,7 +990,7 @@ bool CWeaponMagazined::Attach(PIItem pIItem, bool b_send_event)
 	}
 
 	if(result){
-		if (b_send_event && OnServer()){
+		if (b_send_event){
 			//уничтожить подсоединенную вещь из инвентаря
 //.			pIItem->Drop					();
 			pIItem->object().DestroyObject	();
@@ -1145,7 +1142,7 @@ void CWeaponMagazined::LoadScopeParams(LPCSTR section)
 		m_fScopeZoomFactorSecond = READ_IF_EXISTS(pSettings, r_float, section, "scope_zoom_factor_second", 1.0f);
 		if (LPCSTR scope_second_tex_name = READ_IF_EXISTS(pSettings, r_string, section, "scope_texture_second", nullptr)) {
 			m_UIScopeSecond = xr_new<CUIStaticItem>();
-			m_UIScopeSecond->Init(scope_second_tex_name, psHUD_Flags.test(HUD_TEXTURES_AUTORESIZE) ? "hud\\scope" : "hud\\default", 0, 0, alNone);
+			m_UIScopeSecond->Init(scope_second_tex_name, Core.Features.test(xrCore::Feature::scope_textures_autoresize) ? "hud\\scope" : "hud\\default", 0, 0, alNone);
 		}
 	}
 
@@ -1159,11 +1156,11 @@ void CWeaponMagazined::LoadScopeParams(LPCSTR section)
 			m_fScopeZoomFactor = m_fIronSightZoomFactor;
 			if (LPCSTR scope_tex_name_broken = READ_IF_EXISTS(pSettings, r_string, section, "scope_texture_broken", nullptr)){
 				m_UIScope = xr_new<CUIStaticItem>();
-				m_UIScope->Init(scope_tex_name_broken, psHUD_Flags.test(HUD_TEXTURES_AUTORESIZE) ? "hud\\scope" : "hud\\default", 0, 0, alNone);
+				m_UIScope->Init(scope_tex_name_broken, Core.Features.test(xrCore::Feature::scope_textures_autoresize) ? "hud\\scope" : "hud\\default", 0, 0, alNone);
 			}
 			if (LPCSTR scope_second_tex_name_broken = READ_IF_EXISTS(pSettings, r_string, section, "scope_texture_second_broken", nullptr)) {
 				m_UIScopeSecond = xr_new<CUIStaticItem>();
-				m_UIScopeSecond->Init(scope_second_tex_name_broken, psHUD_Flags.test(HUD_TEXTURES_AUTORESIZE) ? "hud\\scope" : "hud\\default", 0, 0, alNone);
+				m_UIScopeSecond->Init(scope_second_tex_name_broken, Core.Features.test(xrCore::Feature::scope_textures_autoresize) ? "hud\\scope" : "hud\\default", 0, 0, alNone);
 			}
 		}
 
@@ -1230,7 +1227,7 @@ void CWeaponMagazined::LoadScopeParams(LPCSTR section)
 	LPCSTR scope_tex_name = READ_IF_EXISTS(pSettings, r_string, section, "scope_texture", nullptr);
 	if (!scope_tex_name) return;
 	m_UIScope = xr_new<CUIStaticItem>();
-	m_UIScope->Init(scope_tex_name, psHUD_Flags.test(HUD_TEXTURES_AUTORESIZE) ? "hud\\scope" : "hud\\default", 0, 0, alNone);
+	m_UIScope->Init(scope_tex_name, Core.Features.test(xrCore::Feature::scope_textures_autoresize) ? "hud\\scope" : "hud\\default", 0, 0, alNone);
 }
 
 void CWeaponMagazined::ApplySilencerParams() {
@@ -1905,7 +1902,6 @@ void CWeaponMagazined::SwitchNightVision(bool vision_on, bool switch_sound)
 
 void CWeaponMagazined::UpdateSwitchNightVision(){
 	if (!m_bNightVisionEnabled || !m_bNightVisionSwitchedOn) return;
-	if (OnClient()) return;
 
 	auto* pA = smart_cast<CActor*>(H_Parent());
 	if (pA && m_bNightVisionOn && !pA->Cameras().GetPPEffector((EEffectorPPType)effNightvision))
@@ -1913,7 +1909,7 @@ void CWeaponMagazined::UpdateSwitchNightVision(){
 }
 
 void CWeaponMagazined::SwitchNightVision(){
-	if (OnClient() || !m_bNightVisionEnabled || IsGrenadeMode() || IsSecondScopeMode()) return;
+	if (!m_bNightVisionEnabled || IsGrenadeMode() || IsSecondScopeMode()) return;
 	m_bNightVisionSwitchedOn = !m_bNightVisionSwitchedOn;
 	SwitchNightVision(!m_bNightVisionOn, true);
 }

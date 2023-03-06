@@ -463,10 +463,8 @@ bool CInventoryItem::Attach(PIItem pIItem, bool b_send_event)
 		InitPowerSource();
 		Switch(true);
 
-		if (b_send_event) {
-			if (OnServer())
-				pIItem->object().DestroyObject();
-		}
+		if (b_send_event)
+			pIItem->object().DestroyObject();		
 		return true;
 	}
 	else
@@ -478,8 +476,6 @@ bool CInventoryItem::Attach(PIItem pIItem, bool b_send_event)
 //объекте, поэтому функция должна быть переопределена
 bool CInventoryItem::Detach(const char* item_section_name, bool b_spawn_item, float item_condition)
 {
-	if (OnClient()) return true;
-
 	float power_level{};
 	if (IsPowerSourceAttachable() && IsPowerSourceAttached() &&
 		std::find(m_power_sources.begin(), m_power_sources.end(), item_section_name) != m_power_sources.end())
@@ -1036,7 +1032,7 @@ float CInventoryItem::GetHitTypeProtection(int hit_type) const {
 }
 
 float CInventoryItem::GetItemEffect(int effect) const {
-	if (!psActorFlags.test(AF_INVENTORY_VOLUME) && effect == eAdditionalVolume)
+	if (!Core.Features.test(xrCore::Feature::inventory_volume) && effect == eAdditionalVolume)
 		return 0.f;
 	//на випромінення радіації стан предмету не впливає (окрім як для артефактів)
 	float condition_k = (effect == eRadiationRestoreSpeed) ? 1.f : GetCondition();

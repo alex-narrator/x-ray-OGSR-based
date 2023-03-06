@@ -368,11 +368,6 @@ void CExplosive::Explode()
 	//осколки
 	//////////////////////////////
 	//-------------------------------------
-	bool SendHits = false;
-	if (OnServer()) SendHits = true;
-	else SendHits = false;
-
-
 	for(int i = 0; i < m_iFragsNum; ++i){
 		frag_dir.random_dir();
 		frag_dir.normalize	();
@@ -389,7 +384,7 @@ void CExplosive::Explode()
 		Level().BulletManager().AddBullet(	pos, frag_dir, m_fFragmentSpeed,
 											m_fFragHit, m_fFragHitImpulse, Initiator(),
 											cast_game_object()->ID(), m_eHitTypeFrag, m_fFragsRadius, 
-											cartridge, SendHits );
+											cartridge, true );
 	}	
 
 	if (cast_game_object()->Remote()) return;
@@ -587,7 +582,7 @@ void CExplosive::ExplodeParams(const Fvector& pos,
 
 void CExplosive::GenExplodeEvent (const Fvector& pos, const Fvector& normal)
 {
-	if (OnClient() || cast_game_object()->Remote()) return;
+	if (cast_game_object()->Remote()) return;
 
 //	if( m_bExplodeEventSent ) 
 //		return;

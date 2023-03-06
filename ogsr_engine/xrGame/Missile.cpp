@@ -128,8 +128,6 @@ void CMissile::OnHiddenItem()
 
 void CMissile::spawn_fake_missile()
 {
-	if (OnClient()) return;
-
 	if (!getDestroy())
 	{
 		CSE_Abstract		*object = Level().spawn_item(
@@ -190,7 +188,7 @@ void CMissile::UpdateCL()
 {
 	inherited::UpdateCL();
 
-	if (/*!Core.Features.test(xrCore::Feature::stop_anim_playing)*/!psHUD_Flags.test(HUD_STOP_MISSILE_PLAYING))
+	if (!Core.Features.test(xrCore::Feature::stop_anim_playing))
 	{
 		CActor* pActor = smart_cast<CActor*>(H_Parent());
 		if (pActor && !(pActor->get_state()&EMoveCommand::mcAnyMove) && this == pActor->inventory().ActiveItem())
@@ -575,8 +573,6 @@ void CMissile::OnEvent(NET_Packet& P, u16 type)
 				break;
 			}
 			missile->H_SetParent(0,!P.r_eof() && P.r_u8());
-			if (IsFakeMissile && OnClient()) 
-				missile->set_destroy_time(m_dwDestroyTimeMax);
 			break;
 		}
 	}

@@ -311,7 +311,7 @@ void WeaponUsageStatistic::OnBullet_Remove(SBullet* pBullet)
 
 void WeaponUsageStatistic::OnBullet_Check_Request(SHit* pHDS)
 {
-	if (!pHDS || OnClient()) return;
+	if (!pHDS) return;
 	s16 BoneID = pHDS->bone();
 	u32 BulletID = pHDS->BulletID;
 	u32 SenderID = pHDS->SenderID;
@@ -331,7 +331,6 @@ void WeaponUsageStatistic::OnBullet_Check_Request(SHit* pHDS)
 
 void WeaponUsageStatistic::OnBullet_Check_Result(bool Result)
 {
-	if (OnClient()) return;
 	if (m_dwLastRequestSenderID)
 	{
 		BChA_it pSenderI	= std::find(m_Requests.begin(), m_Requests.end(), m_dwLastRequestSenderID);
@@ -353,7 +352,6 @@ void WeaponUsageStatistic::OnBullet_Check_Result(bool Result)
 
 void WeaponUsageStatistic::Send_Check_Respond()
 {
-	if (!OnServer()) return;
 	NET_Packet P;
 	string1024 STrue, SFalse;
 	for (u32 i=0; i<m_Requests.size(); i++)
@@ -514,7 +512,6 @@ void WeaponUsageStatistic::OnExplosionKill(game_PlayerState* ps, const SHit& hit
 {
 	if (!CollectData())							return;
 	if (!ps)									return;
-	if (!OnServer())							return;
 
 	CObject* killer								= hit.who;
 	if(!killer)									return;
