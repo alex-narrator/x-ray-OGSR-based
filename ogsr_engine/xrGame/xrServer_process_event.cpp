@@ -56,12 +56,6 @@ void xrServer::Process_event	(NET_Packet& P, ClientID sender)
 		{
 		SendBroadcast			(BroadcastCID,P,MODE);
 		}break;
-	case GE_INV_ACTION:
-		{
-			xrClientData* CL		= ID_to_client(sender);
-			if (CL)	CL->net_Ready	= TRUE;
-			if (SV_Client) SendTo(SV_Client->ID, P, net_flags(TRUE, TRUE));
-		}break;
 	case GE_RESPAWN:
 		{
 			CSE_Abstract*		E	= receiver;

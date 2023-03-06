@@ -167,12 +167,7 @@ public:
 			int					GetYPos				() const ;
 
 			bool				GetInvShowCondition	() const;
-	//---------------------------------------------------------------------
-			float				GetKillMsgXPos		() const ;
-			float				GetKillMsgYPos		() const ;
-			float				GetKillMsgWidth		() const ;
-			float				GetKillMsgHeight	() const ;
-	//---------------------------------------------------------------------
+
 			float				GetCondition		() const					{return m_fCondition;}
 			void				ChangeCondition		(float fDeltaCondition);
 	virtual	void				SetCondition	    (float fNewCondition) { m_fCondition = fNewCondition; ChangeCondition(0.0f); }		

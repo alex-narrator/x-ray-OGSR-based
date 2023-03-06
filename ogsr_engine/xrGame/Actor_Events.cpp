@@ -108,41 +108,6 @@ void CActor::OnEvent		(NET_Packet& P, u16 type)
 				HUD().GetUI()->UIGame()->ReInitShownUI();
 		}
 		break;
-	case GE_INV_ACTION:
-		{
-			s32 cmd;
-			P.r_s32		(cmd);
-			u32 flags;
-			P.r_u32		(flags);
-			s32 ZoomRndSeed = P.r_s32();
-			s32 ShotRndSeed = P.r_s32();
-									
-			if (flags & CMD_START)
-			{
-				if (cmd == kWPN_ZOOM)
-					SetZoomRndSeed(ZoomRndSeed);
-				if (cmd == kWPN_FIRE)
-					SetShotRndSeed(ShotRndSeed);
-				IR_OnKeyboardPress(cmd);
-			}
-			else
-				IR_OnKeyboardRelease(cmd);
-		}
-		break;
-	case GE_MOVE_ACTOR:
-		{
-			Fvector NewPos, NewRot;
-			P.r_vec3(NewPos);
-			P.r_vec3(NewRot);
-			
-			MoveActor(NewPos, NewRot);
-		}break;
-	case GE_ACTOR_MAX_POWER:
-		{
-			conditions().MaxPower();
-			conditions().ClearWounds();
-			ClearBloodWounds();
-		}break;
 	}
 }
 
