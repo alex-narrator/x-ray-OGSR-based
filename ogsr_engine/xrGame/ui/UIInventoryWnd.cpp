@@ -87,9 +87,6 @@ void CUIInventoryWnd::Init()
 	UIBagWnd.AttachChild				(&UIWeightWnd);
 	xml_init.InitStatic					(uiXml, "weight_static", 0, &UIWeightWnd);
 
-	UIBagWnd.AttachChild				(&UIVolumeWnd);
-	xml_init.InitStatic					(uiXml, "volume_static", 0, &UIVolumeWnd);
-	
 	AttachChild							(&UIMoneyWnd);
 	xml_init.InitStatic					(uiXml, "money_static", 0, &UIMoneyWnd);
 
@@ -677,5 +674,5 @@ void CUIInventoryWnd::CheckForcedWeightVolumeUpdate() {
 		}
 	}
 	if (need_update)
-		UpdateWeightVolume();
+		UpdateWeight();
 }

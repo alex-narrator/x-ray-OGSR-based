@@ -2026,27 +2026,6 @@ u32 CWeapon::Cost() const{
 	return res;
 }
 
-float CWeapon::Volume() const{
-	float res = inherited::Volume();
-	if (GrenadeLauncherAttachable() && IsGrenadeLauncherAttached())
-		res += READ_IF_EXISTS(pSettings, r_float, GetGrenadeLauncherName(),		"inv_volume", .0f);
-	if (ScopeAttachable() && IsScopeAttached())
-		res += READ_IF_EXISTS(pSettings, r_float, GetScopeName(),				"inv_volume", .0f);
-	if (SilencerAttachable() && IsSilencerAttached())
-		res += READ_IF_EXISTS(pSettings, r_float, GetSilencerName(),			"inv_volume", .0f);
-	if (LaserAttachable() && IsLaserAttached())
-		res += READ_IF_EXISTS(pSettings, r_float, GetLaserName(),				"inv_volume", .0f);
-	if (FlashlightAttachable() && IsFlashlightAttached())
-		res += READ_IF_EXISTS(pSettings, r_float, GetFlashlightName(),			"inv_volume", .0f);
-	if (StockAttachable() && IsStockAttached())
-		res += READ_IF_EXISTS(pSettings, r_float, GetStockName(),				"inv_volume", .0f);
-	if (ExtenderAttachable() && IsExtenderAttached())
-		res += READ_IF_EXISTS(pSettings, r_float, GetExtenderName(),			"inv_volume", .0f);
-	if (ForendAttachable() && IsForendAttached())
-		res += READ_IF_EXISTS(pSettings, r_float, GetForendName(),				"inv_volume", .0f);
-	return res;
-}
-
 void CWeapon::Hide(bool now){
 	if (now){
 		OnStateSwitch(eHidden, GetState());

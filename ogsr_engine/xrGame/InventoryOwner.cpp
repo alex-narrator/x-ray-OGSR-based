@@ -48,8 +48,6 @@ CInventoryOwner::CInventoryOwner			()
 	m_need_osoznanie_mode		= FALSE;
 
     m_tmp_next_item_slot = NO_ACTIVE_SLOT;
-
-	m_deficits.clear();
 }
 
 DLL_Pure *CInventoryOwner::_construct		()
@@ -74,9 +72,6 @@ void CInventoryOwner::Load					(LPCSTR section)
 {
 	if(pSettings->line_exist(section, "inv_max_weight"))
 		m_inventory->SetMaxWeight( pSettings->r_float(section,"inv_max_weight") );
-
-	if (pSettings->line_exist(section, "inv_max_volume"))
-		m_inventory->SetMaxVolume(pSettings->r_float(section, "inv_max_volume"));
 
 	if(pSettings->line_exist(section, "need_osoznanie_mode")){
 		m_need_osoznanie_mode=pSettings->r_bool(section,"need_osoznanie_mode");
@@ -167,15 +162,6 @@ void	CInventoryOwner::save	(NET_Packet &output_packet)
 	CharacterInfo().save(output_packet);
 	save_data	(m_game_name, output_packet);
 	save_data	(m_money,	output_packet);
-	//
-	save_data(m_deficits.size(), output_packet);
-	DEFICITS::const_iterator I = m_deficits.begin();
-	DEFICITS::const_iterator E = m_deficits.end();
-	for (; I != E; ++I)
-	{
-		save_data((*I).first.c_str(), output_packet);
-		save_data((*I).second, output_packet);
-	}
 }
 void	CInventoryOwner::load	(IReader &input_packet)
 {
@@ -193,15 +179,6 @@ void	CInventoryOwner::load	(IReader &input_packet)
 	CharacterInfo().load(input_packet);
 	load_data		(m_game_name, input_packet);
 	load_data		(m_money,	input_packet);
-	//
-	u32	deficits_size = input_packet.r_u32();
-	DEFICITS::value_type		pair;
-	for (u32 i = 0; i < deficits_size; ++i)
-	{
-		load_data(pair.first, input_packet);
-		load_data(pair.second, input_packet);
-		m_deficits.insert(pair);
-	}
 }
 
 
@@ -359,22 +336,6 @@ float  CInventoryOwner::MaxCarryWeight () const
 			}
 		}
 	}
-
-	return res;
-}
-
-float CInventoryOwner::GetCarryVolume() const
-{
-	return inventory().TotalVolume();
-}
-
-float  CInventoryOwner::MaxCarryVolume() const
-{
-	float res = inventory().GetMaxVolume();
-
-	auto backpack = GetBackpack();
-	if (backpack && !fis_zero(backpack->GetCondition()))
-		res += backpack->GetItemEffect(CInventoryItem::eAdditionalVolume);
 
 	return res;
 }
@@ -542,8 +503,10 @@ LPCSTR CInventoryOwner::trade_section			() const
 
 float CInventoryOwner::deficit_factor			(const shared_str &section) const
 {
-	/*Msg("deficit [%.4f] for item [%s] by trader [%s]", deficit(section), section.c_str(), Name());*/
-	return deficit(section);
+	if (!m_purchase_list)
+		return (1.f);
+
+	return (m_purchase_list->deficit(section));
 }
 
 void CInventoryOwner::buy_supplies				(CInifile &ini_file, LPCSTR section)
@@ -552,9 +515,6 @@ void CInventoryOwner::buy_supplies				(CInifile &ini_file, LPCSTR section)
 		m_purchase_list			= xr_new<CPurchaseList>();
 
 	m_purchase_list->process	(ini_file,section,*this);
-
-	m_deficits.clear();
-	m_deficits = m_purchase_list->deficits();
 }
 
 void CInventoryOwner::sell_useless_items		()
@@ -632,20 +592,6 @@ CInventoryItem* CInventoryOwner::GetCurrentTorch() const {
   return smart_cast<CTorch*>(inventory().ItemFromSlot(TORCH_SLOT));
 }
 
-float CInventoryOwner::deficit(const shared_str& section) const
-{
-	DEFICITS::const_iterator	I = m_deficits.find(section);
-	if (I != m_deficits.end())
-		return					((*I).second);
-
-	return						(1.f);
-}
-
 bool CInventoryOwner::CanPutInSlot(PIItem item, u32 slot) {
 	return true;
-}
-
-bool CInventoryOwner::IsVolumeUnlimited() const {
-	return !pSettings->line_exist(smart_cast<const CGameObject*>(this)->cNameSect(), "inv_max_volume") ||
-		!Core.Features.test(xrCore::Feature::inventory_volume);
 }

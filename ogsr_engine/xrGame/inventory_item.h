@@ -126,9 +126,6 @@ public:
 	virtual float				Weight				()	const;//	{ return m_weight;	}		
 	virtual void                SetWeight			(float w)	{ m_weight = w;		}
 
-	virtual float				Volume				() const	{ return m_volume;	}
-	virtual void                SetVolume			(float v)	{ m_volume = v;		}
-
 			float 				m_fRadiationAccumFactor{};          // alpet: скорость появления вторичной радиактивности
 			float 				m_fRadiationAccumLimit{};			// alpet: предел вторичной радиоактивности 
 
@@ -141,7 +138,6 @@ public:
 
 	u32							m_cost;
 	float						m_weight;
-	float						m_volume;
 	shared_str					m_Description{};
 	CUIInventoryCellItem*		m_cell_item{};
 
@@ -307,7 +303,6 @@ public:
 		eAdditionalSprint,
 		eAdditionalJump,
 		eAdditionalWeight,
-		eAdditionalVolume,
 
 		eEffectMax,
 	};

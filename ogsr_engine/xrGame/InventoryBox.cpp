@@ -15,8 +15,6 @@ IInventoryBox::IInventoryBox() : m_items ()
 {
 	m_in_use = false;
 	m_items.clear();
-
-	m_fMaxVolume = READ_IF_EXISTS(pSettings, r_float, "inventory_box", "max_volume", .0f);
 }
 
 void IInventoryBox::ProcessEvent(CGameObject *O, NET_Packet& P, u16 type)
@@ -91,26 +89,8 @@ void IInventoryBox::AddAvailableItems(TIItemContainer& items_container) const
 	}
 }
 
-float IInventoryBox::GetCarryVolume() const{
-	float res{};
-	for (const auto& item_id : m_items) {
-		PIItem itm = smart_cast<PIItem>(Level().Objects.net_Find(item_id));
-		res += itm->Volume();
-	}
-	return res;
-}
-
-float IInventoryBox::MaxCarryVolume() const{
-	return m_fMaxVolume;
-}
-
-bool IInventoryBox::IsVolumeUnlimited() const {
-	return fis_zero(MaxCarryVolume());
-}
-
 bool IInventoryBox::CanTakeItem(CInventoryItem* inventory_item) const {
-	if (IsVolumeUnlimited()) return true;
-	return (inventory_item->Volume() + GetCarryVolume() <= MaxCarryVolume());
+	return true;
 }
 
 CScriptGameObject* IInventoryBox::GetObjectByName(LPCSTR name)

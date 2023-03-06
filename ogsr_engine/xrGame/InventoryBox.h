@@ -9,7 +9,6 @@ protected:
 				xr_vector<u16>			m_items;
 
 				void					ProcessEvent					(CGameObject *O, NET_Packet& P, u16 type);	
-				float					m_fMaxVolume{};
 				bool					b_opened{true};
 public:
 				bool					m_in_use;
@@ -26,9 +25,6 @@ public:
 	virtual     bool					IsOpened						() const { return b_opened; }
 	virtual     void					SetOpened						(bool opened) { b_opened = opened; }
 
-	virtual		float					GetCarryVolume					() const;
-	virtual		float					MaxCarryVolume					() const;
-	virtual		bool					IsVolumeUnlimited				() const;
 	virtual		bool					CanTakeItem						(CInventoryItem*) const;
 
 	virtual xr_vector<u16>				GetItems						() const { return m_items; };

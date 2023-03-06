@@ -216,7 +216,7 @@ void CUIInventoryWnd::InitInventory()
 
 	m_pUIBagList->SetScrollPos(bag_scroll);
 
-	UpdateWeightVolume();
+	UpdateWeight();
 
 	m_b_need_reinit					= false;
 }  
@@ -238,7 +238,7 @@ void CUIInventoryWnd::DropCurrentItem(bool b_all){
 
 	CurrentIItem()->Drop();
 	SetCurrentItem			(NULL);
-	UpdateWeightVolume		();
+	UpdateWeight();
 
 	PlaySnd(eInvDropItem);
 	m_b_need_update_stats = true;
@@ -260,7 +260,7 @@ void CUIInventoryWnd::DisassembleItem(bool b_all) {
 	CurrentIItem()->Disassemble();
 	SetCurrentItem(NULL);
 	PlaySnd(eInvDetachAddon);
-	UpdateWeightVolume();
+	UpdateWeight();
 }
 
 //------------------------------------------
@@ -300,7 +300,7 @@ bool CUIInventoryWnd::ToSlot(CUICellItem* itm, bool force_place)
 		
 		/************************************************** added by Ray Twitty (aka Shadows) START **************************************************/
 		// обновляем статик веса в инвентаре
-		UpdateWeightVolume();
+		UpdateWeight();
 		/*************************************************** added by Ray Twitty (aka Shadows) END ***************************************************/
 	}else
 	{ // in case slot is busy
@@ -365,7 +365,7 @@ bool CUIInventoryWnd::ToBag(CUICellItem* itm, bool b_use_cursor_pos)
 
 		/************************************************** added by Ray Twitty (aka Shadows) START **************************************************/
 		// обновляем статик веса в инвентаре
-		UpdateWeightVolume();
+		UpdateWeight();
 		/*************************************************** added by Ray Twitty (aka Shadows) END ***************************************************/
 		
 		if(b_use_cursor_pos)
@@ -420,7 +420,7 @@ bool CUIInventoryWnd::ToBelt(CUICellItem* itm, bool b_use_cursor_pos){
 
 		/************************************************** added by Ray Twitty (aka Shadows) START **************************************************/
 		// обновляем статик веса в инвентаре
-		UpdateWeightVolume();
+		UpdateWeight();
 		/*************************************************** added by Ray Twitty (aka Shadows) END ***************************************************/
 		if (iitem->IsModule() && !iitem->IsDropPouch() && old_owner != m_pUIVestList)
 			ReinitSlotList(iitem->GetSlotEnabled());
@@ -459,7 +459,7 @@ bool CUIInventoryWnd::ToVest(CUICellItem* itm, bool b_use_cursor_pos) {
 
 		/************************************************** added by Ray Twitty (aka Shadows) START **************************************************/
 		// обновляем статик веса в инвентаре
-		UpdateWeightVolume();
+		UpdateWeight();
 		/*************************************************** added by Ray Twitty (aka Shadows) END ***************************************************/
 		//ReinitVestList();
 		if (iitem->IsModule() && !iitem->IsDropPouch() && old_owner != m_pUIBeltList)
@@ -639,7 +639,7 @@ bool CUIInventoryWnd::OnItemDbClick(CUICellItem* itm)
 			return true;
 		if (ToBelt(itm, false))
 			return true;
-        //__item->SetSlot( slots.size() ? slots[ 0 ]: NO_ACTIVE_SLOT );
+
 		for (const auto& slot : slots) {
 			if (m_pInv->IsSlotAllowed(slot)) {
 				__item->SetSlot(slot);
@@ -647,9 +647,7 @@ bool CUIInventoryWnd::OnItemDbClick(CUICellItem* itm)
 			}
 		}
 		if (!ToSlot(itm, false))
-			//if (!ToVest(itm, false))
-			//	if (!ToBelt(itm, false))
-					ToSlot(itm, true);
+			ToSlot(itm, true);
 	}break;
 	};
 
@@ -701,10 +699,8 @@ void CUIInventoryWnd::ClearAllLists()
 }
 
 
-void CUIInventoryWnd::UpdateWeightVolume() {
+void CUIInventoryWnd::UpdateWeight() {
   InventoryUtilities::UpdateWeight(UIWeightWnd, true);
-  InventoryUtilities::UpdateVolume(Actor()->cast_game_object(), UIVolumeWnd, true);
-  UIVolumeWnd.SetVisible(Core.Features.test(xrCore::Feature::inventory_volume));
 }
 
 void CUIInventoryWnd::ReinitVestList() {

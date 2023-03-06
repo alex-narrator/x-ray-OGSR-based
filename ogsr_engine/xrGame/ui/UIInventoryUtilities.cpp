@@ -394,58 +394,6 @@ void InventoryUtilities::UpdateWeight(CUIStatic &wnd, bool withPrefix)
 	//	UIStaticWeight.ClipperOff();
 }
 
-void InventoryUtilities::UpdateVolume(CGameObject* owner, CUIStatic& wnd, bool withPrefix)
-{
-	auto inv_owner	= smart_cast<CInventoryOwner*>(owner);
-	auto inv_box	= smart_cast<IInventoryBox*>(owner);
-	bool is_volume_unlimited{};
-
-	string128 buf{};
-
-	float total{}, max{};
-	if (inv_owner) {
-		total	= inv_owner->GetCarryVolume();
-		max		= inv_owner->MaxCarryVolume();
-		is_volume_unlimited = inv_owner->IsVolumeUnlimited();
-	}
-	else if (inv_box) {
-		total	= inv_box->GetCarryVolume();
-		max		= inv_box->MaxCarryVolume();
-		is_volume_unlimited = inv_box->IsVolumeUnlimited();
-	}
-
-	if (is_volume_unlimited) {
-		wnd.SetText("");
-		return;
-	}
-
-	string16 cl{};
-
-	if (total > max)
-	{
-		strcpy_s(cl, "%c[red]");
-	}
-	else
-	{
-		strcpy_s(cl, "%c[UI_orange]");
-	}
-
-	string32 prefix{};
-
-	if (withPrefix)
-	{
-		sprintf_s(prefix, "%%c[default]%s ", *CStringTable().translate("ui_inv_volume"));
-	}
-	else
-	{
-		strcpy_s(prefix, "");
-	}
-
-	sprintf_s(buf, "%s%s%.1f%s/%.1f %s", prefix, cl, total, "%c[UI_orange]", max, CStringTable().translate("st_l").c_str());
-	wnd.SetText(buf);
-	//	UIStaticWeight.ClipperOff();
-}
-
 //////////////////////////////////////////////////////////////////////////
 
 void LoadStrings(CharInfoStrings *container, LPCSTR section, LPCSTR field)

@@ -781,8 +781,6 @@ public:
 			void	DrawHUDMasks			();
 			void	UpdateVisorEfects		();
 
-	virtual bool	IsVolumeUnlimited		() const { return !Core.Features.test(xrCore::Feature::inventory_volume); };
-
 			void	TryPlayAnimItemTake		();
 			void	ActorCheckout			();
 			void	ActorCheckGear			();

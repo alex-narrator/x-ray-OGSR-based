@@ -70,7 +70,6 @@ void CInventoryContainer::shedule_Update(u32 dt)
 {
 	inherited::shedule_Update(dt);
 	UpdateDropTasks();
-	UpdateVolumeDropOut();
 }
 
 void CInventoryContainer::UpdateDropTasks(){
@@ -143,10 +142,6 @@ float CInventoryContainer::GetContainmentArtefactProtection(int hit_type) const 
 		}
 	}
 	return res;
-}
-
-float CInventoryContainer::MaxCarryVolume() const {
-	return GetItemEffect(eAdditionalVolume);
 }
 
 bool  CInventoryContainer::can_be_attached() const {
@@ -270,25 +265,5 @@ void CInventoryContainer::AddUniqueItems(TIItemContainer& items_container) const
 		PIItem itm = smart_cast<PIItem>(Level().Objects.net_Find(item_id)); VERIFY(itm);
 		if (is_unique(items_container, itm))
 			items_container.push_back(itm);
-	}
-}
-
-bool CInventoryContainer::IsVolumeUnlimited() const {
-	return !Core.Features.test(xrCore::Feature::inventory_volume);
-}
-
-void CInventoryContainer::UpdateVolumeDropOut() {
-	if (IsVolumeUnlimited()) return;
-	float total_volume = GetCarryVolume();
-	if (total_volume > MaxCarryVolume()) {
-		for (const auto& item_id : m_items) {
-			auto item = smart_cast<PIItem>(Level().Objects.net_Find(item_id)); VERIFY(itm);
-			if (fis_zero(item->Volume()) || item->IsQuestItem())
-				continue;
-			item->SetDropManual(true);
-			total_volume -= item->Volume();
-			if (total_volume <= MaxCarryVolume())
-				break;
-		}
 	}
 }

@@ -38,13 +38,11 @@ protected:
 	//-1 - порция одна и больше не бывает (чтоб не выводить надпись в меню)
 	int						m_iPortionsNum;
 	int						m_iStartPortionsNum{};
-	bool					m_bUsePortionVolume{};
 
 	//яка доля власної радіоактивності предмета буде передана гравцеві при вживанні
 	float					m_fSelfRadiationInfluence{};
 
 	float					GetOnePortionWeight	();
-	float					GetOnePortionVolume	();
 	u32						GetOnePortionCost	();
 
 	LPCSTR					m_sUseMenuTip{};

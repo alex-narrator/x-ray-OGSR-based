@@ -77,7 +77,6 @@ protected:
 
 	CUIStatic					UIBagWnd;
 	CUIStatic					UIWeightWnd;
-	CUIStatic					UIVolumeWnd;
 	CUIStatic					UIMoneyWnd;
 	CUIStatic					UIDescrWnd;
 	CUIFrameWindow				UIPersonalWnd;
@@ -196,7 +195,7 @@ protected:
 
 public:
 	PIItem						CurrentIItem();
-	void						UpdateWeightVolume();
+	void						UpdateWeight();
 	//обновление отрисовки сетки пояса
 	void						UpdateCustomDraw(bool = true);
 	void						CheckForcedWeightVolumeUpdate();

@@ -45,7 +45,6 @@ public:
 	bool				m_b_force_drawing{};
 	CUIStatic*			UIName{};
 	CUIStatic*			UIWeight{};
-	CUIStatic*			UIVolume{};
 	CUIStatic*			UICost{};
 	CUIStatic*			UICondition{};
 	CUIScrollView*		UIDesc{};

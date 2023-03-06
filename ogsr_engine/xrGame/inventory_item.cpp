@@ -96,8 +96,6 @@ void CInventoryItem::Load(LPCSTR section)
 	m_weight			= pSettings->r_float(section, "inv_weight");
 	R_ASSERT			(m_weight>=0.f);
 
-	m_volume			= READ_IF_EXISTS(pSettings, r_float, section, "inv_volume", .0f);
-
 	m_cost				= pSettings->r_u32(section, "cost");
 
 	m_slots_sect = READ_IF_EXISTS( pSettings, r_string, section, "slot", "" );
@@ -157,7 +155,6 @@ void CInventoryItem::Load(LPCSTR section)
 	m_ItemEffect[eAdditionalSprint]						= READ_IF_EXISTS(pSettings, r_float, section, "additional_sprint",			0.f);
 	m_ItemEffect[eAdditionalJump]						= READ_IF_EXISTS(pSettings, r_float, section, "additional_jump",			0.f);
 	m_ItemEffect[eAdditionalWeight]						= READ_IF_EXISTS(pSettings, r_float, section, "additional_max_weight",		0.f);
-	m_ItemEffect[eAdditionalVolume]						= READ_IF_EXISTS(pSettings, r_float, section, "additional_max_volume",		0.f);
 	//protection
 	m_HitTypeProtection[ALife::eHitTypeBurn]			= READ_IF_EXISTS(pSettings, r_float, section, "burn_protection",			0.f);
 	m_HitTypeProtection[ALife::eHitTypeShock]			= READ_IF_EXISTS(pSettings, r_float, section, "shock_protection",			0.f);
@@ -1007,8 +1004,6 @@ float CInventoryItem::GetHitTypeProtection(int hit_type) const {
 }
 
 float CInventoryItem::GetItemEffect(int effect) const {
-	if (!Core.Features.test(xrCore::Feature::inventory_volume) && effect == eAdditionalVolume)
-		return 0.f;
 	//на випромінення радіації стан предмету не впливає (окрім як для артефактів)
 	float condition_k = (effect == eRadiationRestoreSpeed) ? 1.f : GetCondition();
 	return m_ItemEffect[effect] * condition_k;
@@ -1164,7 +1159,7 @@ void CInventoryItem::PrepairItem() {
 	auto& inv = m_pCurrentInventory;
 	if (inv) {
 		if (!inv->InRuck(this))
-			inv->Ruck(this, true);
+			inv->Ruck(this);
 		if (IsPowerSourceAttached() && IsPowerSourceAttachable())
 			Detach(GetPowerSourceName().c_str(), true);
 	}

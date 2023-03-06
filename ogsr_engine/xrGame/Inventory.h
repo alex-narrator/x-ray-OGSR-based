@@ -42,9 +42,6 @@ public:
 	float 					TotalWeight			() const;
 	float 					CalcTotalWeight		();
 
-	float 					TotalVolume			() const;
-	float 					CalcTotalVolume		();
-
 	void					Take				(CGameObject *pObj, bool bNotActivate, bool strict_placement);
 	bool					DropItem			(CGameObject *pObj);
 	void					Clear				();
@@ -53,18 +50,18 @@ public:
 	bool					Slot				(PIItem pIItem, bool bNotActivate = false);	
 	bool					Belt				(PIItem pIItem);
 	bool					Vest				(PIItem pIItem);
-	bool					Ruck				(PIItem pIItem, bool skip_volume_check = false);
+	bool					Ruck				(PIItem pIItem);
 
 	bool 					InSlot				(PIItem pIItem) const;
 	bool 					InBelt				(PIItem pIItem) const;
 	bool 					InVest				(PIItem pIItem) const;
 	bool 					InRuck				(PIItem pIItem) const;
 
-	bool 					CanPutInSlot		(PIItem pIItem, bool check_all = false) const;
+	bool 					CanPutInSlot		(PIItem pIItem) const;
 	bool 					CanPutInSlot		(PIItem pIItem, u8 slot) const;
 	bool 					CanPutInBelt		(PIItem pIItem) const;
 	bool 					CanPutInVest		(PIItem pIItem) const;
-	bool 					CanPutInRuck		(PIItem pIItem, bool skip_volume_check = false) const;
+	bool 					CanPutInRuck		(PIItem pIItem) const;
 
 	bool					CanTakeItem			(CInventoryItem *inventory_item) const;
 
@@ -137,11 +134,6 @@ public:
 	float				GetMaxWeight				() const				{return m_fMaxWeight;}
 	void				SetMaxWeight				(float weight)			{m_fMaxWeight = weight;}
 
-	float				GetMaxVolume				() const				{return m_fMaxVolume;}
-	void				SetMaxVolume				(float volume)			{m_fMaxVolume = volume;}
-
-//	u32					BeltSlotsCount					() const;
-
 	inline	CInventoryOwner*GetOwner				() const				{ return m_pOwner; }
 	
 
@@ -159,7 +151,6 @@ public:
 
 	// максимальный вес инвентаря
 	float				m_fMaxWeight;
-	float				m_fMaxVolume;
 protected:
 	void					UpdateDropTasks		();
 	void					UpdateDropItem		(PIItem pIItem);
@@ -184,11 +175,6 @@ protected:
 	// текущий вес в инвентаре
 	float				m_fTotalWeight;
 
-	float				m_fTotalVolume;
-
-	// Максимальное кол-во объектов
-	//на поясе
-	/*u32					m_iMaxBelt;	*/
 	// Максимальное расстояние на котором можно подобрать объект
 	float				 m_fTakeDist;
 
@@ -218,13 +204,10 @@ public:
 	void					DropVestToRuck		(bool = false);
 	void					DropSlotsToRuck		(u32 min_slot, u32 max_slot = NO_ACTIVE_SLOT);
 	void					BackpackItemsTransfer(CInventoryItem*, bool);
-	void					UpdateVolumeDropOut	();
 	bool					IsSlotAllowed		(u32) const;
 	bool					HasModuleForSlot	(u32) const;
 	bool					HasSameModuleEquiped(PIItem) const;
 	bool					HasDropPouch		() const;
-
-	void					TryRestoreSlot		(CInventoryItem* pIItem);
 
 	bool					activate_slot		(u32 slot);
 	bool					IsAllItemsLoaded	() const;

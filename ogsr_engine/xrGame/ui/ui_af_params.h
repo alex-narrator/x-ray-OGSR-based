@@ -28,7 +28,6 @@ protected:
 		_item_additional_sprint,
 		_item_additional_jump,
 		_item_additional_weight,
-		_item_additional_volume,
 
 		_hit_type_protection_index,
 

@@ -72,7 +72,6 @@ const shared_str GetTimeAsString(ALife::_TIME_ID time, ETimePrecision timePrec, 
 LPCSTR GetTimePeriodAsString	(LPSTR _buff, u32 buff_sz, ALife::_TIME_ID _from, ALife::_TIME_ID _to);
 // Отобразить вес, который несет актер
 void UpdateWeight(CUIStatic &wnd, bool withPrefix = false);
-void UpdateVolume(CGameObject* owner, CUIStatic &wnd, bool withPrefix = false);
 
 // Функции получения строки-идентификатора ранга и отношения по их числовому идентификатору
 LPCSTR	GetRankAsText				(CHARACTER_RANK_VALUE		rankID);

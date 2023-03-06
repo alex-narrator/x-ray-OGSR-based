@@ -97,7 +97,6 @@ void InitConsole	()
 	CORE_FEATURE_SET( disable_dialog_break,			"features" );
 	CORE_FEATURE_SET( small_font,					"features" );
 	CORE_FEATURE_SET(no_zone_posteffect,			"features");
-	CORE_FEATURE_SET(inventory_volume,				"features");
 	CORE_FEATURE_SET(artefacts_from_all,			"features");
 	CORE_FEATURE_SET(knife_to_cut_parts,			"features");
 	CORE_FEATURE_SET(pickup_check_overlaped,		"features");

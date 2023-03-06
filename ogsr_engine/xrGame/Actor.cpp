@@ -85,8 +85,6 @@ constexpr const char* m_sGameObjectDragAction			= "game_object_drag";
 constexpr const char* m_sInventoryContainerUseOrTakeAction	= "inventory_container_use_or_take"; //обшукати/підібрати контейнер
 constexpr const char* m_sInventoryBoxUseAction			= "inventory_box_use";				//обшукати скриньку
 constexpr const char* m_sGameObjectThrowDropAction		= "game_object_throw_drop";			//Відкинути/відпустити предмет
-constexpr const char* m_sNoPlaceAvailable				= "no_place_available";				//немає місця
-constexpr const char* m_sLocked							= "locked";							//зачинено
 
 const u32		patch_frames	= 50;
 const float		respawn_delay	= 1.f;
@@ -1062,20 +1060,13 @@ void CActor::shedule_Update	(u32 DT)
 			m_sDefaultObjAction = m_sCarCharacterUseAction;
 		}
 		else if (m_pInvBoxWeLookingAt) {
-			if (m_pInvBoxWeLookingAt->IsOpened()) {
-				if (smart_cast<CInventoryContainer*>(m_pInvBoxWeLookingAt))
-					m_sDefaultObjAction = m_sInventoryContainerUseOrTakeAction;
-				else
-					m_sDefaultObjAction = m_sInventoryBoxUseAction;
-			}
+			if (smart_cast<CInventoryContainer*>(m_pInvBoxWeLookingAt))
+				m_sDefaultObjAction = m_sInventoryContainerUseOrTakeAction;
 			else
-				m_sDefaultObjAction = m_sLocked;
+				m_sDefaultObjAction = m_sInventoryBoxUseAction;
 		}
 		else if (inventory().m_pTarget && inventory().m_pTarget->CanTake()){
-			if (inventory().CanTakeItem(inventory().m_pTarget)){
-				m_sDefaultObjAction = b_allow_drag ? m_sInventoryItemUseOrDragAction : m_sInventoryItemUseAction;
-			}
-			else m_sDefaultObjAction = m_sNoPlaceAvailable;
+			m_sDefaultObjAction = b_allow_drag ? m_sInventoryItemUseOrDragAction : m_sInventoryItemUseAction;
 		}
 		else if (b_allow_drag){
 			m_sDefaultObjAction = m_sGameObjectDragAction;

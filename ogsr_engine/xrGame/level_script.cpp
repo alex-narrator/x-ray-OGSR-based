@@ -795,7 +795,7 @@ void update_inventory_window() {
 void update_inventory_weight() {
   CUIGameSP* pGameSP = smart_cast<CUIGameSP*>( HUD().GetUI()->UIGame() );
   if ( pGameSP)
-    pGameSP->InventoryMenu->UpdateWeightVolume();
+    pGameSP->InventoryMenu->UpdateWeight();
 }
 
 

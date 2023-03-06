@@ -94,17 +94,9 @@ void CUICarBodyWnd::Init()
 	m_pUIOurBagWnd->AttachChild		(m_pUIOurWeightWnd);
 	xml_init.InitStatic				(uiXml, "our_weight_static", 0, m_pUIOurWeightWnd);
 
-	m_pUIOurVolWnd					= xr_new<CUIStatic>(); m_pUIOurVolWnd->SetAutoDelete(true);
-	m_pUIOurBagWnd->AttachChild		(m_pUIOurVolWnd);
-	xml_init.InitStatic				(uiXml, "our_vol_static", 0, m_pUIOurVolWnd);
-
 	m_pUIOthersBagWnd				= xr_new<CUIStatic>(); m_pUIOthersBagWnd->SetAutoDelete(true);
 	AttachChild						(m_pUIOthersBagWnd);
 	xml_init.InitStatic				(uiXml, "others_bag_static", 0, m_pUIOthersBagWnd);
-
-	m_pUIOthersVolWnd				= xr_new<CUIStatic>(); m_pUIOthersVolWnd->SetAutoDelete(true);
-	m_pUIOthersBagWnd->AttachChild	(m_pUIOthersVolWnd);
-	xml_init.InitStatic				(uiXml, "other_vol_static", 0, m_pUIOthersVolWnd);
 
 	m_pUIOurBagList					= xr_new<CUIDragDropListEx>(); m_pUIOurBagList->SetAutoDelete(true);
 	m_pUIOurBagWnd->AttachChild		(m_pUIOurBagList);	
@@ -324,7 +316,7 @@ void CUICarBodyWnd::UpdateLists()
 		m_pUIOthersBagList->SetItem(itm);
 	}
 
-	UpdateWeightVolume();
+	UpdateWeight();
 	m_b_need_update									= false;
 }
 
@@ -688,7 +680,7 @@ void CUICarBodyWnd::Update()
 	{
 		GetHolder()->StartStopMenu(this, true);
 	}
-	CheckForcedWeightVolumeUpdate();
+	CheckForcedWeightUpdate();
 	inherited::Update();
 }
 
@@ -698,7 +690,7 @@ void CUICarBodyWnd::Show()
 	InventoryUtilities::SendInfoToActor		("ui_car_body");
 	inherited::Show							();
 	SetCurrentItem							(NULL);
-	UpdateWeightVolume						();
+	UpdateWeight							();
 
 	if (const auto& actor = Actor()){
 		actor->SetWeaponHideState(INV_STATE_INV_WND, true);
@@ -748,7 +740,6 @@ void CUICarBodyWnd::TakeAll()
 	u32 cnt				= m_pUIOthersBagList->ItemsCount();
 	for(u32 i=0; i<cnt; ++i){
 		CUICellItem*	ci = m_pUIOthersBagList->GetItemIdx(i);
-		if (!CanTakeStack(ci, m_pActorGO)) continue;
 		for (u32 j = 0; j < ci->ChildsCount(); ++j) {
 			PIItem _itm = (PIItem)(ci->Child(j)->m_pData);
 			TransferItem(_itm, m_pOtherGO, m_pActorGO);
@@ -769,7 +760,6 @@ void CUICarBodyWnd::MoveItems(CUICellItem* itm, bool b_all)
 
 	if (actor_to_other){ //actor -> other
 		if (b_all) {
-			if (!CanTakeStack(itm, actor_to_other ? m_pOtherGO : m_pActorGO)) return;
 			for (u32 j = 0; j < CurrentItem()->ChildsCount(); ++j) {
 				PIItem _itm = (PIItem)(CurrentItem()->Child(j)->m_pData);
 				TransferItem(_itm, m_pActorGO, m_pOtherGO);
@@ -780,7 +770,6 @@ void CUICarBodyWnd::MoveItems(CUICellItem* itm, bool b_all)
 	}
 	else{ // other -> actor
 		if (b_all) {
-			if (!CanTakeStack(itm, actor_to_other ? m_pOtherGO : m_pActorGO)) return;
 			for (u32 j = 0; j < CurrentItem()->ChildsCount(); ++j) {
 				PIItem _itm = (PIItem)(CurrentItem()->Child(j)->m_pData);
 				TransferItem(_itm, m_pOtherGO, m_pActorGO);
@@ -825,7 +814,7 @@ void CUICarBodyWnd::DropItems(bool b_all)
 
 	SetCurrentItem(NULL);
 
-	UpdateWeightVolume();
+	UpdateWeight();
 
 	PlaySnd(eInvDropItem);
 }
@@ -937,8 +926,6 @@ bool CUICarBodyWnd::TransferItem(PIItem itm, CGameObject* owner_from, CGameObjec
 
 	itm->Transfer(owner_from->ID(), owner_to->ID());
 
-	/*Msg("~ item [%s] transfered from [%s] to [%s]", itm->Name(), owner_from->Name(), owner_to->Name());*/
-
 	return true;
 }
 
@@ -969,55 +956,20 @@ bool CUICarBodyWnd::CanMoveToOther(PIItem pItem, CGameObject* owner_to) const {
 	if (smart_cast<CBaseMonster*>(owner_to)) return false;
 	if (!CheckMonsterAndKnife()) return false;
 	bool can_move{};
-	auto owner	= smart_cast<CInventoryOwner*>(owner_to);
-	auto box	= smart_cast<IInventoryBox*>(owner_to);
-	if (owner) {
+	if (auto owner = smart_cast<CInventoryOwner*>(owner_to)) {
 		can_move = owner->inventory().CanTakeItem(pItem);
 	}
-	else if (box) {
+	else if (auto box = smart_cast<IInventoryBox*>(owner_to)) {
 		can_move = box->CanTakeItem(pItem);
 	}
 	return can_move;
 }
 
-void CUICarBodyWnd::UpdateWeightVolume(bool only_for_actor) {
+void CUICarBodyWnd::UpdateWeight() {
 	InventoryUtilities::UpdateWeight(*m_pUIOurWeightWnd);
-	InventoryUtilities::UpdateVolume(m_pActorGO, *m_pUIOurVolWnd);
-	m_pUIOurVolWnd->SetVisible(Core.Features.test(xrCore::Feature::inventory_volume));
-	if (only_for_actor) return;
-	InventoryUtilities::UpdateVolume(m_pOtherGO, *m_pUIOthersVolWnd);
 }
 
-float CUICarBodyWnd::GetStackVolume(CUICellItem* ci) const {
-	float total_vol{};
-	if (!ci) return total_vol;
-	u32 cnt = ci->ChildsCount();
-	PIItem item = (PIItem)ci->m_pData;
-	total_vol += item->Volume();
-	for (u32 i = 0; i < cnt; ++i) {
-		CUICellItem* _ci = ci->Child(i);
-		PIItem		_item = (PIItem)_ci->m_pData;
-		total_vol += _item->Volume();
-	}
-	return total_vol;
-}
-
-bool CUICarBodyWnd::CanTakeStack(CUICellItem* ci, CGameObject* owner_to) const {
-	bool can_take{};
-	float stack_volume = GetStackVolume(ci);
-	auto owner = smart_cast<CInventoryOwner*>(owner_to);
-	auto box = smart_cast<IInventoryBox*>(owner_to);
-	if (owner) {
-		can_take = owner->IsVolumeUnlimited() ? true : owner->GetCarryVolume() + stack_volume <= owner->MaxCarryVolume();
-	}
-	else if (box) {
-		can_take = box->IsVolumeUnlimited() ? true : box->GetCarryVolume() + stack_volume <= box->MaxCarryVolume();
-	}
-	/*Msg("%s: [%s]", __FUNCTION__, can_take ? "true" : "false");*/
-	return can_take;
-}
-
-void CUICarBodyWnd::CheckForcedWeightVolumeUpdate() {
+void CUICarBodyWnd::CheckForcedWeightUpdate() {
 	bool need_update{};
 	auto place_to_search = m_pActorInventoryOwner->inventory().GetActiveArtefactPlace();
 	for (const auto& item : place_to_search) {
@@ -1035,7 +987,7 @@ void CUICarBodyWnd::CheckForcedWeightVolumeUpdate() {
 		}
 	}
 	if (need_update)
-		UpdateWeightVolume(true);
+		UpdateWeight();
 }
 
 bool CUICarBodyWnd::CheckMonsterAndKnife() const {
@@ -1073,7 +1025,7 @@ void CUICarBodyWnd::DisassembleItem(bool b_all) {
 	}
 	CurrentIItem()->Disassemble();
 	SetCurrentItem(nullptr);
-	UpdateWeightVolume();
+	UpdateWeight();
 }
 
 void CUICarBodyWnd::DetachAddon(const char* addon_name, bool for_all)

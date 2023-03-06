@@ -151,15 +151,6 @@ void CGrenade::Throw()
 	}
 	inherited::Throw			();
 
-	if (m_pCurrentInventory->GetOwner())
-	{
-		CActor* pActor = smart_cast<CActor*>(m_pCurrentInventory->GetOwner());
-		if (pActor)
-		{
-			Actor()->set_state_wishful(Actor()->get_state_wishful() & (~mcSprint));
-		}
-	}
-
 	m_fake_missile->processing_activate();//@sliph
 	m_thrown = true;
 	
@@ -215,7 +206,7 @@ void CGrenade::PutNextToSlot()
 	if (m_pCurrentInventory){
 		auto& inv = m_pCurrentInventory;
 		auto _grenade_slot = this->GetSlot();
-		inv->Ruck(this, true);
+		inv->Ruck(this);
 		inv->Belt(this);
 		auto pNext = smart_cast<CGrenade*>(inv->Same(this, false));
 		if (!pNext)
@@ -298,12 +289,12 @@ bool CGrenade::Action(s32 cmd, u32 flags)
 							tgt = curr_it->second;
 						else
 							tgt = tmp.begin()->second;
-						inv->Ruck(this, true);
+						inv->Ruck(this);
 						inv->SetActiveSlot(NO_ACTIVE_SLOT);
 						inv->Slot(tgt);
 						if (!inv->Vest(this))						//поточну гранату до розгрузки
 							if (!inv->Belt(this))					//якщо ні то у пояс
-								if (inv->CanPutInSlot(this, true))	//перевіримо так щоб вільний слот був призначено автоматично
+								if (inv->CanPutInSlot(this))	//перевіримо так щоб вільний слот був призначено автоматично
 									inv->Slot(this);				//та пхнемо у слот якщо нікуди не лізе
 					}
 				}

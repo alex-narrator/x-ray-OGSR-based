@@ -1977,16 +1977,6 @@ float CWeaponMagazined::Weight() const{
 	return res;
 }
 
-float CWeaponMagazined::Volume() const{
-	float res = inherited::Volume();
-
-	//додамо обсяг магазину (так це не для кожної зброї підходить але поки так)
-	if (GetMagazineEmptySect())
-		res += READ_IF_EXISTS(pSettings, r_float, GetMagazineEmptySect(), "inv_volume", .0f);
-
-	return res;
-}
-
 void CWeaponMagazined::ChangeAttachedSilencerCondition(float fDeltaCondition){
 	if (fis_zero(m_fAttachedSilencerCondition)) return;
 	m_fAttachedSilencerCondition += fDeltaCondition;

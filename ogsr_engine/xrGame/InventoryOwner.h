@@ -145,11 +145,6 @@ public:
 	virtual float GetCarryWeight			() const;
 	virtual float MaxCarryWeight			() const;
 
-	virtual float GetCarryVolume			() const;
-	virtual float MaxCarryVolume			() const;
-
-	virtual bool IsVolumeUnlimited			() const /*{ return true; }*/;
-
 	virtual	void TryGroggyEffect			(float,int){};
 
 	virtual CCustomOutfit*					GetOutfit		() const {return nullptr;};
@@ -246,13 +241,6 @@ public:
 	virtual bool				NeedOsoznanieMode		() {return m_need_osoznanie_mode!=FALSE;}
 
   void SetNextItemSlot( u32 );
-
-  protected:
-	  //
-	  typedef associative_vector<shared_str, float>	DEFICITS;
-	  DEFICITS				m_deficits;
-	  float					deficit(const shared_str& section) const;
-	  //
 };
 
 #include "inventory_owner_inline.h"

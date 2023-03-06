@@ -66,13 +66,6 @@ void CUIItemInfo::Init(LPCSTR xml_name){
 		UIWeight->SetAutoDelete(true);
 		xml_init.InitStatic		(uiXml, "static_weight", 0, UIWeight);
 	}
-	if(uiXml.NavigateToNode("static_volume", 0) && Core.Features.test(xrCore::Feature::inventory_volume))
-	{
-		UIVolume				= xr_new<CUIStatic>();
-		AttachChild				(UIVolume);
-		UIVolume->SetAutoDelete	(true);
-		xml_init.InitStatic		(uiXml, "static_volume", 0, UIVolume);
-	}
 	if(uiXml.NavigateToNode("static_cost",0))
 	{
 		UICost					= xr_new<CUIStatic>();	 
@@ -157,10 +150,6 @@ void CUIItemInfo::InitItem(CInventoryItem* pInvItem)
 	if(UIWeight){
 		sprintf_s			(str, "%3.2f %s", pInvItem->Weight(), CStringTable().translate("st_kg").c_str());
 		UIWeight->SetText	(str);
-	}
-	if (UIVolume){
-		sprintf_s			(str, "%3.2f %s", pInvItem->Volume(), CStringTable().translate("st_l").c_str());
-		UIVolume->SetText	(str);
 	}
 	if(UICost){
 		sprintf_s			(str, "%d %s", pInvItem->Cost(), CStringTable().translate("ui_st_money_regional").c_str());		// will be owerwritten in multiplayer

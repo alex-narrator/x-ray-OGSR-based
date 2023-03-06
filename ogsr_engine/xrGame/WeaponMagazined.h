@@ -266,7 +266,6 @@ public:
 	virtual void	HandleCartridgeInChamber();
 
 	virtual float	Weight() const;
-	virtual float	Volume() const;
 
 	virtual void	LoadScopeParams		(LPCSTR);
 	virtual void	LoadLaserParams		(LPCSTR);

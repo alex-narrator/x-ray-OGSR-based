@@ -43,7 +43,7 @@ public:
 	virtual bool			OnMouse						(float x, float y, EUIMessages mouse_action);
 
 	void					UpdateLists_delayed			();
-	void					CheckForcedWeightVolumeUpdate();
+	void					CheckForcedWeightUpdate		();
 	bool					CheckMonsterAndKnife		() const;
 	void					TryPlayStabbing				(PIItem itm, CGameObject* owner_from);
 
@@ -62,9 +62,6 @@ protected:
 
 	CUIStatic*				m_pUIOurBagWnd;
 	CUIStatic*				m_pUIOthersBagWnd;
-
-	CUIStatic*				m_pUIOurVolWnd;
-	CUIStatic*				m_pUIOthersVolWnd;
 
 	CUIStatic*				m_pUIOurWeightWnd;
 
@@ -132,8 +129,6 @@ protected:
 	void						PlaySnd(eInventorySndAction a);
 
 	bool						CanMoveToOther		(PIItem pItem, CGameObject* owner_to) const;
-	void						UpdateWeightVolume	(bool only_for_actor = false);
-	float						GetStackVolume		(CUICellItem* ci) const;
-	bool						CanTakeStack		(CUICellItem* ci, CGameObject* owner_to) const;
+	void						UpdateWeight		();
 	bool						m_bShowAllInv{};
 };

@@ -191,13 +191,12 @@ public:
 			disable_dialog_break = 1ull << 18,
 			no_progress_bar_animation = 1ull << 19,
 			no_zone_posteffect = 1ull << 20,
-			inventory_volume = 1ull << 21,
-			artefacts_from_all = 1ull << 22,
-			knife_to_cut_parts = 1ull << 23,
-			pickup_check_overlaped = 1ull << 24,
-			stop_anim_playing = 1ull << 25,
-			scope_textures_autoresize = 1ull << 26,
-			use_luminocity = 1ull << 27;
+			artefacts_from_all = 1ull << 21,
+			knife_to_cut_parts = 1ull << 22,
+			pickup_check_overlaped = 1ull << 23,
+			stop_anim_playing = 1ull << 24,
+			scope_textures_autoresize = 1ull << 25,
+			use_luminocity = 1ull << 26;
 	};
 
 	void		_initialize	(LPCSTR ApplicationName, LogCallback cb=0, BOOL init_fs=TRUE, LPCSTR fs_fname=0);

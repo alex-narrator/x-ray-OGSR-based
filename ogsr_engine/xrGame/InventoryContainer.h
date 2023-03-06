@@ -31,8 +31,6 @@ public:
 	virtual float					GetContainmentArtefactEffect		(int) const;
 	virtual float					GetContainmentArtefactProtection	(int) const;
 
-	virtual	float					MaxCarryVolume						() const;
-
 	virtual bool					can_be_attached						() const override;
 
 	virtual void					Hit									(SHit* pHDS);
@@ -47,9 +45,6 @@ public:
 	virtual u32						GetSameItemCount					(shared_str) const;
 
 			void					AddUniqueItems						(TIItemContainer& items_container) const;
-
-virtual		bool					IsVolumeUnlimited					() const;
-			void					UpdateVolumeDropOut					();
 
 protected:
 			void					UpdateDropTasks						();

@@ -78,8 +78,6 @@ void CEatableItem::Load(LPCSTR section)
 	m_iStartPortionsNum			= READ_IF_EXISTS	(pSettings, r_s32, section, "eat_portions_num", 1);
 	VERIFY						(m_iPortionsNum < 10000);
 
-	m_bUsePortionVolume			= !!READ_IF_EXISTS(pSettings, r_bool, section, "use_portion_volume", false);
-
 	m_fSelfRadiationInfluence	= READ_IF_EXISTS(pSettings, r_float, section, "eat_radiation_self", 0.1f);
 
 	m_sUseMenuTip				= READ_IF_EXISTS(pSettings, r_string, section, "menu_use_tip", "st_use");
@@ -97,13 +95,10 @@ BOOL CEatableItem::net_Spawn				(CSE_Abstract* DC)
 		m_iPortionsNum = se_eat->m_portions_num;
 		if (m_iPortionsNum > 0) {
 			float   w = GetOnePortionWeight();
-			float   v = GetOnePortionVolume();
 			float   weight = w * m_iPortionsNum;
-			float   volume = v * m_iPortionsNum;
 			u32     c = GetOnePortionCost();
 			u32     cost = c * m_iPortionsNum;
 			SetWeight(weight);
-			SetVolume(volume);
 			SetCost(cost);
 		}
 	}
@@ -173,14 +168,10 @@ void CEatableItem::UseBy (CEntityAlive* entity_alive)
 	float   w = GetOnePortionWeight();
 	float   weight = m_weight - w;
 
-	float   v = GetOnePortionVolume();
-	float   volume = m_volume - v;
-
 	u32     c = GetOnePortionCost();
 	u32     cost = m_cost - c;
 
 	SetWeight	(weight);
-	SetVolume	(volume);
 	SetCost		(cost);
 }
 void CEatableItem::ZeroAllEffects()
@@ -203,26 +194,6 @@ float CEatableItem::GetOnePortionWeight()
 	}
 	else {
 		rest = weight;
-	}
-	return rest;
-}
-
-float CEatableItem::GetOnePortionVolume()
-{
-	float   rest = 0.0f;
-
-	if (!m_bUsePortionVolume)
-		return rest;
-
-	LPCSTR  sect = object().cNameSect().c_str();
-	float   volume = READ_IF_EXISTS(pSettings, r_float, sect, "inv_volume", 0.f);
-	s32     portions = GetStartPortionsNum();//pSettings->r_s32(sect, "eat_portions_num");
-
-	if (portions > 0) {
-		rest = volume / portions;
-	}
-	else {
-		rest = volume;
 	}
 	return rest;
 }
