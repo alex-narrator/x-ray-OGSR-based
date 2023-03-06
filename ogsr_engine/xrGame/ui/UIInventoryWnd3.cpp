@@ -133,7 +133,7 @@ void CUIInventoryWnd::ActivatePropertiesBox()
 			//reload AmmoBox
 			if (pAmmo->m_boxCurr < pAmmo->m_boxSize){
 				_ammo_sect = pAmmo->m_ammoSect.c_str();
-				if (inv->GetAmmo(_ammo_sect, true)){
+				if (inv->GetAmmoByLimit(_ammo_sect, true, false)){
 					sprintf(temp, "%s%s %s", _many, 
 						CStringTable().translate("st_load_ammo_type").c_str(),
 						CStringTable().translate(pSettings->r_string(_ammo_sect, "inv_name_short")).c_str());
@@ -145,7 +145,7 @@ void CUIInventoryWnd::ActivatePropertiesBox()
 		else if (pAmmo->IsBoxReloadableEmpty()){
 			for (u8 i = 0; i < pAmmo->m_ammoTypes.size(); ++i){
 				_ammo_sect = pAmmo->m_ammoTypes[i].c_str();
-				if (inv->GetAmmo(_ammo_sect, true)){
+				if (inv->GetAmmoByLimit(_ammo_sect, true, false)){
 					sprintf(temp, "%s%s %s", _many, 
 						CStringTable().translate("st_load_ammo_type").c_str(),
 						CStringTable().translate(pSettings->r_string(_ammo_sect, "inv_name_short")).c_str());

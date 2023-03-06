@@ -911,16 +911,6 @@ PIItem CInventory::GetAny(const char *name) const
 	return itm;
 }
 
-PIItem CInventory::GetAmmo(const char *name, bool forActor) const
-{
-	bool include_ruck = !forActor || Actor()->IsRuckAmmoPlacement();
-
-	PIItem itm = Get(name, include_ruck);
-	if (!include_ruck && !itm)
-		itm = GetFromSlots(name);
-	return itm;
-}
-
 PIItem CInventory::item(CLASS_ID cls_id) const
 {
 	for(const auto& item : m_all){
@@ -966,29 +956,6 @@ float CInventory::CalcTotalVolume()
 	return m_fTotalVolume;
 }
 
-u32 CInventory::dwfGetSameItemCount(LPCSTR caSection, bool SearchAll)
-{
-	u32			l_dwCount = 0;
-	TIItemContainer	&l_list = SearchAll ? m_all : m_ruck;
-	for(const auto& item : l_list){
-		if (item && !xr_strcmp(item->object().cNameSect(), caSection))
-            ++l_dwCount;
-	}
-	
-	return		(l_dwCount);
-}
-u32		CInventory::dwfGetGrenadeCount(LPCSTR caSection, bool SearchAll)
-{
-	u32			l_dwCount = 0;
-	TIItemContainer	&l_list = SearchAll ? m_all : m_ruck;
-	for(const auto& item : l_list){
-		if (item && (item->object().CLS_ID == CLSID_GRENADE_F1 || item->object().CLS_ID == CLSID_GRENADE_RGD5))
-			++l_dwCount;
-	}
-
-	return		(l_dwCount);
-}
-
 bool CInventory::bfCheckForObject(ALife::_OBJECT_ID tObjectID)
 {
 	for(const auto& item : m_all) {
@@ -1013,14 +980,14 @@ CInventoryItem *CInventory::get_object_by_id(ALife::_OBJECT_ID tObjectID)
 #include "script_game_object.h"
 bool CInventory::Eat(PIItem pIItem, CInventoryOwner* eater)
 {
-//	R_ASSERT(pIItem->m_pCurrentInventory==this);
 	//устанаовить съедобна ли вещь
 	CEatableItem* pItemToEat = smart_cast<CEatableItem*>(pIItem);
 	R_ASSERT				(pItemToEat);
 
-	auto eatem_eater = eater ? eater : m_pOwner;
+	if (!eater)
+		eater = m_pOwner;
 
-	CEntityAlive *entity_alive = smart_cast<CEntityAlive*>(eatem_eater);
+	CEntityAlive *entity_alive = smart_cast<CEntityAlive*>(eater);
 	R_ASSERT				(entity_alive);
 
 	if (Actor()->m_inventory == this)
@@ -1206,7 +1173,7 @@ bool CInventory::CanTakeItem(CInventoryItem *inventory_item) const
 		if((*it)->object().ID() == inventory_item->object().ID()) break;
 	VERIFY3(it == m_all.end(), "item already exists in inventory",*inventory_item->object().cName());
 
-	//перевантаження не враховуєтсья для актора
+	//перевантаження не враховується для актора
 	if(!OwnerIsActor() && (TotalWeight() + inventory_item->Weight() > m_pOwner->MaxCarryWeight()))
 		return false;
 
@@ -1360,8 +1327,8 @@ void CInventory::IterateAmmo( bool bSearchRuck, std::function<bool( const PIItem
 
 
 PIItem CInventory::GetAmmoByLimit(const char* name, bool forActor, bool limit_max) const {
-	PIItem box		= nullptr;
-	u32    limit	= 0;
+	PIItem box{};
+	u32    limit{};
 
 	auto callback = [&](const auto pIItem) -> bool {
 		if (!xr_strcmp(pIItem->object().cNameSect(), name)) {
@@ -1494,17 +1461,6 @@ u32 CInventory::GetSameItemCount(LPCSTR caSection, bool SearchRuck)
 	}
 
 	return		(l_dwCount);
-}
-
-//найти в слотах вещь с указанным именем
-PIItem CInventory::GetFromSlots(const char* name) const
-{
-	for (const auto& slot : m_slots) {
-		auto item = slot.m_pIItem;
-		if (item && item->Useful() && !xr_strcmp(item->object().cNameSect(), name))
-			return item;
-	}
-	return nullptr;
 }
 
 void CInventory::TryAmmoCustomPlacement(CInventoryItem* pIItem)

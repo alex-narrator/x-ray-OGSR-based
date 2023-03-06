@@ -87,7 +87,6 @@ public:
 	// Ищет на поясе или в рюкзаке IItem с указанным CLS_ID
 	PIItem					Get					(CLASS_ID cls_id,  bool bSearchRuck) const;
 	PIItem					GetAny				(const char *name) const;
-	PIItem					GetAmmo				(const char * name, bool forActor) const;
 
 	void   Iterate        ( bool, std::function<bool( const PIItem )> ) const;
 	void   IterateAmmo    ( bool, std::function<bool( const PIItem )> ) const;
@@ -98,9 +97,6 @@ public:
 	//search both (ruck and belt)
 	PIItem					item				(CLASS_ID cls_id) const;
 	
-	// get all the items with the same section name
-	virtual u32				dwfGetSameItemCount	(LPCSTR caSection, bool SearchAll = false);	
-	virtual u32				dwfGetGrenadeCount	(LPCSTR caSection, bool SearchAll);	
 	// get all the items with the same object id
 	virtual bool			bfCheckForObject	(ALife::_OBJECT_ID tObjectID);	
 	PIItem					get_object_by_id	(ALife::_OBJECT_ID tObjectID);
@@ -209,7 +205,6 @@ public:
 	PIItem					GetSame(const PIItem pIItem, bool bSearchRuck) const;	//получаем айтем из всего инвентаря или с пояса
 	//считаем предметы в рюкзаке или на поясе + в слотах
 	virtual u32				GetSameItemCount(LPCSTR caSection, bool SearchRuck);
-	PIItem					GetFromSlots(const char* name) const;						//получаем айтем из слотов
 	//размещение патронов на поясе при разрядке оружия в руках
 	void					TryAmmoCustomPlacement(CInventoryItem* pIItem);
 
