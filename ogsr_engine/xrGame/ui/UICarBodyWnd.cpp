@@ -37,8 +37,6 @@
 constexpr auto CAR_BODY_XML		= "carbody_new.xml";
 constexpr auto CARBODY_ITEM_XML = "carbody_item.xml";
 
-void move_item (u16 from_id, u16 to_id, u16 what_id);
-
 CUICarBodyWnd::CUICarBodyWnd()
 {
 	Init				();
@@ -818,11 +816,11 @@ void CUICarBodyWnd::DropItems(bool b_all)
 		for (u32 i = 0; i < cnt; ++i){
 			CUICellItem* itm = ci->PopChild();
 			PIItem			iitm = (PIItem)itm->m_pData;
-			InventoryUtilities::SendEvent_Item_Drop(iitm);
+			iitm->Drop();
 		}
 	}
 	TryPlayStabbing(CurrentIItem(), m_pOtherGO);
-	InventoryUtilities::SendEvent_Item_Drop(CurrentIItem());
+	CurrentIItem()->Drop();
 	old_owner->RemoveItem(ci, b_all);
 
 	SetCurrentItem(NULL);
@@ -931,37 +929,13 @@ bool CUICarBodyWnd::OnItemRButtonClick(CUICellItem* itm)
 	return						false;
 }
 
-void move_item (u16 from_id, u16 to_id, u16 what_id)
-{
-	NET_Packet P;
-	CGameObject::u_EventGen					(	P,
-												GE_TRANSFER_REJECT,
-												from_id
-											);
-
-	P.w_u16									(what_id);
-	CGameObject::u_EventSend				(P);
-
-	//другому инвентарю - взять вещь 
-	CGameObject::u_EventGen					(	P,
-												GE_TRANSFER_TAKE,
-												to_id
-											);
-	P.w_u16									(what_id);
-	CGameObject::u_EventSend				(P);
-
-}
-
 bool CUICarBodyWnd::TransferItem(PIItem itm, CGameObject* owner_from, CGameObject* owner_to)
 {
 	if (!CanMoveToOther(itm, owner_to)) return false;
 
 	TryPlayStabbing(itm, owner_from);
-	//
-	if (smart_cast<CInventoryOwner*>(owner_from))
-		itm->OnMoveOut(itm->m_eItemPlace);
 
-	move_item(owner_from->ID(), owner_to->ID(), itm->object().ID());
+	itm->Transfer(owner_from->ID(), owner_to->ID());
 
 	/*Msg("~ item [%s] transfered from [%s] to [%s]", itm->Name(), owner_from->Name(), owner_to->Name());*/
 

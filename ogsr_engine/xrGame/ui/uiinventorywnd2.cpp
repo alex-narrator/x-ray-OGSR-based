@@ -232,11 +232,11 @@ void CUIInventoryWnd::DropCurrentItem(bool b_all){
 		for(u32 i=0; i<cnt; ++i){
 			CUICellItem*	itm				= CurrentItem()->PopChild();
 			PIItem			iitm			= (PIItem)itm->m_pData;
-			InventoryUtilities::SendEvent_Item_Drop(iitm);
+			iitm->Drop();
 		}
 	}
 
-	InventoryUtilities::SendEvent_Item_Drop(CurrentIItem());
+	CurrentIItem()->Drop();
 	SetCurrentItem			(NULL);
 	UpdateWeightVolume		();
 

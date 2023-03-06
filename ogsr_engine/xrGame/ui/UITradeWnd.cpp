@@ -813,14 +813,12 @@ void CUITradeWnd::PerformTrade()
 		}
 	}else
 	{
-		string256				deal_refuse_text; //строка с текстом сообщения-отказа при невозмжности совершить торговую сделку
-		//условия для формирования текста
-		LPCSTR                  trader_name = others_money < 0 ? m_pOthersInvOwner->Name() : m_pInvOwner->Name(); //от чьего имени выдаётся сообщение
-		STRING_ID               refusal_text = Actor()->HasPDAWorkable() ? "st_not_enough_money_to_trade" : "st_not_enough_money_to_barter"; //текст сообщения отказа в зависимости от торговля/бартер
-		//показываем статик с текстом отказа
-		m_uidata->UIDealMsg = HUD().GetUI()->UIGame()->AddCustomStatic("not_enough_money", true); //показать статик
-		strconcat(sizeof(deal_refuse_text), deal_refuse_text, trader_name, ": ", CStringTable().translate(refusal_text).c_str()); //сформировать текст
-		m_uidata->UIDealMsg->wnd()->SetText(deal_refuse_text); //задать текст статику
+		string256 deal_refuse_text; //строка с текстом сообщения-отказа при невозмжности совершить торговую сделку
+		auto trader_name = others_money < 0 ? m_pOthersInvOwner->Name() : m_pInvOwner->Name();
+		auto refusal_text = Actor()->HasPDAWorkable() ? "st_not_enough_money_to_trade" : "st_not_enough_money_to_barter";
+		m_uidata->UIDealMsg = HUD().GetUI()->UIGame()->AddCustomStatic("not_enough_money", true);
+		sprintf(deal_refuse_text, "%s: %s", trader_name, CStringTable().translate(refusal_text).c_str());
+		m_uidata->UIDealMsg->wnd()->SetText(deal_refuse_text);
 
 		m_uidata->UIDealMsg->m_endTime	= Device.fTimeGlobal+1.0f;// sec
 	}
@@ -1158,11 +1156,11 @@ void CUITradeWnd::DropItems(bool b_all)
 		for (u32 i = 0; i < cnt; ++i){
 			CUICellItem* itm = ci->PopChild();
 			PIItem			iitm = (PIItem)itm->m_pData;
-			InventoryUtilities::SendEvent_Item_Drop(iitm);
+			iitm->Drop();
 		}
 	}
 
-	InventoryUtilities::SendEvent_Item_Drop(CurrentIItem());
+	CurrentIItem()->Drop();
 
 	owner_list->RemoveItem(ci, b_all);
 

@@ -693,9 +693,3 @@ void InventoryUtilities::TryAttachWpnAddonIcons(CUIStatic* _main_icon, PIItem _i
 
 	delete_data(cell_item);
 }
-
-void InventoryUtilities::SendEvent_Item_Drop(PIItem	pItem)
-{
-	pItem->OnMoveOut(pItem->m_eItemPlace);
-	pItem->SetDropManual(TRUE);
-}

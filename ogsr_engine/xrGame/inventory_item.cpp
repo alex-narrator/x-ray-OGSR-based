@@ -1237,3 +1237,24 @@ float CInventoryItem::Weight() const {
 	}
 	return res;
 }
+
+void CInventoryItem::Drop() 
+{
+	OnMoveOut(m_eItemPlace);
+	SetDropManual(TRUE);
+}
+
+void CInventoryItem::Transfer(u16 from_id, u16 to_id)
+{
+	OnMoveOut(m_eItemPlace);
+
+	NET_Packet P;
+	CGameObject::u_EventGen(P, GE_TRANSFER_REJECT, from_id);
+	P.w_u16(object().ID());
+	CGameObject::u_EventSend(P);
+
+	//другому инвентарю - взять вещь 
+	CGameObject::u_EventGen(P, GE_TRANSFER_TAKE, to_id);
+	P.w_u16(object().ID());
+	CGameObject::u_EventSend(P);
+}

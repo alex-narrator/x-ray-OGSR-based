@@ -373,6 +373,10 @@ public:
 	virtual bool					HasArmorToDisplay	(int);
 
 	virtual float					GetPowerLoss		() { return 1.f; };
+
+	virtual void					Drop();
+			void					Transfer(u16 from_id, u16 to_id);
+
 protected:
 	HitImmunity::HitTypeSVec		m_HitTypeProtection;
 

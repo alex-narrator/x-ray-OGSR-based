@@ -1626,27 +1626,16 @@ void CInventory::BackpackItemsTransfer(CInventoryItem* container, bool move_to_c
 	auto container_id = container->object().ID();
 	if (move_to_container) {
 		for (const auto& item : m_ruck) {
-			TransferItem(actor_id, container_id, item->object().ID());
+			item->Transfer(actor_id, container_id);
 		}
 	} else {
 		auto cont = smart_cast<CInventoryContainer*>(container);
 		if (!cont) return;
 		for (const auto& item_id : cont->GetItems()) {
-			TransferItem(container_id, actor_id, item_id);
+			auto item = smart_cast<PIItem>(Level().Objects.net_Find(item_id));
+			item->Transfer(container_id, actor_id);
 		}
 	}
-}
-
-void CInventory::TransferItem(u16 from_id, u16 to_id, u16 what_id){
-	NET_Packet P;
-	//віддаємо річ
-	CGameObject::u_EventGen(P, GE_TRANSFER_REJECT, from_id);
-	P.w_u16(what_id);
-	CGameObject::u_EventSend(P);
-	//беремо річ
-	CGameObject::u_EventGen(P, GE_TRANSFER_TAKE, to_id);
-	P.w_u16(what_id);
-	CGameObject::u_EventSend(P);
 }
 
 void CInventory::UpdateVolumeDropOut()
