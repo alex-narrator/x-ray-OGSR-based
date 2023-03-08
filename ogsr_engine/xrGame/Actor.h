@@ -804,7 +804,7 @@ public:
 			float	GetItemBoostedParams		(int);
 			float	GetTotalArtefactsEffect		(int);
 
-	virtual void	TryGroggyEffect				(float, int);
+	virtual void	TryGroggyEffect				(SHit* pHDS);
 
 			bool	SaveGameAllowed				();
 			bool	InSafeHouse					();

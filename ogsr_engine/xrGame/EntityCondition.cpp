@@ -494,7 +494,8 @@ dsh: обработка перенесена ниже, вместе с eHitTypeF
 	//раны добавляются только живому
 		if (bAddWound && GetHealth() > 0) {
 			if (auto pInvOwner = smart_cast<CInventoryOwner*>(m_object)) {
-				pInvOwner->TryGroggyEffect(hit_power, pHDS->hit_type);
+				pHDS->power == hit_power;
+				pInvOwner->TryGroggyEffect(pHDS);
 			}
 			return AddWound(hit_power * m_fWoundBoneScale, pHDS->hit_type, pHDS->boneID);
 		} else

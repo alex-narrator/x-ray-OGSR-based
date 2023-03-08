@@ -140,12 +140,12 @@ public:
 
 	//возвращает текуший разброс стрельбы (в радианах) с учетом движения
 	virtual float GetWeaponAccuracy			() const;
-//	virtual float ArtefactsAddWeight ( bool = true ) const;
+
 	//максимальный переносимы вес
 	virtual float GetCarryWeight			() const;
 	virtual float MaxCarryWeight			() const;
 
-	virtual	void TryGroggyEffect			(float,int){};
+	virtual	void TryGroggyEffect			(SHit* pHDS){};
 
 	virtual CCustomOutfit*					GetOutfit		() const {return nullptr;};
 	virtual CInventoryContainer*			GetBackpack		() const {return nullptr;};

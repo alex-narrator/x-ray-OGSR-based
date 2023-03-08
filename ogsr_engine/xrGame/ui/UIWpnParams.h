@@ -5,9 +5,6 @@
 
 class CUIXml;
 
-#include "../script_export_space.h"
-
-struct SLuaWpnParams;
 class CInventoryItem;
 
 class CUIWpnParams : public CUIWindow 

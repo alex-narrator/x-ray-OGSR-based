@@ -209,29 +209,7 @@ void CUIEquipParams::SetInfo(CInventoryItem* obj){
 		}
 	}
 
-	auto pForend = smart_cast<CForend*>(obj);
-	if (pForend) {
-		bool addon_allowed = READ_IF_EXISTS(pSettings, r_bool, item_section, "grenade_launcher_allowed", true);
-		_param_name = CStringTable().translate("st_grenade_launcher_allowed").c_str();
-		sprintf_s(text_to_show, "%s %s", _param_name, addon_allowed ? CStringTable().translate("st_yes").c_str() : CStringTable().translate("st_no").c_str());
-		SetStaticParams(_uiXml, _path, _h)->SetText(text_to_show);
-		_h += list_item_h;
-
-		addon_allowed = READ_IF_EXISTS(pSettings, r_bool, item_section, "laser_allowed", true);
-		_param_name = CStringTable().translate("st_laser_allowed").c_str();
-		sprintf_s(text_to_show, "%s %s", _param_name, addon_allowed ? CStringTable().translate("st_yes").c_str() : CStringTable().translate("st_no").c_str());
-		SetStaticParams(_uiXml, _path, _h)->SetText(text_to_show);
-		_h += list_item_h;
-
-		addon_allowed = READ_IF_EXISTS(pSettings, r_bool, item_section, "flashlight_allowed", true);
-		_param_name = CStringTable().translate("st_flashlight_allowed").c_str();
-		sprintf_s(text_to_show, "%s %s", _param_name, addon_allowed ? CStringTable().translate("st_yes").c_str() : CStringTable().translate("st_no").c_str());
-		SetStaticParams(_uiXml, _path, _h)->SetText(text_to_show);
-		_h += list_item_h;
-	}
-
-	auto pStock = smart_cast<CStock*>(obj);
-	if (pStock || pForend) {
+	if (smart_cast<CStock*>(obj) || smart_cast<CForend*>(obj)) {
 		_val = READ_IF_EXISTS(pSettings, r_float, item_section, "cam_dispersion_k", 0.f);
 		if (!fis_zero(_val)) {
 			_val *= 100.f;

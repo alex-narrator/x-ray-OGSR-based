@@ -558,7 +558,7 @@ bool CWeaponMagazinedWGrenade::CanAttach(PIItem pIItem)
 	   CSE_ALifeItemWeapon::eAddonAttachable == m_eGrenadeLauncherStatus &&
 	   0 == (m_flagsAddOnState&CSE_ALifeItemWeapon::eWeaponAddonGrenadeLauncher) &&
 	   std::find(m_glaunchers.begin(), m_glaunchers.end(), pIItem->object().cNameSect()) != m_glaunchers.end())
-	   return !m_bGrenadeLauncherRequiresForend || IsForendAttached() && READ_IF_EXISTS(pSettings, r_bool, GetForendName(), "grenade_launcher_allowed", true);//true;
+	   return true;
 	else
 		return inherited::CanAttach(pIItem);
 }

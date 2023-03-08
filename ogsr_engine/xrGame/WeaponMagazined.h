@@ -89,7 +89,6 @@ protected:
 			void	ApplySilencerKoeffs	();
 			void	ApplyStockParams	();
 			void	ApplyForendParams	();
-			void	DetachWForend		();
 
 	virtual void	state_Fire		(float dt);
 	virtual void	state_MagEmpty	(float dt);

@@ -1917,15 +1917,16 @@ bool CActor::HasRequiredTool(const shared_str& sect) {
 	return false;
 }
 
-void CActor::TryGroggyEffect(float hit_power, int hit_type) {
+void CActor::TryGroggyEffect(SHit* pHDS) {
 	if (GodMode() ||
 		fis_zero(m_fGroggyTreshold) ||
-		hit_power < m_fGroggyTreshold)
+		pHDS->damage() < m_fGroggyTreshold ||
+		!IsHitToHead(pHDS))
 		return;
 
 	//groggy effect
 	if (this == Level().CurrentControlEntity()) {
-		switch (hit_type)
+		switch (pHDS->type())
 		{
 		case ALife::eHitTypeFireWound:
 		case ALife::eHitTypeStrike:
@@ -1933,7 +1934,7 @@ void CActor::TryGroggyEffect(float hit_power, int hit_type) {
 		{
 			CEffectorCam* ce = Actor()->Cameras().GetCamEffector((ECamEffectorType)effGroggy);
 			if (!ce && !!m_GroggyEffector) {
-				AddEffector(this, effGroggy, "effector_groggy", hit_power);
+				AddEffector(this, effGroggy, "effector_groggy", pHDS->damage());
 			}
 			Fvector point = Position();
 			point.y += CameraHeight();

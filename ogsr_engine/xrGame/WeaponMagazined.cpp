@@ -866,12 +866,12 @@ bool CWeaponMagazined::CanAttach(PIItem pIItem)
 		m_eLaserStatus == ALife::eAddonAttachable &&
 		(m_flagsAddOnState & CSE_ALifeItemWeapon::eWeaponAddonLaser) == 0 &&
 		std::find(m_lasers.begin(), m_lasers.end(), pIItem->object().cNameSect()) != m_lasers.end())
-		return !m_bLaserRequiresForend || IsForendAttached() && READ_IF_EXISTS(pSettings, r_bool, GetForendName(), "laser_allowed", true);//true;
+		return true;
 	else if (pFlashlight &&
 		m_eFlashlightStatus == ALife::eAddonAttachable &&
 		(m_flagsAddOnState & CSE_ALifeItemWeapon::eWeaponAddonFlashlight) == 0 &&
 		std::find(m_flashlights.begin(), m_flashlights.end(), pIItem->object().cNameSect()) != m_flashlights.end())
-		return !m_bFlashlightRequiresForend || IsForendAttached() && READ_IF_EXISTS(pSettings, r_bool, GetForendName(), "flashlight_allowed", true);//true;
+		return true;
 	else if (pStock &&
 		m_eStockStatus == ALife::eAddonAttachable &&
 		(m_flagsAddOnState & CSE_ALifeItemWeapon::eWeaponAddonStock) == 0 &&
@@ -986,7 +986,6 @@ bool CWeaponMagazined::Attach(PIItem pIItem, bool b_send_event)
 		m_cur_forend = (u8)std::distance(m_forends.begin(), it);
 		m_flagsAddOnState |= CSE_ALifeItemWeapon::eWeaponAddonForend;
 		result = true;
-		DetachWForend();
 	}
 
 	if(result){
@@ -1084,7 +1083,6 @@ bool CWeaponMagazined::Detach(const char* item_section_name, bool b_spawn_item, 
 		//
 		m_cur_forend = 0;
 		//
-		DetachWForend();
 		UpdateAddonsVisibility();
 		InitAddons();
 		return CInventoryItemObject::Detach(item_section_name, b_spawn_item, item_condition);
@@ -1347,15 +1345,6 @@ void CWeaponMagazined::ApplyForendParams() {
 	}
 	m_fAimInertionK += AI_k;
 	m_fAimControlInertionK += CI_k;
-}
-
-void CWeaponMagazined::DetachWForend() {
-	if (GrenadeLauncherAttachable() && IsGrenadeLauncherAttached())
-		Detach(GetGrenadeLauncherName().c_str(), true);
-	if (LaserAttachable() && IsLaserAttached())
-		Detach(GetLaserName().c_str(), true);
-	if (FlashlightAttachable() && IsFlashlightAttached())
-		Detach(GetFlashlightName().c_str(), true);
 }
 
 void CWeaponMagazined::LoadLaserParams(LPCSTR section) {
