@@ -365,7 +365,6 @@ void CWeapon::Load		(LPCSTR section)
 				m_glaunchers.push_back(glauncher_section);
 				m_highlightAddons.push_back(glauncher_section);
 			}
-			m_bGrenadeLauncherRequiresForend = READ_IF_EXISTS(pSettings, r_bool, section, "grenade_launcher_requires_forend", false);
 		}
 	}
 	if (m_eLaserStatus == ALife::eAddonAttachable){
@@ -377,7 +376,6 @@ void CWeapon::Load		(LPCSTR section)
 				m_lasers.push_back(laser_section);
 				m_highlightAddons.push_back(laser_section);
 			}
-			m_bLaserRequiresForend = READ_IF_EXISTS(pSettings, r_bool, section, "laser_requires_forend", false);
 		}
 	}
 	if (m_eFlashlightStatus == ALife::eAddonAttachable){
@@ -389,7 +387,6 @@ void CWeapon::Load		(LPCSTR section)
 				m_flashlights.push_back(flashlight_section);
 				m_highlightAddons.push_back(flashlight_section);
 			}
-			m_bFlashlightRequiresForend = READ_IF_EXISTS(pSettings, r_bool, section, "flashlight_requires_forend", false);
 		}
 	}
 	if (m_eStockStatus == ALife::eAddonAttachable) {

@@ -15,7 +15,6 @@ public:
 		eReady,
 		eThrow,
 		eThrowEnd,
-		eKick,
 	};
 							CMissile					();
 	virtual					~CMissile					();

@@ -244,11 +244,6 @@ public:
 	shared_str m_sHud_wpn_magazine_bone;
 	shared_str m_sHud_wpn_stock_bone;
 
-	bool
-		m_bGrenadeLauncherRequiresForend{},
-		m_bLaserRequiresForend{},
-		m_bFlashlightRequiresForend{};
-
 private:
 	xr_vector<shared_str> hidden_bones;
 	xr_vector<shared_str> hud_hidden_bones;

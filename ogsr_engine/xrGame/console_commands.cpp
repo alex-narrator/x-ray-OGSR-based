@@ -852,7 +852,7 @@ public:
 		}
 
 		if (auto tpGame = smart_cast<game_sv_Single*>(Level().Server->game)) {
-			for (int i = 0; i < count; ++i) {
+			for (u32 i = 0; i < count; ++i) {
 				if(to_inv)
 					Level().spawn_item(section, Actor()->Position(), false, Actor()->ID());
 				else

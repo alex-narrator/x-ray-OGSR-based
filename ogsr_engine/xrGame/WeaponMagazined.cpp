@@ -466,9 +466,6 @@ void CWeaponMagazined::OnStateSwitch(u32 S, u32 oldState)
 	case eShutter:
 		switch2_Shutter();
 		break;
-	case eKick:
-		switch2_Kick();
-		break;
 	}
 }
 
