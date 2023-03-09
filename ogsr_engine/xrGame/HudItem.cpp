@@ -18,7 +18,6 @@
 #include "HUDManager.h"
 #include "Weapon.h"
 #include "ActorCondition.h"
-#include "ai_sounds.h"
 
 ENGINE_API extern float psHUD_FOV_def;
 
@@ -59,10 +58,12 @@ void CHudItem::Load(LPCSTR section)
 		hud_recalc_koef = READ_IF_EXISTS(pSettings, r_float, hud_sect, "hud_recalc_koef", 1.35f); //На калаше при 1.35 вроде норм смотрится, другим стволам возможно придется подбирать другие значения.
 	}
 
-	HUD_SOUND::LoadSound(section, !!pSettings->line_exist(section, "snd_on_item_take") ? "snd_on_item_take"	: "snd_draw", sndOnItemTake, SOUND_TYPE_ITEM_TAKING);
-	HUD_SOUND::LoadSound(section, !!pSettings->line_exist(section, "snd_check_gear") ? "snd_check_gear" : "snd_draw", sndCheckGear, SOUND_TYPE_ITEM_USING);
-	if(!!pSettings->line_exist(section, "snd_checkout"))
-		HUD_SOUND::LoadSound(section, "snd_checkout", sndCheckout, SOUND_TYPE_ITEM_USING);
+	if (pSettings->line_exist(section, "snd_on_item_take"))
+		HUD_SOUND::LoadSound(section, "snd_on_item_take", sndOnItemTake);
+	if (pSettings->line_exist(section, "snd_check_gear"))
+		HUD_SOUND::LoadSound(section, "snd_check_gear", sndCheckGear);
+	if(pSettings->line_exist(section, "snd_checkout"))
+		HUD_SOUND::LoadSound(section, "snd_checkout", sndCheckout);
 
 	m_animation_slot	= pSettings->r_u32(section,"animation_slot");
 
@@ -191,6 +192,8 @@ void CHudItem::Load(LPCSTR section)
 
 void CHudItem::PlaySound(HUD_SOUND& hud_snd, const Fvector& position, bool overlap)
 {
+	if (hud_snd.sounds.empty())
+		return;
 	HUD_SOUND::PlaySound(hud_snd, position, object().H_Root(), !!GetHUDmode(), false, overlap);
 }
 
@@ -557,17 +560,17 @@ void CHudItem::PlayAnimIdleSprint()
 
 void CHudItem::PlayAnimOnItemTake(){
 	AnimationExist("anm_on_item_take") ? PlayHUDMotion("anm_on_item_take", true, GetState()) : PlayHUDMotion({ "anim_draw", "anm_show" }, true, GetState(), false);
-	HUD_SOUND::PlaySound(sndOnItemTake, object().H_Parent()->Position(), object().H_Parent(), true);
+	PlaySound(sndOnItemTake, object().H_Parent()->Position());
 }
 
 void CHudItem::PlayAnimCheckout(){
 	AnimationExist("anm_checkout") ? PlayHUDMotion("anm_checkout", true, GetState()) : PlayHUDMotion({ "anim_idle", "anm_bore" }, true, GetState(), false);
-	HUD_SOUND::PlaySound(sndCheckout, object().H_Parent()->Position(), object().H_Parent(), true);
+	PlaySound(sndCheckout, object().H_Parent()->Position());
 }
 
 void CHudItem::PlayAnimCheckGear(){
 	AnimationExist("anm_check_gear") ? PlayHUDMotion("anm_check_gear", true, GetState()) :	PlayHUDMotion({ "anim_draw", "anm_show" }, true, GetState(), false);
-	HUD_SOUND::PlaySound(sndCheckGear, object().H_Parent()->Position(), object().H_Parent(), true);
+	PlaySound(sndCheckGear, object().H_Parent()->Position());
 }
 
 void CHudItem::PlayAnimKick() {
@@ -752,11 +755,11 @@ void CHudItem::UpdateCollision(Fmatrix& trans) {
 	curr_offs_final.mul(1.f - m_fZoomRotationFactor);
 	curr_rot_final.mul(1.f - m_fZoomRotationFactor);
 
-	Fmatrix hud_rotation;
+	Fmatrix hud_rotation{};
 	hud_rotation.identity();
 	hud_rotation.rotateX(curr_rot_final.x);
 
-	Fmatrix hud_rotation_y;
+	Fmatrix hud_rotation_y{};
 	hud_rotation_y.identity();
 	hud_rotation_y.rotateY(curr_rot_final.y);
 	hud_rotation.mulA_43(hud_rotation_y);
@@ -1162,7 +1165,7 @@ APPLY_EFFECTS:
 		{
 			hud_rotation.rotateX(zr_rot.x);
 
-			Fmatrix hud_rotation_y;
+			Fmatrix hud_rotation_y{};
 			hud_rotation_y.identity();
 			hud_rotation_y.rotateY(zr_rot.y);
 			hud_rotation.mulA_43(hud_rotation_y);

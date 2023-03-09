@@ -62,8 +62,7 @@ void CWeaponMagazinedWGrenade::Load	(LPCSTR section)
 	HUD_SOUND::LoadSound(section,"snd_reload_grenade"	, sndReloadG	, m_eSoundReload);
 	HUD_SOUND::LoadSound(section,"snd_switch"			, sndSwitch		, m_eSoundReload);
 	//
-	bool b_shutter_g_sound = !!pSettings->line_exist(section, "snd_shutter_g");
-	HUD_SOUND::LoadSound(section, b_shutter_g_sound ? "snd_shutter_g" : "snd_draw", sndShutterG, m_eSoundShutter);
+	HUD_SOUND::LoadSound(section, pSettings->line_exist(section, "snd_shutter_g") ? "snd_shutter_g" : "snd_draw", sndShutterG, m_eSoundShutter);
 
 	m_sFlameParticles2 = pSettings->r_string(section, "grenade_flame_particles");
 
@@ -286,15 +285,11 @@ bool CWeaponMagazinedWGrenade::Action(s32 cmd, u32 flags)
 	
 	switch(cmd) 
 	{
-	// case kWPN_ZOOM:  ??? 
 	case kWPN_FUNC: 
 	{
-		//if (!IsZoomed())
-		//{
-			if (flags&CMD_START)
-				SwitchState(eSwitch);
-			return true;
-		//}
+		if (flags & CMD_START)
+			SwitchState(eSwitch);
+		return true;
 	}
 	}
 	return false;
@@ -310,9 +305,7 @@ void CWeaponMagazinedWGrenade::state_Fire(float dt)
 	if(m_bGrenadeMode)
 	{
 		fTime					-=dt;
-		Fvector					p1, d; 
-		p1.set	(get_LastFP2()); 
-		d.set	(get_LastFD());
+		Fvector					p1{ get_LastFP2() }, d{ get_LastFD() };
 		
 		if(H_Parent())
 		{ 
@@ -371,9 +364,7 @@ void CWeaponMagazinedWGrenade::SwitchState(u32 S)
 	//стрельнуть из подствольника
 	if(m_bGrenadeMode && GetState() == eIdle && S == eFire && getRocketCount() ) 
 	{
-		Fvector						p1, d; 
-		p1.set						(get_LastFP2());
-		d.set						(get_LastFD());
+		Fvector						p1{ get_LastFP2() }, d{ get_LastFD() };
 		CEntity*					E = smart_cast<CEntity*>(H_Parent());
 
 		if (E){
@@ -393,7 +384,7 @@ void CWeaponMagazinedWGrenade::SwitchState(u32 S)
 
 		p1.set(get_LastFP2());
 		
-		Fmatrix launch_matrix;
+		Fmatrix launch_matrix{};
 		launch_matrix.identity();
 		launch_matrix.k.set(d);
 		Fvector::generate_orthonormal_basis(launch_matrix.k,
@@ -413,7 +404,7 @@ void CWeaponMagazinedWGrenade::SwitchState(u32 S)
 
 			if (HasPick)
 			{
-				Fvector Transference;
+				Fvector Transference{};
 				Transference.mul(d, RQ.range);
 				Fvector res[2];
 #ifdef		DEBUG
@@ -540,8 +531,7 @@ void CWeaponMagazinedWGrenade::OnH_B_Independent(bool just_before_destroy)
 
 	SetPending(FALSE);
 	if (m_bGrenadeMode){
-		SetState		( eIdle );
-//.		SwitchMode	();
+		SetState(eIdle);
 		SetPending(FALSE);
 	}
 }
@@ -880,61 +870,53 @@ float CWeaponMagazinedWGrenade::GetWeaponDeterioration() const {
 //
 void CWeaponMagazinedWGrenade::PlayAnimShutter()
 {
-	VERIFY(GetState() == eShutter);
-	if (m_bGrenadeMode){
-		AnimationExist("anm_shutter_g") ? PlayHUDMotion("anm_shutter_g", true, GetState()) : PlayHUDMotion({ "anm_draw", "anm_show_g" }, true, GetState());
-	}else{
-		if (IsGrenadeLauncherAttached()){
-			AnimationExist("anm_shutter_w_gl") ? PlayHUDMotion("anm_shutter_w_gl", true, GetState()) : PlayHUDMotion({ "anim_draw", "anm_show_w_gl" }, true, GetState());
-		}else
-			inherited::PlayAnimShutter();
+	if (!IsGrenadeLauncherAttached()) {
+		inherited::PlayAnimShutter();
+		return;
 	}
+	else if (IsGrenadeMode())
+		AnimationExist("anm_shutter_g") ? PlayHUDMotion("anm_shutter_g", true, GetState()) : PlayHUDMotion({ "anm_draw", "anm_show_g" }, true, GetState());
+	else
+		AnimationExist("anm_shutter_w_gl") ? PlayHUDMotion("anm_shutter_w_gl", true, GetState()) : PlayHUDMotion({ "anim_draw", "anm_show_w_gl" }, true, GetState());
+	PlaySound(sndShutter, get_LastFP());
 }
 
 void CWeaponMagazinedWGrenade::PlayAnimCheckout()
 {
-	if (m_bGrenadeMode) {
+	if (!IsGrenadeLauncherAttached()) {
+		inherited::PlayAnimCheckout();
+		return;
+	}
+	else if (IsGrenadeMode())
 		AnimationExist("anm_checkout_g") ? PlayHUDMotion("anm_checkout_g", true, GetState()) : PlayHUDMotion("anm_bore_g", true, GetState());
-		HUD_SOUND::PlaySound(sndCheckout, H_Parent()->Position(), H_Parent(), true);
-	}
-	else {
-		if (IsGrenadeLauncherAttached()) {
-			AnimationExist("anm_checkout_w_gl") ? PlayHUDMotion("anm_checkout_w_gl", true, GetState()) : PlayHUDMotion("anm_bore_w_gl", true, GetState());
-			HUD_SOUND::PlaySound(sndCheckout, H_Parent()->Position(), H_Parent(), true);
-		}else
-			inherited::PlayAnimCheckout();
-	}
+	else
+		AnimationExist("anm_checkout_w_gl") ? PlayHUDMotion("anm_checkout_w_gl", true, GetState()) : PlayHUDMotion("anm_bore_w_gl", true, GetState());
+	PlaySound(sndCheckout, H_Parent()->Position());
 }
 
 void CWeaponMagazinedWGrenade::PlayAnimCheckGear()
 {
-	VERIFY(GetState() == eShutter);
-	if (m_bGrenadeMode) {
+	if (!IsGrenadeLauncherAttached()) {
+		inherited::PlayAnimCheckGear();
+		return;
+	}
+	else if (IsGrenadeMode())
 		AnimationExist("anm_check_gear_g") ? PlayHUDMotion("anm_check_gear_g", true, GetState()) : PlayHUDMotion({ "anm_draw", "anm_show_g" }, true, GetState());
-		HUD_SOUND::PlaySound(sndCheckGear, H_Parent()->Position(), H_Parent(), true);
-	}
-	else {
-		if (IsGrenadeLauncherAttached()) {
-			AnimationExist("anm_check_gear_w_gl") ? PlayHUDMotion("anm_check_gear_w_gl", true, GetState()) : PlayHUDMotion({ "anim_draw", "anm_show_w_gl" }, true, GetState());
-			HUD_SOUND::PlaySound(sndCheckGear, H_Parent()->Position(), H_Parent(), true);
-		}
-		else
-			inherited::PlayAnimCheckGear();
-	}
+	else
+		AnimationExist("anm_check_gear_w_gl") ? PlayHUDMotion("anm_check_gear_w_gl", true, GetState()) : PlayHUDMotion({ "anim_draw", "anm_show_w_gl" }, true, GetState());
+	PlaySound(sndCheckGear, H_Parent()->Position());
 }
 
 void CWeaponMagazinedWGrenade::PlayAnimKick()
 {
-	if (m_bGrenadeMode) {
+	if (!IsGrenadeLauncherAttached()) {
+		inherited::PlayAnimKick();
+		return;
+	}
+	else if (IsGrenadeMode())
 		AnimationExist("anm_kick_g") ? PlayHUDMotion("anm_kick_g", true, GetState()) : PlayHUDMotion({ "anm_draw", "anm_show_g" }, true, GetState());
-	}
-	else {
-		if (IsGrenadeLauncherAttached()) {
-			AnimationExist("anm_kick_w_gl") ? PlayHUDMotion("anm_kick_w_gl", true, GetState()) : PlayHUDMotion({ "anim_draw", "anm_show_w_gl" }, true, GetState());
-		}
-		else
-			inherited::PlayAnimKick();
-	}
+	else
+		AnimationExist("anm_kick_w_gl") ? PlayHUDMotion("anm_kick_w_gl", true, GetState()) : PlayHUDMotion({ "anim_draw", "anm_show_w_gl" }, true, GetState());
 }
 
 bool CWeaponMagazinedWGrenade::HasDetachableMagazine(bool to_show) const {

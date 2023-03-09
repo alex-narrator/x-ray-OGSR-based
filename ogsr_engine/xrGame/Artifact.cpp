@@ -17,7 +17,6 @@
 #include "actor.h"
 #include "patrol_path_storage.h"
 #include "hudmanager.h"
-#include "ai_sounds.h"
 
 constexpr auto FASTMODE_DISTANCE = 50.f;	//distance to camera from sphere, when zone switches to fast update sequence;
 
@@ -95,15 +94,12 @@ void CArtefact::Load(LPCSTR section)
 	m_bCanSpawnZone = !!pSettings->line_exist("artefact_spawn_zones", section);
 	m_af_rank = READ_IF_EXISTS(pSettings, r_u8, section, "af_rank", 0);
 
-	if (pSettings->line_exist(section, "snd_draw")) {
-		HUD_SOUND::LoadSound(section, "snd_draw", sndShow, SOUND_TYPE_ITEM_TAKING);
-	}
-	if (pSettings->line_exist(section, "snd_holster")) {
-		HUD_SOUND::LoadSound(section, "snd_holster", sndHide, SOUND_TYPE_ITEM_HIDING);
-	}
-	if (pSettings->line_exist(section, "snd_activate")) {
-		HUD_SOUND::LoadSound(section, "snd_activate", sndActivate, SOUND_TYPE_ITEM_USING);
-	}
+	if (pSettings->line_exist(section, "snd_draw"))
+		HUD_SOUND::LoadSound(section, "snd_draw", sndShow);
+	if (pSettings->line_exist(section, "snd_holster"))
+		HUD_SOUND::LoadSound(section, "snd_holster", sndHide);
+	if (pSettings->line_exist(section, "snd_activate"))
+		HUD_SOUND::LoadSound(section, "snd_activate", sndActivate);
 }
 
 BOOL CArtefact::net_Spawn(CSE_Abstract* DC) 
@@ -341,8 +337,8 @@ void CArtefact::UpdateXForm()
 		Fmatrix& mR			= V->LL_GetTransform(u16(boneR));
 
 		// Calculate
-		Fmatrix				mRes;
-		Fvector				R,D,N;
+		Fmatrix				mRes{};
+		Fvector				R{}, D{}, N{};
 		D.sub				(mL.c,mR.c);	D.normalize_safe();
 		R.crossproduct		(mR.j,D);		R.normalize_safe();
 		N.crossproduct		(D,R);			N.normalize_safe();
@@ -383,21 +379,21 @@ void CArtefact::OnStateSwitch(u32 S, u32 oldState)
 	{ 
 		SetPending(TRUE);
 		PlayHUDMotion({ "anim_show", "anm_show" }, false, S);
-		HUD_SOUND::PlaySound(sndShow, Fvector{}, H_Parent(), true, false);
+		PlaySound(sndShow, H_Parent()->Position());
 	} break;
 	case eHiding:
 	{
 		if (oldState != eHiding) {
 			SetPending(TRUE);
 			PlayHUDMotion({ "anim_hide", "anm_hide" }, false, S);
-			HUD_SOUND::PlaySound(sndHide, Fvector{}, H_Parent(), true, false);
+			PlaySound(sndHide, H_Parent()->Position());
 		}
 	} break;
 	case eActivating:
 	{
 		SetPending(TRUE);
 		PlayHUDMotion({ "anim_activate", "anm_activate" }, false, S);
-		HUD_SOUND::PlaySound(sndActivate, Fvector{}, H_Parent(), true, false);
+		PlaySound(sndActivate, H_Parent()->Position());
 	} break;
 	case eIdle:
 	{ 
@@ -460,8 +456,7 @@ void CArtefact::SwitchAfParticles(bool bOn)
 		return;
 
 	if (bOn){
-		Fvector dir;
-		dir.set(0, 1, 0);
+		Fvector dir{ 0, 1, 0 };
 		CParticlesPlayer::StartParticles(m_sParticlesName, dir, ID(), -1, false);
 	}else{
 		CParticlesPlayer::StopParticles(m_sParticlesName, BI_NONE, true);
@@ -608,9 +603,7 @@ void SArtefactActivation::ChangeEffects()
 								state_def.m_light_color.b);
 	
 	if(state_def.m_particle.size()){
-		Fvector dir;
-		dir.set(0,1,0);
-
+		Fvector dir{ 0,1,0 };
 		m_af->CParticlesPlayer::StartParticles(	state_def.m_particle,
 												dir,
 												m_af->ID(),
@@ -667,7 +660,7 @@ void SArtefactActivation::SpawnAnomaly()
 		);
 		CSE_ALifeAnomalousZone*		AlifeZone = smart_cast<CSE_ALifeAnomalousZone*>(object);
 		VERIFY(AlifeZone);
-		CShapeData::shape_def		_shape;
+		CShapeData::shape_def		_shape{};
 		_shape.data.sphere.P.set	(0.0f,0.0f,0.0f);
 		_shape.data.sphere.R		= zone_radius;
 		_shape.type					= CShapeData::cfSphere;
@@ -793,7 +786,7 @@ void SArtefactDetectorsSupport::UpdateOnFrame()
 			}
 		}
 		float cos_et = _cos(deg2rad(45.f));
-		Fvector dir;
+		Fvector dir{};
 		dir.sub(m_destPoint, m_parent->Position()).normalize_safe();
 
 		Fvector v;

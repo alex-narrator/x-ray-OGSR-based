@@ -18,11 +18,8 @@ constexpr auto KNIFE_MATERIAL_NAME = "objects\\knife";
 
 CWeaponKnife::CWeaponKnife() : CWeapon("KNIFE") 
 {
-	m_attackStart			= false;
-	m_attackMotionMarksAvailable = false;
-	SetState				( eHidden );
-	SetNextState			( eHidden );
-	knife_material_idx		= (u16)-1;
+	SetState				(eHidden);
+	SetNextState			(eHidden);
 }
 
 CWeaponKnife::~CWeaponKnife()
@@ -39,13 +36,12 @@ void CWeaponKnife::Load	(LPCSTR section)
 
 	fWallmarkSize = pSettings->r_float(section,"wm_size");
 
-	HUD_SOUND::LoadSound(section,"snd_shoot"		, m_sndShot		, ESoundTypes(SOUND_TYPE_WEAPON_SHOOTING)		);
-	if (pSettings->line_exist(section, "snd_draw")) {
-		HUD_SOUND::LoadSound(section, "snd_draw", m_sndShow, SOUND_TYPE_ITEM_TAKING);
-	}
-	if (pSettings->line_exist(section, "snd_holster")) {
-		HUD_SOUND::LoadSound(section, "snd_holster", m_sndHide, SOUND_TYPE_ITEM_HIDING);
-	}
+	HUD_SOUND::LoadSound(section,"snd_shoot", m_sndShot, ESoundTypes(SOUND_TYPE_WEAPON_SHOOTING));
+
+	if (pSettings->line_exist(section, "snd_draw"))
+		HUD_SOUND::LoadSound(section, "snd_draw", m_sndShow);
+	if (pSettings->line_exist(section, "snd_holster"))
+		HUD_SOUND::LoadSound(section, "snd_holster", m_sndHide);
 	
 	knife_material_idx =  GMLib.GetMaterialIdx(KNIFE_MATERIAL_NAME);
 
@@ -274,7 +270,7 @@ void CWeaponKnife::switch2_Hiding()
 	FireEnd();
 	VERIFY(GetState() == eHiding);
 	PlayHUDMotion({ "anim_hide", "anm_hide" }, true, GetState());
-	HUD_SOUND::PlaySound(m_sndHide, Fvector{}, H_Parent(), true, false);
+	PlaySound(m_sndHide, H_Parent()->Position());
 	SetPending(TRUE);
 }
 
@@ -289,7 +285,7 @@ void CWeaponKnife::switch2_Showing()
 {
 	VERIFY(GetState() == eShowing);
 	PlayHUDMotion({ "anim_draw", "anm_show" }, false, GetState());
-	HUD_SOUND::PlaySound(m_sndShow, Fvector{}, H_Parent(), true, false);
+	PlaySound(m_sndShow, H_Parent()->Position());
 	SetPending(TRUE);
 }
 
@@ -381,11 +377,4 @@ void CWeaponKnife::LoadFireParams(LPCSTR section, LPCSTR prefix)
 	m_eHitType_2		= ALife::g_tfString2HitType(pSettings->r_string(section, "hit_type_2"));
 
 	m_eHitType_ZeroCondition = ALife::g_tfString2HitType(READ_IF_EXISTS(pSettings, r_string, section, "hit_type_zero_condition", "wound"));
-}
-
-void CWeaponKnife::GetBriefInfo(xr_string& str_name, xr_string& icon_sect_name, xr_string& str_count)
-{
-	str_name		= NameShort();
-	str_count		= "";
-	icon_sect_name	= *cNameSect();
 }

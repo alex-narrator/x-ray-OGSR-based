@@ -11,8 +11,8 @@ protected:
 	HUD_SOUND			m_sndShow;
 	HUD_SOUND			m_sndHide;
 
-	bool				m_attackStart;
-	bool				m_attackMotionMarksAvailable;
+	bool				m_attackStart{};
+	bool				m_attackMotionMarksAvailable{};
 
 protected:
 
@@ -30,24 +30,24 @@ protected:
 
 	virtual void		KnifeStrike					(u32 state, const Fvector& pos, const Fvector& dir);
 
-	float				fWallmarkSize;
-	u16					knife_material_idx;
+	float				fWallmarkSize{};
+	u16					knife_material_idx{ (u16)-1 };
 
-	float				m_fMinConditionHitPart; //минимальная доля хита при полном износе
+	float				m_fMinConditionHitPart{}; //минимальная доля хита при полном износе
 
 protected:	
 
-	ALife::EHitType		m_eHitType_1;
+	ALife::EHitType		m_eHitType_1{};
 	//float				fHitPower_1;
-	Fvector4			fvHitPower_1;
-	float				fHitImpulse_1;
+	Fvector4			fvHitPower_1{};
+	float				fHitImpulse_1{};
 
-	ALife::EHitType		m_eHitType_2;
+	ALife::EHitType		m_eHitType_2{};
 	//float				fHitPower_2;
-	Fvector4			fvHitPower_2;
-	float				fHitImpulse_2;
+	Fvector4			fvHitPower_2{};
+	float				fHitImpulse_2{};
 
-	ALife::EHitType		m_eHitType_ZeroCondition; //тип хита при полном износе
+	ALife::EHitType		m_eHitType_ZeroCondition{}; //тип хита при полном износе
 protected:
 	virtual void		LoadFireParams					(LPCSTR section, LPCSTR prefix);
 
@@ -66,8 +66,6 @@ public:
 
 
 	virtual bool		Action							(s32 cmd, u32 flags);
-
-	virtual void		GetBriefInfo					(xr_string& str_name, xr_string& icon_sect_name, xr_string& str_count);
 
 	bool				m_bIsQuickStab{};
 

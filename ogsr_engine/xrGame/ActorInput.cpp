@@ -229,10 +229,10 @@ void CActor::IR_OnKeyboardPress(int cmd){
 
 					if (iitm){
 						inventory().Eat(iitm);
-						strconcat(sizeof(str), str, CStringTable().translate("st_item_used").c_str(), ": ", iitm->Name());
+						sprintf(str, "%s: %s", CStringTable().translate("st_item_used").c_str(), iitm->Name());
 					}else{
 						inventory().Eat(itm);
-						strconcat(sizeof(str), str, CStringTable().translate("st_item_used").c_str(), ": ", itm->Name());
+						sprintf(str, "%s: %s", CStringTable().translate("st_item_used").c_str(), itm->Name());
 					}
 					HUD().GetUI()->AddInfoMessage("item_usage", str, false);
 				}
@@ -249,12 +249,12 @@ void CActor::IR_OnKeyboardPress(int cmd){
 	}break;
 	case kLASER_ON:
 	{
-		if (auto wpn = smart_cast<CWeapon*>(inventory().ActiveItem()))
+		if (auto wpn = smart_cast<CWeaponMagazined*>(inventory().ActiveItem()))
 			wpn->SwitchLaser(!wpn->IsLaserOn());
 	}break;
 	case kFLASHLIGHT:
 	{
-		if (auto wpn = smart_cast<CWeapon*>(inventory().ActiveItem()))
+		if (auto wpn = smart_cast<CWeaponMagazined*>(inventory().ActiveItem()))
 			wpn->SwitchFlashlight(!wpn->IsFlashlightOn());
 	}break;
 	case kKICK:
@@ -663,6 +663,7 @@ void CActor::ActorThrow(){
 	//Msg("power decreased on [%f]", mass_f / 50);
 }
 //
+#include "material_manager.h"
 void CActor::ActorKick(){
 	CGameObject* O = ObjectWeLookingAt();
 	if (!O)
@@ -705,6 +706,13 @@ void CActor::ActorKick(){
 			EA->character_physics_support()->movement()->ApplyImpulse(dir.normalize(), kick_impulse * alive_kick_power);
 		}
 	}
+	//зіграємо звук коллізії
+	CDB::TRI* pTri = Level().ObjectSpace.GetStaticTris() + RQ.element;
+	u16 kick_material = smart_cast<CHudItem*>(inventory().ActiveItem()) ? GMLib.GetMaterialIdx("objects\\knife") : GMLib.GetMaterialIdx("creatures\\medium");
+	SGameMtlPair* mtl_pair = GMLib.GetMaterialPair(kick_material, pTri->material);
+	if(!mtl_pair->CollideSounds.empty())
+		GET_RANDOM(mtl_pair->CollideSounds).play_no_feedback(nullptr, 0, 0, &Position(), &kick_impulse);
+	//
 	if (!GodMode())
 		conditions().ConditionJump(mass_f / 50);
 }

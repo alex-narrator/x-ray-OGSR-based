@@ -121,8 +121,8 @@ void CWeapon::UpdateXForm	()
 		Fmatrix& mL			= V->LL_GetTransform(u16(boneL));
 		Fmatrix& mR			= V->LL_GetTransform(u16(boneR));
 		// Calculate
-		Fmatrix				mRes;
-		Fvector				R,D,N;
+		Fmatrix				mRes{};
+		Fvector				R{}, D{}, N{};
 		D.sub				(mL.c,mR.c);	
 
 		if(fis_zero(D.magnitude()))
@@ -943,7 +943,7 @@ void CWeapon::UpdateLaser()
 				XFORM().transform_tiny(laser_pos, laserdot_world_attach_offset);
 			}
 
-			Fmatrix laserXForm;
+			Fmatrix laserXForm{};
 			laserXForm.identity();
 			laserXForm.k.set(laser_dir);
 			Fvector::generate_orthonormal_basis_normalized(laserXForm.k, laserXForm.j, laserXForm.i);
@@ -1007,7 +1007,7 @@ void CWeapon::UpdateFlashlight()
 				XFORM().transform_tiny(flashlight_pos_omni, flashlight_omni_world_attach_offset);
 			}
 
-			Fmatrix flashlightXForm;
+			Fmatrix flashlightXForm{};
 			flashlightXForm.identity();
 			flashlightXForm.k.set(flashlight_dir);
 			Fvector::generate_orthonormal_basis_normalized(flashlightXForm.k, flashlightXForm.j, flashlightXForm.i);
@@ -1017,7 +1017,7 @@ void CWeapon::UpdateFlashlight()
 			flashlight_glow->set_position(flashlight_pos);
 			flashlight_glow->set_direction(flashlightXForm.k);
 
-			Fmatrix flashlightomniXForm;
+			Fmatrix flashlightomniXForm{};
 			flashlightomniXForm.identity();
 			flashlightomniXForm.k.set(flashlight_dir_omni);
 			Fvector::generate_orthonormal_basis_normalized(flashlightomniXForm.k, flashlightomniXForm.j, flashlightomniXForm.i);
@@ -1118,7 +1118,7 @@ bool CWeapon::Action(s32 cmd, u32 flags)
 						m_set_next_ammoType_on_reload = GetNextAmmoType();
 						LPCSTR ammo_sect = pSettings->r_string(m_ammoTypes[m_set_next_ammoType_on_reload].c_str(), "inv_name_short");
 						string1024	str;
-						strconcat(sizeof(str), str, CStringTable().translate("st_next_ammo_type").c_str(), ": ", *CStringTable().translate(ammo_sect));
+						sprintf(str, "%s: %s", CStringTable().translate("st_next_ammo_type").c_str(), CStringTable().translate(ammo_sect).c_str());
 						HUD().GetUI()->AddInfoMessage("item_usage", str, false);
 					}
 				}
@@ -2384,7 +2384,7 @@ void CWeapon::SaveAttachableParams()
 	sprintf_s(buff, "%f,%f,%f", m_Offset.c.x, m_Offset.c.y, m_Offset.c.z);
 	pHudCfg.w_string(sect_name, "position", buff);
 
-	Fvector ypr;
+	Fvector ypr{};
 	m_Offset.getHPB(ypr.x, ypr.y, ypr.z);
 	ypr.mul(180.f / PI);
 	sprintf_s(buff, "%f,%f,%f", ypr.x, ypr.y, ypr.z);
