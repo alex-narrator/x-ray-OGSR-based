@@ -62,11 +62,6 @@ CWeapon::~CWeapon		()
 	xr_delete	(m_UIScope);
 	xr_delete	(m_UIScopeSecond);
 
-	laser_light_render.destroy();
-	flashlight_render.destroy();
-	flashlight_omni.destroy();
-	flashlight_glow.destroy();
-
 	delete_data(m_scopes);
 	delete_data(m_silencers);
 	delete_data(m_glaunchers);
@@ -554,8 +549,8 @@ BOOL CWeapon::net_Spawn		(CSE_Abstract* DC)
 	m_ammoType						= E->ammo_type;
 	SetState						(E->wpn_state);
 	SetNextState					(E->wpn_state);
-	//
-	bMisfire		= E->bMisfire;
+
+	bMisfire = E->bMisfire;
 	//addons check
 	if (ScopeAttachable() && IsScopeAttached() && E->m_cur_scope >= m_scopes.size()) {
 		Msg("! [%s]: %s: wrong scope current [%u/%u]", __FUNCTION__, cName().c_str(), E->m_cur_scope, m_scopes.size() - 1);
@@ -605,9 +600,6 @@ BOOL CWeapon::net_Spawn		(CSE_Abstract* DC)
 	}
 	m_cur_forend = E->m_cur_forend;
 
-	//
-	iMagazineSize	= E->m_MagazineSize;
-	//
 	if ( m_ammoType >= m_ammoTypes.size() ) {
 	  Msg( "! [%s]: %s: wrong m_ammoType[%u/%u]", __FUNCTION__, cName().c_str(), m_ammoType, m_ammoTypes.size() - 1 );
 	  m_ammoType = 0;
@@ -624,7 +616,7 @@ BOOL CWeapon::net_Spawn		(CSE_Abstract* DC)
 		// нож автоматически заряжается двумя патронами, хотя
 		// размер магазина у него 0. Что бы зря не ругаться, проверим
 		// что в конфиге размер магазина не нулевой.
-		if ( iMagazineSize && iAmmoElapsed > iMagazineSize ) {
+		if ( iMagazineSize && iAmmoElapsed > iMagazineSize && !HasDetachableMagazine()) {
 		  Msg( "! [%s]: %s: wrong iAmmoElapsed[%u/%u]", __FUNCTION__, cName().c_str(), iAmmoElapsed, iMagazineSize );
 		  iAmmoElapsed = iMagazineSize;
 		  auto se_obj = alife_object();
@@ -637,11 +629,6 @@ BOOL CWeapon::net_Spawn		(CSE_Abstract* DC)
 		for(int i = 0; i < iAmmoElapsed; ++i) 
 			m_magazine.push_back(m_DefaultCartridge);
 	}
-
-	if (IsLaserAttached())
-		m_bIsLaserOn = E->m_bIsLaserOn;
-	if (IsFlashlightAttached())
-		m_bIsFlashlightOn = E->m_bIsFlashlightOn;
 
 	m_bZoomMode = E->m_bZoom;
 	if (m_bZoomMode)	OnZoomIn();
@@ -697,11 +684,6 @@ void CWeapon::net_Export( CSE_Abstract* E ) {
   wpn->m_cur_stock		= m_cur_stock;
   wpn->m_cur_extender	= m_cur_extender;
   wpn->m_cur_forend		= m_cur_forend;
-  //
-  wpn->m_MagazineSize	= iMagazineSize;
-  //
-  wpn->m_bIsLaserOn = m_bIsLaserOn;
-  wpn->m_bIsFlashlightOn = m_bIsFlashlightOn;
 }
 
 void CWeapon::save(NET_Packet &output_packet){
@@ -889,9 +871,6 @@ void CWeapon::UpdateCL		()
         else
           m_idle_state = eIdle;
 
-	UpdateLaser();
-	UpdateFlashlight();
-
 	if (ParentIsActor())
 	{
 		bool b_shoots = ((GetState() == eFire) || (GetState() == eFire2));
@@ -900,143 +879,6 @@ void CWeapon::UpdateCL		()
 
 		if (Actor()->conditions().IsCantWalk() && IsZoomed())
 			OnZoomOut();
-	}
-}
-
-void SetToScreenCenter(Fvector& dir, Fvector& pos, float distance, CWeapon* wpn) {
-	auto pActor = smart_cast<CActor*>(wpn->H_Parent());
-	if (!pActor) return;
-	dir = pActor->Cameras().Direction();
-	pos = pActor->Cameras().Position();
-	pos.mad(pos, dir, distance);
-}
-
-void CWeapon::UpdateLaser()
-{
-	if (IsLaserAttached())
-	{
-		auto io = smart_cast<CInventoryOwner*>(H_Parent());
-		if (!laser_light_render->get_active() && IsLaserOn() && (!H_Parent() || (io && this == io->inventory().ActiveItem()))) {
-			laser_light_render->set_active(true);
-			UpdateAddonsVisibility();
-		}
-		else if (laser_light_render->get_active() && (!IsLaserOn() || !(!H_Parent() || (io && this == io->inventory().ActiveItem())))) {
-			laser_light_render->set_active(false);
-			UpdateAddonsVisibility();
-		}
-
-		if (laser_light_render->get_active()) {
-			laser_pos = get_LastFP();
-			Fvector laser_dir = get_LastFD();
-
-			if (GetHUDmode()) {
-				if (IsZoomed() && !IsRotatingToZoom()) {
-					SetToScreenCenter(laser_dir, laser_pos, laserdot_attach_aim_dist, this);
-
-				}else
-				if (laserdot_attach_bone.size()) {
-					GetBoneOffsetPosDir(laserdot_attach_bone, laser_pos, laser_dir, laserdot_attach_offset);
-					CorrectDirFromWorldToHud(laser_dir);
-				}
-			}
-			else {
-				XFORM().transform_tiny(laser_pos, laserdot_world_attach_offset);
-			}
-
-			Fmatrix laserXForm{};
-			laserXForm.identity();
-			laserXForm.k.set(laser_dir);
-			Fvector::generate_orthonormal_basis_normalized(laserXForm.k, laserXForm.j, laserXForm.i);
-
-			laser_light_render->set_position(laser_pos);
-			laser_light_render->set_rotation(laserXForm.k, laserXForm.i);
-
-			// calc color animator
-			if (laser_lanim)
-			{
-				int frame;
-				const u32 clr = laser_lanim->CalculateBGR(Device.fTimeGlobal, frame);
-
-				Fcolor fclr{ (float)color_get_B(clr), (float)color_get_G(clr), (float)color_get_R(clr), 1.f };
-				fclr.mul_rgb(laser_fBrightness / 255.f);
-				laser_light_render->set_color(fclr);
-			}
-		}
-	}
-}
-
-void CWeapon::UpdateFlashlight()
-{
-	if (IsFlashlightAttached())
-	{
-		auto io = smart_cast<CInventoryOwner*>(H_Parent());
-		if (!flashlight_render->get_active() && IsFlashlightOn() && (!H_Parent() || (io && this == io->inventory().ActiveItem()))) {
-			flashlight_render->set_active(true);
-			flashlight_omni->set_active(true);
-			flashlight_glow->set_active(true);
-			UpdateAddonsVisibility();
-		}
-		else if (flashlight_render->get_active() && (!IsFlashlightOn() || !(!H_Parent() || (io && this == io->inventory().ActiveItem())))) {
-			flashlight_render->set_active(false);
-			flashlight_omni->set_active(false);
-			flashlight_glow->set_active(false);
-			UpdateAddonsVisibility();
-		}
-
-		if (flashlight_render->get_active()) {
-			Fvector flashlight_pos_omni{}, flashlight_dir{}, flashlight_dir_omni{};
-
-			if (GetHUDmode()) {
-				if (IsZoomed() && !IsRotatingToZoom()) {
-					SetToScreenCenter(flashlight_dir, flashlight_pos, flashlight_attach_aim_dist, this);
-					SetToScreenCenter(flashlight_dir_omni, flashlight_pos_omni, flashlight_attach_aim_dist, this);
-				}
-				else {
-					GetBoneOffsetPosDir(flashlight_attach_bone, flashlight_pos, flashlight_dir, flashlight_attach_offset);
-					CorrectDirFromWorldToHud(flashlight_dir);
-
-					GetBoneOffsetPosDir(flashlight_attach_bone, flashlight_pos_omni, flashlight_dir_omni, flashlight_omni_attach_offset);
-					CorrectDirFromWorldToHud(flashlight_dir_omni);
-				}
-			}
-			else {
-				flashlight_dir = get_LastFD();
-				XFORM().transform_tiny(flashlight_pos, flashlight_world_attach_offset);
-
-				flashlight_dir_omni = get_LastFD();
-				XFORM().transform_tiny(flashlight_pos_omni, flashlight_omni_world_attach_offset);
-			}
-
-			Fmatrix flashlightXForm{};
-			flashlightXForm.identity();
-			flashlightXForm.k.set(flashlight_dir);
-			Fvector::generate_orthonormal_basis_normalized(flashlightXForm.k, flashlightXForm.j, flashlightXForm.i);
-			flashlight_render->set_position(flashlight_pos);
-			flashlight_render->set_rotation(flashlightXForm.k, flashlightXForm.i);
-
-			flashlight_glow->set_position(flashlight_pos);
-			flashlight_glow->set_direction(flashlightXForm.k);
-
-			Fmatrix flashlightomniXForm{};
-			flashlightomniXForm.identity();
-			flashlightomniXForm.k.set(flashlight_dir_omni);
-			Fvector::generate_orthonormal_basis_normalized(flashlightomniXForm.k, flashlightomniXForm.j, flashlightomniXForm.i);
-			flashlight_omni->set_position(flashlight_pos_omni);
-			flashlight_omni->set_rotation(flashlightomniXForm.k, flashlightomniXForm.i);
-
-			// calc color animator
-			if (flashlight_lanim)
-			{
-				int frame;
-				const u32 clr = flashlight_lanim->CalculateBGR(Device.fTimeGlobal, frame);
-
-				Fcolor fclr{ (float)color_get_B(clr), (float)color_get_G(clr), (float)color_get_R(clr), 1.f };
-				fclr.mul_rgb(flashlight_fBrightness / 255.f);
-				flashlight_render->set_color(fclr);
-				flashlight_omni->set_color(fclr);
-				flashlight_glow->set_color(fclr);
-			}
-		}
 	}
 }
 
@@ -2149,18 +1991,11 @@ float CWeapon::GetHudFov(){
 	return last_nw_hf;
 }
 
-
 void CWeapon::OnBulletHit() {
   if ( !fis_zero( conditionDecreasePerShotOnHit ) )
     ChangeCondition( -conditionDecreasePerShotOnHit );
 }
 
-
-bool CWeapon::IsPartlyReloading() {
-//  return ( m_set_next_ammoType_on_reload == u32(-1) && GetAmmoElapsed() > 0 && !IsMisfire() );
-	return (GetAmmoElapsed() > 0);
-}
-//
 u32 CWeapon::GetNextAmmoType(){
 	u32 l_newType = m_set_next_ammoType_on_reload;
 	for (;;){
@@ -2334,14 +2169,6 @@ int	CWeapon::GetMagazineY() {
 
 float CWeapon::GetHitPowerForActor() const {
 	return fvHitPower[g_SingleGameDifficulty];
-}
-
-bool CWeapon::IsLaserOn() const {
-	return m_bIsLaserOn;
-}
-
-bool CWeapon::IsFlashlightOn() const {
-	return m_bIsFlashlightOn;
 }
 
 bool CWeapon::IsDirectReload(CWeaponAmmo* ammo) {

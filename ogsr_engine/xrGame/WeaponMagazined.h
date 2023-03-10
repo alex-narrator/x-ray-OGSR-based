@@ -60,6 +60,29 @@ protected:
 	// General
 	//кадр момента пересчета UpdateSounds
 	u32				dwUpdateSounds_Frame{};
+
+	//laser
+	float laserdot_attach_aim_dist{};
+	shared_str laserdot_attach_bone;
+	Fvector laserdot_world_attach_offset{};
+	ref_light laser_light_render;
+	CLAItem* laser_lanim{};
+	float laser_fBrightness{ 1.f };
+	bool m_bIsLaserOn{};
+	void UpdateLaser();
+	
+	//flashlight
+	float flashlight_attach_aim_dist{};
+	shared_str flashlight_attach_bone;
+	Fvector flashlight_omni_attach_offset{}, flashlight_world_attach_offset{}, flashlight_omni_world_attach_offset{};
+	ref_light flashlight_render;
+	ref_light flashlight_omni;
+	ref_glow flashlight_glow;
+	CLAItem* flashlight_lanim{};
+	float flashlight_fBrightness{ 1.f };
+	bool m_bIsFlashlightOn{};
+	void UpdateFlashlight();
+
 protected:
 	virtual void	OnMagazineEmpty	();
 
@@ -125,6 +148,15 @@ public:
 
 	virtual void	GetBriefInfo				(xr_string& str_name, xr_string& icon_sect_name, xr_string& str_count);
 
+	virtual void processing_deactivate() override {
+		UpdateLaser();
+		UpdateFlashlight();
+		inherited::processing_deactivate();
+	}
+	Fvector laserdot_attach_offset{}, laser_pos{};
+	Fvector flashlight_attach_offset{}, flashlight_pos{};
+	virtual bool IsLaserOn() const { return m_bIsLaserOn; };
+	virtual bool IsFlashlightOn() const { return m_bIsFlashlightOn; };
 
 	//////////////////////////////////////////////
 	// для стрельбы очередями или одиночными
@@ -248,7 +280,7 @@ public:
 	virtual bool	HasDetachableMagazine	(bool = false) const;
 	virtual bool	IsMagazineAttached		() const;
 	//у оружия есть патронник
-	virtual bool	HasChamber				() { return m_bHasChamber; };
+	virtual bool	HasChamber				() const { return m_bHasChamber; };
 	//разрядить кол-во патронов
 	virtual void	UnloadAmmo(int unload_count, bool spawn_ammo = true, bool detach_magazine = false);
 	//

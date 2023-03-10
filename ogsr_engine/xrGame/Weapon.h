@@ -609,48 +609,14 @@ public:
 	float					GetHudFov			() override;
 
 	virtual void OnBulletHit();
-	bool IsPartlyReloading();
+	bool IsPartlyReloading() { return (GetAmmoElapsed() > 0); };
 
-	virtual void processing_deactivate() override {
-		UpdateLaser();
-		UpdateFlashlight();
-		inherited::processing_deactivate();
-	}
-	Fvector laserdot_attach_offset{}, laser_pos{};
-	float laserdot_attach_aim_dist{};
-protected:
-	shared_str laserdot_attach_bone;
-	Fvector laserdot_world_attach_offset{};
-	ref_light laser_light_render;
-	CLAItem* laser_lanim{};
-	float laser_fBrightness{ 1.f };
-	bool m_bIsLaserOn{};
-
-	void UpdateLaser();
-public:
-	virtual void SwitchLaser(bool on) {};
-	bool IsLaserOn() const;
-	Fvector flashlight_attach_offset{}, flashlight_pos{};
-	float flashlight_attach_aim_dist{};
-protected:
-	shared_str flashlight_attach_bone;
-	Fvector flashlight_omni_attach_offset{}, flashlight_world_attach_offset{}, flashlight_omni_world_attach_offset{};
-	ref_light flashlight_render;
-	ref_light flashlight_omni;
-	ref_glow flashlight_glow;
-	CLAItem* flashlight_lanim{};
-	float flashlight_fBrightness{ 1.f };
-	bool m_bIsFlashlightOn{};
-
-	void UpdateFlashlight();
-public:
-	virtual void SwitchFlashlight(bool on) {};
-	bool IsFlashlightOn() const;
-
-public:
 	bool IsAmmoWasSpawned	() { return m_bAmmoWasSpawned; };
 	void SetAmmoWasSpawned	(bool value) { m_bAmmoWasSpawned = value; };
-	//
+
+	virtual bool IsLaserOn() const { return false; };
+	virtual bool IsFlashlightOn() const { return false; };
+
 	//какие патроны будут заряжены при смене типа боеприпаса
 	u32	GetNextAmmoType();
 	//оружие использует отъёмный магазин

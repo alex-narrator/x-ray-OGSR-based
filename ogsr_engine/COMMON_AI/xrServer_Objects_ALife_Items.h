@@ -166,17 +166,7 @@ SERVER_ENTITY_DECLARE_BEGIN(CSE_ALifeItemWeapon,CSE_ALifeItem)
 		eWeaponAddonFlashlight		= 1 << 4,
 		eWeaponAddonStock			= 1 << 5,
 		eWeaponAddonExtender		= 1 << 6,
-		eWeaponAddonForend			= 1 << 7,
-
-		//KRodin: TODO: эти пять свободных флагов можно использовать для хранения какой-то полезной информации, типа установлен ли на оружие лцу, фонарик и тп.
-		//emaxflag = 1<<7,
-	};
-
-	//флаги
-	enum EStats {
-		eMisfire		= (1 << 0),
-		eLaserOn		= (1 << 1),
-		eFlashlightOn	= (1 << 2),
+		eWeaponAddonForend			= 1 << 7,//maximum
 	};
 
 	EWeaponAddonStatus				m_scope_status{};
@@ -204,9 +194,6 @@ SERVER_ENTITY_DECLARE_BEGIN(CSE_ALifeItemWeapon,CSE_ALifeItem)
 	u32								m_ef_weapon_type;
 	//
 	bool							bMisfire{};
-	bool							m_bIsLaserOn{};
-	bool							m_bIsFlashlightOn{};
-	//
 	u8								m_cur_scope{};
 	u8								m_cur_silencer{};
 	u8								m_cur_glauncher{};
@@ -215,8 +202,6 @@ SERVER_ENTITY_DECLARE_BEGIN(CSE_ALifeItemWeapon,CSE_ALifeItem)
 	u8								m_cur_stock{};
 	u8								m_cur_extender{};
 	u8								m_cur_forend{};
-	//
-	u32								m_MagazineSize;
 
 									CSE_ALifeItemWeapon	(LPCSTR caSection);
 	virtual							~CSE_ALifeItemWeapon();
@@ -238,16 +223,19 @@ add_to_type_list(CSE_ALifeItemWeapon)
 
 SERVER_ENTITY_DECLARE_BEGIN(CSE_ALifeItemWeaponMagazined,CSE_ALifeItemWeapon)
 //флаги
+enum EStats {
+	eMagazineAttached	= (1 << 0),
+	eLaserOn			= (1 << 1),
+	eFlashlightOn		= (1 << 2),
+};
 u8			m_u8CurFireMode;
 //присоединён ли магазин
 bool		m_bIsMagazineAttached{true};
-//для хранения состояния присоединённого прицела
+bool		m_bIsLaserOn{};
+bool		m_bIsFlashlightOn{};
 float		m_fAttachedScopeCondition{1.f};
-//для хранения состояния присоединённого гранатомёта
 float		m_fAttachedGrenadeLauncherCondition{1.f};
-//для хранения состояния присоединённого глушителя
 float		m_fAttachedSilencerCondition{1.f};
-//
 xr_vector<u8> m_AmmoIDs;
 //
 CSE_ALifeItemWeaponMagazined(LPCSTR caSection);

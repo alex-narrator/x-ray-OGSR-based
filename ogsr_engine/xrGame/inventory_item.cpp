@@ -232,12 +232,6 @@ void  CInventoryItem::ChangeCondition(float fDeltaCondition){
 	clamp(m_fCondition, 0.f, 1.f);
 	if (fis_zero(GetCondition()) && IsPowerConsumer() && IsPowerOn())
 		Switch(false);
-	if (auto se_obj = object().alife_object()){
-		auto itm = smart_cast<CSE_ALifeInventoryItem*>(se_obj);
-		if (itm)
-			itm->m_fCondition = m_fCondition;
-	}
-
 }
 
 
@@ -584,10 +578,10 @@ void CInventoryItem::save(NET_Packet &packet)
 void CInventoryItem::net_Export( CSE_Abstract* E ) {
   CSE_ALifeInventoryItem* item = smart_cast<CSE_ALifeInventoryItem*>( E );
   item->m_u8NumItems					= 0;
-  //item->m_fCondition					= m_fCondition;
+  item->m_fCondition					= m_fCondition;
   item->m_fRadiationRestoreSpeed		= m_ItemEffect[eRadiationRestoreSpeed];
   item->m_fLastTimeCalled				= m_fLastTimeCalled;
-  //item->m_fPowerLevel					= m_fPowerLevel;
+  item->m_fPowerLevel					= m_fPowerLevel;
   item->m_cur_power_source				= m_cur_power_source;
   item->m_bIsPowerSourceAttached		= m_bIsPowerSourceAttached;
   item->m_fAttachedPowerSourceCondition = m_fAttachedPowerSourceCondition;
@@ -693,7 +687,7 @@ void CInventoryItem::UpdateXForm	()
 	if (parent && parent->use_simplified_visual())
 		return;
 
-	if (parent->attached(this))
+	if (parent && parent->attached(this))
 		return;
 
 	R_ASSERT		(E);
@@ -1027,11 +1021,6 @@ void CInventoryItem::ChangePowerLevel(float value) {
 	clamp(m_fPowerLevel, 0.f, m_fPowerLevel);
 	if (fis_zero(m_fPowerLevel) && IsPowerOn())
 		Switch(false);
-	if (auto se_obj = object().alife_object()) {
-		auto itm = smart_cast<CSE_ALifeInventoryItem*>(se_obj);
-		if (itm)
-			itm->m_fPowerLevel = m_fPowerLevel;
-	}
 }
 
 void CInventoryItem::SetPowerLevel(float value) {

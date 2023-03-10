@@ -5,7 +5,7 @@
 #include "../xr_3da/xr_input.h"
 #include "HudManager.h"
 #include "HudItem.h"
-#include "Weapon.h"
+#include "WeaponMagazined.h"
 #include <array>
 
 enum HUD_ADJUST_MODE : int {
@@ -147,11 +147,11 @@ void attachable_hud_item::tune(const Ivector& values) {
 		else if (g_bHudAdjustMode == SHELL_POINT)
 			m_measures.m_shell_point_offset.add(diff);
 		else if (g_bHudAdjustMode == LASERDOT_POS) {
-			if (auto Wpn = smart_cast<CWeapon*>(m_parent_hud_item))
+			if (auto Wpn = smart_cast<CWeaponMagazined*>(m_parent_hud_item))
 					Wpn->laserdot_attach_offset.add(diff);
 		}
 		else if (g_bHudAdjustMode == FLASHLIGHT_POS) {
-			if (auto Wpn = smart_cast<CWeapon*>(m_parent_hud_item))
+			if (auto Wpn = smart_cast<CWeaponMagazined*>(m_parent_hud_item))
 				Wpn->flashlight_attach_offset.add(diff);
 		}
 
@@ -161,7 +161,7 @@ void attachable_hud_item::tune(const Ivector& values) {
 			Msg("fire_point = %f,%f,%f", m_measures.m_fire_point_offset.x, m_measures.m_fire_point_offset.y, m_measures.m_fire_point_offset.z);
 			Msg("fire_point2 = %f,%f,%f", m_measures.m_fire_point2_offset.x, m_measures.m_fire_point2_offset.y, m_measures.m_fire_point2_offset.z);
 			Msg("shell_point = %f,%f,%f", m_measures.m_shell_point_offset.x, m_measures.m_shell_point_offset.y, m_measures.m_shell_point_offset.z);
-			if (auto Wpn = smart_cast<CWeapon*>(m_parent_hud_item)) {
+			if (auto Wpn = smart_cast<CWeaponMagazined*>(m_parent_hud_item)) {
 				Msg("laserdot_attach_offset = %f,%f,%f", Wpn->laserdot_attach_offset.x, Wpn->laserdot_attach_offset.y, Wpn->laserdot_attach_offset.z);
 				Msg("torch_attach_offset = %f,%f,%f", Wpn->flashlight_attach_offset.x, Wpn->flashlight_attach_offset.y, Wpn->flashlight_attach_offset.z);
 			}
@@ -190,11 +190,11 @@ void attachable_hud_item::debug_draw_firedeps() {
 			render.draw_aabb(fd.vLastSP, 0.01f, 0.01f, 0.01f, D3DCOLOR_XRGB(0, 255, 0));
 		}
 		else if (g_bHudAdjustMode == LASERDOT_POS) {
-			if (auto Wpn = smart_cast<CWeapon*>(m_parent_hud_item))
+			if (auto Wpn = smart_cast<CWeaponMagazined*>(m_parent_hud_item))
 				render.draw_aabb(Wpn->laser_pos, 0.01f, 0.01f, 0.01f, D3DCOLOR_XRGB(125, 0, 0));
 		}
 		else if (g_bHudAdjustMode == FLASHLIGHT_POS) {
-			if (auto Wpn = smart_cast<CWeapon*>(m_parent_hud_item))
+			if (auto Wpn = smart_cast<CWeaponMagazined*>(m_parent_hud_item))
 				render.draw_aabb(Wpn->flashlight_pos, 0.01f, 0.01f, 0.01f, D3DCOLOR_XRGB(0, 56, 125));
 		}
 	}

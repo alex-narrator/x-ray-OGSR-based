@@ -99,8 +99,10 @@ static inline bool check (const u8 &mask, const u8 &test)
 
 void CSE_ALifeInventoryItem::UPDATE_Write	(NET_Packet &tNetPacket)
 {
+	tNetPacket.w_float_q8	(m_fCondition, 0.0f, 1.0f);
 	tNetPacket.w_float		(m_fRadiationRestoreSpeed);
 	tNetPacket.w_float		(m_fLastTimeCalled);
+	tNetPacket.w_float_q8	(m_fPowerLevel , 0.0f, 1.0f);
 	tNetPacket.w_u8			(m_cur_power_source);
 	tNetPacket.w_u8			(m_bIsPowerSourceAttached ? 1 : 0);
 	tNetPacket.w_float_q8	(m_fAttachedPowerSourceCondition, 0.0f, 1.0f);
@@ -110,7 +112,7 @@ void CSE_ALifeInventoryItem::UPDATE_Write	(NET_Packet &tNetPacket)
 		return;
 	}
 
-	mask_num_items					num_items;
+	mask_num_items					num_items{};
 	num_items.mask					= 0;
 	num_items.num_items				= m_u8NumItems;
 
@@ -149,8 +151,10 @@ void CSE_ALifeInventoryItem::UPDATE_Read	(NET_Packet &tNetPacket)
 {
 	u16 m_wVersion = base()->m_wVersion;
 	if (m_wVersion > 118){
+		tNetPacket.r_float_q8	(m_fCondition, 0.0f, 1.0f);
 		tNetPacket.r_float		(m_fRadiationRestoreSpeed);
 		tNetPacket.r_float		(m_fLastTimeCalled);
+		tNetPacket.r_float_q8	(m_fPowerLevel, 0.0f, 1.0f);
 		tNetPacket.r_u8			(m_cur_power_source);
 		m_bIsPowerSourceAttached = !!(tNetPacket.r_u8() & 0x1);
 		tNetPacket.r_float_q8	(m_fAttachedPowerSourceCondition, 0.0f, 1.0f);
@@ -161,7 +165,7 @@ void CSE_ALifeInventoryItem::UPDATE_Read	(NET_Packet &tNetPacket)
 		return;
 	}
 
-	mask_num_items					num_items;
+	mask_num_items					num_items{};
 	num_items.common				= m_u8NumItems;
 	m_u8NumItems					= num_items.num_items;
 
@@ -418,7 +422,7 @@ CSE_ALifeItemWeapon::CSE_ALifeItemWeapon	(LPCSTR caSection) : CSE_ALifeItem(caSe
 	m_ef_main_weapon_type		= READ_IF_EXISTS(pSettings,r_u32,caSection,"ef_main_weapon_type",u32(-1));
 	m_ef_weapon_type			= READ_IF_EXISTS(pSettings,r_u32,caSection,"ef_weapon_type",u32(-1));
 	//
-	m_MagazineSize				= pSettings->r_float(caSection, "ammo_mag_size");
+	//m_MagazineSize				= pSettings->r_float(caSection, "ammo_mag_size");
 	//preloaded ammo_type
 	if (pSettings->line_exist(caSection, "ammo_type_loaded")) {
 		ammo_type = pSettings->r_u8(s_name, "ammo_type_loaded");
@@ -502,6 +506,7 @@ void CSE_ALifeItemWeapon::UPDATE_Read(NET_Packet	&tNetPacket)
 	tNetPacket.r_u8				(m_bZoom);
 	//
 	if (m_wVersion > 118){
+		bMisfire			= !!(tNetPacket.r_u8() & 0x1);
 		tNetPacket.r_u8		(m_cur_scope);
 		tNetPacket.r_u8		(m_cur_silencer);
 		tNetPacket.r_u8		(m_cur_glauncher);
@@ -510,13 +515,6 @@ void CSE_ALifeItemWeapon::UPDATE_Read(NET_Packet	&tNetPacket)
 		tNetPacket.r_u8		(m_cur_stock);
 		tNetPacket.r_u8		(m_cur_extender);
 		tNetPacket.r_u8		(m_cur_forend);
-
-		tNetPacket.r_u32	(m_MagazineSize);
-
-		BYTE F = tNetPacket.r_u8();
-		bMisfire = !!(F & eMisfire);
-		m_bIsLaserOn = !!(F & eLaserOn);
-		m_bIsFlashlightOn = !!(F & eFlashlightOn);
 	}
 }
 
@@ -531,6 +529,7 @@ void CSE_ALifeItemWeapon::UPDATE_Write(NET_Packet	&tNetPacket)
 	tNetPacket.w_u8				(wpn_state);
 	tNetPacket.w_u8				(m_bZoom);
 
+	tNetPacket.w_u8				(bMisfire ? 1 : 0);
 	tNetPacket.w_u8				(m_cur_scope);
 	tNetPacket.w_u8				(m_cur_silencer);
 	tNetPacket.w_u8				(m_cur_glauncher);
@@ -539,14 +538,6 @@ void CSE_ALifeItemWeapon::UPDATE_Write(NET_Packet	&tNetPacket)
 	tNetPacket.w_u8				(m_cur_stock);
 	tNetPacket.w_u8				(m_cur_extender);
 	tNetPacket.w_u8				(m_cur_forend);
-
-	tNetPacket.w_u32			(m_MagazineSize);
-
-	BYTE F = 0;
-	F |= (bMisfire ? eMisfire : 0);
-	F |= (m_bIsLaserOn ? eLaserOn : 0);
-	F |= (m_bIsFlashlightOn ? eFlashlightOn : 0);
-	tNetPacket.w_u8(F);
 }
 
 void CSE_ALifeItemWeapon::STATE_Read(NET_Packet	&tNetPacket, u16 size)
@@ -683,9 +674,10 @@ void CSE_ALifeItemWeaponMagazined::UPDATE_Read		(NET_Packet& P)
 		for (u8 i = 0; i < AmmoCount; i++){
 			m_AmmoIDs.push_back(P.r_u8());
 		}
-
-		m_bIsMagazineAttached = !!(P.r_u8() & 0x1);
-
+		BYTE F = P.r_u8();
+		m_bIsMagazineAttached = !!(F & eMagazineAttached);
+		m_bIsLaserOn = !!(F & eLaserOn);
+		m_bIsFlashlightOn = !!(F & eFlashlightOn);
 		P.r_float_q8(m_fAttachedSilencerCondition, 0.f, 1.f);
 		P.r_float_q8(m_fAttachedScopeCondition, 0.f, 1.f);
 		P.r_float_q8(m_fAttachedGrenadeLauncherCondition, 0.f, 1.f);
@@ -701,9 +693,11 @@ void CSE_ALifeItemWeaponMagazined::UPDATE_Write	(NET_Packet& P)
 	for(const auto& _item : m_AmmoIDs){
 		P.w_u8(u8(m_AmmoIDs[_item]));
 	}
-
-	P.w_u8(m_bIsMagazineAttached ? 1 : 0);
-
+	BYTE F = 0;
+	F |= (m_bIsMagazineAttached ? eMagazineAttached : 0);
+	F |= (m_bIsLaserOn ? eLaserOn : 0);
+	F |= (m_bIsFlashlightOn ? eFlashlightOn : 0);
+	P.w_u8(F);
 	P.w_float_q8(m_fAttachedSilencerCondition, 0.f, 1.f);
 	P.w_float_q8(m_fAttachedScopeCondition, 0.f, 1.f);
 	P.w_float_q8(m_fAttachedGrenadeLauncherCondition, 0.f, 1.f);
