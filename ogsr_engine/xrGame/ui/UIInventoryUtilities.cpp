@@ -133,6 +133,14 @@ bool InventoryUtilities::FreeRoom_inBelt	(TIItemContainer& item_list, PIItem _it
 					place_col = j;
 				}
 
+				//разместить элемент на найденном месте
+				if (found_place) {
+					for (k = 0; k < iHeight; ++k) {
+						for (m = 0; m < iWidth; ++m) {
+							ruck_room[(place_row + k) * width + place_col + m] = true;
+						}
+					}
+				}
 			}
 		}
 	}
@@ -199,6 +207,14 @@ bool InventoryUtilities::FreeRoom_inVest(TIItemContainer& item_list, PIItem _ite
 					place_col = j;
 				}
 
+				//разместить элемент на найденном месте
+				if (found_place) {
+					for (k = 0; k < iWidth; ++k) {
+						for (m = 0; m < iHeight; ++m) {
+							ruck_room[(place_row + k) * height + place_col + m] = true;
+						}
+					}
+				}
 			}
 		}
 	}

@@ -147,12 +147,7 @@ void CActor::IR_OnKeyboardPress(int cmd){
 	case kCAM_2:	cam_Set(eacLookAt);		UpdateVisorEfects(); break;
 	case kCAM_3:	cam_Set(eacFreeLook);	UpdateVisorEfects(); break;
 	case kNIGHT_VISION: {
-		auto pActiveWeapon = smart_cast<CWeaponMagazined*>(inventory().ActiveItem());
-		if (Level().IR_GetKeyState(get_action_dik(kADDITIONAL_ACTION))) {
-			if (pActiveWeapon)
-				pActiveWeapon->SwitchLaser(!pActiveWeapon->IsLaserOn());
-		}
-		else if (pActiveWeapon && pActiveWeapon->IsZoomed())
+		if (auto pActiveWeapon = smart_cast<CWeaponMagazined*>(inventory().ActiveItem()); pActiveWeapon && pActiveWeapon->IsZoomed())
 			pActiveWeapon->SwitchNightVision();
 		else{
 			if (GetNightVisionDevice()) {
@@ -164,11 +159,7 @@ void CActor::IR_OnKeyboardPress(int cmd){
 		}
 		} break;
 	case kTORCH: { 
-		if (Level().IR_GetKeyState(get_action_dik(kADDITIONAL_ACTION))) {
-			if (auto wpn = smart_cast<CWeapon*>(inventory().ActiveItem()))
-				wpn->SwitchFlashlight(!wpn->IsFlashlightOn());
-		}
-		else if (GetTorch()) {
+		if (GetTorch()) {
 			if (!IsFreeHands())
 				HUD().GetUI()->AddInfoMessage("item_usage", "hands_not_free");
 			else
