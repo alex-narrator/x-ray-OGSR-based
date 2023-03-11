@@ -117,7 +117,7 @@ BOOL CWeaponMagazinedWGrenade::net_Spawn(CSE_Abstract* DC)
 	m_ammoType2	= m_ammoType2 > 0 ? m_ammoType2 : wgl->ammo_type2;
 	iAmmoElapsed2 = iAmmoElapsed2 > 0 ? iAmmoElapsed2 : wgl->a_elapsed2;
 
-	//Msg("~~[%s][%s] net_Spawn", __FUNCTION__, this->Name());
+	//Msg("~~[%s][%s] net_Spawn", __FUNCTION__, Name());
 
 	if (m_bGrenadeMode) // m_bGrenadeMode enabled
 	{
@@ -144,7 +144,7 @@ BOOL CWeaponMagazinedWGrenade::net_Spawn(CSE_Abstract* DC)
 	}
 	else
 	{
-		ASSERT_FMT( m_ammoType2 < m_ammoTypes2.size(), "Ammo type [%u] not found in weapon [%s]. Something strange...", m_ammoType2, this->cName().c_str() );
+		ASSERT_FMT( m_ammoType2 < m_ammoTypes2.size(), "Ammo type [%u] not found in weapon [%s]. Something strange...", m_ammoType2, cName().c_str() );
 
 		m_DefaultCartridge2.Load(m_ammoTypes2.at(m_ammoType2).c_str(), u8(m_ammoType2));
 		while ((u32)iAmmoElapsed2 > m_magazine2.size())
@@ -796,11 +796,11 @@ void CWeaponMagazinedWGrenade::PlayAnimIdle()
 void CWeaponMagazinedWGrenade::PlayAnimShoot()
 {
 	VERIFY(GetState()==eFire || GetState()==eFire2);
-	if (this->m_bGrenadeMode)
+	if (m_bGrenadeMode)
 	{
 		//анимация стрельбы из подствольника
 		string_path guns_shoot_anm{};
-		xr_strconcat(guns_shoot_anm, "anm_shoot", (this->IsZoomed() && !this->IsRotatingToZoom()) ? "_aim" : "", "_g");
+		xr_strconcat(guns_shoot_anm, "anm_shoot", (IsZoomed() && !IsRotatingToZoom()) ? "_aim" : "", "_g");
 
 		PlayHUDMotion({ guns_shoot_anm, "anim_shoot_g", "anm_shots_g" }, false, GetState());
 	}
@@ -808,7 +808,7 @@ void CWeaponMagazinedWGrenade::PlayAnimShoot()
 	{
 		if (IsGrenadeLauncherAttached()) {
 			string_path guns_shoot_anm{};
-			xr_strconcat(guns_shoot_anm, "anm_shoot", (this->IsZoomed() && !this->IsRotatingToZoom()) ? (this->IsScopeAttached() ? "_aim_scope" : "_aim") : "", this->IsSilencerAttached() ? "_sil" : "", "_w_gl");
+			xr_strconcat(guns_shoot_anm, "anm_shoot", (IsZoomed() && !IsRotatingToZoom()) ? (IsScopeAttached() ? "_aim_scope" : "_aim") : "", IsSilencerAttached() ? "_sil" : "", "_w_gl");
 
 			PlayHUDMotion({ guns_shoot_anm, "anim_shoot_gl", "anm_shots_w_gl" }, false, GetState());
 		}
