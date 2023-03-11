@@ -19,8 +19,6 @@ public:
 
 	virtual float					GetHitTypeProtection(int) const override;
 
-	virtual	BOOL					BonePassBullet(int boneID);
-
 	virtual bool					can_be_attached() const override;
 
 	virtual void					OnMoveToSlot(EItemPlace prevPlace);

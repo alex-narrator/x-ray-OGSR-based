@@ -111,7 +111,6 @@ public:
 	virtual void 			ChangeAlcohol			(float value){};
 			void 			ChangeMaxPower			(float value);
 
-	IC void					MaxPower				()					{m_fPower = m_fPowerMax;};
 	IC void					SetMaxPower				(float val)			{m_fPowerMax = val; clamp(m_fPowerMax,0.1f,1.0f);};
 	IC float				GetMaxPower				() const			{return m_fPowerMax;};
 

@@ -522,11 +522,6 @@ bool				CActor::InventoryAllowSprint			()
 	return true;
 };
 
-BOOL				CActor::BonePassBullet					(int boneID)
-{
-	return inherited::BonePassBullet(boneID);
-}
-
 void			CActor::On_B_NotCurrentEntity		()
 {
 	inventory().Items_SetCurrentEntityHud(false);

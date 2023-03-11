@@ -494,7 +494,7 @@ dsh: обработка перенесена ниже, вместе с eHitTypeF
 	//раны добавляются только живому
 		if (bAddWound && GetHealth() > 0) {
 			if (auto pInvOwner = smart_cast<CInventoryOwner*>(m_object)) {
-				pHDS->power == hit_power;
+				pHDS->power = hit_power;
 				pInvOwner->TryGroggyEffect(pHDS);
 			}
 			return AddWound(hit_power * m_fWoundBoneScale, pHDS->hit_type, pHDS->boneID);
@@ -652,22 +652,6 @@ void CEntityCondition::SConditionChangeV::load(LPCSTR sect, LPCSTR prefix)
 		float v = READ_IF_EXISTS(pSettings,r_float,sect, str,0.0f);
 		value(CCV_NAMES[i]) = v;
 	}
-	/*
-	strconcat				(sizeof(str),str,"radiation_v",prefix);
-	m_fV_Radiation			= pSettings->r_float(sect,str);
-	strconcat				(sizeof(str),str,"radiation_health_v",prefix);
-	m_fV_RadiationHealth	= pSettings->r_float(sect,str);
-	strconcat				(sizeof(str),str,"morale_v",prefix);
-	m_fV_EntityMorale		= pSettings->r_float(sect,str);
-	strconcat				(sizeof(str),str,"psy_health_v",prefix);
-	m_fV_PsyHealth			= pSettings->r_float(sect,str);	
-	strconcat				(sizeof(str),str,"bleeding_v",prefix);
-	m_fV_Bleeding			= pSettings->r_float(sect,str);
-	strconcat				(sizeof(str),str,"wound_incarnation_v",prefix);
-	m_fV_WoundIncarnation	= pSettings->r_float(sect,str);
-	strconcat				(sizeof(str),str,"health_restore_v",prefix);
-	m_fV_HealthRestore		= READ_IF_EXISTS(pSettings,r_float,sect, str,0.0f);
-	*/
 }
 
 float CEntityCondition::GetParamByName(LPCSTR name)
@@ -724,11 +708,21 @@ void CEntityCondition::script_register(lua_State *L)
 			class_<CEntityCondition>("CEntityCondition")
 			.def( "fdelta_time", &CEntityCondition::fdelta_time )
 			.def_readonly( "has_valid_time", &CEntityCondition::m_bTimeValid )
-#define		CONDITION_CLASS								CEntityCondition
-#include	"entity_conditions_export.inc"
-			.property("health"					,				&CEntityCondition::GetHealth,				&set_entity_health)
-			.property("max_health"				,				&CEntityCondition::GetMaxHealth,			&set_entity_max_health)
+			.property("health",	&CEntityCondition::GetHealth, &set_entity_health)
+			.property("max_health",	&CEntityCondition::GetMaxHealth, &set_entity_max_health)
 			//.property("class_name"				,				&get_lua_class_name)
+			.def_readwrite("power", &CEntityCondition::m_fPower)
+			.def_readwrite("power_max", &CEntityCondition::m_fPowerMax)
+			.def_readwrite("psy_health", &CEntityCondition::m_fPsyHealth)
+			.def_readwrite("psy_health_max", &CEntityCondition::m_fPsyHealthMax)
+			.def_readwrite("radiation", &CEntityCondition::m_fRadiation)
+			.def_readwrite("radiation_max", &CEntityCondition::m_fRadiationMax)
+			.def_readwrite("morale", &CEntityCondition::m_fEntityMorale)
+			.def_readwrite("morale_max", &CEntityCondition::m_fEntityMoraleMax)
+			.def_readwrite("min_wound_size", &CEntityCondition::m_fMinWoundSize)
+			.def_readonly("is_bleeding", &CEntityCondition::m_bIsBleeding)
+			//.def_readwrite("health_hit_part", &CEntityCondition::m_fHealthHitPart)
+			.def_readwrite("power_hit_part", &CEntityCondition::m_fPowerHitPart)
 		];
 }
 

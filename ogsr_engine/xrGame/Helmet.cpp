@@ -41,10 +41,6 @@ float CHelmet::HitThruArmour(SHit* pHDS){
 	return hit_power;
 };
 
-BOOL CHelmet::BonePassBullet(int boneID){
-	return m_boneProtection->getBonePassBullet(s16(boneID));
-};
-
 float CHelmet::GetHitTypeProtection(int hit_type) const {
 	return (hit_type == ALife::eHitTypeFireWound) ? 0.f : inherited::GetHitTypeProtection(hit_type);
 }
