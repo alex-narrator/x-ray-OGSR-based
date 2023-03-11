@@ -141,6 +141,10 @@ BOOL CWeaponMagazinedWGrenade::net_Spawn(CSE_Abstract* DC)
 		m_magazine2.clear();
 		while ((u32)iAmmoElapsed2 > m_magazine2.size()) //(mag_sz--)
 			m_magazine2.push_back(m_DefaultCartridge2);
+
+		if (HasDetachableMagazine(true) && IsMagazineAttached()) {
+			m_LastLoadedMagType = m_ammoType2;
+		}
 	}
 	else
 	{
