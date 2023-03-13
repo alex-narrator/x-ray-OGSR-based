@@ -26,6 +26,19 @@ class CUIStaticItem;
 constexpr float def_min_zoom_k = 0.3f;
 constexpr float def_zoom_step_count = 4.0f;
 
+extern enum eWeaponAddonType {
+	eSilencer,
+	eScope,
+	eLauncher,
+	eLaser,
+	eFlashlight,
+	eStock,
+	eExtender,
+	eForend,
+	eMagazine,
+	eMaxAddon
+};
+
 class CWeapon : public CHudItemObject,
 				public CShootingObject
 {
@@ -139,7 +152,7 @@ public:
 	BOOL					IsUpdating			();
 
 
-	BOOL					IsMisfire			() const;
+	BOOL					IsMisfire() const { return bMisfire; };
 	BOOL					CheckForMisfire		();
 
 	bool					IsTriStateReload	() const		{ return m_bTriStateReload;}
@@ -165,65 +178,23 @@ public:
 	// работа с аддонами к оружию
 	//////////////////////////////////////////
 
-
-			bool IsGrenadeLauncherAttached	() const;
-			bool IsScopeAttached			() const;
-			bool IsSilencerAttached			() const;
-			bool IsLaserAttached			() const;
-			bool IsFlashlightAttached		() const;
-			bool IsStockAttached			() const;
-			bool IsExtenderAttached			() const;
-			bool IsForendAttached			() const;
+	virtual bool IsAddonAttached(u32) const;
+	virtual bool AddonAttachable(u32, bool = false) const;
 
 	virtual bool IsGrenadeMode				() const { return false; };
 
-	virtual bool GrenadeLauncherAttachable	() const;
-	virtual bool ScopeAttachable			() const;
-	virtual bool SilencerAttachable			() const;
-	virtual bool LaserAttachable			() const;
-	virtual bool FlashlightAttachable		() const;
-	virtual bool StockAttachable			() const;
-	virtual bool ExtenderAttachable			() const;
-	virtual bool ForendAttachable			() const;
 	virtual bool UseScopeTexture();
 
 	//обновление видимости для косточек аддонов
 			void UpdateAddonsVisibility();
 			void UpdateHUDAddonsVisibility();
 	//инициализация свойств присоединенных аддонов
-	virtual void InitAddons();
+	virtual void InitAddons(){};
 
 	//для отоброажения иконок апгрейдов в интерфейсе
-	int	GetScopeX			();
-	int	GetScopeY			();
-	int	GetSilencerX		();
-	int	GetSilencerY		();
-	int	GetGrenadeLauncherX	();
-	int	GetGrenadeLauncherY	();
-	int	GetLaserX			();
-	int	GetLaserY			();
-	int	GetFlashlightX		();
-	int	GetFlashlightY		();
-	int	GetStockX			();
-	int	GetStockY			();
-	int	GetExtenderX		();
-	int	GetExtenderY		();
-	int	GetForendX			();
-	int	GetForendY			();
+	Fvector2 GetAddonOffset(u32);
+	virtual shared_str GetAddonName(u32, bool = false) const;
 
-	int	GetMagazineX		();
-	int	GetMagazineY		();
-
-	const shared_str GetScopeName				() const { return m_scopes		[m_cur_scope]		; }
-	const shared_str GetSilencerName			() const { return m_silencers	[m_cur_silencer]	; }
-	const shared_str GetGrenadeLauncherName		() const { return m_glaunchers	[m_cur_glauncher]	; }
-	const shared_str GetLaserName				() const { return m_lasers		[m_cur_laser]		; }
-	const shared_str GetFlashlightName			() const { return m_flashlights	[m_cur_flashlight]	; }
-	const shared_str GetStockName				() const { return m_stocks		[m_cur_stock]		; }
-	const shared_str GetExtenderName			() const { return m_extenders	[m_cur_extender]	; }
-	const shared_str GetForendName				() const { return m_forends		[m_cur_forend]		; }
-
-	virtual shared_str GetMagazineName			(bool = false) const { return m_ammoTypes	[m_LastLoadedMagType]; }
 	const shared_str GetMagazineIconSect		(bool = false) const;
 
 	u8		GetAddonsState						()		const		{return m_flagsAddOnState;};
@@ -323,8 +294,6 @@ protected:
 public:
 
 	IC bool					IsZoomEnabled		()	const	{return m_bZoomEnabled;}
-//	void					GetZoomData			(float scope_factor, float& delta, float& min_zoom_factor);
-	float					GetZoomStepDelta	(float, float, u32);
 	virtual	void			ZoomChange			(bool inc);
 	virtual void			OnZoomIn			();
 	virtual void			OnZoomOut			(bool = false);
@@ -425,7 +394,7 @@ protected:
 
 	virtual void			Fire2Start			();
 	virtual void			Fire2End			();
-	virtual void			Reload				();
+	virtual void			Reload				(){ OnZoomOut() ;};
 			void			StopShooting		();
     
 
@@ -532,7 +501,7 @@ public:
 	virtual	float			Get_PDM_Crouch		()	const	{ return m_fPDM_disp_crouch			; };
 	virtual	float			Get_PDM_Crouch_NA	()	const	{ return m_fPDM_disp_crouch_no_acc	; };
 	//  [8/3/2005]
-	virtual float			GetCondDecPerShotToShow	() const /*{ return GetWeaponDeterioration();		}*/;
+	virtual float			GetCondDecPerShotToShow	() const;
 	virtual float			GetCondDecPerShotOnHit	() const { return conditionDecreasePerShotOnHit;	};
 protected:
 	int						iAmmoElapsed{ -1 };		// ammo in magazine, currently
@@ -620,8 +589,8 @@ public:
 	//какие патроны будут заряжены при смене типа боеприпаса
 	u32	GetNextAmmoType();
 	//оружие использует отъёмный магазин
-	virtual bool		HasDetachableMagazine	(bool = false) const { return false; };
-	virtual bool		IsMagazineAttached		() const { return false; };
+	//virtual bool		HasDetachableMagazine	(bool = false) const { return false; };
+	//virtual bool		IsMagazineAttached		() const { return false; };
 	virtual bool		IsSingleReloading		() { return false; };
 	virtual bool		CanBeReloaded			();
 	//

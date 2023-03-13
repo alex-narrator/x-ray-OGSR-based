@@ -9,19 +9,19 @@ class CInventoryOwner;
 class CInventorySlot
 {									
 public:
-							CInventorySlot		();
-	virtual					~CInventorySlot		();
+							CInventorySlot		(){};
+	virtual					~CInventorySlot		(){};
 
 	bool					CanBeActivated		() const;
 	bool					IsBlocked			() const;
 	bool maySwitchFast() const;
 	void setSwitchFast( bool );
 
-	PIItem					m_pIItem;
-	bool					m_bPersistent;
-	bool					m_bVisible;
-	int						m_blockCounter;
-	bool m_maySwitchFast;
+	PIItem m_pIItem{};
+	bool m_bPersistent{};
+	bool m_bVisible{true};
+	int	m_blockCounter{};
+	bool m_maySwitchFast{};
 };
 enum EActivationReason{
 	eGeneral,
@@ -37,7 +37,7 @@ class CInventory
 	friend class  CInventoryScript;
 public:
 							CInventory			();
-	virtual					~CInventory			();
+	virtual					~CInventory			(){};
 
 	float 					TotalWeight			() const;
 	float 					CalcTotalWeight		();
@@ -138,7 +138,7 @@ public:
 	
 
 	// Объект на который наведен прицел
-	PIItem				m_pTarget;
+	PIItem				m_pTarget{};
 
 	friend class CInventoryOwner;
 
@@ -157,34 +157,34 @@ protected:
 
 	// Активный слот и слот который станет активным после смены
     //значения совпадают в обычном состоянии (нет смены слотов)
-	u32 				m_iActiveSlot;
-	u32 				m_iNextActiveSlot;
-	u32 				m_iPrevActiveSlot;
-	u32 				m_iLoadActiveSlot;
-	u32 				m_iLoadActiveSlotFrame;
-	EActivationReason	m_ActivationSlotReason;
+	u32 				m_iActiveSlot{ NO_ACTIVE_SLOT };
+	u32 				m_iNextActiveSlot{ NO_ACTIVE_SLOT };
+	u32 				m_iPrevActiveSlot{ NO_ACTIVE_SLOT };
+	u32 				m_iLoadActiveSlot{ NO_ACTIVE_SLOT };
+	u32 				m_iLoadActiveSlotFrame{ u32(-1) };
+	EActivationReason	m_ActivationSlotReason{};
 
-	CInventoryOwner*	m_pOwner;
+	CInventoryOwner*	m_pOwner{};
 
 	//флаг, показывающий наличие пояса в инвенторе
 	bool				m_bBeltUseful{};
 	bool				m_bVestUseful{};
 	//флаг, допускающий использование слотов
-	bool				m_bSlotsUseful;
+	bool				m_bSlotsUseful{true};
 
 	// текущий вес в инвентаре
-	float				m_fTotalWeight;
+	float				m_fTotalWeight{ -1.f };
 
 	// Максимальное расстояние на котором можно подобрать объект
 	float				 m_fTakeDist;
 
 	//кадр на котором произошло последнее изменение в инвенторе
-	u32					m_dwModifyFrame;
+	u32					m_dwModifyFrame{};
 
-	bool				m_drop_last_frame;
+	bool				m_drop_last_frame{};
 
 private:
-	u32					UpdatesCount{};
+	bool				m_bUpdated{};
 
 public:
 	void                    TryToHideWeapon(bool b_hide_state, bool b_save_prev_slot = true);

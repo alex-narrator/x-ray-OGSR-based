@@ -533,7 +533,7 @@ bool CScriptGameObject::GrenadeLauncherAttachable()
 		ai().script_engine().script_log(ScriptStorage::eLuaMessageTypeError, "CWeapon : cannot access class member GrenadeLauncherAttachable!");
 		return false;
 	}
-	return k->GrenadeLauncherAttachable();
+	return k->AddonAttachable(eLauncher);
 }
 u32 CScriptGameObject::GetAmmoType()
 {

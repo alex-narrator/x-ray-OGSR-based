@@ -342,13 +342,6 @@ void CActor::Load	(LPCSTR section )
 		m_BloodSnd.create		(pSettings->r_string(section,"heavy_blood_snd"), st_Effect,SOUND_TYPE_MONSTER_INJURING);
 	}
 
-	if (pSettings->section_exist("actor_groggy")) {
-		LPCSTR concussion_sect = "actor_groggy";
-		m_fGroggyTreshold = pSettings->r_float(concussion_sect, "treshold");
-		sndGroggy.create(pSettings->r_string(concussion_sect, "snd"), st_Effect, sg_SourceType);
-		m_GroggyEffector = pSettings->r_string(concussion_sect, "effector");
-	}
-
 	if (this == Level().CurrentEntity()) //--#SM+#-- Сбрасываем режим рендеринга в дефолтный [reset some render flags]
 	{
 		g_pGamePersistent->m_pGShaderConstants.m_blender_mode.set(0.f, 0.f, 0.f, 0.f);
@@ -399,6 +392,13 @@ void CActor::Load	(LPCSTR section )
 	CurrentHeight = CameraHeight();	
 
 	m_news_to_show = READ_IF_EXISTS( pSettings, r_u32, section, "news_to_show", NEWS_TO_SHOW );
+
+	if (pSettings->section_exist("actor_groggy")) {
+		LPCSTR concussion_sect = "actor_groggy";
+		m_fGroggyTreshold = pSettings->r_float(concussion_sect, "treshold");
+		sndGroggy.create(pSettings->r_string(concussion_sect, "snd"), st_Effect, sg_SourceType);
+		m_GroggyEffector = pSettings->r_string(concussion_sect, "effector");
+	}
 
 	m_fThrowImpulse		= READ_IF_EXISTS(pSettings, r_float, "actor_capture", "throw_impulse",		5.0f);
 	m_fKickImpulse		= READ_IF_EXISTS(pSettings, r_float, "actor_capture", "kick_impulse",		250.f);

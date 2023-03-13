@@ -352,30 +352,30 @@ void CWeaponScript::set_hit_power(CWeapon *wpn, luabind::object const& t)
 	vector.w = object_cast<float>(t[4]);	
 }
 
-LPCSTR get_scope_name(CWeapon *I) { return I->GetScopeName().c_str(); }
+LPCSTR get_scope_name(CWeapon *I) { return I->GetAddonName(eScope).c_str(); }
 
 void set_scope_name(CWeapon* item, LPCSTR text)
 {
-	item->m_scopes.erase(std::remove(item->m_scopes.begin(), item->m_scopes.end(), item->GetScopeName()), item->m_scopes.end());
+	item->m_scopes.erase(std::remove(item->m_scopes.begin(), item->m_scopes.end(), item->GetAddonName(eScope)), item->m_scopes.end());
 //	item->m_sScopeName = text;
 	item->m_scopes.push_back(text);
 }
 
-LPCSTR get_silencer_name(CWeapon *I) { return I->GetSilencerName().c_str(); }
+LPCSTR get_silencer_name(CWeapon *I) { return I->GetAddonName(eSilencer).c_str(); }
 
 void set_silencer_name(CWeapon *item, LPCSTR text)
 {
 //    item->m_sSilencerName = text;
-	item->m_silencers.erase(std::remove(item->m_silencers.begin(), item->m_silencers.end(), item->GetSilencerName()), item->m_silencers.end());
+	item->m_silencers.erase(std::remove(item->m_silencers.begin(), item->m_silencers.end(), item->GetAddonName(eSilencer)), item->m_silencers.end());
 	item->m_silencers.push_back(text);
 }
 
-LPCSTR get_grenade_launcher_name(CWeapon *I) { return I->GetGrenadeLauncherName().c_str(); }
+LPCSTR get_grenade_launcher_name(CWeapon *I) { return I->GetAddonName(eLauncher).c_str(); }
 
 void set_grenade_launcher_name(CWeapon *item, LPCSTR text)
 {
 //    item->m_sGrenadeLauncherName = text;
-	item->m_glaunchers.erase(std::remove(item->m_glaunchers.begin(), item->m_glaunchers.end(), item->GetGrenadeLauncherName()), item->m_glaunchers.end());
+	item->m_glaunchers.erase(std::remove(item->m_glaunchers.begin(), item->m_glaunchers.end(), item->GetAddonName(eLauncher)), item->m_glaunchers.end());
 	item->m_glaunchers.push_back(text);
 }
 

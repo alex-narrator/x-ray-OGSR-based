@@ -64,10 +64,11 @@ public:
 		FIUngroupable			= (1 << 13),
 		FIHiddenForInventory	= (1 << 14),
 		Fvest					= (1 << 15),
+		Fbreakable				= (1 << 16),
 	};
 	const u32 ClrEquipped   = READ_IF_EXISTS(pSettings, r_color, "dragdrop", "color_equipped", color_argb(255, 255, 225, 0));
 	const u32 ClrUntradable = READ_IF_EXISTS(pSettings, r_color, "dragdrop", "color_untradable", color_argb(255, 124, 0, 0));
-	Flags16						m_flags;
+	Flags32						m_flags;
 	CIconParams					m_icon_params;
 public:
 								CInventoryItem		();
@@ -134,7 +135,7 @@ public:
 	virtual bool				IsDropPouch			() const	{ return m_uSlotEnabled == u32(-1); }
 
 public:
-	CInventory*					m_pCurrentInventory;
+	CInventory* m_pCurrentInventory{};
 
 	u32							m_cost;
 	float						m_weight;
@@ -145,7 +146,7 @@ public:
 	shared_str					m_nameShort{};
 	shared_str					m_nameComplex;
 
-	EItemPlace					m_eItemPlace;
+	EItemPlace					m_eItemPlace{};
 
 
 	virtual void				OnMoveToSlot		(EItemPlace prevPlace);
@@ -273,7 +274,6 @@ public:
 			bool				m_highlight_equipped{};
 			bool				m_always_ungroupable{};
 
-			bool				m_bBreakOnZeroCondition{};
 	virtual void				TryBreakToPieces	(bool);
 			bool				b_brake_item{};
 	//проміжок часу до повного розряджання
@@ -338,7 +338,6 @@ public:
 	virtual float					GetPowerLevelToShow	() const { return m_fPowerLevel/m_fPowerCapacity * 100.f; };
 	virtual float					GetPowerConsumption	() const { return m_fPowerConsumption; };
 	virtual float					GetPowerCapacity	() const { return m_fPowerCapacity; };
-	virtual bool					IsPowerLow			() const { return GetPowerLevelToShow() <= m_fPowerLowThreshold; };
 	virtual bool					CanBeCharged		() const;
 	virtual void					InitPowerSource		();
 
@@ -379,7 +378,6 @@ protected:
 
 	float							m_fPowerLevel{};
 	float							m_fPowerCapacity{};
-	float							m_fPowerLowThreshold;
 	float							m_fPowerConsumingUpdateTime;
 	float							m_fAttachedPowerSourceCondition{ 1.f };
 

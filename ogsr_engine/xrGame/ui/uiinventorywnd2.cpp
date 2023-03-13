@@ -237,7 +237,7 @@ void CUIInventoryWnd::DropCurrentItem(bool b_all){
 	}
 
 	CurrentIItem()->Drop();
-	SetCurrentItem			(NULL);
+	SetCurrentItem(NULL);
 	UpdateWeight();
 
 	PlaySnd(eInvDropItem);

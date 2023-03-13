@@ -277,8 +277,11 @@ public:
 	virtual float			GetConditionMisfireProbability() const;
 
 	//оружие использует отъёмный магазин
-	virtual bool	HasDetachableMagazine	(bool = false) const;
-	virtual bool	IsMagazineAttached		() const;
+	//virtual bool	HasDetachableMagazine	(bool = false) const;
+	//virtual bool	IsMagazineAttached		() const;
+
+	virtual bool	IsAddonAttached(u32) const;
+	virtual bool	AddonAttachable(u32, bool = false) const;
 	//у оружия есть патронник
 	virtual bool	HasChamber				() const { return m_bHasChamber; };
 	//разрядить кол-во патронов

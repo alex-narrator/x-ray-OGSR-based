@@ -1265,7 +1265,7 @@ void CHudItem::CWeaponBobbing::Update(Fmatrix& m)
 			float zoom_factor = m_fZoomFactor;
 
 			auto wpn = smart_cast<CWeapon*>(parent_hud_item);
-			if (wpn && wpn->IsScopeAttached() && !wpn->IsGrenadeMode())
+			if (wpn && wpn->IsAddonAttached(eScope) && !wpn->IsGrenadeMode())
 				zoom_factor = m_fScopeZoomFactor;
 
 			k2 *= zoom_factor;

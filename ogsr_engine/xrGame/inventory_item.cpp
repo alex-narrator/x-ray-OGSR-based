@@ -32,21 +32,16 @@
 
 CInventoryItem::CInventoryItem() 
 {
+	SetDropManual(FALSE);
 	SetSlot(NO_ACTIVE_SLOT);
 	m_flags.zero();
-	m_flags.set			(Fbelt,FALSE);
-	m_flags.set			(Fvest,FALSE);
-	m_flags.set			(Fruck,TRUE);
-	m_flags.set			(FRuckDefault,FALSE);
-	m_pCurrentInventory	= NULL;
-
-	SetDropManual		(FALSE);
-
-	m_flags.set			(FCanTake,TRUE);
-	m_flags.set			(FCanTrade,TRUE);
-	m_flags.set			(FUsingCondition,TRUE);
-
-	m_eItemPlace		= eItemPlaceUndefined;
+	m_flags.set(Fbelt,FALSE);
+	m_flags.set(Fvest,FALSE);
+	m_flags.set(Fruck,TRUE);
+	m_flags.set(FRuckDefault,FALSE);
+	m_flags.set(FCanTake,TRUE);
+	m_flags.set(FCanTrade,TRUE);
+	m_flags.set(FUsingCondition,TRUE);
 
 	m_HitTypeProtection.clear();
 	m_HitTypeProtection.resize(ALife::eHitTypeMax);
@@ -126,6 +121,7 @@ void CInventoryItem::Load(LPCSTR section)
 	m_flags.set(FIsQuestItem,		READ_IF_EXISTS(pSettings, r_bool, section, "quest_item",		FALSE));
 	m_flags.set(FAllowSprint,		READ_IF_EXISTS(pSettings, r_bool, section, "sprint_allowed",	TRUE));
 	m_flags.set(FUsingCondition,	READ_IF_EXISTS(pSettings, r_bool, section, "use_condition",		TRUE));
+	m_flags.set(Fbreakable,			READ_IF_EXISTS(pSettings, r_bool, section, "breakable",			FALSE));
 
 //	m_fControlInertionFactor		= READ_IF_EXISTS(pSettings, r_float,section,"control_inertion_factor", 1.0f);
 	m_icon_name						= READ_IF_EXISTS(pSettings, r_string,section,"icon_name", NULL);
@@ -133,8 +129,6 @@ void CInventoryItem::Load(LPCSTR section)
 	m_always_ungroupable			= READ_IF_EXISTS(pSettings, r_bool, section, "always_ungroupable", false );
 
 	m_need_brief_info				= READ_IF_EXISTS(pSettings, r_bool, section, "show_brief_info", true );
-
-	m_bBreakOnZeroCondition			= READ_IF_EXISTS(pSettings, r_bool, section, "break_on_zero_condition", false);
 
 	if (pSettings->line_exist(section, "break_particles"))
 		m_sBreakParticles = pSettings->r_string(section, "break_particles");
@@ -193,8 +187,6 @@ void CInventoryItem::Load(LPCSTR section)
 		}
 	}
 
-	m_fPowerLowThreshold		= READ_IF_EXISTS(pSettings, r_float, section, "power_low_threshold", 0.1f);
-
 	m_uSlotEnabled				= READ_IF_EXISTS(pSettings, r_u32, section, "slot_enabled", NO_ACTIVE_SLOT);
 
 	m_detail_part_section		= READ_IF_EXISTS(pSettings, r_string, section, "detail_parts", nullptr);
@@ -223,7 +215,7 @@ void CInventoryItem::Load(LPCSTR section)
 	m_sAttachMenuTip			= READ_IF_EXISTS(pSettings, r_string, section, "menu_attach_tip", "st_attach");
 	m_sDetachMenuTip			= READ_IF_EXISTS(pSettings, r_string, section, "menu_detach_tip", "st_detach");
 	m_sRepairMenuTip			= READ_IF_EXISTS(pSettings, r_string, section, "menu_repair_tip", "st_repair");
-	m_sDisassembleMenuTip		= READ_IF_EXISTS(pSettings, r_string, section, "menu_repair_tip", "st_disassemble");
+	m_sDisassembleMenuTip		= READ_IF_EXISTS(pSettings, r_string, section, "menu_disassemble_tip", "st_disassemble");
 }
 
 
@@ -601,13 +593,14 @@ void CInventoryItem::load(IReader &packet)
 	}
 
     if ( m_eItemPlace == eItemPlaceSlot )
-		if ( ai().get_alife()->header().version() < 4 ) {
-			auto &slots = GetSlots();
-            SetSlot( slots.size() ? slots[ 0 ] : NO_ACTIVE_SLOT );
-		}
-		else {
-			SetSlot(packet.r_u8());
-		}
+		SetSlot(packet.r_u8());
+		//if ( ai().get_alife()->header().version() < 4 ) {
+		//	auto &slots = GetSlots();
+  //          SetSlot( slots.size() ? slots[ 0 ] : NO_ACTIVE_SLOT );
+		//}
+		//else {
+		//	SetSlot(packet.r_u8());
+		//}
 
 	u8						tmp = packet.r_u8();
 	if (!tmp)
@@ -901,7 +894,7 @@ float	CInventoryItem::GetControlInertionFactor(){
 
 void CInventoryItem::TryBreakToPieces(bool play_effects)
 {
-	if (m_bBreakOnZeroCondition && fis_zero(GetCondition()) && !IsQuestItem() && !b_brake_item){
+	if (m_flags.test(Fbreakable) && fis_zero(GetCondition()) && !IsQuestItem() && !b_brake_item) {
 		b_brake_item = true;
 		if (play_effects){
 			if (object().H_Parent()){

@@ -531,7 +531,7 @@ void CWeaponShotgun::InitAddons()
 {
 	inherited::InitAddons();
 	iMagazineSize = pSettings->r_s32(cNameSect(), "ammo_mag_size");
-	if (IsExtenderAttached()) {
-		iMagazineSize += READ_IF_EXISTS(pSettings, r_u32, GetExtenderName(), "ammo_mag_size", 0);
+	if (IsAddonAttached(eExtender)) {
+		iMagazineSize += READ_IF_EXISTS(pSettings, r_u32, GetAddonName(eExtender), "ammo_mag_size", 0);
 	}
 }

@@ -345,68 +345,22 @@ void CUITradeWnd::ActivatePropertiesBox()
 					}
 				}
 			}
+			//addons detach
+			for (u32 i = 0; i < eMagazine; i++) {
+				if (pWeapon->AddonAttachable(i) && pWeapon->IsAddonAttached(i) && pWeapon->CanDetach(pWeapon->GetAddonName(i).c_str())) {
+					_addon_sect = pWeapon->GetAddonName(i).c_str();
+					_addon_name = pSettings->r_string(_addon_sect, "inv_name_short");
+					sprintf(temp, "%s%s %s", _many, CStringTable().translate(detach_tip).c_str(), CStringTable().translate(_addon_name).c_str());
+					m_pUIPropertiesBox->AddItem(temp, (void*)_addon_sect, INVENTORY_DETACH_ADDON);
+					b_show = true;
+				}
+			}
 			//
-			if (pWeapon->IsGrenadeLauncherAttached() && pWeapon->GrenadeLauncherAttachable() && pWeapon->CanDetach(pWeapon->GetGrenadeLauncherName().c_str())) {
-				_addon_sect = pWeapon->GetGrenadeLauncherName().c_str();
-				_addon_name = pSettings->r_string(_addon_sect, "inv_name_short");
-				sprintf(temp, "%s%s %s", _many, CStringTable().translate(detach_tip).c_str(), CStringTable().translate(_addon_name).c_str());
-				m_pUIPropertiesBox->AddItem(temp, (void*)_addon_sect, INVENTORY_DETACH_ADDON);
-				b_show = true;
-			}
-			if (pWeapon->IsScopeAttached() && pWeapon->ScopeAttachable() && pWeapon->CanDetach(pWeapon->GetScopeName().c_str())) {
-				_addon_sect = pWeapon->GetScopeName().c_str();
-				_addon_name = pSettings->r_string(_addon_sect, "inv_name_short");
-				sprintf(temp, "%s%s %s", _many, CStringTable().translate(detach_tip).c_str(), CStringTable().translate(_addon_name).c_str());
-				m_pUIPropertiesBox->AddItem(temp, (void*)_addon_sect, INVENTORY_DETACH_ADDON);
-				b_show = true;
-			}
-			if (pWeapon->IsSilencerAttached() && pWeapon->SilencerAttachable() && pWeapon->CanDetach(pWeapon->GetSilencerName().c_str())) {
-				_addon_sect = pWeapon->GetSilencerName().c_str();
-				_addon_name = pSettings->r_string(_addon_sect, "inv_name_short");
-				sprintf(temp, "%s%s %s", _many, CStringTable().translate(detach_tip).c_str(), CStringTable().translate(_addon_name).c_str());
-				m_pUIPropertiesBox->AddItem(temp, (void*)_addon_sect, INVENTORY_DETACH_ADDON);
-				b_show = true;
-			}
-			if (pWeapon->IsLaserAttached() && pWeapon->LaserAttachable() && pWeapon->CanDetach(pWeapon->GetLaserName().c_str())) {
-				_addon_sect = pWeapon->GetLaserName().c_str();
-				_addon_name = pSettings->r_string(_addon_sect, "inv_name_short");
-				sprintf(temp, "%s%s %s", _many, CStringTable().translate(detach_tip).c_str(), CStringTable().translate(_addon_name).c_str());
-				m_pUIPropertiesBox->AddItem(temp, (void*)_addon_sect, INVENTORY_DETACH_ADDON);
-				b_show = true;
-			}
-			if (pWeapon->IsFlashlightAttached() && pWeapon->FlashlightAttachable() && pWeapon->CanDetach(pWeapon->GetFlashlightName().c_str())) {
-				_addon_sect = pWeapon->GetFlashlightName().c_str();
-				_addon_name = pSettings->r_string(_addon_sect, "inv_name_short");
-				sprintf(temp, "%s%s %s", _many, CStringTable().translate(detach_tip).c_str(), CStringTable().translate(_addon_name).c_str());
-				m_pUIPropertiesBox->AddItem(temp, (void*)_addon_sect, INVENTORY_DETACH_ADDON);
-				b_show = true;
-			}
-			if (pWeapon->IsStockAttached() && pWeapon->StockAttachable() && pWeapon->CanDetach(pWeapon->GetStockName().c_str())) {
-				_addon_sect = pWeapon->GetStockName().c_str();
-				_addon_name = pSettings->r_string(_addon_sect, "inv_name_short");
-				sprintf(temp, "%s%s %s", _many, CStringTable().translate(detach_tip).c_str(), CStringTable().translate(_addon_name).c_str());
-				m_pUIPropertiesBox->AddItem(temp, (void*)_addon_sect, INVENTORY_DETACH_ADDON);
-				b_show = true;
-			}
-			if (pWeapon->IsExtenderAttached() && pWeapon->ExtenderAttachable() && pWeapon->CanDetach(pWeapon->GetExtenderName().c_str())) {
-				_addon_sect = pWeapon->GetExtenderName().c_str();
-				_addon_name = pSettings->r_string(_addon_sect, "inv_name_short");
-				sprintf(temp, "%s%s %s", _many, CStringTable().translate(detach_tip).c_str(), CStringTable().translate(_addon_name).c_str());
-				m_pUIPropertiesBox->AddItem(temp, (void*)_addon_sect, INVENTORY_DETACH_ADDON);
-				b_show = true;
-			}
-			if (pWeapon->IsForendAttached() && pWeapon->ForendAttachable() && pWeapon->CanDetach(pWeapon->GetForendName().c_str())) {
-				_addon_sect = pWeapon->GetForendName().c_str();
-				_addon_name = pSettings->r_string(_addon_sect, "inv_name_short");
-				sprintf(temp, "%s%s %s", _many, CStringTable().translate(detach_tip).c_str(), CStringTable().translate(_addon_name).c_str());
-				m_pUIPropertiesBox->AddItem(temp, (void*)_addon_sect, INVENTORY_DETACH_ADDON);
-				b_show = true;
-			}
 			if (smart_cast<CWeaponMagazined*>(pWeapon)) {
 				auto WpnMagazWgl = smart_cast<CWeaponMagazinedWGrenade*>(pWeapon);
 				bool b = pWeapon->GetAmmoElapsed() > 0
 					|| WpnMagazWgl && !WpnMagazWgl->m_magazine2.empty()
-					|| smart_cast<CWeaponMagazined*>(pWeapon)->IsMagazineAttached();
+					|| smart_cast<CWeaponMagazined*>(pWeapon)->IsAddonAttached(eMagazine);
 
 				if (!b) {
 					CUICellItem* itm = CurrentItem();
@@ -415,7 +369,7 @@ void CUITradeWnd::ActivatePropertiesBox()
 						auto WpnMagazWglChild = smart_cast<CWeaponMagazinedWGrenade*>(pWeaponChild);
 						if (pWeaponChild->GetAmmoElapsed() > 0
 							|| WpnMagazWglChild && !WpnMagazWglChild->m_magazine2.empty()
-							|| pWeaponChild->IsMagazineAttached())
+							|| pWeaponChild->IsAddonAttached(eMagazine))
 						{
 							b = true;
 							break;
@@ -506,51 +460,30 @@ void CUITradeWnd::SendMessage(CUIWindow *pWnd, s16 msg, void *pData)
 				}break;
 				case INVENTORY_UNLOAD_MAGAZINE:
 				{
-					auto ProcessUnload = [](void* pWpn) {
-						auto WpnMagaz = static_cast<CWeaponMagazined*>(pWpn);
-						WpnMagaz->UnloadWeaponFull();
-						if (auto WpnMagazWgl = smart_cast<CWeaponMagazinedWGrenade*>(WpnMagaz)) {
-							if (WpnMagazWgl->IsGrenadeLauncherAttached()) {
-								WpnMagazWgl->PerformSwitchGL();
-								WpnMagazWgl->UnloadWeaponFull();
-								WpnMagazWgl->PerformSwitchGL();
-							}
-						}
-					};
-
-					ProcessUnload(itm->m_pData);
-
+					auto wpn = smart_cast<CWeaponMagazined*>(item);
+					wpn->UnloadWeaponFull();
 					for (u32 i = 0; i < itm->ChildsCount() && for_all; ++i) {
-						auto child_itm = itm->Child(i);
-						ProcessUnload(child_itm->m_pData);
+						auto wpn = static_cast<CWeaponMagazined*>(itm->Child(i)->m_pData);
+						wpn->UnloadWeaponFull();
 					}
 				}break;
 				case INVENTORY_RELOAD_AMMO_BOX:
 				{
 					auto sect_to_load = (LPCSTR)m_pUIPropertiesBox->GetClickedItem()->GetData();
-
-					auto ProcessReload = [](void* pAmmo, LPCSTR sect_to_load) {
-						auto AmmoBox = static_cast<CWeaponAmmo*>(pAmmo);
-						AmmoBox->ReloadBox(sect_to_load);
-					};
-
-					ProcessReload(itm->m_pData, sect_to_load);
+					auto ammobox = smart_cast<CWeaponAmmo*>(item);
+					ammobox->ReloadBox(sect_to_load);
 					for (u32 i = 0; i < itm->ChildsCount() && for_all; ++i) {
-						auto child_itm = itm->Child(i);
-						ProcessReload(child_itm->m_pData, sect_to_load);
+						auto ammobox = static_cast<CWeaponAmmo*>(itm->Child(i)->m_pData);
+						ammobox->ReloadBox(sect_to_load);
 					}
 				}break;
 				case INVENTORY_UNLOAD_AMMO_BOX:
 				{
-					auto ProcessUnload = [](void* pAmmo) {
-						auto AmmoBox = static_cast<CWeaponAmmo*>(pAmmo);
-						AmmoBox->UnloadBox();
-					};
-
-					ProcessUnload(itm->m_pData);
+					auto ammobox = smart_cast<CWeaponAmmo*>(item);
+					ammobox->UnloadBox();
 					for (u32 i = 0; i < itm->ChildsCount() && for_all; ++i) {
-						auto child_itm = itm->Child(i);
-						ProcessUnload(child_itm->m_pData);
+						auto ammobox = static_cast<CWeaponAmmo*>(itm->Child(i)->m_pData);
+						ammobox->UnloadBox();
 					}
 				}break;
 				case INVENTORY_DETACH_ADDON: {

@@ -34,20 +34,11 @@
 
 CInventoryOwner::CInventoryOwner			()
 {
-	m_pTrade					= NULL;
-	m_trade_parameters			= 0;
-	
 	m_inventory					= xr_new<CInventory>();
 	m_pCharacterInfo			= xr_new<CCharacterInfo>();
-	
+	m_known_info_registry		= xr_new<CInfoPortionWrapper>();
 	EnableTalk();
 	EnableTrade();
-	
-	m_known_info_registry		= xr_new<CInfoPortionWrapper>();
-	m_tmp_active_slot_num		= NO_ACTIVE_SLOT;
-	m_need_osoznanie_mode		= FALSE;
-
-    m_tmp_next_item_slot = NO_ACTIVE_SLOT;
 }
 
 DLL_Pure *CInventoryOwner::_construct		()

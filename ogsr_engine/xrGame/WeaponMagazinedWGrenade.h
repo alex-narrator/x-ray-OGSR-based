@@ -102,9 +102,11 @@ public:
 	virtual void	PlayAnimCheckGear	() override;
 	virtual void	PlayAnimKick		() override;
 	//оружие использует отъёмный магазин
-	virtual bool	HasDetachableMagazine(bool = false) const;
+	virtual bool	AddonAttachable(u32, bool = false) const;
 	virtual bool	AmmoType2IsMagazine	(u32 type) const;
-	virtual shared_str GetMagazineName	(bool = false) const;
+	virtual shared_str GetAddonName(u32, bool = false) const;
 	virtual LPCSTR	GetMagazineEmptySect(bool = false) const;
 	virtual bool	IsDirectReload		(CWeaponAmmo*);
+	virtual void	SetQueueSize(int size);
+	virtual void	UnloadWeaponFull();
 };

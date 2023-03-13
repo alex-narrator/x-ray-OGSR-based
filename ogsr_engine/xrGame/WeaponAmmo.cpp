@@ -28,21 +28,21 @@ void CCartridge::Load(LPCSTR section, u8 LocalAmmoType)
 	//
 	m_LocalAmmoType			= LocalAmmoType;
 
-	m_kDist					= READ_IF_EXISTS(pSettings, r_float, m_ammoSect, "k_dist",		0.f);//pSettings->r_float(m_ammoSect, "k_dist");
-	m_kDisp					= READ_IF_EXISTS(pSettings, r_float, m_ammoSect, "k_disp",		0.f);//pSettings->r_float(m_ammoSect, "k_disp");
-	m_kHit					= READ_IF_EXISTS(pSettings, r_float, m_ammoSect, "k_hit",		0.f);//pSettings->r_float(m_ammoSect, "k_hit");
-	m_kImpulse				= READ_IF_EXISTS(pSettings, r_float, m_ammoSect, "k_impulse",	0.f);//pSettings->r_float(m_ammoSect, "k_impulse");
-	m_kPierce				= READ_IF_EXISTS(pSettings, r_float, m_ammoSect, "k_pierce",	1.0f);//pSettings->r_float(m_ammoSect, "k_pierce");
+	m_kDist					= READ_IF_EXISTS(pSettings, r_float, m_ammoSect, "k_dist",		0.f);
+	m_kDisp					= READ_IF_EXISTS(pSettings, r_float, m_ammoSect, "k_disp",		0.f);
+	m_kHit					= READ_IF_EXISTS(pSettings, r_float, m_ammoSect, "k_hit",		0.f);
+	m_kImpulse				= READ_IF_EXISTS(pSettings, r_float, m_ammoSect, "k_impulse",	0.f);
+	m_kPierce				= READ_IF_EXISTS(pSettings, r_float, m_ammoSect, "k_pierce",	1.0f);
 	m_kAP					= READ_IF_EXISTS(pSettings, r_float, m_ammoSect, "k_ap",		0.f);
 	m_kSpeed				= READ_IF_EXISTS(pSettings, r_float, m_ammoSect, "k_speed",		0.f);
 	m_u8ColorID				= READ_IF_EXISTS(pSettings, r_u8, m_ammoSect, "tracer_color_ID", 0);
 	
 	m_kAirRes				= READ_IF_EXISTS(pSettings, r_float, m_ammoSect, "k_air_resistance", pSettings->r_float(BULLET_MANAGER_SECTION, "air_resistance_k"));
 
-	m_flags.set				(cfTracer, READ_IF_EXISTS(pSettings, r_bool, m_ammoSect, "tracer", false)/*pSettings->r_bool(m_ammoSect, "tracer")*/);
-	m_buckShot				= READ_IF_EXISTS(pSettings, r_s32, m_ammoSect, "buck_shot", 1);//pSettings->r_s32(m_ammoSect, "buck_shot");
-	m_impair				= READ_IF_EXISTS(pSettings, r_float, m_ammoSect, "impair", 0.f); //pSettings->r_float(m_ammoSect, "impair");
-	fWallmarkSize			= READ_IF_EXISTS(pSettings, r_float, m_ammoSect, "wm_size", 0.05f);//pSettings->r_float(m_ammoSect, "wm_size");
+	m_flags.set				(cfTracer, READ_IF_EXISTS(pSettings, r_bool, m_ammoSect, "tracer", false));
+	m_buckShot				= READ_IF_EXISTS(pSettings, r_s32, m_ammoSect, "buck_shot", 1);
+	m_impair				= READ_IF_EXISTS(pSettings, r_float, m_ammoSect, "impair", 0.f);
+	fWallmarkSize			= READ_IF_EXISTS(pSettings, r_float, m_ammoSect, "wm_size", 0.05f);
 
 	m_flags.set( cfCanBeUnlimited, TRUE );
 
@@ -148,21 +148,21 @@ void CWeaponAmmo::Load(LPCSTR section)
 	m_InvShortName = CStringTable().translate(pSettings->r_string(m_ammoSect, "inv_name_short"));
 	//
 
-	m_kDist					= READ_IF_EXISTS(pSettings, r_float, m_ammoSect, "k_dist",		0.f);//pSettings->r_float(m_ammoSect, "k_dist");
-	m_kDisp					= READ_IF_EXISTS(pSettings, r_float, m_ammoSect, "k_disp",		0.f); //pSettings->r_float(m_ammoSect, "k_disp");
-	m_kHit					= READ_IF_EXISTS(pSettings, r_float, m_ammoSect, "k_hit",		0.f);//pSettings->r_float(m_ammoSect, "k_hit");
-	m_kImpulse				= READ_IF_EXISTS(pSettings, r_float, m_ammoSect, "k_impulse",	0.f);//pSettings->r_float(m_ammoSect, "k_impulse");
-	m_kPierce				= READ_IF_EXISTS(pSettings, r_float, m_ammoSect, "k_pierce",	1.0f);//pSettings->r_float(m_ammoSect, "k_pierce");
+	m_kDist					= READ_IF_EXISTS(pSettings, r_float, m_ammoSect, "k_dist",		0.f);
+	m_kDisp					= READ_IF_EXISTS(pSettings, r_float, m_ammoSect, "k_disp",		0.f);
+	m_kHit					= READ_IF_EXISTS(pSettings, r_float, m_ammoSect, "k_hit",		0.f);
+	m_kImpulse				= READ_IF_EXISTS(pSettings, r_float, m_ammoSect, "k_impulse",	0.f);
+	m_kPierce				= READ_IF_EXISTS(pSettings, r_float, m_ammoSect, "k_pierce",	1.0f);
 	m_kAP					= READ_IF_EXISTS(pSettings, r_float, m_ammoSect, "k_ap",		0.0f);
 	m_kSpeed				= READ_IF_EXISTS(pSettings, r_float, m_ammoSect, "k_speed",		0.f);
 	m_u8ColorID				= READ_IF_EXISTS(pSettings, r_u8, m_ammoSect, "tracer_color_ID", 0);
 
 	m_kAirRes				= READ_IF_EXISTS(pSettings, r_float, m_ammoSect, "k_air_resistance", pSettings->r_float(BULLET_MANAGER_SECTION, "air_resistance_k"));
 
-	m_tracer				= READ_IF_EXISTS(pSettings, r_bool, m_ammoSect, "tracer", false);//!!pSettings->r_bool(m_ammoSect, "tracer");
+	m_tracer				= READ_IF_EXISTS(pSettings, r_bool, m_ammoSect, "tracer", false);
 	m_buckShot				= READ_IF_EXISTS(pSettings, r_s32, m_ammoSect, "buck_shot", 1);
 	m_impair				= READ_IF_EXISTS(pSettings, r_float, m_ammoSect, "impair", 0.f);
-	fWallmarkSize			= READ_IF_EXISTS(pSettings, r_float, m_ammoSect, "wm_size", 0.05f);//pSettings->r_float(m_ammoSect,"wm_size");
+	fWallmarkSize			= READ_IF_EXISTS(pSettings, r_float, m_ammoSect, "wm_size", 0.05f);
 
 	R_ASSERT				(fWallmarkSize>0);	
 	//
@@ -220,18 +220,6 @@ bool CWeaponAmmo::IsBoxReloadableEmpty() const
 	return !m_ammoTypes.empty() && !m_magTypes.empty();
 }
 
-/*
-s32 CWeaponAmmo::Sort(PIItem pIItem) 
-{
-	// Если нужно разместить IItem после this - вернуть 1, если
-	// перед - -1. Если пофиг то 0.
-	CWeaponAmmo *l_pA = smart_cast<CWeaponAmmo*>(pIItem);
-	if(!l_pA) return 0;
-	if(xr_strcmp(cNameSect(), l_pA->cNameSect())) return 0;
-	if(m_boxCurr <= l_pA->m_boxCurr) return 1;
-	else return -1;
-}
-*/
 bool CWeaponAmmo::Get(CCartridge &cartridge) 
 {
 	if(!m_boxCurr) return false;
@@ -295,7 +283,7 @@ CInventoryItem *CWeaponAmmo::can_make_killing	(const CInventory *inventory) cons
 
 float CWeaponAmmo::Weight() const
 {	
-	float res = inherited::Weight();
+	float res{ inherited::Weight() };
 
 	if (!m_boxCurr)
 		return res;
@@ -326,7 +314,6 @@ u32 CWeaponAmmo::Cost() const
 
 	float res = (float)m_cost;
 	res *= (float)m_boxCurr / (float)m_boxSize;
-	// return (u32)roundf(res); // VC18 only
 	return (u32)ceil(res + 0.5);
 }
 
@@ -357,7 +344,7 @@ void CWeaponAmmo::UnloadBox()
 	if (pSettings->line_exist(cNameSect(), "unload_sound")) {
 		if (sndUnload._feedback())
 			sndUnload.stop();
-		sndUnload.play_at_pos(H_Parent(), H_Parent()->Position(), false);
+		sndUnload.play_at_pos(H_Parent(), H_Parent()->Position());
 	}
 }
 
@@ -392,7 +379,7 @@ void CWeaponAmmo::ReloadBox(LPCSTR ammo_sect)
 	if (pSettings->line_exist(cNameSect(), "load_sound")) {
 		if (sndLoad._feedback())
 			sndLoad.stop();
-		sndLoad.play_at_pos(H_Parent(), H_Parent()->Position(), false);
+		sndLoad.play_at_pos(H_Parent(), H_Parent()->Position());
 	}
 }
 
@@ -400,8 +387,7 @@ void CWeaponAmmo::ReloadBox(LPCSTR ammo_sect)
 #include "ai_object_location.h"
 void CWeaponAmmo::SpawnAmmo(u32 boxCurr, LPCSTR ammoSect, u32 ParentID){
 	CSE_Abstract* D = F_entity_Create(ammoSect);
-	CSE_ALifeItemAmmo* l_pA = smart_cast<CSE_ALifeItemAmmo*>(D);
-	if (l_pA){
+	if (auto l_pA = smart_cast<CSE_ALifeItemAmmo*>(D)){
 		R_ASSERT(l_pA);
 		l_pA->m_boxSize = (u16)pSettings->r_s32(ammoSect, "box_size");
 		D->s_name = ammoSect;

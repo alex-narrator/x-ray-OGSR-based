@@ -581,6 +581,7 @@ u32	InventoryUtilities::GetRelationColor(ALife::ERelationType relation)
 #endif
 }
 
+
 CUIStatic* init_addon(CUIWeaponCellItem* cell_item, LPCSTR sect, float scale, int idx)
 {
 	CUIStatic* addon = xr_new<CUIStatic>();
@@ -601,7 +602,6 @@ CUIStatic* init_addon(CUIWeaponCellItem* cell_item, LPCSTR sect, float scale, in
 	return addon;
 }
 
-typedef CUIWeaponCellItem::eAddonType eAddonType;
 void InventoryUtilities::TryAttachWpnAddonIcons(CUIStatic* _main_icon, PIItem _item, float _scale) {
 	_main_icon->DetachAll();
 	auto wpn = smart_cast<CWeapon*>(_item);
@@ -610,49 +610,11 @@ void InventoryUtilities::TryAttachWpnAddonIcons(CUIStatic* _main_icon, PIItem _i
 	auto cell_item = xr_new<CUIWeaponCellItem>(wpn);
 	CUIStatic* addon_statick{};
 
-	if (wpn->SilencerAttachable() && wpn->IsSilencerAttached()) {
-		addon_statick = init_addon(cell_item, wpn->GetSilencerName().c_str(), _scale, eAddonType::eSilencer);
-		_main_icon->AttachChild(addon_statick);
-	}
-
-	if (wpn->ScopeAttachable() && wpn->IsScopeAttached()) {
-		addon_statick = init_addon(cell_item, wpn->GetScopeName().c_str(), _scale, eAddonType::eScope);
-		_main_icon->AttachChild(addon_statick);
-	}
-
-	if (wpn->GrenadeLauncherAttachable() && wpn->IsGrenadeLauncherAttached()) {
-		addon_statick = init_addon(cell_item, wpn->GetGrenadeLauncherName().c_str(), _scale, eAddonType::eLauncher);
-		_main_icon->AttachChild(addon_statick);
-	}
-
-	if (wpn->LaserAttachable() && wpn->IsLaserAttached()) {
-		addon_statick = init_addon(cell_item, wpn->GetLaserName().c_str(), _scale, eAddonType::eLaser);
-		_main_icon->AttachChild(addon_statick);
-	}
-
-	if (wpn->FlashlightAttachable() && wpn->IsFlashlightAttached()) {
-		addon_statick = init_addon(cell_item, wpn->GetFlashlightName().c_str(), _scale, eAddonType::eFlashlight);
-		_main_icon->AttachChild(addon_statick);
-	}
-
-	if (wpn->StockAttachable() && wpn->IsStockAttached()) {
-		addon_statick = init_addon(cell_item, wpn->GetStockName().c_str(), _scale, eAddonType::eStock);
-		_main_icon->AttachChild(addon_statick);
-	}
-
-	if (wpn->ExtenderAttachable() && wpn->IsExtenderAttached()) {
-		addon_statick = init_addon(cell_item, wpn->GetExtenderName().c_str(), _scale, eAddonType::eExtender);
-		_main_icon->AttachChild(addon_statick);
-	}
-
-	if (wpn->ForendAttachable() && wpn->IsForendAttached()) {
-		addon_statick = init_addon(cell_item, wpn->GetForendName().c_str(), _scale, eAddonType::eForend);
-		_main_icon->AttachChild(addon_statick);
-	}
-
-	if (wpn->HasDetachableMagazine(true) && wpn->IsMagazineAttached() && !!wpn->GetMagazineIconSect(true)) {
-		addon_statick = init_addon(cell_item, wpn->GetMagazineIconSect(true).c_str(), _scale, eAddonType::eMagazine);
-		_main_icon->AttachChild(addon_statick);
+	for (u32 i = 0; i < eMaxAddon; i++) {
+		if (wpn->AddonAttachable(i) && wpn->IsAddonAttached(i) && (i != eMagazine || !!wpn->GetMagazineIconSect(true))) {
+			addon_statick = init_addon(cell_item, wpn->GetAddonName(i).c_str(), _scale, i);
+			_main_icon->AttachChild(addon_statick);
+		}
 	}
 
 	delete_data(cell_item);

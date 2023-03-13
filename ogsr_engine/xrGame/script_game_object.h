@@ -728,8 +728,8 @@ public:
 			void				ZeroEffects();
 
 			// functions for CInventoryItem class
-			void				SetIIFlags						(Flags16);
-			Flags16				GetIIFlags						();
+			void				SetIIFlags						(Flags32);
+			Flags32				GetIIFlags						();
 			u32				GetHudItemState();
 			float				GetRadius();
 

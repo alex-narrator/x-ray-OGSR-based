@@ -398,14 +398,12 @@ void CUICellItem::ColorizeItems( std::initializer_list<CUIDragDropListEx*> args 
 
 	  if (Wpn) {
 		  std::copy(Wpn->m_ammoTypes.begin(), Wpn->m_ammoTypes.end(), std::back_inserter(ColorizeSects));
-		  if (auto WpnGl = smart_cast<CWeaponMagazinedWGrenade*>(Wpn); WpnGl && WpnGl->IsGrenadeLauncherAttached())
+		  if (auto WpnGl = smart_cast<CWeaponMagazinedWGrenade*>(Wpn); WpnGl && WpnGl->IsAddonAttached(eLauncher))
 			  std::copy(WpnGl->m_ammoTypes2.begin(), WpnGl->m_ammoTypes2.end(), std::back_inserter(ColorizeSects));
-		  if (Wpn->SilencerAttachable())
-			  ColorizeSects.push_back(Wpn->GetSilencerName());
-		  if (Wpn->ScopeAttachable())
-			  ColorizeSects.push_back(Wpn->GetScopeName());
-		  if (Wpn->GrenadeLauncherAttachable())
-			  ColorizeSects.push_back(Wpn->GetGrenadeLauncherName());
+		  for (u32 i = 0; i < eMagazine; i++) {
+			  if (Wpn->AddonAttachable(i))
+				  ColorizeSects.push_back(Wpn->GetAddonName(i));
+		  }
 		  std::copy(Wpn->m_highlightAddons.begin(), Wpn->m_highlightAddons.end(), std::back_inserter(ColorizeSects));
 	  }
 	  if (Ammo) {

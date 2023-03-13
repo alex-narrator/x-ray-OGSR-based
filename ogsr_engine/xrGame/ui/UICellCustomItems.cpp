@@ -384,33 +384,6 @@ CUIWeaponCellItem::CUIWeaponCellItem(CWeapon* itm)
 	if (itm->GetAmmoMagSize()) {
 		init_add();
 	}
-
-	if(itm->SilencerAttachable())
-		m_addon_offset[eSilencer].set(object()->GetSilencerX(), object()->GetSilencerY());
-
-	if(itm->ScopeAttachable())
-		m_addon_offset[eScope].set(object()->GetScopeX(), object()->GetScopeY());
-
-	if(itm->GrenadeLauncherAttachable())
-		m_addon_offset[eLauncher].set(object()->GetGrenadeLauncherX(), object()->GetGrenadeLauncherY());
-
-	if (itm->LaserAttachable())
-		m_addon_offset[eLaser].set(object()->GetLaserX(), object()->GetLaserY());
-
-	if (itm->FlashlightAttachable())
-		m_addon_offset[eFlashlight].set(object()->GetFlashlightX(), object()->GetFlashlightY());
-
-	if (itm->StockAttachable())
-		m_addon_offset[eStock].set(object()->GetStockX(), object()->GetStockY());
-
-	if (itm->ExtenderAttachable())
-		m_addon_offset[eExtender].set(object()->GetExtenderX(), object()->GetExtenderY());
-
-	if (itm->ForendAttachable())
-		m_addon_offset[eForend].set(object()->GetForendX(), object()->GetForendY());
-
-	if (itm->HasDetachableMagazine(true))
-		m_addon_offset[eMagazine].set(object()->GetMagazineX(), object()->GetMagazineY());
 }
 
 void CUIWeaponCellItem::UpdateItemText()
@@ -437,35 +410,35 @@ CUIWeaponCellItem::~CUIWeaponCellItem(){
 }
 
 bool CUIWeaponCellItem::is_scope(){
-	return object()->ScopeAttachable()&&object()->IsScopeAttached();
+	return object()->AddonAttachable(eScope) && object()->IsAddonAttached(eScope);
 }
 bool CUIWeaponCellItem::is_silencer(){
-	return object()->SilencerAttachable()&&object()->IsSilencerAttached();
+	return object()->AddonAttachable(eSilencer) && object()->IsAddonAttached(eSilencer);
 }
 bool CUIWeaponCellItem::is_launcher(){
-	return object()->GrenadeLauncherAttachable()&&object()->IsGrenadeLauncherAttached();
+	return object()->AddonAttachable(eLauncher) && object()->IsAddonAttached(eLauncher);
 }
 bool CUIWeaponCellItem::is_laser() {
-	return object()->LaserAttachable() && object()->IsLaserAttached();
+	return object()->AddonAttachable(eLaser) && object()->IsAddonAttached(eLaser);
 }
 bool CUIWeaponCellItem::is_flashlight() {
-	return object()->FlashlightAttachable() && object()->IsFlashlightAttached();
+	return object()->AddonAttachable(eFlashlight) && object()->IsAddonAttached(eFlashlight);
 }
 bool CUIWeaponCellItem::is_stock() {
-	return object()->StockAttachable() && object()->IsStockAttached();
+	return object()->AddonAttachable(eStock) && object()->IsAddonAttached(eStock);
 }
 bool CUIWeaponCellItem::is_extender() {
-	return object()->ExtenderAttachable() && object()->IsExtenderAttached();
+	return object()->AddonAttachable(eExtender) && object()->IsAddonAttached(eExtender);
 }
 bool CUIWeaponCellItem::is_forend() {
-	return object()->ForendAttachable() && object()->IsForendAttached();
+	return object()->AddonAttachable(eForend) && object()->IsAddonAttached(eForend);
 }
 bool CUIWeaponCellItem::is_magazine() {
-	return object()->HasDetachableMagazine(true) && object()->IsMagazineAttached() &&
+	return object()->AddonAttachable(eMagazine, true) && object()->IsAddonAttached(eMagazine) &&
 		!!object()->GetMagazineIconSect(true);
 }
 
-void CUIWeaponCellItem::CreateIcon(eAddonType t, CIconParams &params)
+void CUIWeaponCellItem::CreateIcon(u32 t, CIconParams &params)
 {
 	if (GetIcon(t)) return;
 	m_addons[t]					= xr_new<CUIStatic>();	
@@ -474,13 +447,13 @@ void CUIWeaponCellItem::CreateIcon(eAddonType t, CIconParams &params)
 	params.set_shader( m_addons[ t ] );
 }
 
-void CUIWeaponCellItem::DestroyIcon(eAddonType t)
+void CUIWeaponCellItem::DestroyIcon(u32 t)
 {
 	DetachChild		(m_addons[t]);
 	m_addons[t]		= NULL;
 }
 
-CUIStatic* CUIWeaponCellItem::GetIcon(eAddonType t)
+CUIStatic* CUIWeaponCellItem::GetIcon(u32 t)
 {
 	return m_addons[t];
 }
@@ -492,12 +465,12 @@ void CUIWeaponCellItem::Update()
 	UpdateItemText();
 	bool bForceReInitAddons = (b != Heading());
 
-	if (object()->SilencerAttachable()){
-		if (object()->IsSilencerAttached()){
+	if (object()->AddonAttachable(eSilencer)){
+		if (object()->IsAddonAttached(eSilencer)){
 			if (!GetIcon(eSilencer) || bForceReInitAddons){
-				CIconParams params(object()->GetSilencerName());
+				CIconParams params(object()->GetAddonName(eSilencer));
 				CreateIcon	(eSilencer, params);
-				InitAddon	(GetIcon(eSilencer), params, m_addon_offset[eSilencer], Heading());
+				InitAddon	(GetIcon(eSilencer), params, object()->GetAddonOffset(eSilencer), Heading());
 			}
 		}
 		else{
@@ -506,12 +479,12 @@ void CUIWeaponCellItem::Update()
 		}
 	}
 
-	if (object()->ScopeAttachable()){
-		if (object()->IsScopeAttached()){
+	if (object()->AddonAttachable(eScope)) {
+		if (object()->IsAddonAttached(eScope)) {
 			if (!GetIcon(eScope) || bForceReInitAddons){
-				CIconParams params(object()->GetScopeName());
+				CIconParams params(object()->GetAddonName(eScope));
 				CreateIcon	(eScope, params);
-				InitAddon	(GetIcon(eScope), params, m_addon_offset[eScope], Heading());
+				InitAddon	(GetIcon(eScope), params, object()->GetAddonOffset(eScope), Heading());
 			}
 		}
 		else{
@@ -520,12 +493,12 @@ void CUIWeaponCellItem::Update()
 		}
 	}
 
-	if (object()->GrenadeLauncherAttachable()){
-		if (object()->IsGrenadeLauncherAttached()){
+	if (object()->AddonAttachable(eLauncher)) {
+		if (object()->IsAddonAttached(eLauncher)) {
 			if (!GetIcon(eLauncher) || bForceReInitAddons){
-				CIconParams params(object()->GetGrenadeLauncherName());
+				CIconParams params(object()->GetAddonName(eLauncher));
 				CreateIcon	(eLauncher, params);
-				InitAddon	(GetIcon(eLauncher), params, m_addon_offset[eLauncher], Heading());
+				InitAddon	(GetIcon(eLauncher), params, object()->GetAddonOffset(eLauncher), Heading());
 			}
 		}
 		else{
@@ -534,12 +507,12 @@ void CUIWeaponCellItem::Update()
 		}
 	}
 
-	if (object()->LaserAttachable()) {
-		if (object()->IsLaserAttached()){
+	if (object()->AddonAttachable(eLaser)) {
+		if (object()->IsAddonAttached(eLaser)) {
 			if (!GetIcon(eLaser) || bForceReInitAddons){
-				CIconParams params(object()->GetLaserName());
+				CIconParams params(object()->GetAddonName(eLaser));
 				CreateIcon(eLaser, params);
-				InitAddon(GetIcon(eLaser), params, m_addon_offset[eLaser], Heading());
+				InitAddon(GetIcon(eLaser), params, object()->GetAddonOffset(eLaser), Heading());
 			}
 		}
 		else{
@@ -548,12 +521,12 @@ void CUIWeaponCellItem::Update()
 		}
 	}
 
-	if (object()->FlashlightAttachable()) {
-		if (object()->IsFlashlightAttached()) {
+	if (object()->AddonAttachable(eFlashlight)) {
+		if (object()->IsAddonAttached(eFlashlight)) {
 			if (!GetIcon(eFlashlight) || bForceReInitAddons) {
-				CIconParams params(object()->GetFlashlightName());
+				CIconParams params(object()->GetAddonName(eFlashlight));
 				CreateIcon(eFlashlight, params);
-				InitAddon(GetIcon(eFlashlight), params, m_addon_offset[eFlashlight], Heading());
+				InitAddon(GetIcon(eFlashlight), params, object()->GetAddonOffset(eFlashlight), Heading());
 			}
 		}
 		else {
@@ -562,12 +535,12 @@ void CUIWeaponCellItem::Update()
 		}
 	}
 
-	if (object()->StockAttachable()) {
-		if (object()->IsStockAttached()) {
+	if (object()->AddonAttachable(eStock)) {
+		if (object()->IsAddonAttached(eStock)) {
 			if (!GetIcon(eStock) || bForceReInitAddons) {
-				CIconParams params(object()->GetStockName());
+				CIconParams params(object()->GetAddonName(eStock));
 				CreateIcon(eStock, params);
-				InitAddon(GetIcon(eStock), params, m_addon_offset[eStock], Heading());
+				InitAddon(GetIcon(eStock), params, object()->GetAddonOffset(eStock), Heading());
 			}
 		}
 		else {
@@ -575,12 +548,12 @@ void CUIWeaponCellItem::Update()
 				DestroyIcon(eStock);
 		}
 	}
-	if (object()->ExtenderAttachable()) {
-		if (object()->IsExtenderAttached()) {
+	if (object()->AddonAttachable(eExtender)) {
+		if (object()->IsAddonAttached(eExtender)) {
 			if (!GetIcon(eExtender) || bForceReInitAddons) {
-				CIconParams params(object()->GetExtenderName());
+				CIconParams params(object()->GetAddonName(eExtender));
 				CreateIcon(eExtender, params);
-				InitAddon(GetIcon(eExtender), params, m_addon_offset[eExtender], Heading());
+				InitAddon(GetIcon(eExtender), params, object()->GetAddonOffset(eExtender), Heading());
 			}
 		}
 		else {
@@ -588,12 +561,12 @@ void CUIWeaponCellItem::Update()
 				DestroyIcon(eExtender);
 		}
 	}
-	if (object()->ForendAttachable()) {
-		if (object()->IsForendAttached()) {
+	if (object()->AddonAttachable(eForend)) {
+		if (object()->IsAddonAttached(eForend)) {
 			if (!GetIcon(eForend) || bForceReInitAddons) {
-				CIconParams params(object()->GetForendName());
+				CIconParams params(object()->GetAddonName(eForend));
 				CreateIcon(eForend, params);
-				InitAddon(GetIcon(eForend), params, m_addon_offset[eForend], Heading());
+				InitAddon(GetIcon(eForend), params, object()->GetAddonOffset(eForend), Heading());
 			}
 		}
 		else {
@@ -601,12 +574,12 @@ void CUIWeaponCellItem::Update()
 				DestroyIcon(eForend);
 		}
 	}
-	if (object()->HasDetachableMagazine(true)) {
-		if (object()->IsMagazineAttached() && !!object()->GetMagazineIconSect(true)) {
+	if (object()->AddonAttachable(eMagazine, true)) {
+		if (object()->IsAddonAttached(eMagazine) && !!object()->GetMagazineIconSect(true)) {
 			if (!GetIcon(eMagazine) || bForceReInitAddons) {
 				CIconParams params(object()->GetMagazineIconSect(true));
 				CreateIcon(eMagazine, params);
-				InitAddon(GetIcon(eMagazine), params, m_addon_offset[eMagazine], Heading());
+				InitAddon(GetIcon(eMagazine), params, object()->GetAddonOffset(eMagazine), Heading());
 			}
 		}
 		else {
@@ -658,49 +631,49 @@ void CUIWeaponCellItem::InitAllAddons(
 	CIconParams params;
 
 	if (s_silencer) {
-		params.Load(object()->GetSilencerName());
+		params.Load(object()->GetAddonName(eSilencer));
 		params.set_shader(s_silencer);
-		InitAddon(s_silencer, params, m_addon_offset[eSilencer], b_vertical);
+		InitAddon(s_silencer, params, object()->GetAddonOffset(eSilencer), b_vertical);
 	}
 	if (s_scope) {
-		params.Load(object()->GetScopeName());
+		params.Load(object()->GetAddonName(eScope));
 		params.set_shader(s_scope);
-		InitAddon(s_scope, params, m_addon_offset[eScope], b_vertical);
+		InitAddon(s_scope, params, object()->GetAddonOffset(eScope), b_vertical);
 	}
 	if (s_launcher) {
-		params.Load(object()->GetGrenadeLauncherName());
+		params.Load(object()->GetAddonName(eLauncher));
 		params.set_shader(s_launcher);
-		InitAddon(s_launcher, params, m_addon_offset[eLauncher], b_vertical);
+		InitAddon(s_launcher, params, object()->GetAddonOffset(eLauncher), b_vertical);
 	}
 	if (s_laser) {
-		params.Load(object()->GetLaserName());
+		params.Load(object()->GetAddonName(eLaser));
 		params.set_shader(s_laser);
-		InitAddon(s_laser, params, m_addon_offset[eLaser], b_vertical);
+		InitAddon(s_laser, params, object()->GetAddonOffset(eLaser), b_vertical);
 	}
 	if (s_flashlight) {
-		params.Load(object()->GetFlashlightName());
+		params.Load(object()->GetAddonName(eFlashlight));
 		params.set_shader(s_flashlight);
-		InitAddon(s_flashlight, params, m_addon_offset[eFlashlight], b_vertical);
+		InitAddon(s_flashlight, params, object()->GetAddonOffset(eFlashlight), b_vertical);
 	}
 	if (s_stock) {
-		params.Load(object()->GetStockName());
+		params.Load(object()->GetAddonName(eStock));
 		params.set_shader(s_stock);
-		InitAddon(s_stock, params, m_addon_offset[eStock], b_vertical);
+		InitAddon(s_stock, params, object()->GetAddonOffset(eStock), b_vertical);
 	}
 	if (s_extender) {
-		params.Load(object()->GetExtenderName());
+		params.Load(object()->GetAddonName(eExtender));
 		params.set_shader(s_extender);
-		InitAddon(s_extender, params, m_addon_offset[eExtender], b_vertical);
+		InitAddon(s_extender, params, object()->GetAddonOffset(eExtender), b_vertical);
 	}
 	if (s_forend) {
-		params.Load(object()->GetForendName());
+		params.Load(object()->GetAddonName(eForend));
 		params.set_shader(s_forend);
-		InitAddon(s_forend, params, m_addon_offset[eForend], b_vertical);
+		InitAddon(s_forend, params, object()->GetAddonOffset(eForend), b_vertical);
 	}
 	if (s_magazine) {
 		params.Load(object()->GetMagazineIconSect(true));
 		params.set_shader(s_magazine);
-		InitAddon(s_magazine, params, m_addon_offset[eMagazine], b_vertical);
+		InitAddon(s_magazine, params, object()->GetAddonOffset(eMagazine), b_vertical);
 	}
 }
 
@@ -805,42 +778,42 @@ CUIDragItem* CUIWeaponCellItem::CreateDragItem()
 	CUIStatic* s_magazine	{};
 
     if (GetIcon(eSilencer)){
-        params.Load(object()->GetSilencerName());
+        params.Load(object()->GetAddonName(eSilencer));
         s_silencer = MakeAddonStatic(i, params);
     }
 
     if (GetIcon(eScope)){
-        params.Load(object()->GetScopeName());
+        params.Load(object()->GetAddonName(eScope));
         s_scope = MakeAddonStatic(i, params);
     }
 
     if (GetIcon(eLauncher)){
-        params.Load(object()->GetGrenadeLauncherName());
+        params.Load(object()->GetAddonName(eLauncher));
         s_launcher = MakeAddonStatic(i, params);
     }
 
 	if (GetIcon(eLaser)) {
-		params.Load(object()->GetLaserName());
+		params.Load(object()->GetAddonName(eLaser));
 		s_laser = MakeAddonStatic(i, params);
 	}
 
 	if (GetIcon(eFlashlight)) {
-		params.Load(object()->GetFlashlightName());
+		params.Load(object()->GetAddonName(eFlashlight));
 		s_flashlight = MakeAddonStatic(i, params);
 	}
 
 	if (GetIcon(eStock)) {
-		params.Load(object()->GetStockName());
+		params.Load(object()->GetAddonName(eStock));
 		s_stock = MakeAddonStatic(i, params);
 	}
 
 	if (GetIcon(eExtender)) {
-		params.Load(object()->GetExtenderName());
+		params.Load(object()->GetAddonName(eExtender));
 		s_extender = MakeAddonStatic(i, params);
 	}
 
 	if (GetIcon(eForend)) {
-		params.Load(object()->GetForendName());
+		params.Load(object()->GetAddonName(eForend));
 		s_forend = MakeAddonStatic(i, params);
 	}
 

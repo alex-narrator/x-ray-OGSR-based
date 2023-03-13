@@ -174,7 +174,7 @@ void CWeaponPistol::PlayAnimShoot()
 	VERIFY(GetState() == eFire || GetState() == eFire2);
 
 	string_path guns_shoot_anm{};
-	xr_strconcat(guns_shoot_anm, "anm_shoot", (IsZoomed() && !IsRotatingToZoom()) ? "_aim" : "", iAmmoElapsed == 1 ? "_last" : "", IsSilencerAttached() ? "_sil" : "");
+	xr_strconcat(guns_shoot_anm, "anm_shoot", (IsZoomed() && !IsRotatingToZoom()) ? "_aim" : "", iAmmoElapsed == 1 ? "_last" : "", IsAddonAttached(eSilencer) ? "_sil" : "");
 	if (AnimationExist(guns_shoot_anm)) {
 		PlayHUDMotion(guns_shoot_anm, false, GetState());
 		m_opened = iAmmoElapsed <= 1;

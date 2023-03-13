@@ -103,16 +103,16 @@ public:
 protected:
 	u32					m_money;
 	// торговля
-	CTrade*				m_pTrade;
+	CTrade* m_pTrade{};
 	bool				m_bTalking; 
 	CInventoryOwner*	m_pTalkPartner;
 
 	bool				m_bAllowTalk;
 	bool				m_bAllowTrade;
 
-	u32					m_tmp_active_slot_num;
+	u32					m_tmp_active_slot_num{ NO_ACTIVE_SLOT };
 public:
-	u32 m_tmp_next_item_slot;
+	u32 m_tmp_next_item_slot{ NO_ACTIVE_SLOT };
 	//////////////////////////////////////////////////////////////////////////
 	// сюжетная информация
 public:
@@ -223,7 +223,7 @@ public:
 	virtual	bool				use_simplified_visual	() const {return (false);};
 
 private:
-	CTradeParameters			*m_trade_parameters;
+	CTradeParameters* m_trade_parameters{};
 	CPurchaseList				*m_purchase_list;
 	BOOL						m_need_osoznanie_mode{};
 

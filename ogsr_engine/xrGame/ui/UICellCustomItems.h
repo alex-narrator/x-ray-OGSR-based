@@ -93,26 +93,26 @@ public:
 class CUIWeaponCellItem :public CUIInventoryCellItem{
 	typedef  CUIInventoryCellItem	inherited;
 public:
-	enum eAddonType{
-		eSilencer, 
-		eScope, 
-		eLauncher, 
-		eLaser, 
-		eFlashlight, 
-		eStock,
-		eExtender,
-		eForend,
-		eMagazine,
-		eMaxAddon
-	};
+	//enum eAddonType{
+	//	eSilencer, 
+	//	eScope, 
+	//	eLauncher, 
+	//	eLaser, 
+	//	eFlashlight, 
+	//	eStock,
+	//	eExtender,
+	//	eForend,
+	//	eMagazine,
+	//	eMaxAddon
+	//};
 
 	CUIStatic*					m_addons					[eMaxAddon]{};
 protected:
 	virtual		void			UpdateItemText();
-	Fvector2					m_addon_offset				[eMaxAddon]{};
-	void						CreateIcon					(eAddonType, CIconParams &params);
-	void						DestroyIcon					(eAddonType);
-	CUIStatic*					GetIcon						(eAddonType);
+	//Fvector2					m_addon_offset				[eMaxAddon]{};
+	void						CreateIcon					(u32, CIconParams &params);
+	void						DestroyIcon					(u32);
+	CUIStatic*					GetIcon						(u32);
 	void						InitAddon					(CUIStatic* s, CIconParams &params, Fvector2 offset, bool b_rotate);
 	void						InitAllAddons				(
 		CUIStatic* s_silencer, 
@@ -143,7 +143,7 @@ public:
 				CUIDragItem*	CreateDragItem				();
 	virtual		bool			EqualTo						(CUICellItem* itm);
 	CUIStatic*					get_addon_static			(u32 idx)				{return m_addons[idx];}
-	Fvector2					get_addon_offset			(u32 idx)				{ return m_addon_offset[idx]; }
+	Fvector2					get_addon_offset			(u32 idx)				{ return object()->GetAddonOffset(idx); }
 };
 
 class CBuyItemCustomDrawCell :public ICustomDrawCell{

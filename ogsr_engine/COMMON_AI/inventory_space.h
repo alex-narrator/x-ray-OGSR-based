@@ -2,6 +2,7 @@
 
 constexpr auto CMD_START			= (1<<0);
 constexpr auto CMD_STOP				= (1<<1);
+constexpr auto CMD_OPT				= (1<<2);
 
 enum : u32
 {

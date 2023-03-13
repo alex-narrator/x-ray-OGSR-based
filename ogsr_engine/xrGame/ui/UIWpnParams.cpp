@@ -150,9 +150,9 @@ void CUIWpnParams::SetInfo(CInventoryItem* obj)
 		}
 	}
 	//тип спорядженого боєприпасу
-	if (!pWeaponKnife && !pWeaponBinoc && (pWeapon->HasDetachableMagazine() && pWeaponMag->IsMagazineAttached() || pWeapon->GetAmmoElapsed())) {
+	if (!pWeaponKnife && !pWeaponBinoc && (pWeapon->AddonAttachable(eMagazine) && pWeaponMag->IsAddonAttached(eMagazine) || pWeapon->GetAmmoElapsed() || pWeapon->IsGrenadeMode())) {
 		_param_name = CStringTable().translate("st_current_ammo_type").c_str();
-		if (pWeapon->HasDetachableMagazine(true) && pWeaponMag->IsMagazineAttached() && pWeapon->GetAmmoElapsed())
+		if (pWeapon->AddonAttachable(eMagazine, true) && pWeaponMag->IsAddonAttached(eMagazine) && pWeapon->GetAmmoElapsed())
 			sprintf_s(text_to_show, "%s %s, %s", _param_name, pWeapon->GetCurrentAmmo_ShortName(), pWeaponMag->GetCurrentMagazine_ShortName(true));
 		else if (pWeapon->GetAmmoElapsed())
 			sprintf_s(text_to_show, "%s %s", _param_name, pWeapon->GetCurrentAmmo_ShortName());
@@ -162,7 +162,7 @@ void CUIWpnParams::SetInfo(CInventoryItem* obj)
 		_h += list_item_h;
 	}
 	//поточний приціл
-	if (pWeapon->IsScopeAttached()) {
+	if (pWeapon->IsAddonAttached(eScope)) {
 		//поточний приціл - заголовок
 		_param_name = CStringTable().translate("st_current_scope").c_str();
 		SetStaticParams(_uiXml, _path, _h)->SetText(_param_name);
@@ -214,7 +214,7 @@ void CUIWpnParams::SetInfo(CInventoryItem* obj)
 			_h += list_item_h;
 		}
 		//сумісні набої грантометів - список
-		if (pWeapon->IsGrenadeLauncherAttached()) {
+		if (pWeapon->IsAddonAttached(eLauncher)) {
 			for (const auto& ammo : pWeaponMagWGren->m_ammoTypes2) {
 				auto ammo_name = pSettings->r_string(ammo, "inv_name");
 				sprintf_s(text_to_show, "%s%s", marker_, CStringTable().translate(ammo_name).c_str());
@@ -223,7 +223,7 @@ void CUIWpnParams::SetInfo(CInventoryItem* obj)
 			}
 		}
 		//сумісні магазини
-		if (pWeapon->HasDetachableMagazine()) {
+		if (pWeapon->AddonAttachable(eMagazine)) {
 			//сумісні магазини - заголовок
 			_param_name = CStringTable().translate("st_compatible_magazine").c_str();
 			SetStaticParams(_uiXml, _path, _h)->SetText(_param_name);
@@ -246,20 +246,20 @@ void CUIWpnParams::SetInfo(CInventoryItem* obj)
 		}
 		
 		bool has_addon =
-			pWeapon->ScopeAttachable() ||
-			pWeapon->SilencerAttachable() ||
-			pWeapon->GrenadeLauncherAttachable() ||
-			pWeapon->LaserAttachable() ||
-			pWeapon->FlashlightAttachable() ||
-			pWeapon->StockAttachable() ||
-			pWeapon->ExtenderAttachable();
+			pWeapon->AddonAttachable(eScope) ||
+			pWeapon->AddonAttachable(eSilencer) ||
+			pWeapon->AddonAttachable(eLauncher) ||
+			pWeapon->AddonAttachable(eLaser) ||
+			pWeapon->AddonAttachable(eFlashlight) ||
+			pWeapon->AddonAttachable(eStock) ||
+			pWeapon->AddonAttachable(eExtender);
 
 		if (has_addon) {
 			//адони - заголовок
 			_param_name = CStringTable().translate("st_compatible_addon").c_str();
 			SetStaticParams(_uiXml, _path, _h)->SetText(_param_name);
 			_h += list_item_h;
-			if (pWeapon->ScopeAttachable()) {
+			if (pWeapon->AddonAttachable(eScope)) {
 				//сумісні приціли - список
 				for (const auto& scope : pWeapon->m_scopes) {
 					auto scope_name = pSettings->r_string(scope, "inv_name");
@@ -269,7 +269,7 @@ void CUIWpnParams::SetInfo(CInventoryItem* obj)
 				}
 			}
 			//сумісні глушники
-			if (pWeapon->SilencerAttachable()) {
+			if (pWeapon->AddonAttachable(eSilencer)) {
 				//глушник - список
 				for (const auto& silencer : pWeapon->m_silencers) {
 					auto silencer_name = pSettings->r_string(silencer, "inv_name");
@@ -279,7 +279,7 @@ void CUIWpnParams::SetInfo(CInventoryItem* obj)
 				}
 			}
 			//сумісні гранатомети
-			if (pWeapon->GrenadeLauncherAttachable()) {
+			if (pWeapon->AddonAttachable(eLauncher)) {
 				//сумісні гранатомети - список
 				for (const auto& glauncher : pWeapon->m_glaunchers) {
 					auto glauncher_name = pSettings->r_string(glauncher, "inv_name");
@@ -289,7 +289,7 @@ void CUIWpnParams::SetInfo(CInventoryItem* obj)
 				}
 			}
 			//сумісні ЛЦВ
-			if (pWeapon->LaserAttachable()) {
+			if (pWeapon->AddonAttachable(eLaser)) {
 				//сумісні ЛЦВ - список
 				for (const auto& laser : pWeapon->m_lasers) {
 					auto laser_name = pSettings->r_string(laser, "inv_name");
@@ -299,7 +299,7 @@ void CUIWpnParams::SetInfo(CInventoryItem* obj)
 				}
 			}
 			//сумісні ліхтарі
-			if (pWeapon->FlashlightAttachable()) {
+			if (pWeapon->AddonAttachable(eFlashlight)) {
 				//сумісні ліхтарі - список
 				for (const auto& flashlight : pWeapon->m_flashlights) {
 					auto flashlight_name = pSettings->r_string(flashlight, "inv_name");
@@ -309,7 +309,7 @@ void CUIWpnParams::SetInfo(CInventoryItem* obj)
 				}
 			}
 			//сумісні приклади
-			if (pWeapon->StockAttachable()) {
+			if (pWeapon->AddonAttachable(eStock)) {
 				//сумісні приклади - список
 				for (const auto& stock : pWeapon->m_stocks) {
 					auto stock_name = pSettings->r_string(stock, "inv_name");
@@ -319,7 +319,7 @@ void CUIWpnParams::SetInfo(CInventoryItem* obj)
 				}
 			}
 			//сумісні подовжувачі магазину
-			if (pWeapon->ExtenderAttachable()) {
+			if (pWeapon->AddonAttachable(eExtender)) {
 				//сумісні приклади - список
 				for (const auto& extender : pWeapon->m_extenders) {
 					auto extender_name = pSettings->r_string(extender, "inv_name");
