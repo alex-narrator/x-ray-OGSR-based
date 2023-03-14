@@ -592,8 +592,7 @@ void CSE_ALifeCustomZone::STATE_Read		(NET_Packet	&tNetPacket, u16 size)
 {
 	inherited::STATE_Read		(tNetPacket,size);
 	
-  float tmp;
-  tNetPacket.r_float(tmp/*m_maxPower*/);
+	tNetPacket.r_float(m_maxPower);
 
 	if (m_wVersion < 113) {
 		tNetPacket.r_float		();
@@ -623,7 +622,7 @@ void CSE_ALifeCustomZone::STATE_Read		(NET_Packet	&tNetPacket, u16 size)
 void CSE_ALifeCustomZone::STATE_Write	(NET_Packet	&tNetPacket)
 {
 	inherited::STATE_Write		(tNetPacket);
-  tNetPacket.w_float    (0.0/*m_maxPower*/);
+	tNetPacket.w_float			(m_maxPower);
 	tNetPacket.w_u32			(m_owner_id);
 	tNetPacket.w_u32			(m_enabled_time);
 	tNetPacket.w_u32			(m_disabled_time);
