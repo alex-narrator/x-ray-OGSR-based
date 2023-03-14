@@ -136,6 +136,23 @@ void CCustomDetectorSHOC::UpdateCL()
 
 		ZONE_TYPE_SHOC& zone_type = m_ZoneTypeMap[pZone->CLS_ID];
 
+		if (xr_strlen(zone_type.zone_map_location))
+		{
+			if (pZone->IsEnabled())
+			{
+				if (!Level().MapManager().HasMapLocation(*zone_type.zone_map_location, pZone->ID()))
+					Level().MapManager().AddMapLocation(*zone_type.zone_map_location, pZone->ID());
+			}
+			else
+			{
+				if (Level().MapManager().HasMapLocation(*zone_type.zone_map_location, pZone->ID()))
+					Level().MapManager().RemoveMapLocation(*zone_type.zone_map_location, pZone->ID());
+			}
+		}
+
+		if (!pZone->IsEnabled())
+			continue;
+
 		CSpaceRestrictor* pSR = smart_cast<CSpaceRestrictor*>(pZone);
 		float dist_to_zone = pSR->distance_to(H_Parent()->Position());
 		if (dist_to_zone > zone_type.m_fRadius)
@@ -165,7 +182,7 @@ void CCustomDetectorSHOC::UpdateCL()
 void CCustomDetectorSHOC::feel_touch_new(CObject* O)
 {
 	CCustomZone* pZone = smart_cast<CCustomZone*>(O);
-	if (pZone && pZone->IsEnabled())
+	if (pZone)
 	{
 		m_ZoneInfoMap[pZone].snd_time = 0;
 
@@ -249,11 +266,18 @@ void CCustomDetectorSHOC::AddRemoveMapSpot(CCustomZone* pZone, bool bAdd)
 
 
 	ZONE_TYPE_SHOC& zone_type = m_ZoneTypeMap[pZone->CLS_ID];
-	if (xr_strlen(zone_type.zone_map_location)) {
-		if (bAdd)
-			Level().MapManager().AddMapLocation(*zone_type.zone_map_location, pZone->ID());
+	if (xr_strlen(zone_type.zone_map_location)) 
+	{
+		if (bAdd && pZone->IsEnabled())
+		{
+			if (!Level().MapManager().HasMapLocation(*zone_type.zone_map_location, pZone->ID()))
+				Level().MapManager().AddMapLocation(*zone_type.zone_map_location, pZone->ID());
+		}
 		else
-			Level().MapManager().RemoveMapLocation(*zone_type.zone_map_location, pZone->ID());
+		{
+			if (Level().MapManager().HasMapLocation(*zone_type.zone_map_location, pZone->ID()))
+				Level().MapManager().RemoveMapLocation(*zone_type.zone_map_location, pZone->ID());
+		}
 	}
 }
 
@@ -265,7 +289,6 @@ void CCustomDetectorSHOC::UpdateMapLocations() // called on turn on/off only
 }
 
 #include "clsid_game.h"
-#include "game_base_space.h"
 void CCustomDetectorSHOC::UpdateNightVisionMode()
 {
 	bool bNightVision = Actor()->Cameras().GetPPEffector(EEffectorPPType(effNightvision)) != NULL;
@@ -281,7 +304,7 @@ void CCustomDetectorSHOC::UpdateNightVisionMode()
 		CCustomZone* pZone = item.first;
 		ZONE_INFO_SHOC& zone_info = item.second;
 
-		if (bOn) {
+		if (bOn && pZone->IsEnabled()) {
 			if (!zone_info.pParticle)
 				zone_info.pParticle = CParticlesObject::Create(m_nightvision_particle.c_str(), FALSE);
 
