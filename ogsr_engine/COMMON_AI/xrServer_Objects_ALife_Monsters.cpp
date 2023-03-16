@@ -112,13 +112,11 @@ CSE_ALifeTraderAbstract::CSE_ALifeTraderAbstract(LPCSTR caSection)
 {
 //	m_fCumulativeItemMass		= 0.f;
 //	m_iCumulativeItemVolume		= 0;
-	m_dwMoney					= 0;
 	if (pSettings->line_exist(caSection, "money"))
 		m_dwMoney 				= pSettings->r_u32(caSection, "money");
 	m_fMaxItemMass				= pSettings->r_float(caSection, "max_item_mass");
 
 	m_sCharacterProfile			= READ_IF_EXISTS(pSettings,r_string,caSection,"character_profile","default");
-	m_SpecificCharacter			= NULL;
 
 #ifdef XRGAME_EXPORTS
 	m_community_index			= NO_COMMUNITY_INDEX;
@@ -571,17 +569,10 @@ bool CSE_ALifeTrader::interactive			() const
 ////////////////////////////////////////////////////////////////////////////
 CSE_ALifeCustomZone::CSE_ALifeCustomZone	(LPCSTR caSection) : CSE_ALifeSpaceRestrictor(caSection)
 {
-	m_owner_id					= u32(-1);
 	if (pSettings->line_exist(caSection,"hit_type"))
 		m_tHitType				= ALife::g_tfString2HitType(pSettings->r_string(caSection,"hit_type"));
-	else
-		m_tHitType				= ALife::eHitTypeMax;
-	m_enabled_time				= 0;
-	m_disabled_time				= 0;
-	m_start_time_shift			= 0;
 
 	m_maxPower					= pSettings->r_float(caSection, "max_start_power");
-	m_zone_ttl					= u32(-1);
 }
 
 CSE_ALifeCustomZone::~CSE_ALifeCustomZone	()

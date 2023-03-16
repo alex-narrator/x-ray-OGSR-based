@@ -10,8 +10,6 @@
 template <typename _return_type>
 class CScriptCallbackEx;
 
-
-
 class CActor;
 
 class CActorCondition: public CEntityCondition {

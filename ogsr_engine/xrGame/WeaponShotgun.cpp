@@ -77,10 +77,6 @@ void CWeaponShotgun::Fire2Start ()
 		}
 	}
 	else if (IsMisfire()){
-		//if (smart_cast<CActor*>(this->H_Parent()) && (Level().CurrentViewEntity() == H_Parent())){
-		//	HUD().GetUI()->AddInfoMessage("item_state", "gun_jammed");
-		//}
-		// Callbacks added by Cribbledirge.
 		StateSwitchCallback(GameObject::eOnActorWeaponJammed, GameObject::eOnNPCWeaponJammed);
 	}
 	else
@@ -274,8 +270,7 @@ void CWeaponShotgun::OnAnimationEnd(u32 state)
 		case eSubstateReloadEnd:{
 			m_sub_state = eSubstateReloadBegin;
 			SwitchState(eIdle);
-		}break;
-		
+		}break;	
 	};
 }
 

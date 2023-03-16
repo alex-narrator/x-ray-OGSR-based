@@ -26,12 +26,6 @@ CGraviArtefact::CGraviArtefact(void)
 {
 	shedule.t_min = 20;
 	shedule.t_max = 50;
-
-	m_fEnergy = 1.f;
-}
-
-CGraviArtefact::~CGraviArtefact(void) 
-{
 }
 
 void CGraviArtefact::Load(LPCSTR section) 
@@ -39,7 +33,6 @@ void CGraviArtefact::Load(LPCSTR section)
 	inherited::Load(section);
 
 	m_fJumpHeight = READ_IF_EXISTS(pSettings, r_float, section, "jump_height",0.f);
-//	m_fEnergy = pSettings->r_float(section,"energy");
 }
 
 
@@ -49,9 +42,8 @@ void CGraviArtefact::UpdateCLChild()
 
 	VERIFY(!ph_world->Processing());
 	if (getVisible() && m_pPhysicsShell) {
-		if (!fis_zero(GetJumpHeight())) {
-			Fvector dir; 
-			dir.set(0, -1.f, 0);
+		if (GetJumpHeight()) {
+			Fvector dir{ 0, -1.f, 0 };
 			collide::rq_result RQ;
 			
 			//проверить высоту артифакта

@@ -143,13 +143,10 @@ void CWeaponKnife::KnifeStrike(u32 state, const Fvector& pos, const Fvector& dir
 
 		if (ParentIsActor())
 		{
+			float condition_k{ 1.f };
 			if (!fis_zero(conditionDecreasePerShotOnHit))
-			{
-				float condition_k = m_fMinConditionHitPart + (1 - m_fMinConditionHitPart) * GetCondition();
-				float power_k = Actor()->conditions().GetPower();
-				cur_fHit = cur_fHit * condition_k * power_k;
-				//Msg("knife hit [%f], condition_k [%f], power_k [%f]", fCurrentHit, condition_k, power_k);
-			}
+				condition_k = m_fMinConditionHitPart + (1 - m_fMinConditionHitPart) * GetCondition();
+			cur_fHit *= (condition_k * Actor()->conditions().GetPower());
 			if (fis_zero(GetCondition()))
 				m_eHitType = m_eHitType_ZeroCondition;
 		}

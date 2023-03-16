@@ -570,7 +570,6 @@ private:
 
 public:
 	const float				&hit_probability	() const;
-	void					UpdateWeaponParams	();
 	void					UpdateSecondVP		();
 	float					GetZRotatingFactor	() const { return m_fZoomRotationFactor; } //--#SM+#--
 	float					GetSecondVPFov		() const; //--#SM+#--

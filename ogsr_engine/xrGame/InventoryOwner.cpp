@@ -64,9 +64,7 @@ void CInventoryOwner::Load					(LPCSTR section)
 	if(pSettings->line_exist(section, "inv_max_weight"))
 		m_inventory->SetMaxWeight( pSettings->r_float(section,"inv_max_weight") );
 
-	if(pSettings->line_exist(section, "need_osoznanie_mode")){
-		m_need_osoznanie_mode=pSettings->r_bool(section,"need_osoznanie_mode");
-	}
+	m_need_osoznanie_mode = READ_IF_EXISTS(pSettings, r_bool, section, "need_osoznanie_mode", false);
 }
 
 void CInventoryOwner::reload				(LPCSTR section)

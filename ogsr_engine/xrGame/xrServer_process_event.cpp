@@ -63,7 +63,7 @@ void xrServer::Process_event	(NET_Packet& P, ClientID sender)
 			{
 				R_ASSERT			(E->s_flags.is(M_SPAWN_OBJECT_PHANTOM));
 
-				svs_respawn			R;
+				svs_respawn			R{};
 				R.timestamp			= timestamp	+ E->RespawnTime*1000;
 				R.phantom			= destination;
 				q_respawn.insert	(R);
@@ -91,26 +91,26 @@ void xrServer::Process_event	(NET_Packet& P, ClientID sender)
 			VERIFY					(verify_entities());
 		}
 		break;
-	case GE_TRANSFER_AMMO:
-		{
-			u16					id_entity;
-			P.r_u16				(id_entity);
-			CSE_Abstract*		e_parent	= receiver;	// кто забирает (для своих нужд)
-			CSE_Abstract*		e_entity	= game->get_entity_from_eid	(id_entity);	// кто отдает
-			if (!e_entity)		break;
-			if (0xffff != e_entity->ID_Parent)	break;						// this item already taken
-			xrClientData*		c_parent	= e_parent->owner;
-			xrClientData*		c_from		= ID_to_client	(sender);
-			R_ASSERT			(c_from == c_parent);						// assure client ownership of event
+	//case GE_TRANSFER_AMMO:
+	//	{
+	//		u16					id_entity;
+	//		P.r_u16				(id_entity);
+	//		CSE_Abstract*		e_parent	= receiver;	// кто забирает (для своих нужд)
+	//		CSE_Abstract*		e_entity	= game->get_entity_from_eid	(id_entity);	// кто отдает
+	//		if (!e_entity)		break;
+	//		if (0xffff != e_entity->ID_Parent)	break;						// this item already taken
+	//		xrClientData*		c_parent	= e_parent->owner;
+	//		xrClientData*		c_from		= ID_to_client	(sender);
+	//		R_ASSERT			(c_from == c_parent);						// assure client ownership of event
 
-			// Signal to everyone (including sender)
-			SendBroadcast		(BroadcastCID,P,MODE);
+	//		// Signal to everyone (including sender)
+	//		SendBroadcast		(BroadcastCID,P,MODE);
 
-			// Perfrom real destroy
-			entity_Destroy		(e_entity	);
-			VERIFY				(verify_entities());
-		}
-		break;
+	//		// Perfrom real destroy
+	//		entity_Destroy		(e_entity	);
+	//		VERIFY				(verify_entities());
+	//	}
+	//	break;
 	case GE_HIT:
 	case GE_HIT_STATISTIC:
 		{

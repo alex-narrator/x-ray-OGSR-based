@@ -442,8 +442,8 @@ void CMissile::UpdateXForm	()
 		Fmatrix& mR			= V->LL_GetTransform(u16(boneR));
 
 		// Calculate
-		Fmatrix				mRes;
-		Fvector				R,D,N;
+		Fmatrix				mRes{};
+		Fvector				R{}, D{}, N{};
 		D.sub				(mL.c,mR.c);	D.normalize_safe();
 		R.crossproduct		(mR.j,D);		R.normalize_safe();
 		N.crossproduct		(D,R);			N.normalize_safe();
@@ -480,7 +480,7 @@ void CMissile::setup_throw_params()
 	VERIFY					(entity);
 	CInventoryOwner			*inventory_owner = smart_cast<CInventoryOwner*>(H_Parent());
 	VERIFY					(inventory_owner);
-	Fmatrix					trans;
+	Fmatrix					trans{};
 	trans.identity			();
 	Fvector					FirePos, FireDir;
 	if (this == inventory_owner->inventory().ActiveItem())
@@ -642,12 +642,12 @@ void CMissile::activate_physic_shell()
 		return;
 	}
 
-	Fvector				l_vel;
+	Fvector				l_vel{};
 	l_vel.set			(m_throw_direction);
 	l_vel.normalize_safe();
 	l_vel.mul			(m_fThrowForce);
 
-	Fvector				a_vel;
+	Fvector				a_vel{};
 	CInventoryOwner		*inventory_owner = smart_cast<CInventoryOwner*>(H_Root());
 	if (inventory_owner && inventory_owner->use_throw_randomness()) 
 	{

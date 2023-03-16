@@ -781,50 +781,6 @@ void CWeapon::OnH_B_Chield		()
 	m_set_next_ammoType_on_reload	= u32(-1);
 }
 
-static float state_time = 0;				// таймер нахождения оружия в текущем состоянии
-static float state_time_heat = 0;			// таймер нагрева оружия
-static float previous_heating = 0;			// "нагретость" оружия в предыдущем состоянии
-
-#include "WeaponBinoculars.h"
-
-void CWeapon::UpdateWeaponParams()
-{
-#pragma todo("KRodin: адаптировать тепловизор и тп. под новый рендер, если это возможно.")
-
-	if (!IsHidden()) {
-		w_states.x = m_fZoomRotationFactor;			//x = zoom mode, y - текущее состояние, z - старое состояние
-		if (psActorFlags.test(AF_DOF_SCOPE) && !(IsZoomed() && !IsRotatingToZoom() && (IsAddonAttached(eScope) || m_bForceScopeDOF) && !IsGrenadeMode() && m_bUseScopeDOF))
-			w_states.x = 0.f;
-		if (w_states.y != GetState())	// первый апдейт или стейт изменился
-		{
-			w_states.z = w_states.y;						// записываем старое состояние
-			state_time_heat = state_time = Device.fTimeGlobal;	// инитим счетчики времени
-			previous_heating = w_timers.z;				// сохраняем "нагретость" оружия
-			w_timers.y = w_timers.x;						// записываем время нахождения в предыдущем состоянии
-			w_states.y = (float)GetState();				// обновляем состояние
-		}
-		// флаг бинокля в руках (в этом режиме не нужно размытие)
-		if (smart_cast<CWeaponBinoculars*>(this))
-			w_states.w = 0;
-		else
-			w_states.w = 1;
-		if (w_states.y == static_cast<float>(eFire) || w_states.y == static_cast<float>(eFire2))	 //стреляем, значит оружие греется
-		{
-			w_timers.z = Device.fTimeGlobal - state_time_heat + previous_heating;
-		}
-		else		// не стреляем - оружие охлаждается
-		{
-			if (w_timers.z > EPS)		// оружие все еще нагрето
-			{
-				float tm = state_time_heat + previous_heating - Device.fTimeGlobal;
-				w_timers.z = (tm<EPS) ? 0.f : tm;
-			}
-		}
-		w_timers.x = Device.fTimeGlobal - state_time;		// обновляем таймер текущего состояния
-	}
-}
-
-
 u8 CWeapon::idle_state() {
 	auto* actor = smart_cast<CActor*>(H_Parent());
 
@@ -848,9 +804,6 @@ void CWeapon::UpdateCL		()
 
 	//подсветка от выстрела
 	UpdateLight				();
-
-	if (ParentIsActor())
-		UpdateWeaponParams();	// параметры для рендера оружия в режиме тепловидения
 
 	//нарисовать партиклы
 	UpdateFlameParticles	();
@@ -2051,4 +2004,3 @@ float CWeapon::GetCondDecPerShotToShow() const {
 const shared_str CWeapon::GetMagazineIconSect(bool to_show) const {
 	return READ_IF_EXISTS(pSettings, r_string, GetAddonName(eMagazine, to_show), "mag_icon_sect", nullptr);
 }
-

@@ -6,7 +6,6 @@
 CWeaponPistol::CWeaponPistol(LPCSTR name) : CWeaponCustomPistol(name)
 {
 	m_eSoundClose		= ESoundTypes(SOUND_TYPE_WEAPON_RECHARGING /*| eSoundType*/);
-	m_opened = false;
 	SetPending(FALSE);
 }
 

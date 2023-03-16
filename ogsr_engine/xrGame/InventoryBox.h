@@ -11,7 +11,7 @@ protected:
 				void					ProcessEvent					(CGameObject *O, NET_Packet& P, u16 type);	
 				bool					b_opened{true};
 public:
-				bool					m_in_use;
+				bool					m_in_use{};
 										IInventoryBox					();
 				void					AddAvailableItems				(TIItemContainer& items_container) const;
 				bool					IsEmpty							() const;
@@ -64,5 +64,3 @@ protected:
 			void	UpdateDropTasks			();
 			void	UpdateDropItem			(PIItem pIItem);
 };
-
-

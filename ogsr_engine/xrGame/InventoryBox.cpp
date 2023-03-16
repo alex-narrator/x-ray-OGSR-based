@@ -13,7 +13,6 @@
 
 IInventoryBox::IInventoryBox() : m_items ()
 {
-	m_in_use = false;
 	m_items.clear();
 }
 

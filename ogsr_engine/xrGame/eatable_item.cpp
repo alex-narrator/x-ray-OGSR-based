@@ -17,19 +17,11 @@
 
 CEatableItem::CEatableItem()
 {
-	m_iPortionsNum = -1;
-
-	m_physic_item	= 0;
-
 	m_ItemInfluence.clear();
 	m_ItemInfluence.resize(eInfluenceMax);
 
 	m_ItemBoost.clear();
 	m_ItemBoost.resize(eBoostMax);
-}
-
-CEatableItem::~CEatableItem()
-{
 }
 
 DLL_Pure *CEatableItem::_construct	()

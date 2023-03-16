@@ -361,8 +361,7 @@ void CUIMainIngameWnd::Update()
 
 		if(!(Device.dwFrame%30))
 		{
-			bool b_God = (GodMode()||(!Game().local_player)) ? true : Game().local_player->testFlag(GAME_PLAYER_FLAG_INVINCIBLE);
-			if(b_God)
+			if(GodMode())
 				SetWarningIconColor	(ewiInvincible,0xffffffff);
 			else
 				if (!external_icon_ctrl)

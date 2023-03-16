@@ -16,7 +16,6 @@
 constexpr auto MAX_HEALTH = 1.0f;
 constexpr auto MIN_HEALTH = -0.01f;
 
-
 constexpr auto MAX_POWER		= 1.0f;
 constexpr auto MAX_RADIATION	= 1.0f;
 constexpr auto MAX_PSY_HEALTH	= 1.0f;
@@ -26,9 +25,6 @@ CEntityConditionSimple::CEntityConditionSimple()
 	max_health()		= MAX_HEALTH;
 	health()			= MAX_HEALTH;
 }
-
-CEntityConditionSimple::~CEntityConditionSimple()
-{}
 
 CEntityCondition::CEntityCondition(CEntityAlive *object)
 :CEntityConditionSimple()

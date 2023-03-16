@@ -1357,7 +1357,6 @@ void CHudItem::OnKick()
 {
 	SwitchState(eKick);
 }
-//
 void CHudItem::switch2_Kick()
 {
 	if (IsZoomed())

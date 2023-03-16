@@ -147,8 +147,6 @@ CActor::CActor() : CEntityAlive(),current_ik_cam_shift(0)
 
 	m_fFallTime				= s_fFallTime;
 
-	updated					= false;
-
 	m_ActorItemBoostedParam.clear();
 	m_ActorItemBoostedParam.resize(eRestoreBoostMax);
 }

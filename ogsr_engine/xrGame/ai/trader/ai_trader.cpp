@@ -190,8 +190,8 @@ void CAI_Trader::OnEvent		(NET_Packet& P, u16 type)
 				if(inventory().DropItem(smart_cast<CGameObject*>(Obj))) 
 					Obj->H_SetParent(0, dont_create_shell);
 			}break;
-		case GE_TRANSFER_AMMO:
-			break;
+		//case GE_TRANSFER_AMMO:
+		//	break;
 	}
 }
 

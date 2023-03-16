@@ -48,7 +48,6 @@ public:
 	u32								m_last_update_time{};
 
 	float 							m_fRadiationRestoreSpeed{};
-
 	//статус джерела живлення
 	enum EPowerSourceStatus {
 		ePowerSourceDisabled		= 0,	//без джерела живлення
@@ -88,7 +87,7 @@ add_to_type_list(CSE_ALifeInventoryItem)
 #define script_type_list save_type_list(CSE_ALifeInventoryItem)
 
 SERVER_ENTITY_DECLARE_BEGIN2(CSE_ALifeItem,CSE_ALifeDynamicObjectVisual,CSE_ALifeInventoryItem)
-	bool							m_physics_disabled;
+bool							m_physics_disabled{};
 
 									CSE_ALifeItem	(LPCSTR caSection);
 	virtual							~CSE_ALifeItem	();
@@ -182,7 +181,7 @@ SERVER_ENTITY_DECLARE_BEGIN(CSE_ALifeItemWeapon,CSE_ALifeItem)
 	u8								wpn_flags{};
 	u8								wpn_state{};
 	u8								ammo_type{};
-	u16								a_current;
+	u16								a_current{90};
 	u16								a_elapsed{};
 	float							m_fHitPower;
 	ALife::EHitType					m_tHitType;
@@ -280,8 +279,8 @@ add_to_type_list(CSE_ALifeItemDetector)
 #define script_type_list save_type_list(CSE_ALifeItemDetector)
 
 SERVER_ENTITY_DECLARE_BEGIN(CSE_ALifeItemArtefact,CSE_ALifeItem)
-	float							m_fAnomalyValue;
-	float							m_fRandomK;
+float							m_fAnomalyValue{ 100.f };
+float							m_fRandomK{ 1.f };
 									CSE_ALifeItemArtefact	(LPCSTR caSection);
 	virtual							~CSE_ALifeItemArtefact	();
 	virtual BOOL					Net_Relevant			();
@@ -289,10 +288,10 @@ SERVER_ENTITY_DECLARE_END
 add_to_type_list(CSE_ALifeItemArtefact)
 #define script_type_list save_type_list(CSE_ALifeItemArtefact)
 
-SERVER_ENTITY_DECLARE_BEGIN(CSE_ALifeItemPDA,CSE_ALifeItem)
-	u16								m_original_owner;
-	shared_str						m_specific_character;
-	shared_str						m_info_portion;
+SERVER_ENTITY_DECLARE_BEGIN(CSE_ALifeItemPDA, CSE_ALifeItem)
+u16								m_original_owner {0xffff};
+shared_str						m_specific_character{};
+shared_str						m_info_portion{};
 
 									CSE_ALifeItemPDA(LPCSTR caSection);
 	virtual							~CSE_ALifeItemPDA();
@@ -301,8 +300,8 @@ SERVER_ENTITY_DECLARE_END
 add_to_type_list(CSE_ALifeItemPDA)
 #define script_type_list save_type_list(CSE_ALifeItemPDA)
 
-SERVER_ENTITY_DECLARE_BEGIN(CSE_ALifeItemDocument,CSE_ALifeItem)
-	shared_str							m_wDoc;
+SERVER_ENTITY_DECLARE_BEGIN(CSE_ALifeItemDocument, CSE_ALifeItem)
+shared_str							m_wDoc {};
 									CSE_ALifeItemDocument(LPCSTR caSection);
 	virtual							~CSE_ALifeItemDocument();
 SERVER_ENTITY_DECLARE_END

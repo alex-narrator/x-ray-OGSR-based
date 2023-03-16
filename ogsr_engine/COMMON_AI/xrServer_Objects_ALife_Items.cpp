@@ -213,10 +213,7 @@ u32 CSE_ALifeInventoryItem::update_rate		() const
 ////////////////////////////////////////////////////////////////////////////
 // CSE_ALifeItem
 ////////////////////////////////////////////////////////////////////////////
-CSE_ALifeItem::CSE_ALifeItem				(LPCSTR caSection) : CSE_ALifeDynamicObjectVisual(caSection), CSE_ALifeInventoryItem(caSection)
-{
-	m_physics_disabled			= false;
-}
+CSE_ALifeItem::CSE_ALifeItem				(LPCSTR caSection) : CSE_ALifeDynamicObjectVisual(caSection), CSE_ALifeInventoryItem(caSection){}
 
 CSE_ALifeItem::~CSE_ALifeItem				()
 {
@@ -400,8 +397,6 @@ void CSE_ALifeItemNightVisionDevice::UPDATE_Write(NET_Packet& tNetPacket)
 ////////////////////////////////////////////////////////////////////////////
 CSE_ALifeItemWeapon::CSE_ALifeItemWeapon	(LPCSTR caSection) : CSE_ALifeItem(caSection)
 {
-	a_current					= 90;
-
 	m_fHitPower					= pSettings->r_float(caSection,"hit_power");
 	m_tHitType					= ALife::g_tfString2HitType(pSettings->r_string(caSection,"hit_type"));
 	m_caAmmoSections			= pSettings->r_string(caSection,"ammo_class");
@@ -422,7 +417,6 @@ CSE_ALifeItemWeapon::CSE_ALifeItemWeapon	(LPCSTR caSection) : CSE_ALifeItem(caSe
 	m_ef_main_weapon_type		= READ_IF_EXISTS(pSettings,r_u32,caSection,"ef_main_weapon_type",u32(-1));
 	m_ef_weapon_type			= READ_IF_EXISTS(pSettings,r_u32,caSection,"ef_weapon_type",u32(-1));
 	//
-	//m_MagazineSize				= pSettings->r_float(caSection, "ammo_mag_size");
 	//preloaded ammo_type
 	if (pSettings->line_exist(caSection, "ammo_type_loaded")) {
 		ammo_type = pSettings->r_u8(s_name, "ammo_type_loaded");
@@ -720,13 +714,9 @@ void CSE_ALifeItemWeaponMagazined::STATE_Write		(NET_Packet& P)
 ////////////////////////////////////////////////////////////////////////////
 // CSE_ALifeItemWeaponMagazinedWGL
 ////////////////////////////////////////////////////////////////////////////
-CSE_ALifeItemWeaponMagazinedWGL::CSE_ALifeItemWeaponMagazinedWGL	(LPCSTR caSection) : CSE_ALifeItemWeaponMagazined(caSection)
-{
-}
+CSE_ALifeItemWeaponMagazinedWGL::CSE_ALifeItemWeaponMagazinedWGL	(LPCSTR caSection) : CSE_ALifeItemWeaponMagazined(caSection){}
 
-CSE_ALifeItemWeaponMagazinedWGL::~CSE_ALifeItemWeaponMagazinedWGL	()
-{
-}
+CSE_ALifeItemWeaponMagazinedWGL::~CSE_ALifeItemWeaponMagazinedWGL	(){}
 
 void CSE_ALifeItemWeaponMagazinedWGL::UPDATE_Read(NET_Packet& P)
 {
@@ -736,7 +726,6 @@ void CSE_ALifeItemWeaponMagazinedWGL::UPDATE_Read(NET_Packet& P)
 	if (m_wVersion > 118) {
 		P.r_u8(ammo_type2);
 		P.r_u16(a_elapsed2);
-	  //Msg( "~~[%s][%s] update_read: m_bGrenadeMode: [%u], iAmmoElapsed2: [%u], m_ammoType2: [%u]", __FUNCTION__, this->name(), m_bGrenadeMode, a_elapsed2, ammo_type2 );
 	}
 }
 
@@ -747,7 +736,6 @@ void CSE_ALifeItemWeaponMagazinedWGL::UPDATE_Write(NET_Packet& P)
 	P.w_u8(m_bGrenadeMode ? 1 : 0);
 	P.w_u8( ammo_type2 );
 	P.w_u16( a_elapsed2 );
-	//Msg( "~~[%s][%s] update_write: m_bGrenadeMode: [%u], iAmmoElapsed2: [%u], m_ammoType2: [%u]", __FUNCTION__, this->name(), m_bGrenadeMode, a_elapsed2, ammo_type2 );
 }
 
 void CSE_ALifeItemWeaponMagazinedWGL::STATE_Read		(NET_Packet& P, u16 size)
@@ -758,7 +746,6 @@ void CSE_ALifeItemWeaponMagazinedWGL::STATE_Read		(NET_Packet& P, u16 size)
 		m_bGrenadeMode = !!(P.r_u8() & 0x1);
 		P.r_u8(ammo_type2);
 		P.r_u16(a_elapsed2);
-		//Msg( "~~[%s][%s] update_read: m_bGrenadeMode: [%u], iAmmoElapsed2: [%u], m_ammoType2: [%u]", __FUNCTION__, this->name(), m_bGrenadeMode, a_elapsed2, ammo_type2 );
 	}
 }
 
@@ -769,7 +756,6 @@ void CSE_ALifeItemWeaponMagazinedWGL::STATE_Write		(NET_Packet& P)
 	P.w_u8(m_bGrenadeMode ? 1 : 0);
 	P.w_u8(ammo_type2);
 	P.w_u16(a_elapsed2);
-	//Msg( "~~[%s][%s] update_write: m_bGrenadeMode: [%u], iAmmoElapsed2: [%u], m_ammoType2: [%u]", __FUNCTION__, this->name(), m_bGrenadeMode, a_elapsed2, ammo_type2 );
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -866,17 +852,11 @@ void CSE_ALifeItemDetector::UPDATE_Write	(NET_Packet	&tNetPacket)
 }
 
 ////////////////////////////////////////////////////////////////////////////
-// CSE_ALifeItemDetector
+// CSE_ALifeItemArtefact
 ////////////////////////////////////////////////////////////////////////////
-CSE_ALifeItemArtefact::CSE_ALifeItemArtefact(LPCSTR caSection) : CSE_ALifeItem(caSection)
-{
-	m_fAnomalyValue				= 100.f;
-	m_fRandomK					= 1.f;
-}
+CSE_ALifeItemArtefact::CSE_ALifeItemArtefact(LPCSTR caSection) : CSE_ALifeItem(caSection){}
 
-CSE_ALifeItemArtefact::~CSE_ALifeItemArtefact()
-{
-}
+CSE_ALifeItemArtefact::~CSE_ALifeItemArtefact(){}
 
 void CSE_ALifeItemArtefact::STATE_Read		(NET_Packet	&tNetPacket, u16 size)
 {
@@ -911,12 +891,7 @@ BOOL CSE_ALifeItemArtefact::Net_Relevant	()
 ////////////////////////////////////////////////////////////////////////////
 // CSE_ALifeItemPDA
 ////////////////////////////////////////////////////////////////////////////
-CSE_ALifeItemPDA::CSE_ALifeItemPDA		(LPCSTR caSection) : CSE_ALifeItem(caSection)
-{
-	m_original_owner		= 0xffff;
-	m_specific_character	= NULL;
-	m_info_portion			= NULL;
-}
+CSE_ALifeItemPDA::CSE_ALifeItemPDA		(LPCSTR caSection) : CSE_ALifeItem(caSection){}
 
 
 CSE_ALifeItemPDA::~CSE_ALifeItemPDA		()
@@ -975,10 +950,7 @@ void CSE_ALifeItemPDA::UPDATE_Write	(NET_Packet	&tNetPacket)
 ////////////////////////////////////////////////////////////////////////////
 // CSE_ALifeItemDocument
 ////////////////////////////////////////////////////////////////////////////
-CSE_ALifeItemDocument::CSE_ALifeItemDocument(LPCSTR caSection): CSE_ALifeItem(caSection)
-{
-	m_wDoc					= NULL;
-}
+CSE_ALifeItemDocument::CSE_ALifeItemDocument(LPCSTR caSection): CSE_ALifeItem(caSection){}
 
 CSE_ALifeItemDocument::~CSE_ALifeItemDocument()
 {
@@ -1177,7 +1149,6 @@ BOOL CSE_ALifeItemCustomOutfit::Net_Relevant		()
 	return							(true);
 }
 
-#include "eatable_item.h"
 ////////////////////////////////////////////////////////////////////////////
 // CSE_ALifeItemEatable by Real Wolf. 09.09.2014.
 ////////////////////////////////////////////////////////////////////////////

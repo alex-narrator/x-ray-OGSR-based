@@ -304,7 +304,7 @@ protected:
 	SRotation				r_torso{};
 	float					r_torso_tgt_roll{};
 	//положение торса без воздействия эффекта отдачи оружия
-	SRotation				unaffected_r_torso;
+	SRotation				unaffected_r_torso{};
 
 	//ориентация модели
 	float					r_model_yaw_dest{};

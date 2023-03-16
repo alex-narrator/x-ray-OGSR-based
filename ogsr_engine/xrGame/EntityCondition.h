@@ -68,7 +68,7 @@ class CEntityConditionSimple
 	float					m_fHealthMax;
 public:
 							CEntityConditionSimple	();
-	virtual					~CEntityConditionSimple	();
+	virtual					~CEntityConditionSimple	(){};
 
 	IC float				GetHealth				() const			{return m_fHealth;}
 	IC float 				GetMaxHealth			() const			{return m_fHealthMax;}

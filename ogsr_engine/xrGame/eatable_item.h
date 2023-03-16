@@ -12,11 +12,11 @@ private:
 	typedef CInventoryItem	inherited;
 
 private:
-	CPhysicItem		*m_physic_item;
+	CPhysicItem* m_physic_item{};
 
 public:
 							CEatableItem				();
-	virtual					~CEatableItem				();
+	virtual					~CEatableItem				(){};
 	virtual	DLL_Pure*		_construct					();
 	virtual CEatableItem	*cast_eatable_item			()	{return this;}
 
@@ -36,7 +36,7 @@ protected:
 
 	//количество порций еды, 
 	//-1 - порция одна и больше не бывает (чтоб не выводить надпись в меню)
-	int						m_iPortionsNum;
+	int						m_iPortionsNum{1};
 	int						m_iStartPortionsNum{};
 
 	//яка доля власної радіоактивності предмета буде передана гравцеві при вживанні
