@@ -612,7 +612,10 @@ void InventoryUtilities::TryAttachWpnAddonIcons(CUIStatic* _main_icon, PIItem _i
 
 	for (u32 i = 0; i < eMaxAddon; i++) {
 		if (wpn->AddonAttachable(i) && wpn->IsAddonAttached(i) && (i != eMagazine || !!wpn->GetMagazineIconSect(true))) {
-			addon_statick = init_addon(cell_item, wpn->GetAddonName(i).c_str(), _scale, i);
+			auto addon_icon_name = wpn->GetAddonName(i).c_str();
+			if (i == eMagazine)
+				addon_icon_name = wpn->GetMagazineIconSect(true).c_str();
+			addon_statick = init_addon(cell_item, addon_icon_name, _scale, i);
 			_main_icon->AttachChild(addon_statick);
 		}
 	}
