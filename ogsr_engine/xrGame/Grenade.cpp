@@ -292,10 +292,21 @@ bool CGrenade::Action(s32 cmd, u32 flags)
 						inv->Ruck(this);
 						inv->SetActiveSlot(NO_ACTIVE_SLOT);
 						inv->Slot(tgt);
-						if (!inv->Vest(this))						//поточну гранату до розгрузки
-							if (!inv->Belt(this))					//якщо ні то у пояс
-								if (inv->CanPutInSlot(this))	//перевіримо так щоб вільний слот був призначено автоматично
-									inv->Slot(this);				//та пхнемо у слот якщо нікуди не лізе
+						if (!inv->Vest(this)) //поточну гранату до розгрузки
+							if (!inv->Belt(this)) // якщо ні то у пояс
+							{
+								// перевіримо так щоб вільний слот був призначено автоматично
+								// та пхнемо у слот якщо нікуди не лізе
+								for (const auto& slot : GetSlots())
+								{
+									if (inv->CanPutInSlot(this, slot))
+									{
+										SetSlot(slot);
+										inv->Slot(this);
+										break;
+									}
+								}
+							}
 					}
 				}
 			}

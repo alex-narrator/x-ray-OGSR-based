@@ -293,7 +293,7 @@ bool CUIInventoryWnd::ToSlot(CUICellItem* itm, bool force_place)
 		
 		new_owner->SetItem					(i);
 	
-		bool b_not_activate = !GetInventory()->activate_slot(_slot) && !iitem->cast_hud_item();
+		bool b_not_activate = !GetInventory()->activate_slot(_slot);
 		GetInventory()->Slot(iitem, b_not_activate);
 		PlaySnd(eInvItemToSlot);
 		m_b_need_update_stats = true;

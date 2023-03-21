@@ -1764,11 +1764,13 @@ bool CActor::IsDetectorActive() const {
 
 float CActor::GetZoomEffectorK(){
 	float k{};
-	if (IsHardHold()) 
+	if (IsHardHold())
 		return k;
 	k = 1.f + (conditions().GetZoomEffectorKoef() * (1.f - conditions().GetPower()));
 	if (is_actor_crouch())
 		k *= 0.5f;
+	if (auto weapon = smart_cast<CWeapon*>(inventory().ActiveItem()))
+		k /= weapon->GetZoomFactor();
 	return k;
 }
 
