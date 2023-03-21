@@ -102,7 +102,7 @@ void CSE_ALifeInventoryItem::UPDATE_Write	(NET_Packet &tNetPacket)
 	tNetPacket.w_float_q8	(m_fCondition, 0.0f, 1.0f);
 	tNetPacket.w_float		(m_fRadiationRestoreSpeed);
 	tNetPacket.w_float		(m_fLastTimeCalled);
-	tNetPacket.w_float_q8	(m_fPowerLevel , 0.0f, 1.0f);
+	tNetPacket.w_float      (m_fPowerLevel);
 	tNetPacket.w_u8			(m_cur_power_source);
 	tNetPacket.w_u8			(m_bIsPowerSourceAttached ? 1 : 0);
 	tNetPacket.w_float_q8	(m_fAttachedPowerSourceCondition, 0.0f, 1.0f);
@@ -154,7 +154,7 @@ void CSE_ALifeInventoryItem::UPDATE_Read	(NET_Packet &tNetPacket)
 		tNetPacket.r_float_q8	(m_fCondition, 0.0f, 1.0f);
 		tNetPacket.r_float		(m_fRadiationRestoreSpeed);
 		tNetPacket.r_float		(m_fLastTimeCalled);
-		tNetPacket.r_float_q8	(m_fPowerLevel, 0.0f, 1.0f);
+		tNetPacket.r_float      (m_fPowerLevel);
 		tNetPacket.r_u8			(m_cur_power_source);
 		m_bIsPowerSourceAttached = !!(tNetPacket.r_u8() & 0x1);
 		tNetPacket.r_float_q8	(m_fAttachedPowerSourceCondition, 0.0f, 1.0f);
